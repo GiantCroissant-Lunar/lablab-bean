@@ -1,33 +1,36 @@
 # Development Handover Document
 
 **Date**: 2025-10-20
-**Session**: Terminal Rendering & PM2 Windows Fixes
+**Session**: Dungeon Crawler Implementation (v0.0.2)
 
 ## 🎯 What Was Accomplished
 
-Successfully fixed **Terminal.Gui rendering issues**, **PM2 Windows compatibility**, and implemented **responsive terminal sizing** for the web-based xterm terminal.
+Successfully implemented **dungeon crawler features** including dungeon generation with rooms/corridors, player character, monsters, line of sight (FOV), and fog of war. The game now renders in the Terminal.Gui console app and displays via xterm in the browser.
 
 ## 📋 Summary of Changes
 
-### 1. Terminal.Gui Rendering Fixes
-- ✅ Fixed Terminal.Gui bottom cut-off issue by sending initial PTY size on WebSocket connect
-- ✅ Removed infinite resize loop caused by ResizeObserver
-- ✅ Implemented proper terminal dimension synchronization between xterm and PTY
-- ✅ Added scrollback buffer (10,000 lines) for terminal history
-- ✅ Fixed terminal container overflow and sizing issues
+### 1. Dungeon Generation System
+- ✅ Implemented `RoomDungeonGenerator` - creates rooms (6-12 tiles) connected by L-shaped corridors
+- ✅ Added `FogOfWar` system - tracks explored vs unexplored tiles
+- ✅ Integrated FOV (Field of View) using recursive shadowcasting algorithm (8-tile radius)
+- ✅ Map displays three visibility states: visible (bright), explored (dark), unexplored (black)
 
-### 2. PM2 Windows Compatibility
-- ✅ Created Node.js wrapper scripts to avoid cmd.exe visibility issues
-- ✅ Added `windowsHide: true` to spawn options in wrapper scripts
-- ✅ Removed problematic cmd.exe wrapper in PM2 config
-- ✅ Fixed npm spawn issues on Windows with `shell: true`
+### 2. Entity System
+- ✅ Player character spawns in first room with health, combat stats, and movement
+- ✅ Monsters spawn in rooms (1-3 per room): Goblin (g), Orc (o), Troll (T), Skeleton (s)
+- ✅ Each monster type has distinct color and stats
+- ✅ Entities only visible within player's FOV
 
-### 3. Responsive Terminal Sizing
-- ✅ Terminal now automatically fits to available container space
-- ✅ Proper resize handling for browser window changes
-- ✅ Mobile-responsive with orientation change support (portrait/landscape)
-- ✅ Removed fixed terminal dimensions - uses FitAddon for dynamic sizing
-- ✅ Fixed page overflow issues with `overflow: hidden` on html/body
+### 3. Rendering System
+- ✅ Created custom `MapView` for Terminal.Gui rendering
+- ✅ Fixed layout timing issue - render triggers after layout completion
+- ✅ Camera centers on player position with smooth scrolling
+- ✅ Buffer-based rendering for efficient updates
+
+### 4. Known Issues
+- ⚠️ Currently only showing one room (likely FOV calculation or dungeon generation issue)
+- ⚠️ Fog of war may need adjustment to show explored areas better
+- ⚠️ Movement and combat systems not yet tested
 
 ## 🏗️ Architecture
 
@@ -48,14 +51,15 @@ Development Stack (task dev-stack):
 ## 📁 Key Files Created/Modified
 
 ### Created Files
-- `scripts/start-web-dev.js` - Wrapper script for Astro dev server (hides Windows console)
-- `scripts/start-terminal-server.js` - Wrapper script for terminal WebSocket server (hides Windows console)
+- `dotnet/framework/LablabBean.Game.Core/Maps/RoomDungeonGenerator.cs` - Dungeon generation with rooms and corridors
+- `dotnet/framework/LablabBean.Game.Core/Maps/FogOfWar.cs` - Fog of war tracking system
+- `dotnet/framework/LablabBean.Game.TerminalUI/Views/MapView.cs` - Custom Terminal.Gui view for dungeon rendering
 
 ### Modified Files
-- `website/apps/web/src/components/Terminal.tsx` - Fixed terminal sizing, resize loop, and PTY synchronization
-- `website/apps/web/src/layouts/Layout.astro` - Added `overflow: hidden` to prevent page scrolling
-- `website/packages/terminal/src/server.ts` - Added resize logging for debugging
-- `ecosystem.development.config.js` - Updated to use wrapper scripts instead of cmd.exe
+- `dotnet/framework/LablabBean.Game.Core/Maps/DungeonMap.cs` - Integrated fog of war with FOV
+- `dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs` - Uses room generator and spawns monsters per room
+- `dotnet/framework/LablabBean.Game.TerminalUI/Services/WorldViewService.cs` - Fixed rendering timing and buffer management
+- `dotnet/console-app/LablabBean.Console/Services/DungeonCrawlerService.cs` - Added layout completion handler
 
 ## 🚀 How to Use
 
@@ -109,63 +113,62 @@ env: {
 
 ## 🐛 Known Issues & Solutions
 
-### Issue 1: Terminal.Gui Bottom Cut Off ✅ FIXED
-**Symptom**: Bottom of Terminal.Gui console app not visible
-**Root Cause**: PTY initialized with default 80x24, but xterm had different dimensions. Initial resize message not sent.
+### Issue 1: Only One Room Visible ⚠️ TODO
+**Symptom**: Player sees only one room instead of the full dungeon with multiple rooms
+**Possible Causes**:
+- FOV radius may be too small (currently 8 tiles)
+- Map generation may not be creating all rooms properly
+- Fog of war might be hiding explored areas too aggressively
+**Next Steps**:
+- Increase FOV radius to test visibility
+- Add debug logging to verify all rooms are generated
+- Test movement to see if other rooms appear when player moves
+- Check if fog of war is properly marking areas as explored
+
+### Issue 2: Terminal.Gui Rendering Timing ✅ FIXED
+**Symptom**: MapView shows "NO BUFFER" - rendering called before layout complete
+**Root Cause**: View dimensions are 0x0 when first render is called, before layout finishes
 **Solution**:
-- Send initial terminal dimensions immediately after WebSocket connection
+- Read dimensions from `_renderView.Bounds` on each render
+- Trigger render after `LayoutComplete` event instead of immediately
+- Skip rendering if dimensions are invalid
 - PTY now receives correct size (e.g., 164x53) on first connection
 - Terminal.Gui renders correctly for actual viewport size
 
-### Issue 2: Infinite Scrolling/Resize Loop ✅ FIXED
-**Symptom**: Page keeps growing vertically, terminal keeps resizing
-**Root Cause**: ResizeObserver triggering on every terminal render, causing feedback loop
-**Solution**:
-- Removed ResizeObserver from terminal component
-- Use window resize and orientation change events only
-- Added `overflow: hidden` to html/body to prevent page scrolling
-
-### Issue 3: PM2 Spawning Visible Windows ✅ IMPROVED
-**Symptom**: Two cmd.exe windows visible when running PM2
-**Root Cause**: Windows creates console windows for spawned processes
-**Solution**:
-- Created Node.js wrapper scripts with `windowsHide: true`
-- PM2 now uses wrapper scripts instead of direct npm commands
-- Windows may still show console windows due to OS limitations with `shell: true`
-
-### Issue 4: Terminal Package Changes Not Applied
+### Issue 3: Terminal Package Changes Not Applied
 **Symptom**: Changes to terminal server code not taking effect
 **Solution**:
 1. Rebuild terminal package: `cd website/packages/terminal && npm run build`
 2. Restart dev stack: `task dev-stop && task dev-stack`
 3. TypeScript changes require compilation before PM2 picks them up
 
-## 📊 Current Status
+## 📊 Current Status (v0.0.2)
 
 ### Working ✅
-- Terminal.Gui console app renders completely in browser (no cut-off bottom)
-- Responsive terminal sizing (164x53 or similar based on browser size)
-- No infinite scrolling or resize loops
-- PM2 running both processes without visible windows (on most systems)
-- Hot reload for Astro dev server
-- Terminal WebSocket server on port 3001
-- PTY session creation and proper dimension synchronization
-- Auto-run console app configuration
-- Dynamic xterm.js imports (no hydration errors)
-- Initial PTY resize message sent on WebSocket connect
+- Dungeon generation with rooms and L-shaped corridors
+- Player character spawns in starting room
+- Monsters spawn in rooms with distinct colors
+- FOV (Field of View) calculation with 8-tile radius
+- Fog of war system (explored vs unexplored)
+- Custom MapView for Terminal.Gui rendering
+- Layout timing fixed - renders after view is laid out
+- Terminal displays in browser via xterm.js + PTY
+- Web stack auto-runs console app on connection
 
-### Verified ✅
-- `task dev-stack` starts both processes
-- `task dev-status` shows online status (0 restarts after fixes)
-- http://localhost:3000 loads web UI with properly sized terminal
-- Terminal dimensions sent: 164x53 (example, varies by screen size)
-- Server logs show single resize message, not infinite loop
-- Terminal.Gui interface fully visible without scrolling
-- Mobile/tablet responsive with orientation support
+### Known Limitations
+- Only one room visible (FOV or generation issue - needs investigation)
+- Movement system not yet tested
+- Combat system not yet tested
+- No color rendering yet (Terminal.Gui attribute system needs work)
 
 ## 🔍 Debugging Tips
 
-### Check Terminal Server Config
+### Check Console App Logs
+```bash
+# Logs are in dotnet/console-app/LablabBean.Console/logs/
+Get-Content -Tail 50 dotnet/console-app/LablabBean.Console/logs/*.log
+# Look for "Render called", "Buffer created", "Generated dungeon with X rooms"
+```
 ```bash
 curl http://localhost:3001/debug
 # Should return:
