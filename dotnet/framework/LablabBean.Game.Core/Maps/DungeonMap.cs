@@ -16,6 +16,7 @@ public class DungeonMap
     private readonly ArrayView<bool> _transparencyMap;
     private readonly IFOV _fov;
     private readonly AStar _pathfinder;
+    private readonly FogOfWar _fogOfWar;
 
     public int Width { get; }
     public int Height { get; }
@@ -29,6 +30,11 @@ public class DungeonMap
     /// Pathfinding instance
     /// </summary>
     public AStar Pathfinder => _pathfinder;
+
+    /// <summary>
+    /// Fog of war instance
+    /// </summary>
+    public FogOfWar FogOfWar => _fogOfWar;
 
     public DungeonMap(int width, int height)
     {
@@ -44,6 +50,9 @@ public class DungeonMap
 
         // Initialize pathfinder with the walkability map
         _pathfinder = new AStar(_walkabilityMap, Distance.Chebyshev);
+
+        // Initialize fog of war
+        _fogOfWar = new FogOfWar(width, height);
     }
 
     /// <summary>
@@ -89,11 +98,14 @@ public class DungeonMap
     }
 
     /// <summary>
-    /// Calculates FOV from a position
+    /// Calculates FOV from a position and updates fog of war
     /// </summary>
     public void CalculateFOV(Point origin, int radius)
     {
         _fov.Calculate(origin, radius);
+        
+        // Update fog of war with newly visible tiles
+        _fogOfWar.Explore(_fov.CurrentFOV);
     }
 
     /// <summary>

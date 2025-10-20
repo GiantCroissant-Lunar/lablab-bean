@@ -1,0 +1,168 @@
+{
+  "generated_at": "2025-10-20T13:40:00.000000Z",
+  "total_docs": 14,
+  "by_type": {
+    "guide": 8,
+    "reference": 5,
+    "finding": 1
+  },
+  "by_status": {
+    "active": 14
+  },
+  "docs": [
+    {
+      "path": "docs/DOCUMENTATION-SCHEMA.md",
+      "doc_id": "DOC-2025-00001",
+      "title": "Documentation Front-Matter Schema",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["docs", "schema", "meta"],
+      "created": "2025-10-20",
+      "summary": "Mandatory front-matter schema for all documentation files"
+    },
+    {
+      "path": "docs/README.md",
+      "doc_id": "DOC-2025-00002",
+      "title": "Documentation Index",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["readme", "navigation"],
+      "created": "2025-10-20",
+      "summary": "Central navigation and overview of lablab-bean documentation"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "doc_id": "DOC-2025-00003",
+      "title": "Lablab Bean Architecture",
+      "doc_type": "reference",
+      "status": "active",
+      "canonical": true,
+      "tags": ["architecture", "overview", "structure"],
+      "created": "2025-10-20",
+      "summary": "Overall architecture and project structure of lablab-bean"
+    },
+    {
+      "path": "docs/CONTRIBUTING.md",
+      "doc_id": "DOC-2025-00004",
+      "title": "Contributing to Lablab Bean",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["contributing", "development", "guidelines"],
+      "created": "2025-10-20",
+      "summary": "Guidelines and instructions for contributing to the project"
+    },
+    {
+      "path": "docs/DEVELOPMENT.md",
+      "doc_id": "DOC-2025-00005",
+      "title": "Development Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["development", "hot-reload", "workflow"],
+      "created": "2025-10-20",
+      "summary": "Development workflow including hot reload setup and best practices"
+    },
+    {
+      "path": "docs/DEBUGGING_NOTES.md",
+      "doc_id": "DOC-2025-00006",
+      "title": "Debugging Notes - Stack Testing",
+      "doc_type": "finding",
+      "status": "active",
+      "canonical": true,
+      "tags": ["debugging", "troubleshooting", "issues"],
+      "created": "2025-10-20",
+      "summary": "Debugging notes and solutions for common stack testing issues"
+    },
+    {
+      "path": "docs/MIGRATION.md",
+      "doc_id": "DOC-2025-00007",
+      "title": "Migration Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["migration", "upgrade", "structure"],
+      "created": "2025-10-20",
+      "summary": "Guide for migrating to new file organization and testing structure"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "doc_id": "DOC-2025-00008",
+      "title": "Testing Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["testing", "playwright", "e2e"],
+      "created": "2025-10-20",
+      "summary": "Complete guide for testing the Lablab Bean stack with Playwright"
+    },
+    {
+      "path": "docs/ORGANIZATION.md",
+      "doc_id": "DOC-2025-00009",
+      "title": "Project Organization",
+      "doc_type": "reference",
+      "status": "active",
+      "canonical": true,
+      "tags": ["organization", "structure", "directories"],
+      "created": "2025-10-20",
+      "summary": "File organization and directory structure of the project"
+    },
+    {
+      "path": "docs/PROJECT_SETUP.md",
+      "doc_id": "DOC-2025-00010",
+      "title": "Project Setup Summary",
+      "doc_type": "reference",
+      "status": "active",
+      "canonical": true,
+      "tags": ["setup", "tools", "configuration"],
+      "created": "2025-10-20",
+      "summary": "Overview of project setup including all integrated tools and configurations"
+    },
+    {
+      "path": "docs/QUICKSTART.md",
+      "doc_id": "DOC-2025-00011",
+      "title": "Quick Start Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["quickstart", "getting-started", "user"],
+      "created": "2025-10-20",
+      "summary": "Quick start guide for users to get up and running in 3 steps"
+    },
+    {
+      "path": "docs/RELEASE.md",
+      "doc_id": "DOC-2025-00012",
+      "title": "Release & Deployment Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": ["release", "deployment", "artifacts"],
+      "created": "2025-10-20",
+      "summary": "Guide for building and running the stack using versioned artifacts"
+    },
+    {
+      "path": "docs/SETUP_COMPLETE.md",
+      "doc_id": "DOC-2025-00013",
+      "title": "Setup Complete - Lablab Bean",
+      "doc_type": "reference",
+      "status": "active",
+      "canonical": true,
+      "tags": ["setup", "completion", "reference"],
+      "created": "2025-10-20",
+      "summary": "Summary of what was added during the initial project setup"
+    },
+    {
+      "path": "docs/SUMMARY.md",
+      "doc_id": "DOC-2025-00014",
+      "title": "Project Summary",
+      "doc_type": "reference",
+      "status": "active",
+      "canonical": true,
+      "tags": ["summary", "refactoring", "history"],
+      "created": "2025-10-20",
+      "summary": "Summary of major refactoring and changes made to the project"
+    }
+  ]
+}

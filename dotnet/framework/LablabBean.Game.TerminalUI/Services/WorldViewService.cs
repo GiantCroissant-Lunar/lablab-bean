@@ -107,10 +107,10 @@ public class WorldViewService
                 char glyph;
                 TGuiAttribute attr;
 
-                // Check if position is in FOV
+                // Check if position is in FOV (currently visible)
                 if (map.IsInFOV(worldPos))
                 {
-                    // Visible tiles
+                    // Currently visible tiles - bright
                     if (map.IsWalkable(worldPos))
                     {
                         glyph = '.';
@@ -122,11 +122,25 @@ public class WorldViewService
                         attr = new TGuiAttribute(TGuiColor.White, TGuiColor.Black);
                     }
                 }
+                else if (map.FogOfWar.IsExplored(worldPos))
+                {
+                    // Explored but not currently visible - darker
+                    if (map.IsWalkable(worldPos))
+                    {
+                        glyph = '.';
+                        attr = new TGuiAttribute(TGuiColor.DarkGray, TGuiColor.Black);
+                    }
+                    else
+                    {
+                        glyph = '#';
+                        attr = new TGuiAttribute(TGuiColor.DarkGray, TGuiColor.Black);
+                    }
+                }
                 else
                 {
-                    // Not visible - show as dark
+                    // Not explored - completely dark
                     glyph = ' ';
-                    attr = new TGuiAttribute(TGuiColor.DarkGray, TGuiColor.Black);
+                    attr = new TGuiAttribute(TGuiColor.Black, TGuiColor.Black);
                 }
 
                 // Draw the tile using Terminal.Gui v2 pattern

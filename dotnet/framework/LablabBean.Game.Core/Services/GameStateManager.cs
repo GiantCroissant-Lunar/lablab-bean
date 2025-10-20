@@ -53,12 +53,15 @@ public class GameStateManager : IDisposable
     {
         _logger.LogInformation("Initializing new game with map size {Width}x{Height}", mapWidth, mapHeight);
 
-        // Generate a new map
-        var generator = new MapGenerator();
-        _currentMap = generator.GenerateRoomsAndCorridors(mapWidth, mapHeight);
+        // Generate a new map with rooms
+        var generator = new RoomDungeonGenerator();
+        var (map, rooms) = generator.Generate(mapWidth, mapHeight, maxRooms: 15, minRoomSize: 6, maxRoomSize: 12);
+        _currentMap = map;
 
-        // Initialize play mode world
-        InitializePlayWorld();
+        _logger.LogInformation("Generated dungeon with {RoomCount} rooms", rooms.Count);
+
+        // Initialize play mode world with room info
+        InitializePlayWorld(rooms);
 
         // Initialize edit mode world (empty for now)
         _worldManager.ClearWorld(GameMode.Edit);
@@ -70,16 +73,16 @@ public class GameStateManager : IDisposable
     /// <summary>
     /// Initializes the play world with player and enemies
     /// </summary>
-    private void InitializePlayWorld()
+    private void InitializePlayWorld(List<RoomDungeonGenerator.Room> rooms)
     {
         var world = _worldManager.GetWorld(GameMode.Play);
         world.Clear();
 
-        if (_currentMap == null)
-            throw new InvalidOperationException("Cannot initialize play world without a map");
+        if (_currentMap == null || rooms.Count == 0)
+            throw new InvalidOperationException("Cannot initialize play world without a map and rooms");
 
-        // Find a valid spawn position (walkable tile)
-        var playerSpawn = FindWalkablePosition(_currentMap);
+        // Spawn player in the first room
+        var playerSpawn = rooms[0].Center;
 
         // Create the player
         var player = world.Create(
@@ -97,8 +100,22 @@ public class GameStateManager : IDisposable
 
         _logger.LogInformation("Player created at {Position}", playerSpawn);
 
-        // Create some enemies
-        CreateEnemies(world, 10);
+        // Create enemies in other rooms (1-3 per room)
+        var random = new Random();
+        int totalEnemies = 0;
+        
+        for (int i = 1; i < rooms.Count; i++)
+        {
+            int enemiesInRoom = random.Next(1, 4);
+            for (int j = 0; j < enemiesInRoom; j++)
+            {
+                var enemyPos = GetRandomPositionInRoom(rooms[i], random);
+                CreateEnemy(world, enemyPos, random);
+                totalEnemies++;
+            }
+        }
+
+        _logger.LogInformation("Created {EnemyCount} enemies across {RoomCount} rooms", totalEnemies, rooms.Count - 1);
 
         // Calculate initial FOV
         _currentMap.CalculateFOV(playerSpawn, 8);
@@ -107,38 +124,38 @@ public class GameStateManager : IDisposable
     }
 
     /// <summary>
-    /// Creates enemy entities
+    /// Gets a random walkable position within a room
     /// </summary>
-    private void CreateEnemies(World world, int count)
+    private Point GetRandomPositionInRoom(RoomDungeonGenerator.Room room, Random random)
     {
-        if (_currentMap == null)
-            return;
+        int x = random.Next(room.Bounds.X + 1, room.Bounds.X + room.Bounds.Width - 1);
+        int y = random.Next(room.Bounds.Y + 1, room.Bounds.Y + room.Bounds.Height - 1);
+        return new Point(x, y);
+    }
 
-        var random = new Random();
+    /// <summary>
+    /// Creates a single enemy entity
+    /// </summary>
+    private void CreateEnemy(World world, Point position, Random random)
+    {
+        // Random enemy type
+        var enemyTypes = new[] { "Goblin", "Orc", "Troll", "Skeleton" };
+        var enemyType = enemyTypes[random.Next(enemyTypes.Length)];
 
-        for (int i = 0; i < count; i++)
-        {
-            var position = FindWalkablePosition(_currentMap);
+        var enemy = world.Create(
+            new Enemy(enemyType),
+            new Position(position),
+            new Health(30, 30),
+            new Combat(5, 2),
+            new Actor(80 + random.Next(40)),
+            new AI(AIBehavior.Chase),
+            new Renderable(GetEnemyGlyph(enemyType), GetEnemyColor(enemyType), Color.Black, 50),
+            new Visible(true),
+            new BlocksMovement(true),
+            new Name(enemyType)
+        );
 
-            // Random enemy type
-            var enemyTypes = new[] { "Goblin", "Orc", "Troll", "Skeleton" };
-            var enemyType = enemyTypes[random.Next(enemyTypes.Length)];
-
-            var enemy = world.Create(
-                new Enemy(enemyType),
-                new Position(position),
-                new Health(30, 30),
-                new Combat(5, 2),
-                new Actor(80 + random.Next(40)),
-                new AI(AIBehavior.Chase),
-                new Renderable(GetEnemyGlyph(enemyType), GetEnemyColor(enemyType), Color.Black, 50),
-                new Visible(true),
-                new BlocksMovement(true),
-                new Name(enemyType)
-            );
-
-            _logger.LogDebug("Created {EnemyType} at {Position}", enemyType, position);
-        }
+        _logger.LogDebug("Created {EnemyType} at {Position}", enemyType, position);
     }
 
     /// <summary>
