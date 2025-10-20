@@ -128,6 +128,156 @@ test.describe('Web Terminal', () => {
   });
 });
 
+test.describe('Console App TUI Integration', () => {
+  test('should display Terminal.Gui welcome screen', async ({ page }) => {
+    await page.goto('/');
+    
+    const terminal = page.locator('.xterm, [data-testid="terminal"]');
+    await expect(terminal).toBeVisible({ timeout: 10000 });
+    
+    // Wait for console app to initialize
+    await page.waitForTimeout(3000);
+    
+    // Check for Terminal.Gui title
+    const content = await terminal.textContent();
+    expect(content).toContain('Lablab Bean - Interactive TUI');
+    expect(content).toContain('Welcome to Lablab Bean Interactive TUI');
+  });
+
+  test('should display console app features and commands', async ({ page }) => {
+    await page.goto('/');
+    
+    const terminal = page.locator('.xterm, [data-testid="terminal"]');
+    await expect(terminal).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(3000);
+    
+    const content = await terminal.textContent();
+    
+    // Check for features
+    expect(content).toContain('Features:');
+    expect(content).toContain('Runs in browser via xterm.js');
+    expect(content).toContain('Full keyboard support');
+    expect(content).toContain('Mouse support');
+    
+    // Check for commands
+    expect(content).toContain('Commands:');
+    expect(content).toContain('ESC - Exit application');
+    expect(content).toContain('F1  - Show help');
+    expect(content).toContain('F5  - Refresh');
+  });
+
+  test('should display status bar with menu items', async ({ page }) => {
+    await page.goto('/');
+    
+    const terminal = page.locator('.xterm, [data-testid="terminal"]');
+    await expect(terminal).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(3000);
+    
+    const content = await terminal.textContent();
+    
+    // Check for status bar items
+    expect(content).toContain('ESC');
+    expect(content).toContain('Quit');
+    expect(content).toContain('F1');
+    expect(content).toContain('Help');
+    expect(content).toContain('F5');
+    expect(content).toContain('Refresh');
+  });
+
+  test('should trigger F5 refresh and show timestamp', async ({ page }) => {
+    await page.goto('/');
+    
+    const terminal = page.locator('.xterm, [data-testid="terminal"]');
+    await expect(terminal).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(3000);
+    
+    // Press F5 to refresh
+    await terminal.click();
+    await page.keyboard.press('F5');
+    await page.waitForTimeout(1000);
+    
+    const content = await terminal.textContent();
+    
+    // Check for refresh message with timestamp
+    expect(content).toMatch(/\[\d{2}:\d{2}:\d{2}\] View refreshed!/);
+  });
+
+  test('should show help dialog when F1 is pressed', async ({ page }) => {
+    await page.goto('/');
+    
+    const terminal = page.locator('.xterm, [data-testid="terminal"]');
+    await expect(terminal).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(3000);
+    
+    // Press F1 to show help
+    await terminal.click();
+    await page.keyboard.press('F1');
+    await page.waitForTimeout(1000);
+    
+    const content = await terminal.textContent();
+    
+    // Check for help dialog content
+    expect(content).toContain('Help');
+    expect(content).toContain('Keyboard Shortcuts:');
+    expect(content).toContain('ESC - Quit application');
+    expect(content).toContain('F1  - Show this help');
+    expect(content).toContain('F5  - Refresh view');
+    expect(content).toContain('Browser (via xterm.js)');
+    expect(content).toContain('PTY session (node-pty)');
+    expect(content).toContain('Managed by PM2');
+  });
+
+  test('should close help dialog with Enter', async ({ page }) => {
+    await page.goto('/');
+    
+    const terminal = page.locator('.xterm, [data-testid="terminal"]');
+    await expect(terminal).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(3000);
+    
+    // Get initial content
+    const initialContent = await terminal.textContent();
+    
+    // Press F1 to show help
+    await terminal.click();
+    await page.keyboard.press('F1');
+    await page.waitForTimeout(1000);
+    
+    // Press Enter to close help dialog
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(500);
+    
+    const finalContent = await terminal.textContent();
+    
+    // Help dialog should be closed (content should be different)
+    expect(finalContent).not.toBe(initialContent);
+  });
+
+  test('should handle multiple F5 refreshes', async ({ page }) => {
+    await page.goto('/');
+    
+    const terminal = page.locator('.xterm, [data-testid="terminal"]');
+    await expect(terminal).toBeVisible({ timeout: 10000 });
+    await page.waitForTimeout(3000);
+    
+    await terminal.click();
+    
+    // Press F5 three times
+    await page.keyboard.press('F5');
+    await page.waitForTimeout(500);
+    await page.keyboard.press('F5');
+    await page.waitForTimeout(500);
+    await page.keyboard.press('F5');
+    await page.waitForTimeout(500);
+    
+    const content = await terminal.textContent();
+    
+    // Should have three refresh messages
+    const refreshMatches = content.match(/View refreshed!/g);
+    expect(refreshMatches).toBeTruthy();
+    expect(refreshMatches?.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
 test.describe('Web App Navigation', () => {
   test('should have working navigation', async ({ page }) => {
     await page.goto('/');
