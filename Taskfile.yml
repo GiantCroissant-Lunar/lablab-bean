@@ -243,31 +243,31 @@ tasks:
     desc: Start development stack with hot reload (Astro dev + PTY + Console)
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🚀 Starting development stack with hot reload..."
+      - echo "Starting development stack with hot reload..."
       - pnpm pm2:dev
       - echo ""
-      - echo "✓ Development stack started!"
+      - echo "Development stack started!"
       - echo ""
-      - echo "🌐 Web App: http://localhost:3000 (hot reload enabled)"
-      - echo "📊 Use 'task dev-status' to check status"
-      - echo "📋 Use 'task dev-logs' to view logs"
-      - echo "🛑 Use 'task dev-stop' to stop the stack"
+      - echo "Web App at http://localhost:3000 with hot reload enabled"
+      - echo "Use task dev-status to check status"
+      - echo "Use task dev-logs to view logs"
+      - echo "Use task dev-stop to stop the stack"
 
   dev-stop:
     desc: Stop development stack
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🛑 Stopping development stack..."
+      - echo "Stopping development stack..."
       - pnpm pm2:dev-stop
-      - echo "✓ Development stack stopped"
+      - echo "Development stack stopped"
 
   dev-restart:
     desc: Restart development stack
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🔄 Restarting development stack..."
+      - echo "Restarting development stack..."
       - pnpm pm2:dev-restart
-      - echo "✓ Development stack restarted"
+      - echo "Development stack restarted"
 
   dev-status:
     desc: Show development stack status
@@ -285,49 +285,49 @@ tasks:
     desc: Delete development stack from PM2
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🗑️  Deleting development stack from PM2..."
+      - echo "Deleting development stack from PM2..."
       - pnpm pm2:dev-delete
-      - echo "✓ Development stack deleted from PM2"
+      - echo "Development stack deleted from PM2"
 
   # Build Tasks (compound commands)
   build:
     desc: Build all components for development (dotnet only, website uses hot reload)
     cmds:
-      - echo "🔨 Building development components..."
+      - echo "Building development components..."
       - task: build-dotnet
-      - echo "✓ Development build complete (website will use hot reload)"
+      - echo "Development build complete (website will use hot reload)"
 
   build-dotnet:
     desc: Build .NET projects using NUKE
     cmds:
-      - echo "🔨 Building .NET projects..."
+      - echo "Building .NET projects..."
       - task: nuke-build
-      - echo "✓ .NET build complete"
+      - echo ".NET build complete"
 
   build-website:
     desc: Build website for production
     cmds:
-      - echo "🌐 Building website for production..."
+      - echo "Building website for production..."
       - task: website-build
-      - echo "✓ Website build complete"
+      - echo "Website build complete"
 
   # Release Stack Tasks (using versioned artifacts)
   build-release:
     desc: Build complete release with versioned artifacts
     cmds:
-      - echo "🔨 Building release with versioned artifacts..."
+      - echo "Building release with versioned artifacts..."
       - task: build-website
       - task: nuke-release
-      - echo "✓ Release built successfully"
+      - echo "Release built successfully"
       - echo ""
-      - echo "📦 Artifacts location{{.ARTIFACTS_DIR}}"
+      - echo "Artifacts location{{.ARTIFACTS_DIR}}"
       - cmd: powershell -Command "Get-ChildItem -Path '{{.ARTIFACTS_DIR}}' -Directory | Select-Object Name, LastWriteTime"
         ignore_error: true
 
   list-versions:
     desc: List all available versioned artifacts
     cmds:
-      - echo "📦 Available versions:"
+      - echo "Available versions:"
       - cmd: powershell -Command "Get-ChildItem -Path '{{.ARTIFACTS_DIR}}' -Directory | Select-Object Name, LastWriteTime | Format-Table -AutoSize"
         ignore_error: true
 
@@ -341,31 +341,31 @@ tasks:
     desc: Start production stack from versioned artifacts (PRODUCTION MODE)
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🚀 Starting production stack from versioned artifacts..."
+      - echo "Starting production stack from versioned artifacts..."
       - pnpm pm2:prod
       - echo ""
-      - echo "✓ Production stack started successfully!"
+      - echo "Production stack started successfully!"
       - echo ""
-      - echo "📊 Use 'task stack-status' to check status"
-      - echo "📋 Use 'task stack-logs' to view logs"
-      - echo "🛑 Use 'task stack-stop' to stop the stack"
-      - echo "🧪 Use 'task test-web' to run Playwright tests"
+      - echo "Use task stack-status to check status"
+      - echo "Use task stack-logs to view logs"
+      - echo "Use task stack-stop to stop the stack"
+      - echo "Use task test-web to run Playwright tests"
 
   stack-stop:
     desc: Stop all PM2 processes
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🛑 Stopping all PM2 processes..."
+      - echo "Stopping all PM2 processes..."
       - pnpm pm2 stop all
-      - echo "✓ All processes stopped"
+      - echo "All processes stopped"
 
   stack-restart:
     desc: Restart production stack
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🔄 Restarting production stack..."
+      - echo "Restarting production stack..."
       - pnpm pm2:prod-restart
-      - echo "✓ Production stack restarted"
+      - echo "Production stack restarted"
 
   stack-status:
     desc: Show PM2 stack status
@@ -395,9 +395,9 @@ tasks:
     desc: Delete all PM2 processes
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🗑️  Deleting all PM2 processes..."
+      - echo "Deleting all PM2 processes..."
       - pnpm pm2 delete all
-      - echo "✓ All processes deleted from PM2"
+      - echo "All processes deleted from PM2"
 
   stack-monit:
     desc: Monitor stack with PM2 dashboard
@@ -442,7 +442,7 @@ tasks:
     desc: Run Playwright tests against the web app
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🧪 Running Playwright tests..."
+      - echo "Running Playwright tests..."
       - pnpm test
 
   test-web-ui:

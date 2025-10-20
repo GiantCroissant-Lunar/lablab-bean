@@ -15,9 +15,11 @@ module.exports = {
   apps: [
     {
       name: 'lablab-web-dev',
-      script: 'pnpm',
+      script: path.join(__dirname, 'website', 'apps', 'web', 'package.json'),
       args: 'dev',
       cwd: path.join(__dirname, 'website', 'apps', 'web'),
+      interpreter: 'pnpm',
+      interpreter_args: 'run',
       watch: false, // Astro handles its own hot reload
       instances: 1,
       exec_mode: 'fork',
@@ -32,9 +34,11 @@ module.exports = {
     },
     {
       name: 'lablab-pty-dev',
-      script: 'pnpm',
+      script: path.join(__dirname, 'website', 'packages', 'terminal', 'package.json'),
       args: 'dev',
       cwd: path.join(__dirname, 'website', 'packages', 'terminal'),
+      interpreter: 'pnpm',
+      interpreter_args: 'run',
       watch: false, // TypeScript watch mode handles rebuilds
       instances: 1,
       exec_mode: 'fork',
