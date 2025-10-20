@@ -11,15 +11,16 @@ const path = require('path');
  * Usage: pnpm pm2:dev or task dev-stack
  */
 
+// Detect platform
+const isWindows = process.platform === 'win32';
+
 module.exports = {
   apps: [
     {
       name: 'lablab-web-dev',
-      script: path.join(__dirname, 'website', 'apps', 'web', 'package.json'),
-      args: 'dev',
+      script: isWindows ? 'cmd.exe' : 'npm',
+      args: isWindows ? '/c npm run dev' : 'run dev',
       cwd: path.join(__dirname, 'website', 'apps', 'web'),
-      interpreter: 'pnpm',
-      interpreter_args: 'run',
       watch: false, // Astro handles its own hot reload
       instances: 1,
       exec_mode: 'fork',
@@ -34,11 +35,9 @@ module.exports = {
     },
     {
       name: 'lablab-pty-dev',
-      script: path.join(__dirname, 'website', 'packages', 'terminal', 'package.json'),
-      args: 'dev',
+      script: isWindows ? 'cmd.exe' : 'npm',
+      args: isWindows ? '/c npm run dev' : 'run dev',
       cwd: path.join(__dirname, 'website', 'packages', 'terminal'),
-      interpreter: 'pnpm',
-      interpreter_args: 'run',
       watch: false, // TypeScript watch mode handles rebuilds
       instances: 1,
       exec_mode: 'fork',
@@ -51,8 +50,8 @@ module.exports = {
     },
     {
       name: 'lablab-console-dev',
-      script: 'dotnet',
-      args: 'run',
+      script: isWindows ? 'cmd.exe' : 'dotnet',
+      args: isWindows ? '/c dotnet run' : 'run',
       cwd: path.join(__dirname, 'dotnet', 'console-app', 'LablabBean.Console'),
       watch: false,
       instances: 1,
