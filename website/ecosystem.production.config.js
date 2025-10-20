@@ -30,7 +30,7 @@ function getLatestVersion() {
 function validateArtifacts(artifactsPath) {
   const requiredPaths = [
     path.join(artifactsPath, 'console', 'LablabBean.Console.exe'),
-    path.join(artifactsPath, 'website', 'package.json')
+    path.join(artifactsPath, 'website', 'server', 'entry.mjs')
   ];
   
   const missing = requiredPaths.filter(p => !fs.existsSync(p));
