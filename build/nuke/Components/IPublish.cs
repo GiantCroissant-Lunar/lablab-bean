@@ -12,8 +12,7 @@ interface IPublish : ICompile
     [Parameter("Runtime identifier for publishing")]
     string Runtime => TryGetValue(() => Runtime) ?? "win-x64";
 
-    [Parameter("Self-contained deployment")]
-    bool SelfContained => TryGetValue(() => SelfContained) ?? true;
+    bool SelfContained => true;
 
     Target Publish => _ => _
         .DependsOn(Compile)

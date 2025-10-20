@@ -9,6 +9,7 @@ vars:
   DOTNET_DIR: ./dotnet
   WEBSITE_DIR: ./website
   BUILD_DIR: ./build/nuke
+  ARTIFACTS_DIR: ./build/_artifacts
 
 tasks:
   default:
@@ -99,10 +100,10 @@ tasks:
       - echo "✓ Speck-kit directories created"
 
   speck-generate:
-    desc: Generate from speck-kit template (usage: task speck-generate TEMPLATE=<name> OUTPUT=<file>)
+    desc: "Generate from speck-kit template (usage: task speck-generate TEMPLATE=name OUTPUT=file)"
     cmds:
       - echo "Generating from template {{.TEMPLATE}}..."
-      - echo "Output: {{.OUTPUT_DIR}}/{{.OUTPUT}}"
+      - echo "Output{{.OUTPUT_DIR}}/{{.OUTPUT}}"
       - echo "⚠ Template generation requires custom implementation"
 
   docker-build:
@@ -171,6 +172,16 @@ tasks:
     cmds:
       - dotnet run --project Build.csproj -- PublishWindows
 
+  nuke-version:
+    desc: Print GitVersion information
+    cmds:
+      - dotnet run --project {{.BUILD_DIR}}/Build.csproj -- PrintVersion
+
+  nuke-release:
+    desc: Build complete release with versioned artifacts
+    cmds:
+      - dotnet run --project {{.BUILD_DIR}}/Build.csproj -- Release
+
   # .NET Tasks
   dotnet-build:
     desc: Build .NET solution
@@ -228,7 +239,7 @@ tasks:
       - pnpm build
 
   stack-start:
-    desc: Start entire stack with PM2 (web + console TUI)
+    desc: Start entire stack with PM2 (web + console TUI) - DEV MODE
     dir: "{{.WEBSITE_DIR}}"
     cmds:
       - pnpm stack:start
@@ -250,6 +261,173 @@ tasks:
     dir: "{{.WEBSITE_DIR}}"
     cmds:
       - pnpm pm2:logs
+
+  # Release Stack Tasks (using versioned artifacts)
+  build-release:
+    desc: Build complete release with versioned artifacts
+    cmds:
+      - echo "🔨 Building release with versioned artifacts..."
+      - task: nuke-release
+      - echo "✓ Release built successfully"
+      - echo ""
+      - echo "📦 Artifacts location{{.ARTIFACTS_DIR}}"
+      - cmd: powershell -Command "Get-ChildItem -Path '{{.ARTIFACTS_DIR}}' -Directory | Select-Object Name, LastWriteTime"
+        ignore_error: true
+
+  list-versions:
+    desc: List all available versioned artifacts
+    cmds:
+      - echo "📦 Available versions:"
+      - cmd: powershell -Command "Get-ChildItem -Path '{{.ARTIFACTS_DIR}}' -Directory | Select-Object Name, LastWriteTime | Format-Table -AutoSize"
+        ignore_error: true
+
+  show-version:
+    desc: Show the current version that will be used
+    cmds:
+      - cmd: node -e "const cfg = require('./ecosystem.config.js'); console.log('Current version:', cfg.apps[0].env.LABLAB_VERSION);"
+        ignore_error: true
+
+  stack-run:
+    desc: Start stack from versioned artifacts (PRODUCTION MODE)
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - echo "🚀 Starting stack from versioned artifacts..."
+      - pm2 start ecosystem.production.config.js
+      - echo ""
+      - echo "✓ Stack started successfully!"
+      - echo ""
+      - echo "📊 Use 'task stack-status' to check status"
+      - echo "📋 Use 'task stack-logs' to view logs"
+      - echo "🛑 Use 'task stack-stop' to stop the stack"
+      - echo "🧪 Use 'task test-web' to run Playwright tests"
+
+  stack-stop:
+    desc: Stop release stack
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - echo "🛑 Stopping stack..."
+      - pm2 stop ecosystem.production.config.js
+      - echo "✓ Release stack stopped"
+
+  stack-restart:
+    desc: Restart release stack
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - echo "🔄 Restarting stack..."
+      - pm2 restart ecosystem.production.config.js
+      - echo "✓ Release stack restarted"
+
+  stack-status:
+    desc: Show release stack status
+    cmds:
+      - pm2 status
+
+  stack-logs:
+    desc: Show release stack logs (live)
+    cmds:
+      - pm2 logs
+
+  stack-logs-web:
+    desc: Show web app logs only
+    cmds:
+      - pm2 logs lablab-web
+
+  stack-logs-console:
+    desc: Show console app logs only
+    cmds:
+      - pm2 logs lablab-console
+
+  stack-delete:
+    desc: Delete release stack from PM2
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - echo "🗑️  Deleting stack from PM2..."
+      - pm2 delete ecosystem.production.config.js
+      - echo "✓ Release stack deleted from PM2"
+
+  stack-monit:
+    desc: Monitor stack with PM2 dashboard
+    cmds:
+      - pm2 monit
+
+  # Full workflow
+  release-and-run:
+    desc: Build release and start the full stack (complete workflow)
+    cmds:
+      - task: build-release
+      - echo ""
+      - echo "⏳ Waiting 2 seconds before starting..."
+      - cmd: timeout /t 2 /nobreak
+        platforms: [windows]
+      - cmd: sleep 2
+        platforms: [linux, darwin]
+      - task: stack-run
+
+  release-test:
+    desc: Build, start, wait, and show status (for testing)
+    cmds:
+      - task: build-release
+      - task: stack-run
+      - echo ""
+      - echo "⏳ Waiting 5 seconds for startup..."
+      - cmd: timeout /t 5 /nobreak
+        platforms: [windows]
+      - cmd: sleep 5
+        platforms: [linux, darwin]
+      - task: stack-status
+
+  # Testing Tasks
+  test-install:
+    desc: Install Playwright browsers
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm exec playwright install
+
+  test-web:
+    desc: Run Playwright tests against the web app
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - echo "🧪 Running Playwright tests..."
+      - pnpm test
+
+  test-web-ui:
+    desc: Run Playwright tests in UI mode
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm test:ui
+
+  test-web-headed:
+    desc: Run Playwright tests in headed mode
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm test:headed
+
+  test-web-debug:
+    desc: Run Playwright tests in debug mode
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm test:debug
+
+  test-report:
+    desc: Show Playwright test report
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm test:report
+
+  test-full:
+    desc: Build, start stack, run tests, and generate report
+    cmds:
+      - task: build-release
+      - task: stack-run
+      - echo "⏳ Waiting 10 seconds for stack to be ready..."
+      - cmd: timeout /t 10 /nobreak
+        platforms: [windows]
+      - cmd: sleep 10
+        platforms: [linux, darwin]
+      - task: test-web
+      - task: test-report
+      - echo ""
+      - echo "✓ Tests complete! Check test reports in build/_artifacts/<version>/test-reports/"
 
   # JetBrains CLI Tasks
   jb-inspect:
@@ -274,9 +452,9 @@ tasks:
   info:
     desc: Show project information
     cmds:
-      - echo "Project: {{.PROJECT_NAME}}"
-      - echo "Output: {{.OUTPUT_DIR}}"
-      - echo "Dotnet: {{.DOTNET_DIR}}"
-      - echo "Website: {{.WEBSITE_DIR}}"
+      - echo "Project{{.PROJECT_NAME}}"
+      - echo "Output{{.OUTPUT_DIR}}"
+      - echo "Dotnet{{.DOTNET_DIR}}"
+      - echo "Website{{.WEBSITE_DIR}}"
       - echo ""
-      - echo "Run 'task --list' to see all available tasks"
+      - echo "Run task --list to see all available tasks"
