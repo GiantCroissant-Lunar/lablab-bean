@@ -32,7 +32,8 @@ public class HudService
             X = Pos.AnchorEnd(30),
             Y = 0,
             Width = 30,
-            Height = Dim.Fill()
+            Height = Dim.Fill(),
+            CanFocus = false  // HUD should not steal focus from game
         };
 
         // Health display
@@ -69,7 +70,8 @@ public class HudService
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
-            Height = Dim.Fill()
+            Height = Dim.Fill(),
+            CanFocus = false  // Don't steal focus from the game window
         };
 
         messageFrame.Add(_messageList);

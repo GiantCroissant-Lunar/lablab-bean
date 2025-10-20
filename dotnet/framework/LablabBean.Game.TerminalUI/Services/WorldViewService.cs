@@ -31,13 +31,13 @@ public class WorldViewService
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        // Create the main world frame (left side)
+        // Create the main world frame (left side, leave space for debug log at bottom)
         _worldFrame = new FrameView("Dungeon")
         {
             X = 0,
             Y = 0,
             Width = Dim.Fill(30), // Leave space for HUD
-            Height = Dim.Fill()
+            Height = Dim.Fill(10) // Leave space for debug log
         };
 
         // Create a custom MapView for rendering
@@ -107,7 +107,7 @@ public class WorldViewService
                 // Check if position is in FOV (currently visible)
                 if (map.IsInFOV(worldPos))
                 {
-                    // Check for entities first
+                    // Check for entities first (only visible in FOV)
                     var entityGlyph = GetEntityGlyphAt(world, map, worldPos);
                     if (entityGlyph.HasValue)
                     {
@@ -115,23 +115,24 @@ public class WorldViewService
                     }
                     else if (map.IsWalkable(worldPos))
                     {
-                        glyph = '.';
+                        glyph = '.';  // Floor - bright
                     }
                     else
                     {
-                        glyph = '#';
+                        glyph = '#';  // Wall - bright
                     }
                 }
                 else if (map.FogOfWar.IsExplored(worldPos))
                 {
-                    // Explored but not visible - darker
+                    // Explored but not currently visible - use dimmer symbols
+                    // No entities shown in fog of war
                     if (map.IsWalkable(worldPos))
                     {
-                        glyph = '.';
+                        glyph = '·';  // Dimmer floor (middle dot)
                     }
                     else
                     {
-                        glyph = '#';
+                        glyph = '▓';  // Dimmer wall (medium shade)
                     }
                 }
                 

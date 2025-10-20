@@ -117,8 +117,8 @@ public class GameStateManager : IDisposable
 
         _logger.LogInformation("Created {EnemyCount} enemies across {RoomCount} rooms", totalEnemies, rooms.Count - 1);
 
-        // Calculate initial FOV
-        _currentMap.CalculateFOV(playerSpawn, 8);
+        // Calculate initial FOV with larger radius to see more of the dungeon
+        _currentMap.CalculateFOV(playerSpawn, 20);
 
         _logger.LogInformation("Play world initialized with player and enemies");
     }
@@ -313,7 +313,7 @@ public class GameStateManager : IDisposable
 
         world.Query(in query, (Entity entity, ref Player player, ref Position pos) =>
         {
-            _currentMap.CalculateFOV(pos.Point, 8);
+            _currentMap.CalculateFOV(pos.Point, 20);
         });
     }
 
