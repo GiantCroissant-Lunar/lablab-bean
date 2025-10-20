@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { Terminal as XTerm } from 'xterm';
+import XTermPkg from 'xterm';
+import type { Terminal as ITerminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import 'xterm/css/xterm.css';
 
+const XTerm = (XTermPkg as any).Terminal || XTermPkg;
+
 export default function Terminal() {
   const terminalRef = useRef<HTMLDivElement>(null);
-  const xtermRef = useRef<XTerm | null>(null);
+  const xtermRef = useRef<ITerminal | null>(null);
   const fitAddonRef = useRef<FitAddon | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
@@ -85,7 +88,7 @@ export default function Terminal() {
     };
 
     // Send data from terminal to WebSocket
-    term.onData((data) => {
+    term.onData((data: string) => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(data);
       }

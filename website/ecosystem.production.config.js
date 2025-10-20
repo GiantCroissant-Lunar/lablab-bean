@@ -30,7 +30,7 @@ function getLatestVersion() {
 function validateArtifacts(artifactsPath) {
   const requiredPaths = [
     path.join(artifactsPath, 'console', 'LablabBean.Console.exe'),
-    path.join(artifactsPath, 'website', 'server', 'entry.mjs')
+    path.join(artifactsPath, 'website', 'index.html')
   ];
   
   const missing = requiredPaths.filter(p => !fs.existsSync(p));
@@ -63,7 +63,7 @@ module.exports = {
   apps: [
     {
       name: 'lablab-web',
-      script: path.join(artifactsPath, 'website', 'server', 'entry.mjs'),
+      script: path.join(__dirname, 'server.mjs'),
       cwd: path.join(artifactsPath, 'website'),
       watch: false,
       instances: 1,
