@@ -34,8 +34,12 @@ secrets.yaml
 secrets.yml
 
 # Build artifacts
-build/
 bin/
+obj/
+artifacts/
+
+# Allow NUKE build directory
+!build/nuke/
 
 # Python
 __pycache__/
