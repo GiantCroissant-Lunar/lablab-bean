@@ -27,6 +27,7 @@ export default function Terminal() {
         cursorBlink: true,
         fontSize: 14,
         fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+        scrollback: 10000, // Keep 10000 lines in scrollback buffer
         theme: {
           background: '#1e1e1e',
           foreground: '#cccccc',
@@ -49,23 +50,28 @@ export default function Terminal() {
           brightCyan: '#29b8db',
           brightWhite: '#ffffff',
         },
-        rows: 30,
-        cols: 100,
+        // Don't set fixed rows/cols - let FitAddon calculate based on container size
       });
 
       // Add addons
       const fitAddon = new FitAddon();
       const webLinksAddon = new WebLinksAddon();
-      
+
       term.loadAddon(fitAddon);
       term.loadAddon(webLinksAddon);
 
       // Open terminal
       term.open(terminalRef.current);
-      fitAddon.fit();
 
+      // Store refs immediately
       xtermRef.current = term;
       fitAddonRef.current = fitAddon;
+
+      // Fit terminal to container - delay to ensure DOM is fully rendered
+      // This happens before we connect to WebSocket to ensure proper sizing
+      requestAnimationFrame(() => {
+        fitAddon.fit();
+      });
 
       // Connect to WebSocket (terminal server on port 3001)
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -78,6 +84,15 @@ export default function Terminal() {
         setConnected(true);
         term.writeln('Connected to terminal server');
         term.writeln('');
+
+        // Send initial terminal size to PTY
+        // This is crucial for Terminal.Gui apps to render correctly
+        console.log(`Sending initial terminal size: ${term.cols}x${term.rows}`);
+        ws.send(JSON.stringify({
+          type: 'resize',
+          cols: term.cols,
+          rows: term.rows,
+        }));
       };
 
       ws.onmessage = (event) => {
@@ -101,23 +116,41 @@ export default function Terminal() {
         }
       });
 
-      // Handle resize
+      // Handle resize - debounced to avoid excessive calls
+      let resizeTimeout: NodeJS.Timeout | null = null;
       const handleResize = () => {
-        fitAddon.fit();
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({
-            type: 'resize',
-            cols: term.cols,
-            rows: term.rows,
-          }));
+        if (resizeTimeout) {
+          clearTimeout(resizeTimeout);
         }
+        resizeTimeout = setTimeout(() => {
+          try {
+            fitAddon.fit();
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({
+                type: 'resize',
+                cols: term.cols,
+                rows: term.rows,
+              }));
+            }
+          } catch (error) {
+            console.error('Error during terminal resize:', error);
+          }
+        }, 100); // Debounce by 100ms
       };
 
+      // Listen to window resize (for browser resize and orientation changes)
       window.addEventListener('resize', handleResize);
+
+      // Listen to orientation changes on mobile devices
+      window.addEventListener('orientationchange', handleResize);
 
       // Cleanup function
       cleanup = () => {
+        if (resizeTimeout) {
+          clearTimeout(resizeTimeout);
+        }
         window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleResize);
         ws.close();
         term.dispose();
       };
@@ -130,24 +163,24 @@ export default function Terminal() {
   }, []);
 
   return (
-    <div className="h-full flex flex-col bg-terminal-bg rounded-lg overflow-hidden shadow-2xl">
-      <div className="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700">
-        <div className="flex items-center space-x-2">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+      <div className="h-full w-full flex flex-col bg-terminal-bg rounded-lg overflow-hidden shadow-2xl">
+        <div className="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700 flex-shrink-0">
+          <div className="flex items-center space-x-2">
+            <div className="flex space-x-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <span className="text-gray-400 text-sm ml-4">Terminal</span>
           </div>
-          <span className="text-gray-400 text-sm ml-4">Terminal</span>
+          <div className="flex items-center space-x-2">
+            <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <span className="text-gray-400 text-xs">
+              {connected ? 'Connected' : 'Disconnected'}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-          <span className="text-gray-400 text-xs">
-            {connected ? 'Connected' : 'Disconnected'}
-          </span>
-        </div>
+        <div ref={terminalRef} className="flex-1 min-h-0 w-full overflow-hidden" style={{ padding: '8px' }} />
       </div>
-      <div ref={terminalRef} className="flex-1 p-2" />
-    </div>
   );
 }

@@ -14,41 +14,28 @@ const path = require('path');
  * Usage: pnpm pm2:dev or task dev-stack
  */
 
-// Detect platform
-const isWindows = process.platform === 'win32';
-
 module.exports = {
   apps: [
     {
       name: 'lablab-web-dev',
-      script: isWindows ? 'cmd.exe' : 'npm',
-      args: isWindows ? '/c npm run dev' : 'run dev',
-      cwd: path.join(__dirname, 'website', 'apps', 'web'),
+      script: path.join(__dirname, 'scripts', 'start-web-dev.js'),
+      cwd: __dirname,
       watch: false, // Astro handles its own hot reload
       instances: 1,
       exec_mode: 'fork',
-      env: {
-        NODE_ENV: 'development',
-        HOST: '0.0.0.0',
-        PORT: 3000
-      },
+      windowsHide: true, // Hide console window on Windows
       error_file: path.join(__dirname, 'logs', 'dev-web-error.log'),
       out_file: path.join(__dirname, 'logs', 'dev-web-out.log'),
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
     },
     {
       name: 'lablab-pty-dev',
-      script: isWindows ? 'cmd.exe' : 'npm',
-      args: isWindows ? '/c npm run dev:server' : 'run dev:server',
-      cwd: path.join(__dirname, 'website', 'packages', 'terminal'),
+      script: path.join(__dirname, 'scripts', 'start-terminal-server.js'),
+      cwd: __dirname,
       watch: false, // Runs standalone WebSocket server
       instances: 1,
       exec_mode: 'fork',
-      env: {
-        NODE_ENV: 'development',
-        TERMINAL_PORT: 3001,
-        TERMINAL_HOST: '0.0.0.0'
-      },
+      windowsHide: true, // Hide console window on Windows
       error_file: path.join(__dirname, 'logs', 'dev-pty-error.log'),
       out_file: path.join(__dirname, 'logs', 'dev-pty-out.log'),
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z'

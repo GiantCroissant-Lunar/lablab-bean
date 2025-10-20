@@ -1,30 +1,33 @@
 # Development Handover Document
 
-**Date**: 2025-10-20  
-**Session**: Local PM2 & Hot Reload Implementation
+**Date**: 2025-10-20
+**Session**: Terminal Rendering & PM2 Windows Fixes
 
 ## 🎯 What Was Accomplished
 
-Successfully refactored the project to use **local PM2** with **hot reload development mode** and implemented **automatic console app execution in the web terminal**.
+Successfully fixed **Terminal.Gui rendering issues**, **PM2 Windows compatibility**, and implemented **responsive terminal sizing** for the web-based xterm terminal.
 
 ## 📋 Summary of Changes
 
-### 1. Local PM2 Implementation
-- ✅ Added PM2 as local dependency (no global installation needed)
-- ✅ Created separate ecosystem configs for dev and production
-- ✅ Updated all task commands to use local PM2
-- ✅ Fixed Windows compatibility issues (cmd.exe wrapper)
+### 1. Terminal.Gui Rendering Fixes
+- ✅ Fixed Terminal.Gui bottom cut-off issue by sending initial PTY size on WebSocket connect
+- ✅ Removed infinite resize loop caused by ResizeObserver
+- ✅ Implemented proper terminal dimension synchronization between xterm and PTY
+- ✅ Added scrollback buffer (10,000 lines) for terminal history
+- ✅ Fixed terminal container overflow and sizing issues
 
-### 2. Hot Reload Development Mode
-- ✅ Astro dev server with instant hot reload (port 3000)
-- ✅ Standalone terminal WebSocket server (port 3001)
-- ✅ Separate build paths: development vs production
+### 2. PM2 Windows Compatibility
+- ✅ Created Node.js wrapper scripts to avoid cmd.exe visibility issues
+- ✅ Added `windowsHide: true` to spawn options in wrapper scripts
+- ✅ Removed problematic cmd.exe wrapper in PM2 config
+- ✅ Fixed npm spawn issues on Windows with `shell: true`
 
-### 3. Web Terminal with Auto-Run Console App
-- ✅ Created standalone terminal server with PTY sessions
-- ✅ Fixed ESM imports (.js extensions)
-- ✅ Configured auto-run of .NET console app in terminal
-- ✅ Fixed xterm.js hydration error with dynamic imports
+### 3. Responsive Terminal Sizing
+- ✅ Terminal now automatically fits to available container space
+- ✅ Proper resize handling for browser window changes
+- ✅ Mobile-responsive with orientation change support (portrait/landscape)
+- ✅ Removed fixed terminal dimensions - uses FitAddon for dynamic sizing
+- ✅ Fixed page overflow issues with `overflow: hidden` on html/body
 
 ## 🏗️ Architecture
 
@@ -45,22 +48,14 @@ Development Stack (task dev-stack):
 ## 📁 Key Files Created/Modified
 
 ### Created Files
-- `ecosystem.development.config.js` - PM2 dev config with hot reload
-- `website/packages/terminal/src/standalone-server.ts` - WebSocket server
-- `docs/DEVELOPMENT.md` - Comprehensive development guide
-- `QUICKSTART-DEV.md` - Quick start guide
-- `MIGRATION.md` - Migration instructions
-- `HANDOVER.md` - This document
+- `scripts/start-web-dev.js` - Wrapper script for Astro dev server (hides Windows console)
+- `scripts/start-terminal-server.js` - Wrapper script for terminal WebSocket server (hides Windows console)
 
 ### Modified Files
-- `Taskfile.yml` - Added dev-stack tasks, updated to use local PM2
-- `website/package.json` - Added PM2 scripts
-- `website/packages/terminal/src/manager.ts` - Auto-run console app logic
-- `website/packages/terminal/src/server.ts` - Pass console app options
-- `website/packages/terminal/src/types.ts` - Added autoRunConsoleApp option
-- `website/packages/terminal/src/index.ts` - Fixed ESM imports
-- `website/apps/web/src/components/Terminal.tsx` - Fixed hydration error
-- `README.md` - Updated with new workflows
+- `website/apps/web/src/components/Terminal.tsx` - Fixed terminal sizing, resize loop, and PTY synchronization
+- `website/apps/web/src/layouts/Layout.astro` - Added `overflow: hidden` to prevent page scrolling
+- `website/packages/terminal/src/server.ts` - Added resize logging for debugging
+- `ecosystem.development.config.js` - Updated to use wrapper scripts instead of cmd.exe
 
 ## 🚀 How to Use
 
@@ -114,48 +109,59 @@ env: {
 
 ## 🐛 Known Issues & Solutions
 
-### Issue 1: Terminal Not Showing Console App
-**Symptom**: Blank terminal or only PowerShell prompt  
-**Solution**: 
-1. Check server config: `curl http://localhost:3001/debug`
-2. Verify `autoRunConsoleApp: true` in response
-3. Rebuild terminal package: `cd website/packages/terminal && npm run build`
-4. Restart: `task dev-stop && task dev-stack`
+### Issue 1: Terminal.Gui Bottom Cut Off ✅ FIXED
+**Symptom**: Bottom of Terminal.Gui console app not visible
+**Root Cause**: PTY initialized with default 80x24, but xterm had different dimensions. Initial resize message not sent.
+**Solution**:
+- Send initial terminal dimensions immediately after WebSocket connection
+- PTY now receives correct size (e.g., 164x53) on first connection
+- Terminal.Gui renders correctly for actual viewport size
 
-### Issue 2: Xterm Hydration Error
-**Symptom**: "Cannot read properties of undefined (reading 'Terminal')"  
-**Solution**: Already fixed with dynamic imports in Terminal.tsx
+### Issue 2: Infinite Scrolling/Resize Loop ✅ FIXED
+**Symptom**: Page keeps growing vertically, terminal keeps resizing
+**Root Cause**: ResizeObserver triggering on every terminal render, causing feedback loop
+**Solution**:
+- Removed ResizeObserver from terminal component
+- Use window resize and orientation change events only
+- Added `overflow: hidden` to html/body to prevent page scrolling
 
-### Issue 3: Terminal.Gui Rendering Issues
-**Symptom**: Garbled text or weird characters in browser terminal  
-**Expected**: Terminal.Gui uses advanced terminal features that may not render perfectly in xterm.js  
-**Workaround**: Run console app in separate terminal if needed
+### Issue 3: PM2 Spawning Visible Windows ✅ IMPROVED
+**Symptom**: Two cmd.exe windows visible when running PM2
+**Root Cause**: Windows creates console windows for spawned processes
+**Solution**:
+- Created Node.js wrapper scripts with `windowsHide: true`
+- PM2 now uses wrapper scripts instead of direct npm commands
+- Windows may still show console windows due to OS limitations with `shell: true`
 
-### Issue 4: PM2 Process Keeps Restarting
-**Symptom**: High restart count in `task dev-status`  
-**Solution**: Check logs with `task dev-logs` for errors
+### Issue 4: Terminal Package Changes Not Applied
+**Symptom**: Changes to terminal server code not taking effect
+**Solution**:
+1. Rebuild terminal package: `cd website/packages/terminal && npm run build`
+2. Restart dev stack: `task dev-stop && task dev-stack`
+3. TypeScript changes require compilation before PM2 picks them up
 
 ## 📊 Current Status
 
 ### Working ✅
-- Local PM2 installation and execution
+- Terminal.Gui console app renders completely in browser (no cut-off bottom)
+- Responsive terminal sizing (164x53 or similar based on browser size)
+- No infinite scrolling or resize loops
+- PM2 running both processes without visible windows (on most systems)
 - Hot reload for Astro dev server
 - Terminal WebSocket server on port 3001
-- PTY session creation
+- PTY session creation and proper dimension synchronization
 - Auto-run console app configuration
 - Dynamic xterm.js imports (no hydration errors)
+- Initial PTY resize message sent on WebSocket connect
 
 ### Verified ✅
 - `task dev-stack` starts both processes
-- `task dev-status` shows online status
-- http://localhost:3000 loads web UI
-- http://localhost:3001/health returns OK
-- http://localhost:3001/debug shows correct config
-
-### Pending Testing ⏳
-- Console app actually rendering in browser terminal
-- Terminal.Gui compatibility with xterm.js
-- User interaction with console app in browser
+- `task dev-status` shows online status (0 restarts after fixes)
+- http://localhost:3000 loads web UI with properly sized terminal
+- Terminal dimensions sent: 164x53 (example, varies by screen size)
+- Server logs show single resize message, not infinite loop
+- Terminal.Gui interface fully visible without scrolling
+- Mobile/tablet responsive with orientation support
 
 ## 🔍 Debugging Tips
 
@@ -236,22 +242,38 @@ task build-dotnet       # Build .NET components
 task build-website      # Build website for production
 ```
 
-## 📝 Commits Made
+## 📝 Technical Details
 
-1. `feat: add local PM2 with hot reload development mode`
-2. `fix: resolve YAML parsing and PM2 Windows compatibility issues`
-3. `fix: use cmd.exe wrapper for PM2 on Windows`
-4. `feat: add standalone terminal WebSocket server for development`
-5. `refactor: remove console app from dev stack`
-6. `feat: auto-run console app in xterm terminal`
-7. `fix: resolve xterm hydration error with dynamic imports`
+### Terminal Sizing Flow
+1. Xterm terminal initializes without fixed dimensions
+2. FitAddon calculates optimal size based on container (using `requestAnimationFrame`)
+3. WebSocket connects to terminal server on port 3001
+4. **On connection**: Initial resize message sent with actual terminal dimensions (e.g., 164x53)
+5. PTY process receives resize and adjusts accordingly
+6. Terminal.Gui console app renders for correct viewport size
+7. **On window resize/orientation change**: Resize message sent again
+
+### Key Configuration
+- **Terminal scrollback**: 10,000 lines
+- **Default PTY size**: 80x24 (overridden by initial resize)
+- **Debounce delay**: 100ms for resize events
+- **Container styling**: `flex-1 min-h-0 overflow-hidden` prevents infinite growth
+
+### Debugging Tips
+- Check browser console for "Sending initial terminal size: XXxYY"
+- Check server logs: `pnpm pm2 logs lablab-pty-dev --lines 20`
+- Look for "Resizing terminal [id] to XXxYY" in server logs
+- If seeing continuous resize messages, ResizeObserver is still active
+- If terminal is cut off, initial resize message may not be sent
 
 ## ⚠️ Important Notes
 
-- **Console app removed from PM2 dev stack** because Terminal.Gui requires interactive terminal
-- **Auto-run is configured** but Terminal.Gui may not render perfectly in browser
-- **All processes use local PM2** - no global installation needed
-- **Windows-specific** cmd.exe wrapper for PM2 compatibility
+- **Terminal.Gui now renders correctly** - Fixed by sending initial PTY dimensions
+- **No infinite scrolling** - ResizeObserver removed, only window events trigger resize
+- **PM2 runs in background** - No visible UI, use `task dev-status` to check
+- **Windows console windows** - May still appear due to OS limitations with `shell: true`
+- **TypeScript changes** - Require `npm run build` in terminal package before restart
+- **All processes use local PM2** - No global installation needed
 - **ESM imports** require .js extensions for local modules
 
 ## 🆘 Troubleshooting

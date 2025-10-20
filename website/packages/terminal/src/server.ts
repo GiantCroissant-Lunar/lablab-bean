@@ -43,6 +43,7 @@ export class TerminalServer {
             const parsed = JSON.parse(message);
             
             if (parsed.type === 'resize') {
+              console.log(`Resizing terminal ${sessionId} to ${parsed.cols}x${parsed.rows}`);
               this.manager.resizeSession(sessionId, parsed.cols, parsed.rows);
               return;
             }
