@@ -21,9 +21,13 @@ desktop.ini
 # Temporary files
 *.tmp
 *.temp
-*.log
 *.bak
 *.backup
+
+# PM2 logs
+logs/
+*.log
+!logs/.gitkeep
 
 # Configuration files with secrets
 *.local.yaml
@@ -38,8 +42,9 @@ bin/
 obj/
 artifacts/
 
-# Allow NUKE build directory
+# Allow NUKE build directory and artifacts
 !build/nuke/
+!build/_artifacts/
 
 # Python
 __pycache__/
