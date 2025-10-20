@@ -62,9 +62,11 @@ export default function Terminal() {
     xtermRef.current = term;
     fitAddonRef.current = fitAddon;
 
-    // Connect to WebSocket
+    // Connect to WebSocket (terminal server on port 3001)
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${protocol}//${window.location.host}/terminal`);
+    const terminalPort = import.meta.env.PUBLIC_TERMINAL_PORT || '3001';
+    const terminalHost = window.location.hostname;
+    const ws = new WebSocket(`${protocol}//${terminalHost}:${terminalPort}/terminal`);
     wsRef.current = ws;
 
     ws.onopen = () => {

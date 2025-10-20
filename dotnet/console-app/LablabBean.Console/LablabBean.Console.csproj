@@ -27,4 +27,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Views/MainWindow.cs" />
+    <Compile Remove="Views/InteractiveWindow.cs" />
+  </ItemGroup>
+
 </Project>

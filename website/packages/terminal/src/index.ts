@@ -1,3 +1,3 @@
-export { TerminalServer } from './server';
-export { TerminalManager } from './manager';
-export type { TerminalOptions, TerminalSession } from './types';
+export { TerminalServer } from './server.js';
+export { TerminalManager } from './manager.js';
+export type { TerminalOptions, TerminalSession } from './types.js';

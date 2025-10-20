@@ -1,17 +1,17 @@
-using LablabBean.Windows.UI;
 using Microsoft.Extensions.Logging;
 using SadConsole;
 using SadConsole.Input;
 using SadRogue.Primitives;
+using SadConsoleConsole = SadConsole.Console;
 
 namespace LablabBean.Windows;
 
 public class RootScreen : ScreenObject
 {
     private readonly ILogger<RootScreen>? _logger;
-    private Console _mainConsole;
-    private Console _statusBar;
-    private Console _menuBar;
+    private SadConsoleConsole _mainConsole;
+    private SadConsoleConsole _statusBar;
+    private SadConsoleConsole _menuBar;
 
     public RootScreen()
     {
@@ -19,7 +19,7 @@ public class RootScreen : ScreenObject
         _logger?.LogInformation("Initializing RootScreen");
 
         // Create menu bar
-        _menuBar = new Console(GameSettings.GAME_WIDTH, 1)
+        _menuBar = new SadConsoleConsole(GameSettings.GAME_WIDTH, 1)
         {
             Position = new Point(0, 0)
         };
@@ -30,7 +30,7 @@ public class RootScreen : ScreenObject
         Children.Add(_menuBar);
 
         // Create main console
-        _mainConsole = new Console(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT - 2)
+        _mainConsole = new SadConsoleConsole(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT - 2)
         {
             Position = new Point(0, 1)
         };
@@ -42,7 +42,7 @@ public class RootScreen : ScreenObject
         Children.Add(_mainConsole);
 
         // Create status bar
-        _statusBar = new Console(GameSettings.GAME_WIDTH, 1)
+        _statusBar = new SadConsoleConsole(GameSettings.GAME_WIDTH, 1)
         {
             Position = new Point(0, GameSettings.GAME_HEIGHT - 1)
         };

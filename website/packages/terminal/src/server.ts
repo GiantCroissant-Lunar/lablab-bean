@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import type { Server } from 'http';
-import { TerminalManager } from './manager';
-import type { TerminalOptions } from './types';
+import { TerminalManager } from './manager.js';
+import type { TerminalOptions } from './types.js';
 
 export class TerminalServer {
   private wss: WebSocketServer;

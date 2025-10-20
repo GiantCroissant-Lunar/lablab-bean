@@ -14,6 +14,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "server": "node dist/standalone-server.js",
+    "dev:server": "tsc && node dist/standalone-server.js",
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {

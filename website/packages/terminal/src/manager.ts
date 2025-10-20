@@ -1,6 +1,6 @@
 import * as pty from 'node-pty';
 import type { WebSocket } from 'ws';
-import type { TerminalOptions, TerminalSession } from './types';
+import type { TerminalOptions, TerminalSession } from './types.js';
 import { randomUUID } from 'crypto';
 
 export class TerminalManager {

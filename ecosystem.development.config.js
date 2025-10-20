@@ -36,13 +36,15 @@ module.exports = {
     {
       name: 'lablab-pty-dev',
       script: isWindows ? 'cmd.exe' : 'npm',
-      args: isWindows ? '/c npm run dev' : 'run dev',
+      args: isWindows ? '/c npm run dev:server' : 'run dev:server',
       cwd: path.join(__dirname, 'website', 'packages', 'terminal'),
-      watch: false, // TypeScript watch mode handles rebuilds
+      watch: false, // Runs standalone WebSocket server
       instances: 1,
       exec_mode: 'fork',
       env: {
-        NODE_ENV: 'development'
+        NODE_ENV: 'development',
+        TERMINAL_PORT: 3001,
+        TERMINAL_HOST: '0.0.0.0'
       },
       error_file: path.join(__dirname, 'logs', 'dev-pty-error.log'),
       out_file: path.join(__dirname, 'logs', 'dev-pty-out.log'),

@@ -28,10 +28,9 @@ public class TerminalGuiService : ITerminalGuiService
     {
         _logger.LogInformation("Starting Terminal.Gui application");
 
-        // Use InteractiveWindow instead of MainWindow
-        var menuService = _serviceProvider.GetRequiredService<IMenuService>();
-        var interactiveWindow = new InteractiveWindow(menuService);
-        Application.Run(interactiveWindow);
+        // Use SimpleWindow for compatibility
+        var simpleWindow = new SimpleWindow();
+        Application.Run(simpleWindow);
     }
 
     public void Shutdown()
