@@ -156,46 +156,25 @@ class Build : NukeBuild
     Target BuildWebsite => _ => _
         .Executes(() =>
         {
-            Serilog.Log.Information("Building website...");
+            Serilog.Log.Information("Copying website artifacts...");
             
-            // Check if website is already built
+            // Expect website to be already built by separate build process
             var webDist = WebsiteDirectory / "apps" / "web" / "dist";
             if (!System.IO.Directory.Exists(webDist))
             {
-                Serilog.Log.Information("Website not built, building now...");
-                ProcessTasks.StartProcess("pnpm", "build:all", workingDirectory: WebsiteDirectory)
-                    .AssertZeroExitCode();
-            }
-            else
-            {
-                Serilog.Log.Information("Website already built, skipping build");
+                throw new Exception("Website not built. Please run: task build-website first");
             }
             
-            // Copy to artifacts
+            // Copy built website to artifacts
             var websiteArtifacts = PublishDirectory / "website";
             websiteArtifacts.CreateOrCleanDirectory();
             
-            // Copy built web app
             CopyDirectoryRecursively(
-                WebsiteDirectory / "apps" / "web" / "dist",
+                webDist,
                 websiteArtifacts,
                 DirectoryExistsPolicy.Merge);
             
-            // Copy package.json and install production dependencies
-            Serilog.Log.Information("Installing production dependencies...");
-            var packageJson = WebsiteDirectory / "package.json";
-            var pnpmLock = WebsiteDirectory / "pnpm-lock.yaml";
-            CopyFileToDirectory(packageJson, websiteArtifacts);
-            if (System.IO.File.Exists(pnpmLock))
-            {
-                CopyFileToDirectory(pnpmLock, websiteArtifacts);
-            }
-            
-            // Install production dependencies in artifacts
-            ProcessTasks.StartProcess("pnpm", "install --prod", workingDirectory: websiteArtifacts)
-                .AssertWaitForExit();
-            
-            Serilog.Log.Information("Website built to: {Path}", websiteArtifacts);
+            Serilog.Log.Information("Website artifacts copied to: {Path}", websiteArtifacts);
         });
 
     Target PublishAll => _ => _

@@ -233,10 +233,10 @@ tasks:
       - pnpm dev
 
   website-build:
-    desc: Build website
+    desc: Build website with GitVersion
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pnpm build
+      - pwsh -File build.ps1
 
   stack-start:
     desc: Start entire stack with PM2 (web + console TUI) - DEV MODE
@@ -262,11 +262,35 @@ tasks:
     cmds:
       - pnpm pm2:logs
 
+  # Build Tasks (compound commands)
+  build:
+    desc: Build all components (dotnet + website)
+    cmds:
+      - echo "🔨 Building all components..."
+      - task: build-dotnet
+      - task: build-website
+      - echo "✓ All components built successfully"
+
+  build-dotnet:
+    desc: Build .NET projects using NUKE
+    cmds:
+      - echo "🔨 Building .NET projects..."
+      - task: nuke-build
+      - echo "✓ .NET build complete"
+
+  build-website:
+    desc: Build website
+    cmds:
+      - echo "🌐 Building website..."
+      - task: website-build
+      - echo "✓ Website build complete"
+
   # Release Stack Tasks (using versioned artifacts)
   build-release:
     desc: Build complete release with versioned artifacts
     cmds:
       - echo "🔨 Building release with versioned artifacts..."
+      - task: build-website
       - task: nuke-release
       - echo "✓ Release built successfully"
       - echo ""
