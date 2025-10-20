@@ -35,6 +35,17 @@ const server = http.createServer((req, res) => {
     return;
   }
   
+  // Debug endpoint
+  if (req.url === '/debug') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      autoRunConsoleApp: AUTO_RUN_CONSOLE,
+      consoleAppPath: CONSOLE_APP_PATH,
+      platform: process.platform
+    }));
+    return;
+  }
+  
   // Default response
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Terminal WebSocket Server\nConnect via WebSocket to /terminal');
