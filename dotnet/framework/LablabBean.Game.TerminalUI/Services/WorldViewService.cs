@@ -64,13 +64,27 @@ public class WorldViewService
     /// </summary>
     public void Render(World world, DungeonMap map)
     {
+        // Update dimensions from current view bounds
+        _viewWidth = _renderView.Bounds.Width;
+        _viewHeight = _renderView.Bounds.Height;
+        
+        _logger.LogInformation("Render called: viewWidth={Width}, viewHeight={Height}", _viewWidth, _viewHeight);
+        
         if (_viewWidth <= 0 || _viewHeight <= 0)
+        {
+            _logger.LogWarning("Render aborted: view dimensions invalid");
             return;
+        }
 
         // Get player position for camera centering
         var playerPos = GetPlayerPosition(world);
         if (playerPos == null)
+        {
+            _logger.LogWarning("Render aborted: no player position");
             return;
+        }
+        
+        _logger.LogInformation("Rendering with player at {X},{Y}", playerPos.Value.X, playerPos.Value.Y);
 
         // Calculate camera offset to center on player
         int cameraX = playerPos.Value.X - _viewWidth / 2;
@@ -125,6 +139,7 @@ public class WorldViewService
             }
         }
 
+        _logger.LogInformation("Buffer created: {Width}x{Height}, updating view", _viewWidth, _viewHeight);
         _renderView.UpdateBuffer(buffer);
     }
     

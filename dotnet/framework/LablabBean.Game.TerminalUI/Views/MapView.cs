@@ -29,22 +29,21 @@ public class MapView : View
     }
 
     /// <summary>
-    /// Renders the buffer to screen
+    /// Renders the buffer to screen - called by Terminal.Gui rendering system
     /// </summary>
-    public override void OnDrawContent(Rect contentArea)
+    public override void OnDrawContent(Rect viewport)
     {
-        base.OnDrawContent(contentArea);
-
+        base.OnDrawContent(viewport);
+        
         if (_buffer == null)
             return;
 
-        // Draw character by character
-        for (int row = 0; row < _bufferHeight && row < contentArea.Height; row++)
+        // Draw character by character using AddRune
+        for (int row = 0; row < _bufferHeight && row < viewport.Height; row++)
         {
-            for (int col = 0; col < _bufferWidth && col < contentArea.Width; col++)
+            for (int col = 0; col < _bufferWidth && col < viewport.Width; col++)
             {
                 char ch = _buffer[row, col];
-                Move(col, row);
                 AddRune(col, row, new Rune(ch));
             }
         }

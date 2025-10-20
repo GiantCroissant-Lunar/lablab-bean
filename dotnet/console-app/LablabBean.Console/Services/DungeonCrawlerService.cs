@@ -54,6 +54,13 @@ public class DungeonCrawlerService : IDisposable
 
         // Set up key bindings using Terminal.Gui v2 KeyDown event
         _gameWindow.KeyDown += OnWindowKeyDown;
+        
+        // Set up a handler to render after layout is complete
+        _gameWindow.LayoutComplete += (s, e) =>
+        {
+            // Render after first layout
+            Update();
+        };
 
         _logger.LogInformation("Game window created");
 
@@ -93,8 +100,8 @@ public class DungeonCrawlerService : IDisposable
         _hudService.AddMessage("Press 'E' to switch to edit mode.");
         _hudService.AddMessage("Press 'Q' to quit.");
 
-        // Initial render
-        Update();
+        // Don't call Update here - it will be called after layout
+        // Update();
     }
 
     /// <summary>
