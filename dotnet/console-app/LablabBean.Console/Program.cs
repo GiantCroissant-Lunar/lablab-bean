@@ -1,4 +1,8 @@
 using LablabBean.Console.Services;
+using LablabBean.Game.Core.Services;
+using LablabBean.Game.Core.Systems;
+using LablabBean.Game.Core.Worlds;
+using LablabBean.Game.TerminalUI.Services;
 using LablabBean.Infrastructure.Extensions;
 using LablabBean.Reactive.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,10 +17,23 @@ try
         {
             services.AddLablabBeanInfrastructure(context.Configuration);
             services.AddLablabBeanReactive();
-            
+
+            // Add game framework services
+            services.AddSingleton<GameWorldManager>();
+            services.AddSingleton<MovementSystem>();
+            services.AddSingleton<CombatSystem>();
+            services.AddSingleton<AISystem>();
+            services.AddSingleton<ActorSystem>();
+            services.AddSingleton<GameStateManager>();
+
+            // Add Terminal.Gui rendering services
+            services.AddSingleton<HudService>();
+            services.AddSingleton<WorldViewService>();
+
             // Add application services
             services.AddSingleton<ITerminalGuiService, TerminalGuiService>();
             services.AddSingleton<IMenuService, MenuService>();
+            services.AddSingleton<DungeonCrawlerService>();
             services.AddHostedService<ConsoleHostedService>();
         })
         .Build();

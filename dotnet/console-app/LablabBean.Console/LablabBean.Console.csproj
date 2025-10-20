@@ -8,6 +8,8 @@
     <ProjectReference Include="..\..\framework\LablabBean.Core\LablabBean.Core.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Infrastructure\LablabBean.Infrastructure.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reactive\LablabBean.Reactive.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Game.TerminalUI\LablabBean.Game.TerminalUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

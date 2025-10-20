@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LablabBean.Core\LablabBean.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ECS Framework -->
+    <PackageReference Include="Arch" />
+    <PackageReference Include="Arch.System" />
+    <PackageReference Include="Arch.System.SourceGenerator" />
+
+    <!-- Roguelike Framework -->
+    <PackageReference Include="GoRogue" />
+    <PackageReference Include="TheSadRogue.Primitives" />
+
+    <!-- Audio -->
+    <PackageReference Include="LibVLCSharp" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" />
+
+    <!-- Dependency Injection and Logging -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+  </ItemGroup>
+
+</Project>

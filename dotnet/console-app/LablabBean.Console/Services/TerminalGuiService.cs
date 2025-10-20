@@ -1,4 +1,3 @@
-using LablabBean.Console.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
@@ -28,9 +27,32 @@ public class TerminalGuiService : ITerminalGuiService
     {
         _logger.LogInformation("Starting Terminal.Gui application");
 
-        // Use SimpleWindow for compatibility
-        var simpleWindow = new SimpleWindow();
-        Application.Run(simpleWindow);
+        try
+        {
+            // Get the dungeon crawler service
+            var dungeonCrawlerService = _serviceProvider.GetRequiredService<DungeonCrawlerService>();
+
+            // Create the game window
+            var gameWindow = dungeonCrawlerService.CreateGameWindow();
+
+            // Start a new game
+            dungeonCrawlerService.StartNewGame();
+
+            // Run the application
+            Application.Run(gameWindow);
+
+            // Proper cleanup after Application.Run exits
+            gameWindow.Dispose();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during Terminal.Gui application run");
+            throw;
+        }
+        finally
+        {
+            _logger.LogInformation("Terminal.Gui application finished");
+        }
     }
 
     public void Shutdown()
