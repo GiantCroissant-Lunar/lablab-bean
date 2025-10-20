@@ -1,17 +1,34 @@
 # Quick Start Guide
 
-Get up and running with Lablab Bean in 5 minutes!
+## Get Started in 3 Steps
+
+### 1. Build the Release
+```bash
+task build-release
+```
+
+### 2. Start the Stack
+```bash
+task stack-run
+```
+
+### 3. Access Your Apps
+- **Web App**: http://localhost:3000
+- **Console App**: Running in PM2
+- **Windows App**: Available in artifacts
+
+---
 
 ## Prerequisites
 
-- **Go 1.21+**: [Download here](https://golang.org/dl/)
-- **Task**: Install with `go install github.com/go-task/task/v3/cmd/task@latest`
-- **Pre-commit** (optional): Install with `pip install pre-commit` or `brew install pre-commit`
+- **Task**: [Install Task](https://taskfile.dev/installation/)
+- **PM2**: `npm install -g pm2`
+- **.NET 8 SDK**: [Download here](https://dotnet.microsoft.com/download)
+- **Node.js 18+** and **pnpm 8+**
 
 ## Installation
 
 ### Option 1: Automated Setup (Recommended)
-
 **Windows (PowerShell):**
 ```powershell
 .\setup.ps1
