@@ -181,6 +181,20 @@ class Build : NukeBuild
                 websiteArtifacts,
                 DirectoryExistsPolicy.Merge);
             
+            // Copy package.json and install production dependencies
+            Serilog.Log.Information("Installing production dependencies...");
+            var packageJson = WebsiteDirectory / "package.json";
+            var pnpmLock = WebsiteDirectory / "pnpm-lock.yaml";
+            CopyFileToDirectory(packageJson, websiteArtifacts);
+            if (System.IO.File.Exists(pnpmLock))
+            {
+                CopyFileToDirectory(pnpmLock, websiteArtifacts);
+            }
+            
+            // Install production dependencies in artifacts
+            ProcessTasks.StartProcess("pnpm", "install --prod", workingDirectory: websiteArtifacts)
+                .AssertWaitForExit();
+            
             Serilog.Log.Information("Website built to: {Path}", websiteArtifacts);
         });
 
