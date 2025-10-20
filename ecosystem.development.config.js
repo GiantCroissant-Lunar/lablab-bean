@@ -5,8 +5,11 @@ const path = require('path');
  * 
  * This configuration runs the stack in development mode with hot reload:
  * - Astro dev server (hot reload enabled)
- * - PTY terminal backend (no hot reload needed)
- * - Console app (from latest build artifacts)
+ * - PTY terminal backend (WebSocket server on port 3001)
+ * 
+ * Note: Console app is NOT included in dev stack because Terminal.Gui
+ * requires an interactive terminal. Run it manually when needed:
+ *   cd dotnet/console-app/LablabBean.Console && dotnet run
  * 
  * Usage: pnpm pm2:dev or task dev-stack
  */
@@ -49,21 +52,8 @@ module.exports = {
       error_file: path.join(__dirname, 'logs', 'dev-pty-error.log'),
       out_file: path.join(__dirname, 'logs', 'dev-pty-out.log'),
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
-    },
-    {
-      name: 'lablab-console-dev',
-      script: isWindows ? 'cmd.exe' : 'dotnet',
-      args: isWindows ? '/c dotnet run' : 'run',
-      cwd: path.join(__dirname, 'dotnet', 'console-app', 'LablabBean.Console'),
-      watch: false,
-      instances: 1,
-      exec_mode: 'fork',
-      env: {
-        DOTNET_ENVIRONMENT: 'Development'
-      },
-      error_file: path.join(__dirname, 'logs', 'dev-console-error.log'),
-      out_file: path.join(__dirname, 'logs', 'dev-console-out.log'),
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
     }
+    // Console app removed from dev stack - run manually when needed
+    // Terminal.Gui apps require an interactive terminal to display their TUI
   ]
 };
