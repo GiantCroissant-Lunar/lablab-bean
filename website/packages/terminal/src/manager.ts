@@ -9,11 +9,32 @@ export class TerminalManager {
   createSession(ws: WebSocket, options: TerminalOptions = {}): string {
     const sessionId = randomUUID();
 
-    // Determine shell based on platform
-    const shell = options.shell || (process.platform === 'win32' ? 'powershell.exe' : 'bash');
+    // Determine shell and args based on platform
+    let shell: string;
+    let shellArgs: string[] = [];
+    
+    if (process.platform === 'win32') {
+      // On Windows, use PowerShell to run the console app
+      shell = 'powershell.exe';
+      
+      // Auto-run console app if enabled (default: true)
+      if (options.autoRunConsoleApp !== false) {
+        // Find the console app path relative to the terminal package
+        const consoleAppPath = options.consoleAppPath || 
+          '..\\..\\..\\dotnet\\console-app\\LablabBean.Console';
+        
+        shellArgs = [
+          '-NoExit',  // Keep PowerShell open after command
+          '-Command',
+          `cd "${consoleAppPath}"; dotnet run`
+        ];
+      }
+    } else {
+      shell = options.shell || 'bash';
+    }
     
     // Create PTY process
-    const ptyProcess = pty.spawn(shell, [], {
+    const ptyProcess = pty.spawn(shell, shellArgs, {
       name: 'xterm-color',
       cols: options.cols || 80,
       rows: options.rows || 24,

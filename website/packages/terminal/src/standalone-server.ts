@@ -4,13 +4,27 @@
  * 
  * This server provides WebSocket terminal access for development mode.
  * It runs on port 3001 and provides PTY sessions via WebSocket.
+ * 
+ * By default, it automatically runs the console app in the terminal.
+ * Set TERMINAL_AUTO_RUN_CONSOLE=false to disable this behavior.
  */
 
 import http from 'http';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { TerminalServer } from './server.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = process.env.TERMINAL_PORT || 3001;
 const HOST = process.env.TERMINAL_HOST || '0.0.0.0';
+const AUTO_RUN_CONSOLE = process.env.TERMINAL_AUTO_RUN_CONSOLE !== 'false';
+
+// Calculate console app path relative to this file
+// From: website/packages/terminal/dist/standalone-server.js
+// To:   dotnet/console-app/LablabBean.Console
+const CONSOLE_APP_PATH = path.resolve(__dirname, '..', '..', '..', '..', 'dotnet', 'console-app', 'LablabBean.Console');
 
 // Create HTTP server
 const server = http.createServer((req, res) => {
@@ -26,9 +40,11 @@ const server = http.createServer((req, res) => {
   res.end('Terminal WebSocket Server\nConnect via WebSocket to /terminal');
 });
 
-// Attach terminal server
+// Attach terminal server with console app configuration
 const terminalServer = new TerminalServer(server, {
   path: '/terminal',
+  autoRunConsoleApp: AUTO_RUN_CONSOLE,
+  consoleAppPath: CONSOLE_APP_PATH,
 });
 
 // Start server

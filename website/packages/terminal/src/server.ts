@@ -6,9 +6,16 @@ import type { TerminalOptions } from './types.js';
 export class TerminalServer {
   private wss: WebSocketServer;
   private manager: TerminalManager;
+  private defaultOptions: TerminalOptions;
 
-  constructor(server: Server, options: { path?: string } = {}) {
+  constructor(server: Server, options: { path?: string; autoRunConsoleApp?: boolean; consoleAppPath?: string } = {}) {
     this.manager = new TerminalManager();
+    
+    // Store default options for new sessions
+    this.defaultOptions = {
+      autoRunConsoleApp: options.autoRunConsoleApp,
+      consoleAppPath: options.consoleAppPath,
+    };
     
     this.wss = new WebSocketServer({
       server,
@@ -21,6 +28,7 @@ export class TerminalServer {
       const terminalOptions: TerminalOptions = {
         cols: 80,
         rows: 24,
+        ...this.defaultOptions,  // Include console app options
       };
 
       const sessionId = this.manager.createSession(ws, terminalOptions);

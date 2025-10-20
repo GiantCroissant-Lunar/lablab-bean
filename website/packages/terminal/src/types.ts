@@ -7,6 +7,8 @@ export interface TerminalOptions {
   env?: Record<string, string>;
   cols?: number;
   rows?: number;
+  autoRunConsoleApp?: boolean;  // Auto-run console app on session start (default: true)
+  consoleAppPath?: string;      // Path to console app (relative to terminal package)
 }
 
 export interface TerminalSession {
