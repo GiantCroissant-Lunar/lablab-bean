@@ -42,7 +42,63 @@ lablab-bean/
 
 ## Quick Start
 
-### Task Automation
+### 🔧 Development Mode (Recommended for Development)
+
+Start the full stack with hot reload for rapid development:
+
+```bash
+# One-command development stack with hot reload
+task dev-stack
+
+# Or step by step:
+task build              # Build .NET components (one-time)
+task dev-stack          # Start dev stack with hot reload
+task dev-status         # Check status
+task dev-logs           # View logs
+task dev-stop           # Stop the stack
+```
+
+**What runs in development mode:**
+- 🌐 **Astro Dev Server** - http://localhost:3000 (hot reload enabled)
+- 🔌 **PTY Terminal Backend** - TypeScript watch mode
+- 💻 **Console App** - .NET development mode
+
+**Key Features:**
+- ✨ Astro hot reload - instant UI updates
+- 🔄 TypeScript watch mode for terminal backend
+- 🚀 Fast iteration without rebuilding
+- 📦 Uses local PM2 (no global installation needed)
+
+### 🚀 Production Build & Run
+
+Build and run the complete stack from versioned artifacts:
+
+```bash
+# One-command build and run
+task release-and-run
+
+# Or step by step:
+task build-release       # Build versioned artifacts
+task stack-run          # Start the stack
+task stack-status       # Check status
+task stack-logs         # View logs
+```
+
+**Quick Script (Windows):**
+```powershell
+.\build\scripts\build-and-run.ps1
+```
+
+The stack includes:
+- 🌐 **Web App** - http://localhost:3000 (bundled Astro)
+- 💻 **Console App** - Terminal.Gui TUI
+- 🎮 **Windows App** - SadConsole GUI
+
+See [docs/RELEASE.md](docs/RELEASE.md) for complete release documentation.
+
+### 🛠️ Manual Component Development
+
+#### Task Automation
 
 ```bash
 task install              # Install dependencies
@@ -50,7 +106,7 @@ task pre-commit-install   # Install pre-commit hooks
 task check               # Run all checks
 ```
 
-### Website (Web Terminal)
+#### Website (Web Terminal)
 
 ```bash
 cd website
@@ -58,14 +114,14 @@ pnpm install
 pnpm dev                 # Start dev server at http://localhost:3000
 ```
 
-### .NET Console App (Terminal.Gui)
+#### .NET Console App (Terminal.Gui)
 
 ```bash
 cd dotnet/console-app/LablabBean.Console
 dotnet run
 ```
 
-### .NET Windows App (SadConsole)
+#### .NET Windows App (SadConsole)
 
 ```bash
 cd dotnet/windows-app/LablabBean.Windows
@@ -79,6 +135,33 @@ View all available tasks:
 ```bash
 task --list
 ```
+
+### Development Stack Tasks
+
+- `task dev-stack` - Start development stack with hot reload
+- `task dev-stop` - Stop development stack
+- `task dev-restart` - Restart development stack
+- `task dev-status` - Show development stack status
+- `task dev-logs` - View development logs (live)
+- `task dev-delete` - Delete development stack from PM2
+
+### Release & Production Stack Tasks
+
+- `task build-release` - Build complete release with versioned artifacts
+- `task release-and-run` - Build and start the full stack (one command)
+- `task stack-run` - Start production stack from versioned artifacts
+- `task stack-stop` - Stop all PM2 processes
+- `task stack-restart` - Restart production stack
+- `task stack-status` - Show PM2 stack status
+- `task stack-logs` - View all logs (live)
+- `task stack-logs-web` - View web app logs only
+- `task stack-logs-console` - View console app logs only
+- `task stack-monit` - Open PM2 monitoring dashboard
+- `task stack-delete` - Delete all PM2 processes
+- `task list-versions` - List all available versioned artifacts
+- `task show-version` - Show current version
+- `task test-web` - Run Playwright tests
+- `task test-full` - Build, start, test, and report (complete test workflow)
 
 ### Common Tasks
 

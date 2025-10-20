@@ -238,38 +238,64 @@ tasks:
     cmds:
       - pwsh -File build.ps1
 
-  stack-start:
-    desc: Start entire stack with PM2 (web + console TUI) - DEV MODE
+  # Development Stack Tasks (Hot Reload)
+  dev-stack:
+    desc: Start development stack with hot reload (Astro dev + PTY + Console)
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pnpm stack:start
+      - echo "🚀 Starting development stack with hot reload..."
+      - pnpm pm2:dev
+      - echo ""
+      - echo "✓ Development stack started!"
+      - echo ""
+      - echo "🌐 Web App: http://localhost:3000 (hot reload enabled)"
+      - echo "📊 Use 'task dev-status' to check status"
+      - echo "📋 Use 'task dev-logs' to view logs"
+      - echo "🛑 Use 'task dev-stop' to stop the stack"
 
-  stack-stop:
-    desc: Stop entire stack
+  dev-stop:
+    desc: Stop development stack
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pnpm stack:stop
+      - echo "🛑 Stopping development stack..."
+      - pnpm pm2:dev-stop
+      - echo "✓ Development stack stopped"
 
-  stack-status:
-    desc: Show stack status
+  dev-restart:
+    desc: Restart development stack
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pnpm stack:status
+      - echo "🔄 Restarting development stack..."
+      - pnpm pm2:dev-restart
+      - echo "✓ Development stack restarted"
 
-  stack-logs:
-    desc: Show stack logs
+  dev-status:
+    desc: Show development stack status
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm pm2:status
+
+  dev-logs:
+    desc: Show development stack logs (live)
     dir: "{{.WEBSITE_DIR}}"
     cmds:
       - pnpm pm2:logs
 
+  dev-delete:
+    desc: Delete development stack from PM2
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - echo "🗑️  Deleting development stack from PM2..."
+      - pnpm pm2:dev-delete
+      - echo "✓ Development stack deleted from PM2"
+
   # Build Tasks (compound commands)
   build:
-    desc: Build all components (dotnet + website)
+    desc: Build all components for development (dotnet only, website uses hot reload)
     cmds:
-      - echo "🔨 Building all components..."
+      - echo "🔨 Building development components..."
       - task: build-dotnet
-      - task: build-website
-      - echo "✓ All components built successfully"
+      - echo "✓ Development build complete (website will use hot reload)"
 
   build-dotnet:
     desc: Build .NET projects using NUKE
@@ -279,9 +305,9 @@ tasks:
       - echo "✓ .NET build complete"
 
   build-website:
-    desc: Build website
+    desc: Build website for production
     cmds:
-      - echo "🌐 Building website..."
+      - echo "🌐 Building website for production..."
       - task: website-build
       - echo "✓ Website build complete"
 
@@ -312,13 +338,13 @@ tasks:
         ignore_error: true
 
   stack-run:
-    desc: Start stack from versioned artifacts (PRODUCTION MODE)
+    desc: Start production stack from versioned artifacts (PRODUCTION MODE)
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🚀 Starting stack from versioned artifacts..."
-      - pm2 start ecosystem.production.config.js
+      - echo "🚀 Starting production stack from versioned artifacts..."
+      - pnpm pm2:prod
       - echo ""
-      - echo "✓ Stack started successfully!"
+      - echo "✓ Production stack started successfully!"
       - echo ""
       - echo "📊 Use 'task stack-status' to check status"
       - echo "📋 Use 'task stack-logs' to view logs"
@@ -326,53 +352,58 @@ tasks:
       - echo "🧪 Use 'task test-web' to run Playwright tests"
 
   stack-stop:
-    desc: Stop release stack
+    desc: Stop all PM2 processes
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🛑 Stopping stack..."
-      - pm2 stop ecosystem.production.config.js
-      - echo "✓ Release stack stopped"
+      - echo "🛑 Stopping all PM2 processes..."
+      - pnpm pm2 stop all
+      - echo "✓ All processes stopped"
 
   stack-restart:
-    desc: Restart release stack
+    desc: Restart production stack
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🔄 Restarting stack..."
-      - pm2 restart ecosystem.production.config.js
-      - echo "✓ Release stack restarted"
+      - echo "🔄 Restarting production stack..."
+      - pnpm pm2:prod-restart
+      - echo "✓ Production stack restarted"
 
   stack-status:
-    desc: Show release stack status
+    desc: Show PM2 stack status
+    dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pm2 status
+      - pnpm pm2:status
 
   stack-logs:
-    desc: Show release stack logs (live)
+    desc: Show PM2 stack logs (live)
+    dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pm2 logs
+      - pnpm pm2:logs
 
   stack-logs-web:
     desc: Show web app logs only
+    dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pm2 logs lablab-web
+      - pnpm pm2 logs lablab-web
 
   stack-logs-console:
     desc: Show console app logs only
-    cmds:
-      - pm2 logs lablab-console
-
-  stack-delete:
-    desc: Delete release stack from PM2
     dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - echo "🗑️  Deleting stack from PM2..."
-      - pm2 delete ecosystem.production.config.js
-      - echo "✓ Release stack deleted from PM2"
+      - pnpm pm2 logs lablab-console
+
+  stack-delete:
+    desc: Delete all PM2 processes
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - echo "🗑️  Deleting all PM2 processes..."
+      - pnpm pm2 delete all
+      - echo "✓ All processes deleted from PM2"
 
   stack-monit:
     desc: Monitor stack with PM2 dashboard
+    dir: "{{.WEBSITE_DIR}}"
     cmds:
-      - pm2 monit
+      - pnpm pm2:monit
 
   # Full workflow
   release-and-run:
