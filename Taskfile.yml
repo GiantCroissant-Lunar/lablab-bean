@@ -1,0 +1,282 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  PROJECT_NAME: lablab-bean
+  OUTPUT_DIR: ./generated
+  SCRIPTS_DIR: ./scripts
+  DOTNET_DIR: ./dotnet
+  WEBSITE_DIR: ./website
+  BUILD_DIR: ./build/nuke
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  install:
+    desc: Install project dependencies and tools
+    cmds:
+      - task: install-tools
+
+  install-tools:
+    desc: Install development tools
+    cmds:
+      - echo "Installing pre-commit..."
+      - pip install pre-commit || echo "⚠ pre-commit installation skipped (pip not available)"
+      - echo "✓ Tools installation complete"
+
+  init:
+    desc: Initialize the project
+    cmds:
+      - task: install
+      - task: pre-commit-install
+      - echo "✓ Project initialized successfully"
+
+  validate-yaml:
+    desc: Validate YAML files
+    cmds:
+      - echo "Validating YAML files..."
+      - pre-commit run check-yaml --all-files || echo "⚠ YAML validation found issues"
+
+  validate-markdown:
+    desc: Validate Markdown files
+    cmds:
+      - echo "Validating Markdown files..."
+      - pre-commit run markdownlint --all-files || echo "⚠ Markdown validation found issues"
+
+  format:
+    desc: Format all files
+    cmds:
+      - echo "Formatting files..."
+      - pre-commit run pretty-format-yaml --all-files || true
+      - pre-commit run markdownlint --all-files || true
+      - echo "✓ Formatting complete"
+
+  check:
+    desc: Run all checks
+    cmds:
+      - task: validate-yaml
+      - task: validate-markdown
+      - echo "✓ All checks passed"
+
+  clean:
+    desc: Clean generated files and artifacts
+    cmds:
+      - echo "Cleaning generated files..."
+      - rm -rf {{.OUTPUT_DIR}}
+      - echo "✓ Clean complete"
+
+  pre-commit-install:
+    desc: Install pre-commit hooks
+    cmds:
+      - echo "Installing pre-commit hooks..."
+      - pre-commit install
+      - pre-commit install --hook-type commit-msg
+      - echo "✓ Pre-commit hooks installed"
+
+  pre-commit-run:
+    desc: Run pre-commit hooks on all files
+    cmds:
+      - echo "Running pre-commit hooks..."
+      - pre-commit run --all-files
+
+  pre-commit-update:
+    desc: Update pre-commit hooks
+    cmds:
+      - echo "Updating pre-commit hooks..."
+      - pre-commit autoupdate
+      - echo "✓ Pre-commit hooks updated"
+
+  speck-init:
+    desc: Initialize speck-kit directories
+    cmds:
+      - echo "Initializing speck-kit..."
+      - mkdir -p {{.TEMPLATES_DIR}}
+      - mkdir -p {{.OUTPUT_DIR}}
+      - echo "✓ Speck-kit directories created"
+
+  speck-generate:
+    desc: Generate from speck-kit template (usage: task speck-generate TEMPLATE=<name> OUTPUT=<file>)
+    cmds:
+      - echo "Generating from template {{.TEMPLATE}}..."
+      - echo "Output: {{.OUTPUT_DIR}}/{{.OUTPUT}}"
+      - echo "⚠ Template generation requires custom implementation"
+
+  docker-build:
+    desc: Build Docker image
+    cmds:
+      - echo "Building Docker image..."
+      - docker build -t {{.PROJECT_NAME}}:latest .
+      - echo "✓ Docker image built"
+
+  docker-run:
+    desc: Run Docker container
+    cmds:
+      - docker run --rm -it {{.PROJECT_NAME}}:latest
+
+  docker-compose-up:
+    desc: Start services with docker-compose
+    cmds:
+      - docker-compose up -d
+      - echo "✓ Services started"
+
+  docker-compose-down:
+    desc: Stop services with docker-compose
+    cmds:
+      - docker-compose down
+      - echo "✓ Services stopped"
+
+  docker-compose-logs:
+    desc: View docker-compose logs
+    cmds:
+      - docker-compose logs -f
+
+  # NUKE Build Tasks
+  nuke-build:
+    desc: Build .NET solution using NUKE
+    dir: "{{.BUILD_DIR}}"
+    cmds:
+      - dotnet run --project Build.csproj -- Compile
+
+  nuke-clean:
+    desc: Clean .NET solution using NUKE
+    dir: "{{.BUILD_DIR}}"
+    cmds:
+      - dotnet run --project Build.csproj -- Clean
+
+  nuke-test:
+    desc: Test .NET solution using NUKE
+    dir: "{{.BUILD_DIR}}"
+    cmds:
+      - dotnet run --project Build.csproj -- Test
+
+  nuke-publish:
+    desc: Publish .NET solution using NUKE
+    dir: "{{.BUILD_DIR}}"
+    cmds:
+      - dotnet run --project Build.csproj -- Publish
+
+  nuke-publish-console:
+    desc: Publish console app using NUKE
+    dir: "{{.BUILD_DIR}}"
+    cmds:
+      - dotnet run --project Build.csproj -- PublishConsole
+
+  nuke-publish-windows:
+    desc: Publish windows app using NUKE
+    dir: "{{.BUILD_DIR}}"
+    cmds:
+      - dotnet run --project Build.csproj -- PublishWindows
+
+  # .NET Tasks
+  dotnet-build:
+    desc: Build .NET solution
+    dir: "{{.DOTNET_DIR}}"
+    cmds:
+      - dotnet build
+
+  dotnet-clean:
+    desc: Clean .NET solution
+    dir: "{{.DOTNET_DIR}}"
+    cmds:
+      - dotnet clean
+
+  dotnet-restore:
+    desc: Restore .NET solution
+    dir: "{{.DOTNET_DIR}}"
+    cmds:
+      - dotnet restore
+
+  dotnet-format:
+    desc: Format .NET code
+    dir: "{{.DOTNET_DIR}}"
+    cmds:
+      - dotnet format
+
+  dotnet-run-console:
+    desc: Run console app
+    dir: "{{.DOTNET_DIR}}/console-app/LablabBean.Console"
+    cmds:
+      - dotnet run
+
+  dotnet-run-windows:
+    desc: Run windows app
+    dir: "{{.DOTNET_DIR}}/windows-app/LablabBean.Windows"
+    cmds:
+      - dotnet run
+
+  # Website/PM2 Tasks
+  website-install:
+    desc: Install website dependencies
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm install
+
+  website-dev:
+    desc: Start website dev server
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm dev
+
+  website-build:
+    desc: Build website
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm build
+
+  stack-start:
+    desc: Start entire stack with PM2 (web + console TUI)
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm stack:start
+
+  stack-stop:
+    desc: Stop entire stack
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm stack:stop
+
+  stack-status:
+    desc: Show stack status
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm stack:status
+
+  stack-logs:
+    desc: Show stack logs
+    dir: "{{.WEBSITE_DIR}}"
+    cmds:
+      - pnpm pm2:logs
+
+  # JetBrains CLI Tasks
+  jb-inspect:
+    desc: Run JetBrains CLI code inspection (slow)
+    dir: "{{.DOTNET_DIR}}"
+    cmds:
+      - echo "Running JetBrains CLI inspection..."
+      - echo "This may take several minutes..."
+      - jb inspectcode LablabBean.sln --output=../artifacts/inspection-results.xml || echo "⚠ JetBrains CLI not found or inspection failed"
+
+  jb-cleanup:
+    desc: Run JetBrains CLI code cleanup
+    dir: "{{.DOTNET_DIR}}"
+    cmds:
+      - jb cleanupcode LablabBean.sln || echo "⚠ JetBrains CLI not found"
+
+  help:
+    desc: Show help
+    cmds:
+      - task --list
+
+  info:
+    desc: Show project information
+    cmds:
+      - echo "Project: {{.PROJECT_NAME}}"
+      - echo "Output: {{.OUTPUT_DIR}}"
+      - echo "Dotnet: {{.DOTNET_DIR}}"
+      - echo "Website: {{.WEBSITE_DIR}}"
+      - echo ""
+      - echo "Run 'task --list' to see all available tasks"

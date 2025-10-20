@@ -1,0 +1,31 @@
+#!/bin/bash
+# Markdown linting
+
+set -e
+
+echo "Running Markdown linting..."
+
+if ! command -v markdownlint &> /dev/null; then
+    echo "⚠ markdownlint not found. Install with: npm install -g markdownlint-cli"
+    exit 0
+fi
+
+# Find all Markdown files
+MD_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.md$' || true)
+
+if [ -z "$MD_FILES" ]; then
+    echo "No Markdown files to lint"
+    exit 0
+fi
+
+# Run markdownlint
+echo "$MD_FILES" | xargs markdownlint --fix
+
+if [ $? -eq 0 ]; then
+    echo "✓ Markdown linting passed"
+    # Re-add fixed files
+    echo "$MD_FILES" | xargs git add
+else
+    echo "✗ Markdown linting failed"
+    exit 1
+fi

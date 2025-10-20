@@ -1,0 +1,29 @@
+#!/bin/bash
+# YAML linting
+
+set -e
+
+echo "Running YAML linting..."
+
+if ! command -v yamllint &> /dev/null; then
+    echo "⚠ yamllint not found. Install with: pip install yamllint"
+    exit 0
+fi
+
+# Find all YAML files
+YAML_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(yaml|yml)$' || true)
+
+if [ -z "$YAML_FILES" ]; then
+    echo "No YAML files to lint"
+    exit 0
+fi
+
+# Run yamllint
+echo "$YAML_FILES" | xargs yamllint -f parsable
+
+if [ $? -eq 0 ]; then
+    echo "✓ YAML linting passed"
+else
+    echo "✗ YAML linting failed"
+    exit 1
+fi

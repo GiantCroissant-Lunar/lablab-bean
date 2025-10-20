@@ -1,0 +1,55 @@
+# Generated files
+generated/
+output/
+dist/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.backup
+
+# Configuration files with secrets
+*.local.yaml
+*.local.yml
+.env
+.env.local
+secrets.yaml
+secrets.yml
+
+# Build artifacts
+build/
+bin/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.venv
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Task cache
+.task/

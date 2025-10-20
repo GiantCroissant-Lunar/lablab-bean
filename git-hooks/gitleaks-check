@@ -1,0 +1,21 @@
+#!/bin/bash
+# Git-leaks check for secrets
+
+set -e
+
+echo "Running gitleaks to detect secrets..."
+
+if ! command -v gitleaks &> /dev/null; then
+    echo "⚠ gitleaks not found. Install from: https://github.com/gitleaks/gitleaks"
+    exit 0
+fi
+
+# Run gitleaks on staged files
+gitleaks detect --source . --verbose --no-git
+
+if [ $? -eq 0 ]; then
+    echo "✓ No secrets detected"
+else
+    echo "✗ Secrets detected! Please remove them before committing."
+    exit 1
+fi

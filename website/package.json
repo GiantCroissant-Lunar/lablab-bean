@@ -1,0 +1,37 @@
+{
+  "name": "lablab-bean-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lablab Bean monorepo workspace",
+  "scripts": {
+    "dev": "pnpm --filter @lablab-bean/web dev",
+    "build": "pnpm --filter @lablab-bean/web build",
+    "preview": "pnpm --filter @lablab-bean/web preview",
+    "dev:all": "pnpm --parallel dev",
+    "build:all": "pnpm -r build",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,css,md,astro}\"",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:restart": "pm2 restart ecosystem.config.js",
+    "pm2:delete": "pm2 delete ecosystem.config.js",
+    "pm2:logs": "pm2 logs",
+    "pm2:monit": "pm2 monit",
+    "stack:start": "pm2 start ecosystem.config.js && pm2 logs",
+    "stack:stop": "pm2 stop all",
+    "stack:status": "pm2 status"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "pm2": "^5.3.0",
+    "prettier": "^3.1.1",
+    "prettier-plugin-astro": "^0.12.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

@@ -1,0 +1,31 @@
+#!/bin/bash
+# .NET code formatting check
+
+set -e
+
+echo "Running dotnet format check..."
+
+if ! command -v dotnet &> /dev/null; then
+    echo "⚠ dotnet not found"
+    exit 0
+fi
+
+# Check if we have .NET files
+DOTNET_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(cs|csproj|sln)$' || true)
+
+if [ -z "$DOTNET_FILES" ]; then
+    echo "No .NET files to format"
+    exit 0
+fi
+
+# Run dotnet format
+cd dotnet
+dotnet format --verify-no-changes --verbosity diagnostic
+
+if [ $? -eq 0 ]; then
+    echo "✓ .NET formatting check passed"
+else
+    echo "✗ .NET formatting check failed"
+    echo "Run 'dotnet format' or 'task dotnet-format' to fix formatting issues"
+    exit 1
+fi

@@ -1,0 +1,74 @@
+import { WebSocketServer } from 'ws';
+import type { Server } from 'http';
+import { TerminalManager } from './manager';
+import type { TerminalOptions } from './types';
+
+export class TerminalServer {
+  private wss: WebSocketServer;
+  private manager: TerminalManager;
+
+  constructor(server: Server, options: { path?: string } = {}) {
+    this.manager = new TerminalManager();
+    
+    this.wss = new WebSocketServer({
+      server,
+      path: options.path || '/terminal',
+    });
+
+    this.wss.on('connection', (ws) => {
+      console.log('New WebSocket connection');
+
+      const terminalOptions: TerminalOptions = {
+        cols: 80,
+        rows: 24,
+      };
+
+      const sessionId = this.manager.createSession(ws, terminalOptions);
+      console.log(`Created terminal session: ${sessionId}`);
+
+      ws.on('message', (data) => {
+        try {
+          const message = data.toString();
+          
+          // Try to parse as JSON for control messages
+          try {
+            const parsed = JSON.parse(message);
+            
+            if (parsed.type === 'resize') {
+              this.manager.resizeSession(sessionId, parsed.cols, parsed.rows);
+              return;
+            }
+          } catch {
+            // Not JSON, treat as terminal input
+          }
+
+          // Write data to terminal
+          this.manager.writeToSession(sessionId, message);
+        } catch (error) {
+          console.error('Error handling message:', error);
+        }
+      });
+
+      ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+      });
+
+      ws.on('close', () => {
+        console.log(`WebSocket closed for session: ${sessionId}`);
+      });
+    });
+
+    this.wss.on('error', (error) => {
+      console.error('WebSocket server error:', error);
+    });
+  }
+
+  close(): void {
+    this.manager.destroyAllSessions();
+    this.wss.close();
+  }
+
+  getSessionCount(): number {
+    return this.manager.getSessionCount();
+  }
+}

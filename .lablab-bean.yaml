@@ -1,0 +1,30 @@
+# Lablab Bean Configuration
+
+# Project settings
+project:
+  name: lablab-bean
+  version: 0.1.0
+  description: Task automation and template generation toolkit
+
+# Speck-kit configuration
+speck:
+  enabled: true
+  templates_dir: ./templates
+  output_dir: ./generated
+  templates:
+    api: ./templates/api.tmpl
+    model: ./templates/model.tmpl
+  default_variables:
+    author: Your Name
+    license: MIT
+    timestamp_format: "2006-01-02 15:04:05"
+
+# Pre-commit configuration
+pre_commit:
+  enabled: true
+  auto_install: true
+  hooks:
+    - trailing-whitespace
+    - end-of-file-fixer
+    - check-yaml
+    - markdownlint
