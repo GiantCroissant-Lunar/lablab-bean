@@ -3,6 +3,7 @@ using Arch.Core;
 using Arch.Core.Extensions;
 using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Maps;
+using LablabBean.Game.TerminalUI.Views;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
 using TGuiColor = Terminal.Gui.Color;
@@ -20,7 +21,7 @@ public class WorldViewService
 {
     private readonly ILogger<WorldViewService> _logger;
     private readonly FrameView _worldFrame;
-    private readonly View _renderView;
+    private readonly MapView _renderView;
     private int _viewWidth;
     private int _viewHeight;
 
@@ -39,14 +40,13 @@ public class WorldViewService
             Height = Dim.Fill()
         };
 
-        // Create a view for rendering
-        _renderView = new View
+        // Create a custom MapView for rendering
+        _renderView = new MapView
         {
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
-            Height = Dim.Fill(),
-            CanFocus = false
+            Height = Dim.Fill()
         };
 
         _worldFrame.Add(_renderView);
@@ -80,124 +80,71 @@ public class WorldViewService
         cameraX = Math.Max(0, Math.Min(cameraX, map.Width - _viewWidth));
         cameraY = Math.Max(0, Math.Min(cameraY, map.Height - _viewHeight));
 
-        // Clear the render view
-        _renderView.Clear();
-
-        // Render map tiles
-        RenderMap(_renderView, map, cameraX, cameraY);
-
-        // Render entities
-        RenderEntities(_renderView, world, map, cameraX, cameraY);
-
-        // Request redraw using Terminal.Gui v2 pattern
-        _renderView.SetNeedsDisplay();
-    }
-
-    /// <summary>
-    /// Renders the map tiles
-    /// </summary>
-    private void RenderMap(View view, DungeonMap map, int cameraX, int cameraY)
-    {
+        // Build the buffer
+        var buffer = new char[_viewHeight, _viewWidth];
+        
         for (int y = 0; y < _viewHeight && y + cameraY < map.Height; y++)
         {
             for (int x = 0; x < _viewWidth && x + cameraX < map.Width; x++)
             {
                 var worldPos = new SadPoint(x + cameraX, y + cameraY);
-
-                char glyph;
-                TGuiAttribute attr;
+                char glyph = ' ';
 
                 // Check if position is in FOV (currently visible)
                 if (map.IsInFOV(worldPos))
                 {
-                    // Currently visible tiles - bright
-                    if (map.IsWalkable(worldPos))
+                    // Check for entities first
+                    var entityGlyph = GetEntityGlyphAt(world, map, worldPos);
+                    if (entityGlyph.HasValue)
+                    {
+                        glyph = entityGlyph.Value;
+                    }
+                    else if (map.IsWalkable(worldPos))
                     {
                         glyph = '.';
-                        attr = new TGuiAttribute(TGuiColor.Gray, TGuiColor.Black);
                     }
                     else
                     {
                         glyph = '#';
-                        attr = new TGuiAttribute(TGuiColor.White, TGuiColor.Black);
                     }
                 }
                 else if (map.FogOfWar.IsExplored(worldPos))
                 {
-                    // Explored but not currently visible - darker
+                    // Explored but not visible - darker
                     if (map.IsWalkable(worldPos))
                     {
                         glyph = '.';
-                        attr = new TGuiAttribute(TGuiColor.DarkGray, TGuiColor.Black);
                     }
                     else
                     {
                         glyph = '#';
-                        attr = new TGuiAttribute(TGuiColor.DarkGray, TGuiColor.Black);
                     }
                 }
-                else
-                {
-                    // Not explored - completely dark
-                    glyph = ' ';
-                    attr = new TGuiAttribute(TGuiColor.Black, TGuiColor.Black);
-                }
-
-                // Draw the tile using Terminal.Gui v2 pattern
-                view.AddRune(x, y, new Rune(glyph));
+                
+                buffer[y, x] = glyph;
             }
         }
-    }
 
+        _renderView.UpdateBuffer(buffer);
+    }
+    
     /// <summary>
-    /// Renders all visible entities
+    /// Gets entity glyph at position if any
     /// </summary>
-    private void RenderEntities(View view, World world, DungeonMap map, int cameraX, int cameraY)
+    private char? GetEntityGlyphAt(World world, DungeonMap map, SadPoint worldPos)
     {
         var query = new QueryDescription().WithAll<Position, Renderable, Visible>();
-
-        // Collect entities to render, sorted by Z-order
-        var entitiesToRender = new List<(int x, int y, char glyph, SadColor foreground, SadColor background, int zOrder)>();
+        char? result = null;
 
         world.Query(in query, (Entity entity, ref Position pos, ref Renderable renderable, ref Visible visible) =>
         {
-            if (!visible.IsVisible)
-                return;
-
-            // Check if entity is in FOV
-            if (!map.IsInFOV(pos.Point))
-                return;
-
-            // Convert world position to screen position
-            int screenX = pos.X - cameraX;
-            int screenY = pos.Y - cameraY;
-
-            // Check if on screen
-            if (screenX >= 0 && screenX < _viewWidth && screenY >= 0 && screenY < _viewHeight)
+            if (visible.IsVisible && pos.Point == worldPos && map.IsInFOV(worldPos))
             {
-                entitiesToRender.Add((
-                    screenX,
-                    screenY,
-                    renderable.Glyph,
-                    renderable.Foreground,
-                    renderable.Background,
-                    renderable.ZOrder
-                ));
+                result = renderable.Glyph;
             }
         });
 
-        // Sort by Z-order (lower values drawn first)
-        entitiesToRender.Sort((a, b) => a.zOrder.CompareTo(b.zOrder));
-
-        // Render entities using Terminal.Gui v2 pattern
-        foreach (var (x, y, glyph, foreground, background, _) in entitiesToRender)
-        {
-            var tguiForeground = ConvertColor(foreground);
-            var tguiBackground = ConvertColor(background);
-            var attr = new TGuiAttribute(tguiForeground, tguiBackground);
-
-            view.AddRune(x, y, new Rune(glyph));
-        }
+        return result;
     }
 
     /// <summary>
