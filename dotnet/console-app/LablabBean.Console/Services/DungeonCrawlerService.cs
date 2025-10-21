@@ -70,8 +70,8 @@ public class DungeonCrawlerService : IDisposable
             Y = 0,
             Width = Dim.Fill(),
             Height = Dim.Fill(),
-            ReadOnly = false,  // Allow selection
-            CanFocus = true,   // Allow focus for selection
+            ReadOnly = true,
+            CanFocus = false,
             WordWrap = true,
             ColorScheme = new ColorScheme()
             {
@@ -286,6 +286,48 @@ public class DungeonCrawlerService : IDisposable
     }
 
     /// <summary>
+    /// Processes NPC turns until it's the player's turn again
+    /// </summary>
+    private void ProcessNPCTurns()
+    {
+        if (!_isRunning || _gameStateManager.CurrentMap == null)
+            return;
+
+        var world = _gameStateManager.WorldManager.CurrentWorld;
+        int maxIterations = 100; // Safety limit to prevent infinite loops
+        int iterations = 0;
+
+        // Keep processing until it's the player's turn or we hit the safety limit
+        while (!_gameStateManager.IsPlayerTurn() && iterations < maxIterations)
+        {
+            AddDebugLog("Processing NPC turn...");
+            _gameStateManager.Update();
+            
+            // Render after each NPC action
+            if (_gameStateManager.CurrentMap != null)
+            {
+                _worldViewService.Render(_gameStateManager.WorldManager.CurrentWorld, _gameStateManager.CurrentMap);
+                _hudService.Update(_gameStateManager.WorldManager.CurrentWorld);
+            }
+            
+            iterations++;
+            
+            // Small delay to make NPC actions visible (optional, can be removed for instant processing)
+            System.Threading.Thread.Sleep(50);
+        }
+
+        if (iterations >= maxIterations)
+        {
+            AddDebugLog("WARNING: Hit max iterations in ProcessNPCTurns");
+            _logger.LogWarning("ProcessNPCTurns hit maximum iterations limit");
+        }
+        else if (iterations > 0)
+        {
+            AddDebugLog($"Processed {iterations} NPC turns");
+        }
+    }
+
+    /// <summary>
     /// Handles keyboard input
     /// </summary>
     private bool OnKeyDown(Key key)
@@ -364,10 +406,10 @@ public class DungeonCrawlerService : IDisposable
                 {
                     AddDebugLog(message);
                 }
-                if (pickupMessages.Count > 0)
+                // Action is taken if an item was actually picked up (energy consumed)
+                if (pickupMessages.Any(m => m.StartsWith("Picked up")))
                 {
-                    Update();
-                    return true;
+                    actionTaken = true;
                 }
                 break;
 
@@ -379,8 +421,11 @@ public class DungeonCrawlerService : IDisposable
                 if (!string.IsNullOrEmpty(useMessage))
                 {
                     AddDebugLog(useMessage);
-                    Update();
-                    return true;
+                    // Check if the action was successful (not an error message)
+                    if (!useMessage.StartsWith("Cannot") && !useMessage.StartsWith("Already") && !useMessage.StartsWith("No"))
+                    {
+                        actionTaken = true;
+                    }
                 }
                 break;
 
@@ -405,6 +450,10 @@ public class DungeonCrawlerService : IDisposable
             AddDebugLog("Action taken, updating game");
             // Update the game after player action
             Update();
+            
+            // Continue processing NPC turns until it's the player's turn again
+            ProcessNPCTurns();
+            
             return true;
         }
 
