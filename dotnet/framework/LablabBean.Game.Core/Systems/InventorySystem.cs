@@ -384,4 +384,258 @@ public class InventorySystem
         inventory.Items.Remove(itemEntity.Id);
         world.Set(playerEntity, inventory);
     }
+
+    /// <summary>
+    /// Gets all equippable items in the player's inventory
+    /// Returns list of (Entity, Item, Equippable)
+    /// </summary>
+    public List<(Entity ItemEntity, Item Item, Equippable Equippable)> GetEquippables(World world, Entity playerEntity)
+    {
+        var equippables = new List<(Entity, Item, Equippable)>();
+
+        if (!world.Has<Inventory>(playerEntity))
+            return equippables;
+
+        var inventory = world.Get<Inventory>(playerEntity);
+
+        foreach (var itemId in inventory.Items)
+        {
+            var query = new QueryDescription().WithAll<Item, Equippable>();
+            
+            world.Query(in query, (Entity entity, ref Item item, ref Equippable equippable) =>
+            {
+                if (entity.Id == itemId)
+                {
+                    equippables.Add((entity, item, equippable));
+                }
+            });
+        }
+
+        return equippables;
+    }
+
+    /// <summary>
+    /// Checks if an item can be equipped
+    /// </summary>
+    public bool CanEquip(World world, Entity playerEntity, Entity itemEntity)
+    {
+        // Check if player has inventory and equipment slots
+        if (!world.Has<Inventory>(playerEntity) || !world.Has<EquipmentSlots>(playerEntity))
+        {
+            _logger.LogWarning("Player entity {PlayerId} has no Inventory or EquipmentSlots component", playerEntity.Id);
+            return false;
+        }
+
+        // Check if item is in inventory
+        var inventory = world.Get<Inventory>(playerEntity);
+        if (!inventory.Items.Contains(itemEntity.Id))
+        {
+            _logger.LogDebug("Item {ItemId} not in player inventory", itemEntity.Id);
+            return false;
+        }
+
+        // Check if item has Equippable component
+        if (!world.Has<Equippable>(itemEntity))
+        {
+            _logger.LogDebug("Item {ItemId} is not equippable", itemEntity.Id);
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Equips an item and returns stat changes
+    /// </summary>
+    public (bool Success, string Message, int AttackChange, int DefenseChange, int SpeedChange) EquipItem(World world, Entity playerEntity, Entity itemEntity)
+    {
+        if (!CanEquip(world, playerEntity, itemEntity))
+        {
+            return (false, "Cannot equip that item.", 0, 0, 0);
+        }
+
+        var item = world.Get<Item>(itemEntity);
+        var equippable = world.Get<Equippable>(itemEntity);
+        var equipment = world.Get<EquipmentSlots>(playerEntity);
+
+        // Unequip old item in the same slot if exists
+        if (equipment.Slots[equippable.Slot].HasValue)
+        {
+            var oldItemId = equipment.Slots[equippable.Slot]!.Value;
+            var oldItemQuery = new QueryDescription().WithAll<Item>();
+            
+            world.Query(in oldItemQuery, (Entity entity, ref Item oldItem) =>
+            {
+                if (entity.Id == oldItemId)
+                {
+                    _logger.LogInformation("Unequipping {OldItem} from {Slot}", oldItem.Name, equippable.Slot);
+                }
+            });
+        }
+
+        // Equip new item
+        equipment.Slots[equippable.Slot] = itemEntity.Id;
+        world.Set(playerEntity, equipment);
+
+        // Update player stats
+        var (newAttack, newDefense, newSpeed) = CalculateTotalStats(world, playerEntity);
+        
+        if (world.Has<Combat>(playerEntity))
+        {
+            var combat = world.Get<Combat>(playerEntity);
+            var oldAttack = combat.Attack;
+            var oldDefense = combat.Defense;
+            
+            combat.Attack = newAttack;
+            combat.Defense = newDefense;
+            world.Set(playerEntity, combat);
+            
+            var attackChange = newAttack - oldAttack;
+            var defenseChange = newDefense - oldDefense;
+            
+            _logger.LogInformation("Equipped {ItemName}. ATK: {OldAtk} → {NewAtk}, DEF: {OldDef} → {NewDef}", 
+                item.Name, oldAttack, newAttack, oldDefense, newDefense);
+        }
+
+        if (world.Has<Actor>(playerEntity))
+        {
+            var actor = world.Get<Actor>(playerEntity);
+            var oldSpeed = actor.Speed;
+            
+            actor.Speed = newSpeed;
+            world.Set(playerEntity, actor);
+            
+            var speedChange = newSpeed - oldSpeed;
+            
+            _logger.LogInformation("Speed updated: {OldSpeed} → {NewSpeed}", oldSpeed, newSpeed);
+        }
+
+        // Build message
+        var statChanges = new List<string>();
+        if (equippable.AttackBonus != 0)
+            statChanges.Add($"ATK {(equippable.AttackBonus > 0 ? "+" : "")}{equippable.AttackBonus}");
+        if (equippable.DefenseBonus != 0)
+            statChanges.Add($"DEF {(equippable.DefenseBonus > 0 ? "+" : "")}{equippable.DefenseBonus}");
+        if (equippable.SpeedModifier != 0)
+            statChanges.Add($"SPD {(equippable.SpeedModifier > 0 ? "+" : "")}{equippable.SpeedModifier}");
+
+        var message = statChanges.Count > 0 
+            ? $"Equipped {item.Name}. {string.Join(", ", statChanges)}"
+            : $"Equipped {item.Name}.";
+
+        return (true, message, equippable.AttackBonus, equippable.DefenseBonus, equippable.SpeedModifier);
+    }
+
+    /// <summary>
+    /// Unequips an item from a slot
+    /// </summary>
+    public (bool Success, string Message) UnequipItem(World world, Entity playerEntity, EquipmentSlot slot)
+    {
+        if (!world.Has<EquipmentSlots>(playerEntity))
+        {
+            return (false, "No equipment slots.");
+        }
+
+        var equipment = world.Get<EquipmentSlots>(playerEntity);
+        
+        if (!equipment.Slots[slot].HasValue)
+        {
+            return (false, $"No item equipped in {slot} slot.");
+        }
+
+        var itemId = equipment.Slots[slot]!.Value;
+        string itemName = "Unknown";
+
+        // Get item name
+        var query = new QueryDescription().WithAll<Item, Equippable>();
+        world.Query(in query, (Entity entity, ref Item item, ref Equippable equippable) =>
+        {
+            if (entity.Id == itemId)
+            {
+                itemName = item.Name;
+            }
+        });
+
+        // Unequip
+        equipment.Slots[slot] = null;
+        world.Set(playerEntity, equipment);
+
+        // Recalculate stats
+        var (newAttack, newDefense, newSpeed) = CalculateTotalStats(world, playerEntity);
+        
+        if (world.Has<Combat>(playerEntity))
+        {
+            var combat = world.Get<Combat>(playerEntity);
+            combat.Attack = newAttack;
+            combat.Defense = newDefense;
+            world.Set(playerEntity, combat);
+        }
+
+        if (world.Has<Actor>(playerEntity))
+        {
+            var actor = world.Get<Actor>(playerEntity);
+            actor.Speed = newSpeed;
+            world.Set(playerEntity, actor);
+        }
+
+        _logger.LogInformation("Unequipped {ItemName} from {Slot}", itemName, slot);
+        return (true, $"Unequipped {itemName}.");
+    }
+
+    /// <summary>
+    /// Calculates total stats from base stats + all equipment bonuses
+    /// Returns (Attack, Defense, Speed)
+    /// </summary>
+    public (int Attack, int Defense, int Speed) CalculateTotalStats(World world, Entity playerEntity)
+    {
+        // Start with base stats
+        int baseAttack = 10;
+        int baseDefense = 5;
+        int baseSpeed = 100;
+
+        if (world.Has<Combat>(playerEntity))
+        {
+            var combat = world.Get<Combat>(playerEntity);
+            // For now, use current values as base (should ideally store base stats separately)
+            // This is a simplification - in a real game, you'd want a BaseStats component
+            baseAttack = 10;
+            baseDefense = 5;
+        }
+
+        if (world.Has<Actor>(playerEntity))
+        {
+            baseSpeed = 100;
+        }
+
+        // Add equipment bonuses
+        int totalAttackBonus = 0;
+        int totalDefenseBonus = 0;
+        int totalSpeedModifier = 0;
+
+        if (world.Has<EquipmentSlots>(playerEntity))
+        {
+            var equipment = world.Get<EquipmentSlots>(playerEntity);
+
+            foreach (var slotValue in equipment.Slots.Values)
+            {
+                if (!slotValue.HasValue)
+                    continue;
+
+                var itemId = slotValue.Value;
+                var query = new QueryDescription().WithAll<Equippable>();
+
+                world.Query(in query, (Entity entity, ref Equippable equippable) =>
+                {
+                    if (entity.Id == itemId)
+                    {
+                        totalAttackBonus += equippable.AttackBonus;
+                        totalDefenseBonus += equippable.DefenseBonus;
+                        totalSpeedModifier += equippable.SpeedModifier;
+                    }
+                });
+            }
+        }
+
+        return (baseAttack + totalAttackBonus, baseDefense + totalDefenseBonus, baseSpeed + totalSpeedModifier);
+    }
 }

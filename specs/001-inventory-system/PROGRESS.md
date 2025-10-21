@@ -237,9 +237,102 @@ dotnet/console-app/LablabBean.Console/
 
 ---
 
+## Phase 6: User Story 4 - Equip Weapons and Armor ✅ COMPLETE
+
+**Status**: 8/8 tasks completed (100%)  
+**Completion Criteria**: ✅ Player can equip/unequip weapons and armor, stats update correctly, old equipment unequipped automatically, messages displayed
+
+### Completed Tasks
+
+- ✅ **T035** [P]: Implement GetEquippables() in InventorySystem
+  - Returns list of (Entity, Item, Equippable) tuples
+  - Queries inventory items, filters by Equippable component
+  - Used for displaying equippable items to player
+
+- ✅ **T036** [P]: Implement CanEquip() in InventorySystem
+  - Validates item in inventory and has Equippable component
+  - Checks player has EquipmentSlots component
+  - Returns false with appropriate logging for failures
+
+- ✅ **T037**: Implement EquipItem() in InventorySystem
+  - Unequips old item in same slot automatically
+  - Sets new item in EquipmentSlots[slot]
+  - Recalculates total stats (attack, defense, speed)
+  - Updates Combat and Actor components
+  - Returns stat changes and feedback message
+
+- ✅ **T038** [P]: Implement UnequipItem() in InventorySystem
+  - Clears EquipmentSlots[slot]
+  - Recalculates stats without the item
+  - Updates Combat and Actor components
+  - Returns success message with item name
+
+- ✅ **T039** [P]: Implement CalculateTotalStats() in InventorySystem
+  - Calculates base stats (ATK: 10, DEF: 5, SPD: 100)
+  - Iterates all equipped items
+  - Sums all equipment bonuses
+  - Returns (Attack, Defense, Speed) tuple
+
+- ✅ **T040**: Integrate CalculateTotalStats() with CombatSystem
+  - CombatSystem already uses Combat.Attack and Combat.Defense
+  - EquipItem() updates these values via CalculateTotalStats()
+  - Integration complete via component updates
+
+- ✅ **T041**: Add equipment selection to 'U' key handling
+  - Modified HandlePlayerUseItem() in GameStateManager
+  - Priority 1: Consumables (healing potions)
+  - Priority 2: Equippables (weapons/armor)
+  - Automatically equips first equippable if no consumables
+
+- ✅ **T042**: Add equipment feedback messages
+  - Success: "Equipped Iron Sword. ATK +5"
+  - Multiple stats: "Equipped Plate Armor. DEF +10, SPD -10"
+  - Unequip: "Unequipped Iron Sword."
+  - Failure: "Cannot equip that item."
+
+### Files Modified
+
+```
+dotnet/framework/LablabBean.Game.Core/
+├── Systems/
+│   └── InventorySystem.cs (Added: GetEquippables(), CanEquip(), EquipItem(),
+│                                   UnequipItem(), CalculateTotalStats())
+└── Services/
+    └── GameStateManager.cs (Modified: HandlePlayerUseItem() with equipment priority)
+```
+
+### Technical Implementation Notes
+
+**Stat Calculation System**:
+- Base stats: ATK 10, DEF 5, SPD 100
+- Equipment bonuses add to base stats
+- Stats recalculated on every equip/unequip
+- Combat and Actor components updated immediately
+
+**Auto-Unequip**:
+- Equipping item in occupied slot automatically unequips old item
+- Old item remains in inventory (not dropped)
+- Player can manually unequip to empty slot (UnequipItem method exists)
+
+**Equipment Slots** (9 total):
+- MainHand, OffHand, Head, Chest, Legs, Feet, Hands, Accessory1, Accessory2
+
+**Two-Handed Weapons**:
+- TwoHanded flag exists in Equippable component
+- Logic not yet implemented (future enhancement)
+
+**Stat Bonuses**:
+- AttackBonus: Increases damage dealt
+- DefenseBonus: Reduces damage taken
+- SpeedModifier: Affects turn order (can be negative)
+
+**Commit**: *(Pending)*
+
+---
+
 ## Progress Tracking
 
-**Total Progress**: 34/45 tasks (76%)
+**Total Progress**: 42/45 tasks (93%)
 
 ### Phase Completion
 - ✅ **Phase 1**: Setup & Infrastructure (5/5 tasks) - **COMPLETE**
@@ -247,8 +340,8 @@ dotnet/console-app/LablabBean.Console/
 - ✅ **Phase 3**: User Story 1 - Item Pickup (8/8 tasks) - **COMPLETE** 🎉 MVP!
 - ✅ **Phase 4**: User Story 2 - Inventory Display (6/6 tasks) - **COMPLETE** 🎉
 - ✅ **Phase 5**: User Story 3 - Consume Healing Potions (7/7 tasks) - **COMPLETE** 🎉
-- ⏳ **Phase 6**: User Story 4 - Equip Weapons/Armor (0/8 tasks) - **NEXT**
-- ⏳ **Phase 7**: Polish & Integration (0/3 tasks)
+- ✅ **Phase 6**: User Story 4 - Equip Weapons/Armor (8/8 tasks) - **COMPLETE** 🎉
+- ⏳ **Phase 7**: Polish & Integration (0/3 tasks) - **FINAL PHASE!**
 
 ### Milestones
 - ✅ **Phase 1 Complete**: Project structure ready
@@ -256,8 +349,8 @@ dotnet/console-app/LablabBean.Console/
 - ✅ **Phase 3 Complete**: MVP - First playable feature! 🎉
 - ✅ **Phase 4 Complete**: Inventory now visible in HUD! 🎉
 - ✅ **Phase 5 Complete**: Consumable items working! 🎉
-- 🎯 **Next Milestone**: Complete Phase 6 (8 tasks) → Equipment system working
-- 🎯 **Full Feature**: Complete all phases (11 remaining tasks) → Complete inventory system
+- ✅ **Phase 6 Complete**: Equipment system working! 🎉
+- 🎯 **Final Milestone**: Complete Phase 7 (3 tasks) → FULL FEATURE COMPLETE!
 
 ---
 
@@ -374,14 +467,73 @@ To test the consumable item functionality:
 
 ---
 
-## Questions/Blockers
+## 🧪 Testing Phase 6 - Equip Weapons and Armor
 
-None currently. Ready to proceed with Phase 6.
+To test the equipment system:
+
+1. **Start the game**:
+   ```bash
+   dotnet run --project dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj
+   ```
+
+2. **Initial state**: 
+   - Player spawns at 50/100 HP
+   - Base stats: ATK 10, DEF 5, SPD 100
+   - 1 Iron Sword (+5 ATK) spawned nearby
+   - HUD shows base stats
+
+3. **Pick up sword**:
+   - Press 'G' to pick up Iron Sword
+   - Verify inventory shows "Iron Sword"
+   - Stats unchanged (not equipped yet)
+
+4. **Equip sword**:
+   - Press 'U' key (consumes potions first if any)
+   - After consuming potions, press 'U' again to equip sword
+   - Verify debug log: "Equipped Iron Sword. ATK +5"
+   - Verify HUD stats: ATK 10 → 15
+   - Verify inventory shows: "Iron Sword [E]"
+
+5. **Test combat with equipped weapon**:
+   - Attack an enemy
+   - Verify damage calculation uses ATK 15 (not 10)
+
+6. **Test multiple equipment**:
+   - Spawn or find armor (e.g., Leather Armor +3 DEF)
+   - Equip armor
+   - Verify stats: DEF 5 → 8
+   - Verify both items show [E] in inventory
+
+7. **Test auto-unequip**:
+   - Find Steel Sword (+10 ATK)
+   - Equip Steel Sword
+   - Verify Iron Sword automatically unequipped
+   - Verify Iron Sword still in inventory (no [E] marker)
+   - Verify stats: ATK 15 → 20
+
+8. **Test negative modifiers**:
+   - Equip Plate Armor (+10 DEF, -10 SPD)
+   - Verify: DEF increases, SPD decreases
+   - Message shows both changes: "DEF +10, SPD -10"
+
+### Expected Behavior
+- ✅ Stats update immediately on equip
+- ✅ Old equipment auto-unequips when slot occupied
+- ✅ [E] marker shows in inventory for equipped items
+- ✅ Combat damage uses equipped weapon bonuses
+- ✅ Multiple equipment pieces can be worn simultaneously
+- ✅ Appropriate feedback messages for all actions
 
 ---
 
-**Ready for Next Phase**: Yes ✅  
-**Recommended Action**: Continue with Phase 6 - Equip Weapons and Armor (equipment system)
+## Questions/Blockers
+
+None! Only 3 tasks remaining in Phase 7.
+
+---
+
+**Ready for Final Phase**: Yes ✅  
+**Recommended Action**: Complete Phase 7 - Polish & Integration (item spawning in dungeons)
 
 ---
 

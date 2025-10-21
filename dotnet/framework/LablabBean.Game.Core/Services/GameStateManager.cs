@@ -368,27 +368,46 @@ public class GameStateManager : IDisposable
                 return;
             }
 
-            // Get all consumable items
+            // Priority 1: Try consumables first
             var consumables = _inventorySystem.GetConsumables(world, playerEntity);
 
-            if (consumables.Count == 0)
+            if (consumables.Count > 0)
             {
-                result = "No consumable items in inventory!";
+                // Use first consumable
+                var firstConsumable = consumables[0];
+                var message = _inventorySystem.UseConsumable(world, playerEntity, firstConsumable.ItemEntity);
+                
+                if (!message.StartsWith("Cannot") && !message.StartsWith("Already"))
+                {
+                    // Item was successfully used - consume energy
+                    actor.ConsumeEnergy();
+                }
+
+                result = message;
                 return;
             }
 
-            // For now, use the first consumable (healing potion priority)
-            // TODO: In future, show selection menu
-            var firstConsumable = consumables[0];
-            var message = _inventorySystem.UseConsumable(world, playerEntity, firstConsumable.ItemEntity);
-            
-            if (!message.StartsWith("Cannot") && !message.StartsWith("Already"))
+            // Priority 2: Try equipment if no consumables
+            var equippables = _inventorySystem.GetEquippables(world, playerEntity);
+
+            if (equippables.Count > 0)
             {
-                // Item was successfully used - consume energy
-                actor.ConsumeEnergy();
+                // Equip first equippable item
+                var firstEquippable = equippables[0];
+                var (success, message, atkChange, defChange, spdChange) = _inventorySystem.EquipItem(world, playerEntity, firstEquippable.ItemEntity);
+                
+                if (success)
+                {
+                    // Item was successfully equipped - consume energy
+                    actor.ConsumeEnergy();
+                }
+
+                result = message;
+                return;
             }
 
-            result = message;
+            // No usable items
+            result = "No usable items in inventory!";
         });
 
         return result;
