@@ -1,0 +1,46 @@
+#!/bin/bash
+# One Type Per File Check
+# Ensures C# files follow the one-type-per-file convention
+
+set -e
+
+echo "Running one-type-per-file check..."
+
+# Check if we have .NET files staged
+DOTNET_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.cs$' || true)
+
+if [ -z "$DOTNET_FILES" ]; then
+    echo "No C# files to check"
+    exit 0
+fi
+
+# Check if dotnet is available
+if ! command -v dotnet &> /dev/null; then
+    echo "⚠ dotnet not found, skipping check"
+    exit 0
+fi
+
+# Path to the OneTypePerFile tool
+TOOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/dotnet/OneTypePerFile/OneTypePerFile" && pwd)"
+
+# Build the tool if not already built
+if [ ! -f "$TOOL_DIR/bin/Debug/net8.0/OneTypePerFile.dll" ]; then
+    echo "Building OneTypePerFile tool..."
+    cd "$TOOL_DIR"
+    dotnet build --nologo --verbosity quiet
+fi
+
+# Run the check on the dotnet directory
+cd "$TOOL_DIR"
+dotnet run --no-build -- --path "$(pwd)/../../../../../dotnet" --mode check
+
+if [ $? -eq 0 ]; then
+    echo "✓ One-type-per-file check passed"
+else
+    echo "✗ One-type-per-file check failed"
+    echo ""
+    echo "To fix violations, run:"
+    echo "  cd git-hooks/dotnet/OneTypePerFile/OneTypePerFile"
+    echo "  dotnet run -- --path ../../../../dotnet --mode fix"
+    exit 1
+fi

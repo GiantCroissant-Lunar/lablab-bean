@@ -14,6 +14,7 @@ This directory contains custom pre-commit hook scripts that can be used alongsid
 - `yaml-lint` - Lints YAML files
 - `markdown-lint` - Lints and fixes Markdown files
 - `dotnet-format-check` - Checks .NET code formatting
+- `one-type-per-file-check` - Enforces one type per file for C# code
 - `python-check` - Runs black, flake8, isort on Python files
 - `validate-agent-pointers` - Ensures agent pointer files are in sync
 
@@ -81,6 +82,12 @@ repos:
         language: script
         pass_filenames: false
 
+      - id: one-type-per-file
+        name: One Type Per File Check
+        entry: ./git-hooks/one-type-per-file-check
+        language: script
+        pass_filenames: false
+
       - id: python-check
         name: Python Code Quality
         entry: ./git-hooks/python-check
@@ -131,6 +138,9 @@ task jb-cleanup
 - **yamllint**: Validates YAML syntax and style
 - **markdownlint**: Enforces Markdown style guide
 - **dotnet-format**: Ensures consistent C# code formatting
+- **one-type-per-file**: Enforces one type per file for C# (Roslyn-based)
+  - Can detect violations (check mode) or automatically split files (fix mode)
+  - See [dotnet/OneTypePerFile/README.md](dotnet/OneTypePerFile/README.md) for details
 - **python-check**: Runs **Ruff** (modern linter + formatter) and optionally **mypy** (type checker)
   - Ruff replaces: black, flake8, isort, pyupgrade, and 50+ other tools
   - 10-100x faster than traditional Python tools
