@@ -6,6 +6,7 @@
 **Prerequisites**: 
 - Spec 007 (Tiered Contract Architecture) ✅ Complete
 - Spec 008 (Extended Contract Assemblies) ✅ Complete
+**Input**: User Story 8 from Spec 007 - "Plugin developer wants to create a proxy service for their contract without writing manual delegation boilerplate. They need a source generator that automatically implements all interface methods by delegating to the registry based on attributes."
 
 ## Overview
 
