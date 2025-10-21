@@ -154,16 +154,47 @@ public class GameStateManager : IDisposable
     /// </summary>
     private void CreateEnemy(World world, Point position, Random random)
     {
-        // Random enemy type
-        var enemyTypes = new[] { "Goblin", "Orc", "Troll", "Skeleton" };
-        var enemyType = enemyTypes[random.Next(enemyTypes.Length)];
+        // Random enemy type with special enemies
+        var roll = random.Next(100);
+        string enemyType;
+        Enemy enemyComponent;
+        int health, attack, defense, speed;
+        
+        if (roll < 20) // 20% chance for Toxic Spider
+        {
+            enemyType = "Toxic Spider";
+            health = 15;
+            attack = 3;
+            defense = 1;
+            speed = 90;
+            
+            // Create enemy with poison attack (40% chance to poison for 5 turns)
+            enemyComponent = new Enemy(enemyType)
+            {
+                InflictsEffect = EffectType.Poison,
+                EffectProbability = 40,  // 40% chance
+                EffectMagnitude = 3,     // 3 damage per turn
+                EffectDuration = 5       // 5 turns
+            };
+        }
+        else
+        {
+            // Normal enemies
+            var normalEnemyTypes = new[] { "Goblin", "Orc", "Troll", "Skeleton" };
+            enemyType = normalEnemyTypes[random.Next(normalEnemyTypes.Length)];
+            health = 30;
+            attack = 5;
+            defense = 2;
+            speed = 80 + random.Next(40);
+            enemyComponent = new Enemy(enemyType);
+        }
 
         var enemy = world.Create(
-            new Enemy(enemyType),
+            enemyComponent,
             new Position(position),
-            new Health(30, 30),
-            new Combat(5, 2),
-            new Actor(80 + random.Next(40)),
+            new Health(health, health),
+            new Combat(attack, defense),
+            new Actor(speed),
             new AI(AIBehavior.Chase),
             new Renderable(GetEnemyGlyph(enemyType), GetEnemyColor(enemyType), Color.Black, 50),
             new Visible(true),
@@ -203,6 +234,7 @@ public class GameStateManager : IDisposable
         "Orc" => 'o',
         "Troll" => 'T',
         "Skeleton" => 's',
+        "Toxic Spider" => 'x',
         _ => 'e'
     };
 
@@ -215,6 +247,7 @@ public class GameStateManager : IDisposable
         "Orc" => Color.Red,
         "Troll" => Color.Brown,
         "Skeleton" => Color.White,
+        "Toxic Spider" => Color.Purple,
         _ => Color.Gray
     };
 

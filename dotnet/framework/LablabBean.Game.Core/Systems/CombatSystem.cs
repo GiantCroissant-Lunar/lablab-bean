@@ -25,7 +25,7 @@ public class CombatSystem
     /// Executes an attack from attacker to defender
     /// Returns true if the attack was successful and dealt damage
     /// </summary>
-    public bool Attack(World world, Entity attacker, Entity defender)
+    public bool Attack(World world, Entity attacker, Entity defender, StatusEffectSystem? statusEffectSystem = null)
     {
         if (!attacker.IsAlive() || !defender.IsAlive())
         {
@@ -63,10 +63,39 @@ public class CombatSystem
 
         OnDamageDealt?.Invoke(attacker, defender, damage);
 
+        // Try to apply status effect if attacker is an enemy with effect-inflicting attack
+        if (attacker.Has<Enemy>() && statusEffectSystem != null)
+        {
+            var enemy = attacker.Get<Enemy>();
+            if (enemy.InflictsEffect.HasValue && enemy.EffectProbability.HasValue)
+            {
+                // Roll for effect application
+                int roll = _random.Next(100);
+                if (roll < enemy.EffectProbability.Value)
+                {
+                    var result = statusEffectSystem.ApplyEffect(
+                        world,
+                        defender,
+                        enemy.InflictsEffect.Value,
+                        enemy.EffectMagnitude ?? EffectDefinitions.GetDefinition(enemy.InflictsEffect.Value).DefaultMagnitude,
+                        enemy.EffectDuration ?? EffectDefinitions.GetDefinition(enemy.InflictsEffect.Value).DefaultDuration,
+                        EffectSource.EnemyAttack
+                    );
+
+                    if (result.Success)
+                    {
+                        _logger.LogInformation("{AttackerName} inflicts {Effect} on {DefenderName}!",
+                            attackerName, enemy.InflictsEffect.Value, defenderName);
+                        OnStatusEffectApplied?.Invoke(attacker, defender, enemy.InflictsEffect.Value);
+                    }
+                }
+            }
+        }
+
         // Check if defender died
         if (defenderHealth.Current <= 0)
         {
-            HandleDeath(world, defender);
+            HandleDeath(world, defender, statusEffectSystem);
         }
 
         return true;
@@ -88,12 +117,18 @@ public class CombatSystem
     /// <summary>
     /// Handles entity death
     /// </summary>
-    private void HandleDeath(World world, Entity entity)
+    private void HandleDeath(World world, Entity entity, StatusEffectSystem? statusEffectSystem = null)
     {
         string entityName = GetEntityName(entity);
         _logger.LogInformation("{Entity} has been defeated!", entityName);
 
         OnEntityDied?.Invoke(entity);
+
+        // Clear all status effects on death
+        if (statusEffectSystem != null)
+        {
+            statusEffectSystem.ClearAllEffects(world, entity);
+        }
 
         // Spawn loot for enemies
         if (entity.Has<Enemy>() && entity.Has<Position>() && _itemSpawnSystem != null)
@@ -192,4 +227,9 @@ public class CombatSystem
     /// Event raised when an entity is healed
     /// </summary>
     public event Action<Entity, int>? OnHealed;
+
+    /// <summary>
+    /// Event raised when a status effect is applied through combat
+    /// </summary>
+    public event Action<Entity, Entity, EffectType>? OnStatusEffectApplied;
 }
