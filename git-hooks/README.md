@@ -14,6 +14,8 @@ This directory contains custom pre-commit hook scripts that can be used alongsid
 - `yaml-lint` - Lints YAML files
 - `markdown-lint` - Lints and fixes Markdown files
 - `dotnet-format-check` - Checks .NET code formatting
+- `python-check` - Runs black, flake8, isort on Python files
+- `validate-agent-pointers` - Ensures agent pointer files are in sync
 
 ## Prerequisites
 
@@ -33,6 +35,16 @@ npm install -g markdownlint-cli
 
 # dotnet format (included with .NET SDK)
 dotnet tool install -g dotnet-format
+
+# Python tools (for python-check)
+# Ruff - modern, fast linter and formatter (replaces black, flake8, isort)
+pip install ruff
+
+# Optional: Type checking
+pip install mypy
+
+# Or install all at once
+pip install ruff mypy
 ```
 
 ## Usage
@@ -66,6 +78,18 @@ repos:
       - id: dotnet-format
         name: .NET Format Check
         entry: ./git-hooks/dotnet-format-check
+        language: script
+        pass_filenames: false
+
+      - id: python-check
+        name: Python Code Quality
+        entry: ./git-hooks/python-check
+        language: script
+        pass_filenames: false
+
+      - id: validate-agent-pointers
+        name: Validate Agent Pointers
+        entry: ./git-hooks/validate-agent-pointers
         language: script
         pass_filenames: false
 ```
@@ -107,6 +131,10 @@ task jb-cleanup
 - **yamllint**: Validates YAML syntax and style
 - **markdownlint**: Enforces Markdown style guide
 - **dotnet-format**: Ensures consistent C# code formatting
+- **python-check**: Runs **Ruff** (modern linter + formatter) and optionally **mypy** (type checker)
+  - Ruff replaces: black, flake8, isort, pyupgrade, and 50+ other tools
+  - 10-100x faster than traditional Python tools
+- **validate-agent-pointers**: Ensures `.agent/` pointer files are synchronized
 - **JetBrains CLI**: Full code inspection (too slow for pre-commit, use via task)
 
 ## Creating Custom Hooks

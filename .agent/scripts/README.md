@@ -24,6 +24,8 @@ python .agent/scripts/generate_pointers.py --check
 
 - `CLAUDE.md` → Points to `.agent/adapters/claude.md`
 - `AGENTS.md` → Points to `.agent/README.md`
+- `.github/copilot-instructions.md` → Points to `.agent/adapters/copilot.md`
+- `.windsurf/rules.md` → Points to `.agent/adapters/windsurf.md`
 
 **When to Run**:
 
@@ -44,16 +46,19 @@ To add a new pointer file:
 1. Edit `generate_pointers.py`
 2. Add entry to `POINTER_CONFIGS` dictionary:
    ```python
-   "NEW_FILE.md": {
+   "path/to/NEW_FILE.md": {
        "adapter": "adapter-name.md",  # or None for generic
        "agent_name": "Agent Name",
        "description": "short description",
+       "path": "path/to",  # or None for root level
    }
    ```
 3. Add generator function `generate_new_file_md(config, version)`
 4. Update `generate_pointer_file()` to handle new file
 5. Run script to test
 6. Update this README
+
+**Note**: The script automatically creates subdirectories if `"path"` is specified.
 
 ## CI/CD Integration
 

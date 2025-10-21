@@ -16,8 +16,8 @@ This project uses a multi-agent instruction system with:
 Different AI assistants should read their specific adapter file:
 
 - **Claude Code**: [.agent/adapters/claude.md](.agent/adapters/claude.md) (also see [CLAUDE.md](CLAUDE.md))
-- **GitHub Copilot**: [.agent/adapters/copilot.md](.agent/adapters/copilot.md)
-- **Windsurf**: [.agent/adapters/windsurf.md](.agent/adapters/windsurf.md)
+- **GitHub Copilot**: [.agent/adapters/copilot.md](.agent/adapters/copilot.md) (also see [.github/copilot-instructions.md](.github/copilot-instructions.md))
+- **Windsurf**: [.agent/adapters/windsurf.md](.agent/adapters/windsurf.md) (also see [.windsurf/rules.md](.windsurf/rules.md))
 
 ## Structure
 
