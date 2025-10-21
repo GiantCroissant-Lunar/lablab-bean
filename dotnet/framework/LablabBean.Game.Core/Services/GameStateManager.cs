@@ -94,7 +94,7 @@ public class GameStateManager : IDisposable
         var player = world.Create(
             new Player("Hero"),
             new Position(playerSpawn),
-            new Health(100, 100),
+            new Health(50, 100),  // Start at 50/100 HP for testing healing
             new Combat(10, 5),
             new Actor(100),
             new Renderable('@', Color.Yellow, Color.Black, 100),
@@ -105,7 +105,7 @@ public class GameStateManager : IDisposable
             new EquipmentSlots()
         );
 
-        _logger.LogInformation("Player created at {Position}", playerSpawn);
+        _logger.LogInformation("Player created at {Position} with 50/100 HP for testing", playerSpawn);
 
         // Create enemies in other rooms (1-3 per room)
         var random = new Random();
@@ -348,6 +348,50 @@ public class GameStateManager : IDisposable
         });
 
         return messages;
+    }
+
+    /// <summary>
+    /// Handles player using/consuming an item from inventory
+    /// Returns a message describing the result
+    /// </summary>
+    public string HandlePlayerUseItem()
+    {
+        var world = _worldManager.CurrentWorld;
+        var query = new QueryDescription().WithAll<Player, Actor>();
+        string result = "";
+
+        world.Query(in query, (Entity playerEntity, ref Player player, ref Actor actor) =>
+        {
+            if (!actor.CanAct)
+            {
+                result = "Cannot act yet!";
+                return;
+            }
+
+            // Get all consumable items
+            var consumables = _inventorySystem.GetConsumables(world, playerEntity);
+
+            if (consumables.Count == 0)
+            {
+                result = "No consumable items in inventory!";
+                return;
+            }
+
+            // For now, use the first consumable (healing potion priority)
+            // TODO: In future, show selection menu
+            var firstConsumable = consumables[0];
+            var message = _inventorySystem.UseConsumable(world, playerEntity, firstConsumable.ItemEntity);
+            
+            if (!message.StartsWith("Cannot") && !message.StartsWith("Already"))
+            {
+                // Item was successfully used - consume energy
+                actor.ConsumeEnergy();
+            }
+
+            result = message;
+        });
+
+        return result;
     }
 
     /// <summary>

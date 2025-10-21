@@ -371,6 +371,19 @@ public class DungeonCrawlerService : IDisposable
                 }
                 break;
 
+            // Use/Consume item
+            case Key.U:
+            case Key.u:
+                AddDebugLog("Opening item use menu");
+                var useMessage = _gameStateManager.HandlePlayerUseItem();
+                if (!string.IsNullOrEmpty(useMessage))
+                {
+                    AddDebugLog(useMessage);
+                    Update();
+                    return true;
+                }
+                break;
+
             // Mode switching
             case Key.E:
             case Key.e:

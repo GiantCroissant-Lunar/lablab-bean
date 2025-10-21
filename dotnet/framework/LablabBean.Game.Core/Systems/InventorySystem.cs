@@ -199,4 +199,189 @@ public class InventorySystem
 
         return false;
     }
+
+    /// <summary>
+    /// Gets all consumable items in the player's inventory
+    /// Returns list of (Entity, Item, Consumable, Count)
+    /// </summary>
+    public List<(Entity ItemEntity, Item Item, Consumable Consumable, int Count)> GetConsumables(World world, Entity playerEntity)
+    {
+        var consumables = new List<(Entity, Item, Consumable, int)>();
+
+        if (!world.Has<Inventory>(playerEntity))
+            return consumables;
+
+        var inventory = world.Get<Inventory>(playerEntity);
+
+        foreach (var itemId in inventory.Items)
+        {
+            var query = new QueryDescription().WithAll<Item, Consumable>();
+            
+            world.Query(in query, (Entity entity, ref Item item, ref Consumable consumable) =>
+            {
+                if (entity.Id == itemId)
+                {
+                    var count = world.Has<Stackable>(entity) ? world.Get<Stackable>(entity).Count : 1;
+                    consumables.Add((entity, item, consumable, count));
+                }
+            });
+        }
+
+        return consumables;
+    }
+
+    /// <summary>
+    /// Checks if a consumable item can be used
+    /// </summary>
+    public bool CanUseConsumable(World world, Entity playerEntity, Entity itemEntity)
+    {
+        // Check if player has the item in inventory
+        if (!world.Has<Inventory>(playerEntity))
+        {
+            _logger.LogWarning("Player entity {PlayerId} has no Inventory component", playerEntity.Id);
+            return false;
+        }
+
+        var inventory = world.Get<Inventory>(playerEntity);
+        if (!inventory.Items.Contains(itemEntity.Id))
+        {
+            _logger.LogDebug("Item {ItemId} not in player inventory", itemEntity.Id);
+            return false;
+        }
+
+        // Check if item has Consumable component
+        if (!world.Has<Consumable>(itemEntity))
+        {
+            _logger.LogDebug("Item {ItemId} is not consumable", itemEntity.Id);
+            return false;
+        }
+
+        var consumable = world.Get<Consumable>(itemEntity);
+
+        // Check if effect can be applied (e.g., health not full for healing potions)
+        if (consumable.Effect == ConsumableEffect.RestoreHealth)
+        {
+            if (!world.Has<Health>(playerEntity))
+                return false;
+
+            var health = world.Get<Health>(playerEntity);
+            if (health.Current >= health.Maximum)
+            {
+                _logger.LogDebug("Player already at full health");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Uses a consumable item and applies its effect
+    /// Returns a message describing the result
+    /// </summary>
+    public string UseConsumable(World world, Entity playerEntity, Entity itemEntity)
+    {
+        if (!CanUseConsumable(world, playerEntity, itemEntity))
+        {
+            // Check specific failure reason
+            if (world.Has<Health>(playerEntity) && world.Has<Consumable>(itemEntity))
+            {
+                var health = world.Get<Health>(playerEntity);
+                var itemConsumable = world.Get<Consumable>(itemEntity);
+                
+                if (itemConsumable.Effect == ConsumableEffect.RestoreHealth && health.Current >= health.Maximum)
+                {
+                    return "Already at full health!";
+                }
+            }
+            return "Cannot use that item.";
+        }
+
+        var item = world.Get<Item>(itemEntity);
+        var consumable = world.Get<Consumable>(itemEntity);
+        string message = "";
+
+        // Apply consumable effect
+        switch (consumable.Effect)
+        {
+            case ConsumableEffect.RestoreHealth:
+                message = ApplyHealingEffect(world, playerEntity, consumable.EffectValue, item.Name);
+                break;
+            
+            case ConsumableEffect.RestoreMana:
+                message = $"You consume the {item.Name}. (Mana system not yet implemented)";
+                break;
+            
+            case ConsumableEffect.IncreaseSpeed:
+                message = $"You consume the {item.Name}. (Speed buff not yet implemented)";
+                break;
+            
+            case ConsumableEffect.CurePoison:
+                message = $"You consume the {item.Name}. (Poison system not yet implemented)";
+                break;
+            
+            default:
+                message = $"You consume the {item.Name}.";
+                break;
+        }
+
+        // Handle stackable items - decrement count or remove
+        if (world.Has<Stackable>(itemEntity))
+        {
+            var stackable = world.Get<Stackable>(itemEntity);
+            stackable.Count--;
+            
+            if (stackable.Count <= 0)
+            {
+                // Remove from inventory and destroy entity
+                RemoveItemFromInventory(world, playerEntity, itemEntity);
+                world.Destroy(itemEntity);
+            }
+            else
+            {
+                // Update stackable count
+                world.Set(itemEntity, stackable);
+            }
+        }
+        else
+        {
+            // Non-stackable item - remove from inventory and destroy
+            RemoveItemFromInventory(world, playerEntity, itemEntity);
+            world.Destroy(itemEntity);
+        }
+
+        _logger.LogInformation("Player used {ItemName}: {Message}", item.Name, message);
+        return message;
+    }
+
+    /// <summary>
+    /// Applies healing effect to the player
+    /// </summary>
+    private string ApplyHealingEffect(World world, Entity playerEntity, int healAmount, string itemName)
+    {
+        if (!world.Has<Health>(playerEntity))
+            return $"You consume the {itemName}, but nothing happens.";
+
+        var health = world.Get<Health>(playerEntity);
+        int oldHealth = health.Current;
+        
+        health.Current = Math.Min(health.Current + healAmount, health.Maximum);
+        world.Set(playerEntity, health);
+
+        int actualHealing = health.Current - oldHealth;
+        return $"You drink the {itemName} and recover {actualHealing} HP.";
+    }
+
+    /// <summary>
+    /// Removes an item from the player's inventory
+    /// </summary>
+    private void RemoveItemFromInventory(World world, Entity playerEntity, Entity itemEntity)
+    {
+        if (!world.Has<Inventory>(playerEntity))
+            return;
+
+        var inventory = world.Get<Inventory>(playerEntity);
+        inventory.Items.Remove(itemEntity.Id);
+        world.Set(playerEntity, inventory);
+    }
 }

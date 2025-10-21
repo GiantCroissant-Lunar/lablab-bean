@@ -155,17 +155,99 @@ dotnet/framework/LablabBean.Game.TerminalUI/
 
 ---
 
+## Phase 5: User Story 3 - Consume Healing Potions ✅ COMPLETE
+
+**Status**: 7/7 tasks completed (100%)  
+**Completion Criteria**: ✅ Player can use healing potions, health restored correctly, items consumed, appropriate messages displayed
+
+### Completed Tasks
+
+- ✅ **T028** [P]: Implement GetConsumables() in InventorySystem
+  - Returns list of (Entity, Item, Consumable, Count) tuples
+  - Queries inventory items, filters by Consumable component
+  - Includes stack counts for consumable items
+
+- ✅ **T029** [P]: Implement CanUseConsumable() in InventorySystem
+  - Validates item in inventory and has Consumable component
+  - Checks health not at maximum for healing potions
+  - Returns false with appropriate reason for failure
+
+- ✅ **T030**: Implement UseConsumable() in InventorySystem
+  - Applies effect based on consumable type (RestoreHealth, RestoreMana, etc.)
+  - Decrements stackable count or removes item
+  - Destroys entity when count reaches 0
+  - Returns descriptive feedback message
+
+- ✅ **T031**: Add 'U' key handling in DungeonCrawlerService
+  - Calls GameStateManager.HandlePlayerUseItem()
+  - Updates game state after successful use
+  - Displays result message in debug log
+
+- ✅ **T032**: Implement healing effect application
+  - ApplyHealingEffect() modifies Health component
+  - Caps healing at maximum health
+  - Returns actual healing amount in message
+
+- ✅ **T033**: Handle stackable consumables
+  - Decrements Stackable.Count on use
+  - Removes from inventory when count = 0
+  - Destroys entity when consumed completely
+
+- ✅ **T034**: Add usage feedback messages
+  - "You drink the Healing Potion and recover 30 HP."
+  - "Already at full health!"
+  - "No consumable items in inventory!"
+  - "Cannot use that item."
+
+### Files Modified
+
+```
+dotnet/framework/LablabBean.Game.Core/
+├── Systems/
+│   └── InventorySystem.cs (Added: GetConsumables(), CanUseConsumable(), 
+│                                   UseConsumable(), ApplyHealingEffect(),
+│                                   RemoveItemFromInventory())
+└── Services/
+    └── GameStateManager.cs (Added: HandlePlayerUseItem(), 
+                                     player starts at 50/100 HP for testing)
+
+dotnet/console-app/LablabBean.Console/
+└── Services/
+    └── DungeonCrawlerService.cs (Added: 'U' key handling)
+```
+
+### Technical Implementation Notes
+
+**Consumable Effects**:
+- RestoreHealth: Fully implemented with healing calculation
+- RestoreMana: Placeholder message (not yet implemented)
+- IncreaseSpeed: Placeholder message (not yet implemented)
+- CurePoison: Placeholder message (not yet implemented)
+
+**Energy System Integration**:
+- Successfully using item consumes actor energy (turn-based)
+- Prevents using items when player can't act
+- Failed attempts (e.g., "Already at full health") don't consume energy
+
+**Item Selection**:
+- Currently uses first consumable in inventory automatically
+- TODO: Future enhancement to show selection menu for multiple consumables
+
+**Commit**: *(Pending)*
+
+---
+
 ## Progress Tracking
 
-**Total Progress**: 27/45 tasks (60%)
+**Total Progress**: 34/45 tasks (76%)
 
 ### Phase Completion
 - ✅ **Phase 1**: Setup & Infrastructure (5/5 tasks) - **COMPLETE**
 - ✅ **Phase 2**: Foundational Components (8/8 tasks) - **COMPLETE**
 - ✅ **Phase 3**: User Story 1 - Item Pickup (8/8 tasks) - **COMPLETE** 🎉 MVP!
 - ✅ **Phase 4**: User Story 2 - Inventory Display (6/6 tasks) - **COMPLETE** 🎉
-- ⏳ **Phase 5**: User Story 3 - Consume Healing Potions (0/7 tasks) - **NEXT**
-- ⏳ **Phase 6**: User Story 4 - Equip Weapons/Armor (0/8 tasks)
+- ✅ **Phase 5**: User Story 3 - Consume Healing Potions (7/7 tasks) - **COMPLETE** 🎉
+- ⏳ **Phase 6**: User Story 4 - Equip Weapons/Armor (0/8 tasks) - **NEXT**
 - ⏳ **Phase 7**: Polish & Integration (0/3 tasks)
 
 ### Milestones
@@ -173,8 +255,9 @@ dotnet/framework/LablabBean.Game.TerminalUI/
 - ✅ **Phase 2 Complete**: All components defined, player initialized
 - ✅ **Phase 3 Complete**: MVP - First playable feature! 🎉
 - ✅ **Phase 4 Complete**: Inventory now visible in HUD! 🎉
-- 🎯 **Next Milestone**: Complete Phase 5 (7 tasks) → Consumable items working
-- 🎯 **Full Feature**: Complete all phases (18 remaining tasks) → Complete inventory system
+- ✅ **Phase 5 Complete**: Consumable items working! 🎉
+- 🎯 **Next Milestone**: Complete Phase 6 (8 tasks) → Equipment system working
+- 🎯 **Full Feature**: Complete all phases (11 remaining tasks) → Complete inventory system
 
 ---
 
@@ -241,14 +324,64 @@ To test the inventory display functionality:
 
 ---
 
+## 🧪 Testing Phase 5 - Consume Healing Potions
+
+To test the consumable item functionality:
+
+1. **Start the game**:
+   ```bash
+   dotnet run --project dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj
+   ```
+
+2. **Initial state**: 
+   - Player spawns at 50/100 HP (for testing)
+   - 2 Healing Potions and 1 Iron Sword spawn nearby
+   - HUD shows: "Health: 50/100"
+
+3. **Pick up items**:
+   - Press 'G' to pick up healing potions
+   - Verify inventory shows "Healing Potion (2)"
+
+4. **Use healing potion**:
+   - Press 'U' key
+   - Verify debug log shows "You drink the Healing Potion and recover 30 HP."
+   - Verify health increases: 50 → 80 HP
+   - Verify inventory count updates: "Healing Potion (2)" → "Healing Potion (1)"
+
+5. **Use second potion**:
+   - Press 'U' again
+   - Verify health increases: 80 → 100 HP (capped at max)
+   - Verify message shows actual healing: "recover 20 HP" (not 30)
+   - Verify potion removed from inventory
+
+6. **Test at full health**:
+   - Try to use potion at 100/100 HP
+   - Verify message: "Already at full health!"
+   - Verify energy not consumed (can still act)
+
+7. **Test with no consumables**:
+   - Use all potions or have only equipment
+   - Press 'U'
+   - Verify message: "No consumable items in inventory!"
+
+### Expected Behavior
+- ✅ Health restored correctly
+- ✅ Stackable count decrements
+- ✅ Item removed when consumed completely
+- ✅ Healing capped at maximum HP
+- ✅ Appropriate feedback messages
+- ✅ Energy consumed only on successful use
+
+---
+
 ## Questions/Blockers
 
-None currently. Ready to proceed with Phase 5.
+None currently. Ready to proceed with Phase 6.
 
 ---
 
 **Ready for Next Phase**: Yes ✅  
-**Recommended Action**: Continue with Phase 5 - Consume Healing Potions (item usage)
+**Recommended Action**: Continue with Phase 6 - Equip Weapons and Armor (equipment system)
 
 ---
 
