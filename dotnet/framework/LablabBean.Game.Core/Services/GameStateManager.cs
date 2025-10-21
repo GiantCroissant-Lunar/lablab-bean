@@ -95,7 +95,8 @@ public class GameStateManager : IDisposable
             new Visible(true),
             new BlocksMovement(true),
             new Name("Player"),
-            new Inventory()
+            new Inventory(maxCapacity: 20),
+            new EquipmentSlots()
         );
 
         _logger.LogInformation("Player created at {Position}", playerSpawn);
