@@ -59,6 +59,14 @@ repos:
   # Custom hooks (also available in git-hooks/ directory)
   - repo: local
     hooks:
+      # Prevent Windows 'nul' file from being committed
+      - id: prevent-nul-file
+        name: Prevent Windows nul file
+        entry: bash git-hooks/prevent-nul-file
+        language: system
+        pass_filenames: false
+        always_run: true
+
       # Validate agent pointer files are up to date
       - id: validate-pointer-files
         name: Validate agent pointer files

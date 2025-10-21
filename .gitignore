@@ -18,6 +18,9 @@ dist/
 Thumbs.db
 desktop.ini
 
+# Windows command redirection file (created by 2>nul)
+nul
+
 # Temporary files
 *.tmp
 *.temp
