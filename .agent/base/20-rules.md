@@ -126,3 +126,32 @@ Agents MUST use project task runner (`task` command) for common operations when 
 **Rationale**: Standardizes commands across development environments and agents.
 
 ---
+
+## R-TOOL-003: Spec Maintenance Strategy
+When updating implemented features, agents MUST follow the appropriate spec maintenance strategy.
+
+**UPDATE existing spec when:**
+- Bug fixes within original scope
+- Small adjustments (< 1 day work)
+- Clarifications of existing requirements
+- Minor enhancements that fit existing user stories
+
+**CREATE new spec when:**
+- New major feature (> 2 days work)
+- New user journeys not in original spec
+- Breaking changes to core behavior
+- Feature depends on but significantly extends prior spec
+
+**Version bumps:**
+- `v1.0.X` → Bug fixes and clarifications
+- `v1.X.0` → Minor enhancements (new requirements, new edge cases)
+- `vX.0.0` → Major changes (usually trigger new spec instead of update)
+
+**Spec versioning format:**
+Add changelog section to spec file documenting all versions and changes.
+
+**Reference**: `.agent/integrations/spec-kit.md`
+
+**Rationale**: Maintains traceability between specifications and implementations while avoiding spec proliferation.
+
+---

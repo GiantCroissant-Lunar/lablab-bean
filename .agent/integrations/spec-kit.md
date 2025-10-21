@@ -1,10 +1,10 @@
 # Spec-Kit Integration
 
 **Type**: Development Methodology
-**Version**: 1.1.0
+**Version**: 1.2.0
 **Status**: Active
 **Last Updated**: 2025-10-21
-**Rule Reference**: R-TOOL-001
+**Rule Reference**: R-TOOL-001, R-TOOL-003
 
 ## Overview
 
@@ -446,8 +446,65 @@ This integration is designed to work with **any AI coding assistant**:
    - **Claude/Copilot:** `/speckit.implement`
    - **Other:** `task speckit:implement`
 
+### Maintaining Specs After Implementation (Any Agent)
+
+Follow **R-TOOL-003** for spec maintenance strategy:
+
+**When to UPDATE existing spec:**
+
+```bash
+# Scenario: Bug fix or small adjustment
+# Action: Update the existing spec file
+cd specs/001-inventory-system/
+# Edit spec.md, increment version (v1.0.0 → v1.0.1 or v1.1.0)
+# Add changelog entry at bottom of spec
+```
+
+**Examples of updates:**
+- Bug fixes: "Pickup doesn't work on diagonal tiles" → v1.0.1
+- Small adjustments: "Change healing potion 30 HP → 40 HP" → v1.0.1
+- Minor enhancements: "Add drop item feature" → v1.1.0
+
+**When to CREATE new spec:**
+
+```bash
+# Scenario: Major new feature or breaking change
+# Action: Create new spec with new number
+/speckit.specify   # or: task speckit:specify
+# Describe: "Item crafting system" → Creates specs/002-item-crafting/
+```
+
+**Examples of new specs:**
+- New major features: Item crafting, trading, shops
+- Breaking changes: Complete UI redesign
+- Different user journeys: Multi-player inventory sharing
+
+**Version Changelog Format:**
+
+Add to bottom of spec file after implementation:
+
+```markdown
 ## Version History
 
+**Current Version**: v1.0.0
+
+### v1.0.0 (2025-10-21) - Initial Release
+- All P1/P2/P3 user stories implemented
+- Item pickup, display, consumption, and equipment
+
+### v1.0.1 (2025-10-25) - Bug Fix
+- Fixed pickup detection for diagonal tiles (FR-003 clarification)
+
+### v1.1.0 (2025-10-28) - Drop Items Enhancement
+- Added P4 user story: Drop items from inventory
+- Added FR-017: Players can drop items with 'D' key
+```
+
+**Reference:** See `.agent/base/20-rules.md` (R-TOOL-003)
+
+## Version History
+
+- **1.2.0** (2025-10-21): Added spec maintenance strategy (R-TOOL-003)
 - **1.1.0** (2025-10-21): Added multi-agent support and task runner integration
 - **1.0.0** (2025-10-21): Initial integration with .agent/ system
 
