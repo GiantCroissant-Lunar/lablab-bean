@@ -4,6 +4,7 @@ using LablabBean.Game.Core.Systems;
 using LablabBean.Game.Core.Worlds;
 using LablabBean.Game.TerminalUI.Services;
 using LablabBean.Infrastructure.Extensions;
+using LablabBean.Plugins.Core;
 using LablabBean.Reactive.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,6 +18,9 @@ try
         {
             services.AddLablabBeanInfrastructure(context.Configuration);
             services.AddLablabBeanReactive();
+
+            // Add plugin system
+            services.AddPluginSystem(context.Configuration);
 
             // Add game framework services
             services.AddSingleton<GameWorldManager>();

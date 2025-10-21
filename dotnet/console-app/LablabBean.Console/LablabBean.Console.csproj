@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\framework\LablabBean.Reactive\LablabBean.Reactive.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Game.TerminalUI\LablabBean.Game.TerminalUI.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Core\LablabBean.Plugins.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
