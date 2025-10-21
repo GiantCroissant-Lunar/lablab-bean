@@ -23,10 +23,20 @@ public static class ServiceCollectionExtensions
             services.Configure<PluginOptions>(configuration.GetSection(PluginOptions.SectionName));
         }
 
+        // Core plugin services
         services.AddSingleton<PluginRegistry>();
         services.AddSingleton<ServiceRegistry>();
         services.AddSingleton<IPluginRegistry>(sp => sp.GetRequiredService<PluginRegistry>());
         services.AddSingleton<IRegistry>(sp => sp.GetRequiredService<ServiceRegistry>());
+        
+        // Observability services
+        services.AddSingleton<PluginSystemMetrics>();
+        services.AddSingleton<PluginHealthChecker>();
+        services.AddSingleton<PluginAdminService>();
+        
+        // Security services
+        services.AddSingleton<Security.PluginSecurityManager>();
+        services.AddSingleton<Security.SecurityAuditLog>();
         
         services.AddSingleton(sp =>
         {
@@ -39,7 +49,8 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<PluginRegistry>(),
                 sp.GetRequiredService<ServiceRegistry>(),
                 options.HotReload,
-                options.Profile
+                options.Profile,
+                sp.GetRequiredService<PluginSystemMetrics>()
             );
         });
 
