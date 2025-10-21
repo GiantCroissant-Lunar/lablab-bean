@@ -2,9 +2,13 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <ItemGroup>
     <!-- Microsoft Extensions -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
@@ -19,24 +23,19 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-
     <!-- Reactive Extensions -->
     <PackageVersion Include="System.Reactive" Version="6.0.0" />
     <PackageVersion Include="ReactiveUI" Version="20.1.1" />
     <PackageVersion Include="ReactiveUI.Fody" Version="19.5.31" />
-
     <!-- Cysharp Libraries -->
     <PackageVersion Include="ObservableCollections" Version="3.0.1" />
     <PackageVersion Include="MessagePipe" Version="1.8.1" />
     <PackageVersion Include="R3" Version="1.2.8" />
-
     <!-- Terminal.Gui -->
     <PackageVersion Include="Terminal.Gui" Version="2.0.0-pre.2" />
-
     <!-- SadConsole -->
     <PackageVersion Include="SadConsole" Version="10.0.3" />
     <PackageVersion Include="SadConsole.Host.MonoGame" Version="10.0.3" />
-
     <!-- Utilities -->
     <PackageVersion Include="Serilog" Version="3.1.1" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
@@ -44,23 +43,18 @@
     <PackageVersion Include="Serilog.Sinks.Console" Version="5.0.1" />
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
-    
     <!-- Build Tools -->
     <PackageVersion Include="GitVersion.MsBuild" Version="6.0.0" />
-
     <!-- ECS and Game Libraries -->
     <PackageVersion Include="Arch" Version="2.0.0" />
     <PackageVersion Include="Arch.System" Version="1.1.0" />
     <PackageVersion Include="Arch.System.SourceGenerator" Version="1.1.0" />
-
     <!-- Audio -->
     <PackageVersion Include="LibVLCSharp" Version="3.9.0" />
     <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
-
     <!-- Roguelike Libraries -->
     <PackageVersion Include="GoRogue" Version="3.0.0-beta09" />
     <PackageVersion Include="TheSadRogue.Primitives" Version="1.6.0-rc3" />
-
     <!-- Testing -->
     <PackageVersion Include="xunit" Version="2.5.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.3" />
