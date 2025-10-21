@@ -19,6 +19,18 @@ public sealed class PluginLoadContext : AssemblyLoadContext
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
+        // Share contracts assembly between plugin and host (avoid ALC boundary issues)
+        if (assemblyName.Name == "LablabBean.Plugins.Contracts")
+        {
+            return null; // Let the default ALC handle it
+        }
+
+        // Share Microsoft.Extensions.* assemblies (logging, DI, config abstractions)
+        if (assemblyName.Name?.StartsWith("Microsoft.Extensions.") == true)
+        {
+            return null; // Let the default ALC handle it
+        }
+
         var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
         if (assemblyPath != null)
         {

@@ -58,4 +58,30 @@ public sealed class PluginRegistry : IPluginRegistry
             }
         }
     }
+
+    // Helper methods for observability
+    internal IEnumerable<PluginDescriptor> GetAllPlugins() => GetAll();
+    internal PluginMetadata? GetContext(string pluginName) => GetById(pluginName) is var desc && desc != null 
+        ? new PluginMetadata 
+        { 
+            Name = desc.Name, 
+            Version = desc.Version, 
+            Profile = desc.Manifest?.Id ?? string.Empty,
+            LoadedAt = desc.State == PluginState.Started ? System.DateTime.UtcNow : null,
+            LoadError = desc.FailureReason
+        } 
+        : null;
+}
+
+/// <summary>
+/// Simplified metadata for health checks
+/// </summary>
+public class PluginMetadata
+{
+    public string Name { get; init; } = string.Empty;
+    public string Version { get; init; } = string.Empty;
+    public string Profile { get; init; } = string.Empty;
+    public System.DateTime? LoadedAt { get; init; }
+    public string? LoadError { get; init; }
+    public PluginLoadContext? AssemblyLoadContext { get; init; }
 }

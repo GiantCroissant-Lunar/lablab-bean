@@ -18,20 +18,24 @@ public sealed class PluginLoaderHostedService : IHostedService, IDisposable
     private readonly ILogger<PluginLoaderHostedService> _logger;
     private readonly IConfiguration _configuration;
     private readonly PluginLoader _pluginLoader;
+    private readonly PluginSystemMetrics _metrics;
 
     public PluginLoaderHostedService(
         ILogger<PluginLoaderHostedService> logger,
         IConfiguration configuration,
-        PluginLoader pluginLoader)
+        PluginLoader pluginLoader,
+        PluginSystemMetrics metrics)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         _pluginLoader = pluginLoader ?? throw new ArgumentNullException(nameof(pluginLoader));
+        _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting plugin loader service");
+        _metrics.StartSystem();
 
         var pluginPathsConfig = _configuration.GetSection("Plugins:Paths").Get<string[]>();
         var pluginPaths = pluginPathsConfig ?? Array.Empty<string>();
@@ -51,6 +55,7 @@ public sealed class PluginLoaderHostedService : IHostedService, IDisposable
         if (expandedPaths.Count == 0)
         {
             _logger.LogWarning("No plugin paths configured. Plugins will not be loaded.");
+            _metrics.CompleteSystem();
             return;
         }
 
@@ -61,10 +66,14 @@ public sealed class PluginLoaderHostedService : IHostedService, IDisposable
         try
         {
             var loadedCount = await _pluginLoader.DiscoverAndLoadAsync(expandedPaths, cancellationToken);
+            _metrics.CompleteSystem();
+            
             _logger.LogInformation("Plugin loader service started. Loaded {LoadedCount} plugin(s)", loadedCount);
+            _logger.LogInformation("\n{MetricsSummary}", _metrics.GetSummary());
         }
         catch (Exception ex)
         {
+            _metrics.CompleteSystem();
             _logger.LogError(ex, "Failed to load plugins during startup");
             throw;
         }

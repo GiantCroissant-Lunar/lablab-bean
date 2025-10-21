@@ -27,6 +27,7 @@ public sealed class PluginLoader : IDisposable
     private readonly Dictionary<string, LoadedPlugin> _loadedPlugins = new();
     private readonly bool _enableHotReload;
     private readonly string _profile;
+    private readonly PluginSystemMetrics? _metrics;
     private bool _disposed;
 
     public PluginLoader(
@@ -37,7 +38,8 @@ public sealed class PluginLoader : IDisposable
         PluginRegistry pluginRegistry,
         ServiceRegistry serviceRegistry,
         bool enableHotReload = false,
-        string profile = "dotnet.console")
+        string profile = "dotnet.console",
+        PluginSystemMetrics? metrics = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
@@ -47,6 +49,7 @@ public sealed class PluginLoader : IDisposable
         _serviceRegistry = serviceRegistry ?? throw new ArgumentNullException(nameof(serviceRegistry));
         _enableHotReload = enableHotReload;
         _profile = profile;
+        _metrics = metrics;
         _dependencyResolver = new DependencyResolver(_logger);
     }
 
@@ -62,15 +65,17 @@ public sealed class PluginLoader : IDisposable
 
         foreach (var pluginPath in pluginPaths)
         {
-            if (!Directory.Exists(pluginPath))
+            var absolutePath = Path.GetFullPath(pluginPath);
+            
+            if (!Directory.Exists(absolutePath))
             {
-                _logger.LogWarning("Plugin path does not exist: {PluginPath}", pluginPath);
+                _logger.LogWarning("Plugin path does not exist: {PluginPath}", absolutePath);
                 continue;
             }
 
-            _logger.LogInformation("Scanning for plugins in: {PluginPath}", pluginPath);
+            _logger.LogInformation("Scanning for plugins in: {PluginPath}", absolutePath);
 
-            var pluginDirs = Directory.GetDirectories(pluginPath);
+            var pluginDirs = Directory.GetDirectories(absolutePath);
             foreach (var pluginDir in pluginDirs)
             {
                 var manifestPath = Path.Combine(pluginDir, "plugin.json");
@@ -137,6 +142,12 @@ public sealed class PluginLoader : IDisposable
             {
                 _logger.LogError(ex, "Failed to load plugin: {PluginId}", pluginId);
                 _pluginRegistry.UpdateState(pluginId, PluginState.Failed, ex.Message);
+                
+                var failedMetrics = _metrics?.Plugins.FirstOrDefault(m => m.PluginName == pluginId);
+                if (failedMetrics != null)
+                {
+                    _metrics?.CompletePluginLoad(failedMetrics, false, ex.Message);
+                }
             }
         }
 
@@ -147,6 +158,8 @@ public sealed class PluginLoader : IDisposable
     {
         var sw = Stopwatch.StartNew();
         _logger.LogInformation("Loading plugin: {PluginId}", manifest.Id);
+
+        var pluginMetrics = _metrics?.StartPluginLoad(manifest.Id, _profile);
 
         var descriptor = new PluginDescriptor
         {
@@ -169,8 +182,8 @@ public sealed class PluginLoader : IDisposable
                 var parts = entryPoint.Split(',');
                 if (parts.Length == 2)
                 {
-                    typeName = parts[0].Trim();
-                    assemblyName = parts[1].Trim();
+                    assemblyName = parts[0].Trim();
+                    typeName = parts[1].Trim();
                 }
             }
         }
@@ -206,7 +219,11 @@ public sealed class PluginLoader : IDisposable
             throw new InvalidOperationException($"Plugin type not found: {typeName}");
         }
 
-        if (!typeof(IPlugin).IsAssignableFrom(pluginType))
+        // Check if type implements IPlugin by name (cross-ALC compatibility)
+        var implementsIPlugin = pluginType.GetInterfaces()
+            .Any(i => i.FullName == typeof(IPlugin).FullName);
+            
+        if (!implementsIPlugin)
         {
             throw new InvalidOperationException($"Plugin type does not implement IPlugin: {typeName}");
         }
@@ -231,6 +248,13 @@ public sealed class PluginLoader : IDisposable
             Logger = pluginLogger
         };
         _loadedPlugins[manifest.Id] = loadedPlugin;
+
+        if (pluginMetrics != null)
+        {
+            pluginMetrics.Version = manifest.Version;
+            pluginMetrics.DependencyCount = manifest.Dependencies?.Count ?? 0;
+            _metrics?.CompletePluginLoad(pluginMetrics, true);
+        }
 
         sw.Stop();
         _logger.LogInformation("Plugin loaded: {PluginId} in {ElapsedMs}ms", manifest.Id, sw.ElapsedMilliseconds);
