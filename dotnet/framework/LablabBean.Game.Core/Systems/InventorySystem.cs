@@ -139,4 +139,64 @@ public class InventorySystem
         _logger.LogInformation("Picked up {ItemName}{Count}", item.Name, countStr);
         return $"Picked up {item.Name}{countStr}";
     }
+
+    /// <summary>
+    /// Gets all items in the player's inventory
+    /// Returns list of (Entity, Item, optional Stackable count, equipped status)
+    /// </summary>
+    public List<(Entity ItemEntity, Item Item, int Count, bool IsEquipped)> GetInventoryItems(World world, Entity playerEntity)
+    {
+        var inventoryItems = new List<(Entity, Item, int, bool)>();
+
+        if (!world.Has<Inventory>(playerEntity))
+            return inventoryItems;
+
+        var inventory = world.Get<Inventory>(playerEntity);
+
+        foreach (var itemId in inventory.Items)
+        {
+            // Note: In Arch, we store entity IDs as ints, but need Entity struct for queries
+            // We'll query all items and match by ID since we can't reconstruct Entity from just ID
+            var query = new QueryDescription().WithAll<Item>();
+            var found = false;
+            
+            world.Query(in query, (Entity entity, ref Item item) =>
+            {
+                if (entity.Id == itemId)
+                {
+                    var count = world.Has<Stackable>(entity) ? world.Get<Stackable>(entity).Count : 1;
+                    var equipped = IsEquipped(world, playerEntity, entity);
+                    inventoryItems.Add((entity, item, count, equipped));
+                    found = true;
+                }
+            });
+            
+            if (!found)
+            {
+                _logger.LogWarning("Item entity {ItemId} in inventory not found in world", itemId);
+            }
+        }
+
+        return inventoryItems;
+    }
+
+    /// <summary>
+    /// Checks if an item is currently equipped
+    /// </summary>
+    public bool IsEquipped(World world, Entity playerEntity, Entity itemEntity)
+    {
+        if (!world.Has<EquipmentSlots>(playerEntity))
+            return false;
+
+        var equipment = world.Get<EquipmentSlots>(playerEntity);
+
+        // Check if this item entity ID is in any equipment slot
+        foreach (var slot in equipment.Slots.Values)
+        {
+            if (slot == itemEntity.Id)
+                return true;
+        }
+
+        return false;
+    }
 }

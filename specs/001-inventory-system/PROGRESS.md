@@ -86,16 +86,84 @@ dotnet/framework/LablabBean.Game.Core/
 
 ---
 
+## Phase 4: User Story 2 - Inventory Display ✅ COMPLETE
+
+**Status**: 6/6 tasks completed (100%)  
+**Completion Criteria**: ✅ Inventory panel displays all items with correct formatting, updates in real-time
+
+### Completed Tasks
+
+- ✅ **T022** [P]: Create inventory FrameView in HudService
+  - Added `_inventoryFrame` and `_inventoryLabel` to HudService
+  - Positioned below stats display (Y=11)
+  - Title shows "Inventory (0/20)" format
+
+- ✅ **T023** [P]: Implement GetInventoryItems() in InventorySystem
+  - Returns list of (Entity, Item, Count, IsEquipped) tuples
+  - Queries world for all items, matches by entity ID
+  - Handles stackable items (returns count)
+  - Handles missing items gracefully with warning log
+
+- ✅ **T024**: Implement IsEquipped() in InventorySystem
+  - Checks if item entity ID exists in any EquipmentSlots
+  - Returns false if player has no EquipmentSlots component
+  - Used by GetInventoryItems() to mark equipped items
+
+- ✅ **T025**: Implement UpdateInventory() in HudService
+  - Called from Update() method after stats update
+  - Formats items as "Name (count) [E]" for equipped items
+  - Shows "(Empty)" when no items in inventory
+  - Displays one item per line with proper indentation
+
+- ✅ **T026**: Add inventory count display to HUD title
+  - Frame title shows "Inventory (5/20)" format
+  - Shows "(FULL)" warning when at MaxCapacity
+  - Updates dynamically with inventory changes
+
+- ✅ **T027**: Call UpdateInventory() after every inventory operation
+  - Integrated into HudService.Update() main loop
+  - Already called after pickup via DungeonCrawlerService.Update()
+  - Real-time updates guaranteed after any inventory change
+
+### Files Modified
+
+```
+dotnet/framework/LablabBean.Game.Core/
+└── Systems/
+    └── InventorySystem.cs (Added: GetInventoryItems(), IsEquipped())
+
+dotnet/framework/LablabBean.Game.TerminalUI/
+└── Services/
+    └── HudService.cs (Added: inventory UI, UpdateInventory(), InventorySystem dependency)
+```
+
+### Technical Implementation Notes
+
+**Inventory Item Retrieval Challenge**: 
+- Arch ECS stores entity IDs as `int`, but queries need `Entity` structs
+- Solution: Query all items with Item component, filter by matching entity.Id
+- Alternative considered: Store Entity references directly (rejected due to struct mutability)
+
+**Display Format**:
+- Single item: "Healing Potion"
+- Stackable: "Healing Potion (3)"
+- Equipped: "Iron Sword [E]"
+- Empty: "(Empty)"
+
+**Commit**: *(Pending)*
+
+---
+
 ## Progress Tracking
 
-**Total Progress**: 21/45 tasks (47%)
+**Total Progress**: 27/45 tasks (60%)
 
 ### Phase Completion
 - ✅ **Phase 1**: Setup & Infrastructure (5/5 tasks) - **COMPLETE**
 - ✅ **Phase 2**: Foundational Components (8/8 tasks) - **COMPLETE**
 - ✅ **Phase 3**: User Story 1 - Item Pickup (8/8 tasks) - **COMPLETE** 🎉 MVP!
-- 🚧 **Phase 4**: User Story 2 - Inventory Display (0/6 tasks) - **NEXT**
-- ⏳ **Phase 5**: User Story 3 - Consume Healing Potions (0/7 tasks)
+- ✅ **Phase 4**: User Story 2 - Inventory Display (6/6 tasks) - **COMPLETE** 🎉
+- ⏳ **Phase 5**: User Story 3 - Consume Healing Potions (0/7 tasks) - **NEXT**
 - ⏳ **Phase 6**: User Story 4 - Equip Weapons/Armor (0/8 tasks)
 - ⏳ **Phase 7**: Polish & Integration (0/3 tasks)
 
@@ -103,8 +171,9 @@ dotnet/framework/LablabBean.Game.Core/
 - ✅ **Phase 1 Complete**: Project structure ready
 - ✅ **Phase 2 Complete**: All components defined, player initialized
 - ✅ **Phase 3 Complete**: MVP - First playable feature! 🎉
-- 🎯 **Next Milestone**: Complete Phase 4 (6 tasks) → Inventory display in HUD
-- 🎯 **Full Feature**: Complete all phases (24 remaining tasks) → Complete inventory system
+- ✅ **Phase 4 Complete**: Inventory now visible in HUD! 🎉
+- 🎯 **Next Milestone**: Complete Phase 5 (7 tasks) → Consumable items working
+- 🎯 **Full Feature**: Complete all phases (18 remaining tasks) → Complete inventory system
 
 ---
 
@@ -136,12 +205,12 @@ Phase 3 implementation needs:
 
 ## Questions/Blockers
 
-None currently. Ready to proceed with Phase 2.
+None currently. Ready to proceed with Phase 5.
 
 ---
 
 **Ready for Next Phase**: Yes ✅  
-**Recommended Action**: Continue with Phase 4 - Inventory Display (HUD integration)
+**Recommended Action**: Continue with Phase 5 - Consume Healing Potions (item usage)
 
 ---
 
