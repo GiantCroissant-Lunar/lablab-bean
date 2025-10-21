@@ -241,7 +241,7 @@ public class DungeonCrawlerService : IDisposable
         }
         
         // Also add to HUD messages for visibility
-        _hudService.AddMessage(message);
+        // _hudService.AddMessage(message); // Removed - using Debug Log instead
     }
 
     /// <summary>
@@ -254,10 +254,10 @@ public class DungeonCrawlerService : IDisposable
         _gameStateManager.InitializeNewGame(80, 40);
         _isRunning = true;
 
-        _hudService.AddMessage("Welcome to the Dungeon!");
-        _hudService.AddMessage("Use arrow keys or WASD to move.");
-        _hudService.AddMessage("Press 'E' to switch to edit mode.");
-        _hudService.AddMessage("Press 'Q' to quit.");
+        // _hudService.AddMessage("Welcome to the Dungeon!"); // Removed - using Debug Log instead
+        // _hudService.AddMessage("Use arrow keys or WASD to move."); // Removed - using Debug Log instead
+        // _hudService.AddMessage("Press 'E' to switch to edit mode."); // Removed - using Debug Log instead
+        // _hudService.AddMessage("Press 'Q' to quit."); // Removed - using Debug Log instead
 
         // Don't call Update here - it will be called after layout
         // Update();
@@ -394,7 +394,7 @@ public class DungeonCrawlerService : IDisposable
 
         _gameStateManager.SwitchMode(newMode);
 
-        _hudService.AddMessage($"Switched to {newMode} mode");
+        // _hudService.AddMessage($"Switched to {newMode} mode"); // Removed - using Debug Log instead
         _logger.LogInformation("Toggled to {Mode} mode", newMode);
 
         Update();
@@ -420,3 +420,4 @@ public class DungeonCrawlerService : IDisposable
         _disposed = true;
     }
 }
+

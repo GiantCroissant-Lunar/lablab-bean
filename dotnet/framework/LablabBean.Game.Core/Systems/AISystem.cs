@@ -30,21 +30,40 @@ public class AISystem
 
     /// <summary>
     /// Processes AI for all entities with AI components
+    /// Only activates monsters within aggro range of player
     /// </summary>
     public void ProcessAI(World world, DungeonMap map)
     {
+        const int AggroRange = 15;  // Only activate monsters within 15 tiles
+
         var query = new QueryDescription().WithAll<AI, Actor, Position>();
+        var playerPos = GetPlayerPosition(world);
+
+        if (playerPos == null)
+        {
+            _logger.LogWarning("No player found, skipping AI processing");
+            return;
+        }
 
         var aiActions = new List<(Entity entity, AIBehavior behavior, Position position)>();
 
-        // Collect all AI entities
+        // Collect AI entities within aggro range
         world.Query(in query, (Entity entity, ref AI ai, ref Actor actor, ref Position pos) =>
         {
             if (actor.CanAct)
             {
-                aiActions.Add((entity, ai.Behavior, pos));
+                // Calculate distance to player
+                double distance = map.GetDistance(pos.Point, playerPos.Value.Point);
+
+                // Only add to actions if within aggro range
+                if (distance <= AggroRange)
+                {
+                    aiActions.Add((entity, ai.Behavior, pos));
+                }
             }
         });
+
+        _logger.LogDebug("Processing AI for {Count} entities within aggro range", aiActions.Count);
 
         // Process each AI entity
         foreach (var (entity, behavior, position) in aiActions)

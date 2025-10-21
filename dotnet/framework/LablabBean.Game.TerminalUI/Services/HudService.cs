@@ -16,15 +16,12 @@ public class HudService
     private readonly FrameView _hudFrame;
     private readonly Label _healthLabel;
     private readonly Label _statsLabel;
-    private readonly ListView _messageList;
-    private readonly List<string> _messages;
 
     public View HudView => _hudFrame;
 
     public HudService(ILogger<HudService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _messages = new List<string>();
 
         // Create the main HUD frame (on the right side)
         _hudFrame = new FrameView("HUD")
@@ -41,7 +38,7 @@ public class HudService
         {
             X = 1,
             Y = 1,
-            Width = Dim.Fill(1),
+            Width = Dim.Fill(2),  // Leave margin for frame border
             Height = 3,
             Text = "Health: --/--"
         };
@@ -51,32 +48,12 @@ public class HudService
         {
             X = 1,
             Y = 5,
-            Width = Dim.Fill(1),
-            Height = 5,
+            Width = Dim.Fill(2),  // Leave margin for frame border
+            Height = Dim.Fill(2),  // Fill remaining space
             Text = "Stats:\n  ATK: --\n  DEF: --\n  SPD: --"
         };
 
-        // Message log
-        var messageFrame = new FrameView("Messages")
-        {
-            X = 1,
-            Y = 12,
-            Width = Dim.Fill(1),
-            Height = Dim.Fill(1)
-        };
-
-        _messageList = new ListView(_messages)
-        {
-            X = 0,
-            Y = 0,
-            Width = Dim.Fill(),
-            Height = Dim.Fill(),
-            CanFocus = false  // Don't steal focus from the game window
-        };
-
-        messageFrame.Add(_messageList);
-
-        _hudFrame.Add(_healthLabel, _statsLabel, messageFrame);
+        _hudFrame.Add(_healthLabel, _statsLabel);
     }
 
     /// <summary>
@@ -120,33 +97,5 @@ public class HudService
         int empty = barLength - filled;
 
         return "[" + new string('=', filled) + new string(' ', empty) + "]";
-    }
-
-    /// <summary>
-    /// Adds a message to the message log
-    /// </summary>
-    public void AddMessage(string message)
-    {
-        _messages.Add(message);
-
-        // Keep only last 100 messages
-        if (_messages.Count > 100)
-        {
-            _messages.RemoveAt(0);
-        }
-
-        // Scroll to bottom
-        _messageList.SelectedItem = _messages.Count - 1;
-
-        _logger.LogDebug("Message added: {Message}", message);
-    }
-
-    /// <summary>
-    /// Clears all messages
-    /// </summary>
-    public void ClearMessages()
-    {
-        _messages.Clear();
-        _messageList.SetNeedsDisplay();
     }
 }

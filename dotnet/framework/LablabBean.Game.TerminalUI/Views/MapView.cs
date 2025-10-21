@@ -38,10 +38,14 @@ public class MapView : View
         if (_buffer == null)
             return;
 
+        // Ensure we don't draw outside viewport bounds
+        int maxRows = Math.Min(_bufferHeight, viewport.Height);
+        int maxCols = Math.Min(_bufferWidth, viewport.Width);
+
         // Draw character by character using AddRune
-        for (int row = 0; row < _bufferHeight && row < viewport.Height; row++)
+        for (int row = 0; row < maxRows; row++)
         {
-            for (int col = 0; col < _bufferWidth && col < viewport.Width; col++)
+            for (int col = 0; col < maxCols; col++)
             {
                 char ch = _buffer[row, col];
                 AddRune(col, row, new Rune(ch));
