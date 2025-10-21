@@ -192,9 +192,20 @@ public class ProxyServiceGenerator : IIncrementalGenerator
         if (selectionStrategyAttribute.ConstructorArguments.Length > 0)
         {
             var modeArg = selectionStrategyAttribute.ConstructorArguments[0];
-            if (modeArg.Kind == TypedConstantKind.Enum)
+            if (modeArg.Kind == TypedConstantKind.Enum && modeArg.Type is INamedTypeSymbol enumType)
             {
-                return modeArg.Value?.ToString();
+                // Get the enum member name from the value
+                var enumValue = modeArg.Value;
+                if (enumValue != null)
+                {
+                    foreach (var member in enumType.GetMembers().OfType<IFieldSymbol>())
+                    {
+                        if (member.HasConstantValue && Equals(member.ConstantValue, enumValue))
+                        {
+                            return member.Name;
+                        }
+                    }
+                }
             }
         }
 
@@ -233,6 +244,22 @@ public class ProxyServiceGenerator : IIncrementalGenerator
             GenerateMethod(sb, method, serviceType, selectionMode);
         }
 
+        // Generate properties
+        var properties = GetAllInterfaceMembers(serviceType).OfType<IPropertySymbol>();
+
+        foreach (var property in properties)
+        {
+            GenerateProperty(sb, property, serviceType, selectionMode);
+        }
+
+        // Generate events
+        var events = GetAllInterfaceMembers(serviceType).OfType<IEventSymbol>();
+
+        foreach (var evt in events)
+        {
+            GenerateEvent(sb, evt, serviceType, selectionMode);
+        }
+
         sb.AppendLine("    }");
         sb.AppendLine("}");
 
@@ -260,6 +287,13 @@ public class ProxyServiceGenerator : IIncrementalGenerator
     {
         sb.AppendLine();
 
+        // XML documentation (T068)
+        var xmlDoc = method.GetDocumentationCommentXml();
+        if (!string.IsNullOrWhiteSpace(xmlDoc))
+        {
+            GenerateXmlDocumentation(sb, xmlDoc, "        ");
+        }
+
         // Method signature
         sb.Append("        ");
         sb.Append("public ");
@@ -271,6 +305,20 @@ public class ProxyServiceGenerator : IIncrementalGenerator
         // Method name
         sb.Append(method.Name);
 
+        // Generic type parameters (T034)
+        if (method.IsGenericMethod)
+        {
+            sb.Append("<");
+            var typeParams = method.TypeParameters;
+            for (int i = 0; i < typeParams.Length; i++)
+            {
+                if (i > 0)
+                    sb.Append(", ");
+                sb.Append(typeParams[i].Name);
+            }
+            sb.Append(">");
+        }
+
         // Parameters
         sb.Append("(");
         var parameters = method.Parameters;
@@ -280,11 +328,82 @@ public class ProxyServiceGenerator : IIncrementalGenerator
                 sb.Append(", ");
 
             var param = parameters[i];
+            
+            // Parameter modifiers: ref/out/in/params (T038-T041)
+            if (param.RefKind == RefKind.Ref)
+                sb.Append("ref ");
+            else if (param.RefKind == RefKind.Out)
+                sb.Append("out ");
+            else if (param.RefKind == RefKind.In)
+                sb.Append("in ");
+            
+            if (param.IsParams)
+                sb.Append("params ");
+            
             sb.Append(param.Type.ToDisplayString());
             sb.Append(" ");
             sb.Append(param.Name);
+            
+            // Default parameter values (T044)
+            if (param.HasExplicitDefaultValue)
+            {
+                sb.Append(" = ");
+                if (param.ExplicitDefaultValue == null)
+                {
+                    if (param.Type.IsValueType)
+                        sb.Append("default");
+                    else
+                        sb.Append("null");
+                }
+                else if (param.ExplicitDefaultValue is string strValue)
+                {
+                    sb.Append($"\"{strValue}\"");
+                }
+                else if (param.ExplicitDefaultValue is bool boolValue)
+                {
+                    sb.Append(boolValue ? "true" : "false");
+                }
+                else
+                {
+                    sb.Append(param.ExplicitDefaultValue.ToString());
+                }
+            }
         }
-        sb.AppendLine(")");
+        sb.Append(")");
+
+        // Type constraints (T035)
+        if (method.IsGenericMethod)
+        {
+            foreach (var typeParam in method.TypeParameters)
+            {
+                var constraints = new List<string>();
+                
+                if (typeParam.HasReferenceTypeConstraint)
+                    constraints.Add("class");
+                if (typeParam.HasValueTypeConstraint)
+                    constraints.Add("struct");
+                if (typeParam.HasUnmanagedTypeConstraint)
+                    constraints.Add("unmanaged");
+                if (typeParam.HasNotNullConstraint)
+                    constraints.Add("notnull");
+                
+                foreach (var constraintType in typeParam.ConstraintTypes)
+                {
+                    constraints.Add(constraintType.ToDisplayString());
+                }
+                
+                if (typeParam.HasConstructorConstraint)
+                    constraints.Add("new()");
+                
+                if (constraints.Count > 0)
+                {
+                    sb.AppendLine();
+                    sb.Append($"            where {typeParam.Name} : {string.Join(", ", constraints)}");
+                }
+            }
+        }
+        
+        sb.AppendLine();
 
         // Method body
         sb.AppendLine("        {");
@@ -294,22 +413,164 @@ public class ProxyServiceGenerator : IIncrementalGenerator
         {
             "One" => $"_registry.Get<{serviceType.ToDisplayString()}>(LablabBean.Plugins.Contracts.SelectionMode.One)",
             "HighestPriority" => $"_registry.Get<{serviceType.ToDisplayString()}>(LablabBean.Plugins.Contracts.SelectionMode.HighestPriority)",
+            "All" => $"_registry.GetAll<{serviceType.ToDisplayString()}>().First()",
+            _ => $"_registry.Get<{serviceType.ToDisplayString()}>()"
+        };
+
+        // Build argument list with ref/out/in modifiers (T038-T040)
+        var argsList = new List<string>();
+        foreach (var param in parameters)
+        {
+            var argPrefix = param.RefKind switch
+            {
+                RefKind.Ref => "ref ",
+                RefKind.Out => "out ",
+                RefKind.In => "in ",
+                _ => ""
+            };
+            argsList.Add($"{argPrefix}{param.Name}");
+        }
+        var args = string.Join(", ", argsList);
+
+        // Add generic type arguments for generic methods (T034)
+        var methodCall = method.Name;
+        if (method.IsGenericMethod)
+        {
+            methodCall += "<" + string.Join(", ", method.TypeParameters.Select(tp => tp.Name)) + ">";
+        }
+
+        if (method.ReturnsVoid)
+        {
+            sb.AppendLine($"            {serviceCall}.{methodCall}({args});");
+        }
+        else
+        {
+            sb.AppendLine($"            return {serviceCall}.{methodCall}({args});");
+        }
+
+        sb.AppendLine("        }");
+    }
+
+    private static void GenerateProperty(
+        StringBuilder sb,
+        IPropertySymbol property,
+        ITypeSymbol serviceType,
+        string? selectionMode)
+    {
+        sb.AppendLine();
+
+        // XML documentation (T068)
+        var xmlDoc = property.GetDocumentationCommentXml();
+        if (!string.IsNullOrWhiteSpace(xmlDoc))
+        {
+            GenerateXmlDocumentation(sb, xmlDoc, "        ");
+        }
+
+        // Property signature
+        sb.Append("        ");
+        sb.Append("public ");
+
+        // Property type
+        sb.Append(property.Type.ToDisplayString());
+        sb.Append(" ");
+
+        // Property name
+        sb.AppendLine(property.Name);
+        sb.AppendLine("        {");
+
+        // Generate service call
+        var serviceCall = selectionMode switch
+        {
+            "One" => $"_registry.Get<{serviceType.ToDisplayString()}>(LablabBean.Plugins.Contracts.SelectionMode.One)",
+            "HighestPriority" => $"_registry.Get<{serviceType.ToDisplayString()}>(LablabBean.Plugins.Contracts.SelectionMode.HighestPriority)",
             "All" => $"_registry.GetAll<{serviceType.ToDisplayString()}>()",
             _ => $"_registry.Get<{serviceType.ToDisplayString()}>()"
         };
 
-        // Build argument list
-        var args = string.Join(", ", parameters.Select(p => p.Name));
-
-        if (method.ReturnsVoid)
+        // Getter
+        if (property.GetMethod is not null)
         {
-            sb.AppendLine($"            {serviceCall}.{method.Name}({args});");
+            sb.AppendLine($"            get => {serviceCall}.{property.Name};");
         }
-        else
+
+        // Setter
+        if (property.SetMethod is not null)
         {
-            sb.AppendLine($"            return {serviceCall}.{method.Name}({args});");
+            sb.AppendLine($"            set => {serviceCall}.{property.Name} = value;");
         }
 
         sb.AppendLine("        }");
+    }
+
+    private static void GenerateEvent(
+        StringBuilder sb,
+        IEventSymbol evt,
+        ITypeSymbol serviceType,
+        string? selectionMode)
+    {
+        sb.AppendLine();
+
+        // XML documentation (T068)
+        var xmlDoc = evt.GetDocumentationCommentXml();
+        if (!string.IsNullOrWhiteSpace(xmlDoc))
+        {
+            GenerateXmlDocumentation(sb, xmlDoc, "        ");
+        }
+
+        // Event signature
+        sb.Append("        ");
+        sb.Append("public event ");
+
+        // Event type
+        sb.Append(evt.Type.ToDisplayString());
+        sb.Append(" ");
+
+        // Event name
+        sb.Append(evt.Name);
+        sb.AppendLine();
+        sb.AppendLine("        {");
+
+        // Generate service call
+        var serviceCall = selectionMode switch
+        {
+            "One" => $"_registry.Get<{serviceType.ToDisplayString()}>(LablabBean.Plugins.Contracts.SelectionMode.One)",
+            "HighestPriority" => $"_registry.Get<{serviceType.ToDisplayString()}>(LablabBean.Plugins.Contracts.SelectionMode.HighestPriority)",
+            "All" => $"_registry.GetAll<{serviceType.ToDisplayString()}>()",
+            _ => $"_registry.Get<{serviceType.ToDisplayString()}>()"
+        };
+
+        // Add accessor
+        sb.AppendLine($"            add => {serviceCall}.{evt.Name} += value;");
+
+        // Remove accessor
+        sb.AppendLine($"            remove => {serviceCall}.{evt.Name} -= value;");
+
+        sb.AppendLine("        }");
+    }
+
+    private static void GenerateXmlDocumentation(StringBuilder sb, string? xmlDoc, string indent)
+    {
+        if (string.IsNullOrWhiteSpace(xmlDoc))
+            return;
+            
+        // Parse XML documentation and convert to /// comments
+        // Simple implementation: extract summary, param, returns tags
+        var lines = xmlDoc!.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        
+        foreach (var line in lines)
+        {
+            var trimmed = line.Trim();
+            if (string.IsNullOrWhiteSpace(trimmed))
+                continue;
+                
+            // Skip XML declaration and member tags
+            if (trimmed.StartsWith("<?xml") || trimmed.StartsWith("<member"))
+                continue;
+            
+            // Convert to /// comment format
+            sb.Append(indent);
+            sb.Append("/// ");
+            sb.AppendLine(trimmed);
+        }
     }
 }
