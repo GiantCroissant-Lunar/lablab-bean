@@ -233,7 +233,7 @@ dotnet/console-app/LablabBean.Console/
 - Currently uses first consumable in inventory automatically
 - TODO: Future enhancement to show selection menu for multiple consumables
 
-**Commit**: *(Pending)*
+**Commit**: `53c12e6` - feat: Phase 5 - Implement consumable item usage (healing potions)
 
 ---
 
