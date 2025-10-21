@@ -1,0 +1,86 @@
+# Claude Code Instructions
+
+Welcome to the Lablab-Bean project!
+
+This file redirects you to the comprehensive agent instructions.
+
+## Quick Start
+
+For complete Claude Code configuration and rules, see:
+
+**→ [.agent/adapters/claude.md](.agent/adapters/claude.md)**
+
+## Agent Instruction System
+
+This project uses a structured multi-agent instruction system located in `.agent/`:
+
+```
+.agent/
+├── README.md              # System overview
+├── base/                  # Canonical rules (source of truth)
+│   ├── 00-index.md       # Version, structure, conventions
+│   ├── 10-principles.md  # Core development principles
+│   ├── 20-rules.md       # Normative rules with IDs
+│   ├── 30-glossary.md    # Domain terminology
+│   └── 40-documentation.md # Documentation standards
+├── adapters/             # Agent-specific configurations
+│   └── claude.md         # ← Your configuration
+└── meta/                 # Versioning and governance
+    ├── changelog.md      # Version history
+    ├── versioning.md     # Sync protocol
+    └── adapter-template.md # Template for new adapters
+```
+
+## Key Rules to Remember
+
+### Documentation (R-DOC)
+- Always write new docs to `docs/_inbox/` first
+- Include YAML front-matter in all documentation
+- Check `docs/index/registry.json` before creating new docs
+- Update existing canonical docs instead of duplicating
+
+### Code Quality (R-CODE)
+- No hardcoded secrets or credentials
+- Use meaningful variable and function names
+- Comment non-obvious code
+
+### Testing (R-TST)
+- Test critical functionality
+- Ensure builds pass before committing
+
+### Git (R-GIT)
+- Use descriptive commit messages (conventional commit format)
+- Never commit secrets
+
+## Documentation Schema
+
+All documentation must include YAML front-matter. See:
+- **Schema Definition**: [docs/DOCUMENTATION-SCHEMA.md](docs/DOCUMENTATION-SCHEMA.md)
+- **Validation**: Run `python scripts/validate_docs.py`
+
+## Quick Reference
+
+**Project Type**: Dungeon crawler game with .NET backend and web terminal UI
+
+**Tech Stack**:
+- Backend: .NET 8, C#, Terminal.Gui
+- Frontend: TypeScript, xterm.js
+- Process Management: PM2
+
+**Common Commands**:
+```bash
+npm run dev          # Start development server
+npm run console      # Run console app
+python scripts/validate_docs.py  # Validate documentation
+```
+
+## Learn More
+
+- **Full Instructions**: [.agent/adapters/claude.md](.agent/adapters/claude.md)
+- **Base Rules**: [.agent/base/20-rules.md](.agent/base/20-rules.md)
+- **Principles**: [.agent/base/10-principles.md](.agent/base/10-principles.md)
+- **Documentation Guide**: [.agent/base/40-documentation.md](.agent/base/40-documentation.md)
+
+---
+
+**Version**: 1.0.0 | **Last Updated**: 2025-10-21
