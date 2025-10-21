@@ -5,13 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LablabBean.Core\LablabBean.Core.csproj" />
-    <ProjectReference Include="..\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Core\LablabBean.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SadConsole" />
-    <PackageReference Include="SadConsole.Host.MonoGame" />
+    <PackageReference Include="Terminal.Gui" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>

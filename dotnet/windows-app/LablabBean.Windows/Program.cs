@@ -1,6 +1,10 @@
 using LablabBean.Infrastructure.Extensions;
 using LablabBean.Plugins.Core;
 using LablabBean.Reactive.Extensions;
+using LablabBean.Game.Core.Services;
+using LablabBean.Game.Core.Systems;
+using LablabBean.Game.Core.Worlds;
+using LablabBean.Game.SadConsole.Screens;
 using LablabBean.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +39,16 @@ try
     // Add plugin system (note: requires manual start/stop since not using Generic Host)
     services.AddPluginSystem(configuration);
     
-    services.AddSingleton<RootScreen>();
+    // Register game services required by GameScreen
+    services.AddSingleton<GameWorldManager>();
+    services.AddSingleton<MovementSystem>();
+    services.AddSingleton<CombatSystem>();
+    services.AddSingleton<AISystem>();
+    services.AddSingleton<ActorSystem>();
+    services.AddSingleton<InventorySystem>();
+    services.AddSingleton<ItemSpawnSystem>();
+    services.AddSingleton<StatusEffectSystem>();
+    services.AddSingleton<GameStateManager>();
 
     var serviceProvider = services.BuildServiceProvider();
 
@@ -45,18 +58,23 @@ try
     // if (pluginService != null) await pluginService.StartAsync(CancellationToken.None);
 
     // Configure SadConsole
+    var width = GameSettings.GAME_WIDTH;
+    var height = GameSettings.GAME_HEIGHT;
+
     var builder = new Builder()
-        .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
-        .SetStartingScreen<RootScreen>()
+        .SetScreenSize(width, height)
         .IsStartingScreenFocused(true)
         .ConfigureFonts(true);
 
     // Start SadConsole
     Game.Create(builder);
-    Game.Instance.MonoGameInstance.WindowTitle = "Lablab Bean - SadConsole";
-    
-    // Set the service provider for dependency injection
-    Game.Instance.Services = serviceProvider;
+    // Optionally set window title if supported by current SadConsole/MonoGame version
+    // (Removed direct assignment to avoid API mismatch)
+
+    // Create and set the starting screen using DI
+    var gameScreen = ActivatorUtilities.CreateInstance<GameScreen>(serviceProvider, width, height);
+    gameScreen.Initialize();
+    Game.Instance.Screen = gameScreen;
 
     Game.Instance.Run();
     Game.Instance.Dispose();

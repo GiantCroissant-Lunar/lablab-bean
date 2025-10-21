@@ -153,7 +153,7 @@ public class GameScreen : ScreenObject
         // Quit
         else if (keyboard.IsKeyPressed(Keys.Escape))
         {
-            Game.Instance.MonoGameInstance.Exit();
+            System.Environment.Exit(0);
             return true;
         }
 

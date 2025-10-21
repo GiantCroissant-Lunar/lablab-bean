@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git mv:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nchore(docs): Organize root-level documentation files\n\nMove temporary documentation files from root to appropriate locations:\n- Plugin READMEs to docs/_inbox/ (PLUGIN_PHASE4_README.md, PLUGIN_PHASE5_README.md, INVENTORY_PLUGIN_README.md, SPEC005_FILES.md)\n- Phase completion records to docs/archive/ (PHASE4_COMPLETE.txt, PHASE5_COMPLETE.txt, SPEC005_COMPLETE.txt)\n\nRoot level now contains only essential files: README.md, CHANGELOG.md, AGENTS.md, CLAUDE.md\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

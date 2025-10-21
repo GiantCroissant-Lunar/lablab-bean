@@ -18,8 +18,8 @@ module.exports = {
   apps: [
     {
       name: 'lablab-web-dev',
-      script: path.join(__dirname, 'scripts', 'start-web-dev.js'),
-      cwd: __dirname,
+      script: path.join(__dirname, '..', '..', 'scripts', 'start-web-dev.js'),
+      cwd: path.join(__dirname, '..', '..'),
       watch: false, // Astro handles its own hot reload
       instances: 1,
       exec_mode: 'fork',
@@ -30,8 +30,8 @@ module.exports = {
     },
     {
       name: 'lablab-pty-dev',
-      script: path.join(__dirname, 'scripts', 'start-terminal-server.js'),
-      cwd: __dirname,
+      script: path.join(__dirname, '..', '..', 'scripts', 'start-terminal-server.js'),
+      cwd: path.join(__dirname, '..', '..'),
       watch: false, // Runs standalone WebSocket server
       instances: 1,
       exec_mode: 'fork',

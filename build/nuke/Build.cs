@@ -191,8 +191,15 @@ class Build : NukeBuild
                 .SetRuntime("win-x64")
                 .SetSelfContained(true));
 
-            // Skip Windows App for now (has compilation errors)
-            Serilog.Log.Information("Skipping Windows App (compilation errors)");
+            // Publish Windows App
+            var windowsProjectPath = SourceDirectory / "windows-app" / "LablabBean.Windows" / "LablabBean.Windows.csproj";
+            Serilog.Log.Information("Publishing Windows App...");
+            DotNetPublish(s => s
+                .SetProject(windowsProjectPath)
+                .SetConfiguration(Configuration)
+                .SetOutput(PublishDirectory / "windows")
+                .SetRuntime("win-x64")
+                .SetSelfContained(true));
         });
 
     Target Release => _ => _

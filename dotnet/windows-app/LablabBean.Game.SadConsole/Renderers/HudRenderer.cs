@@ -179,18 +179,18 @@ public class HudRenderer
     {
         return effectType switch
         {
-            EffectType.Poison => "☠",
-            EffectType.Regeneration => "♥",
-            EffectType.Haste => "⚡",
-            EffectType.Strength => "💪",
-            EffectType.IronSkin => "🛡",
-            EffectType.Bleed => "🩸",
-            EffectType.Burning => "🔥",
-            EffectType.Blessed => "✨",
-            EffectType.Weakness => "⬇",
-            EffectType.Slow => "🐌",
-            EffectType.Fragile => "💔",
-            _ => "•"
+            EffectType.Poison => "?",
+            EffectType.Regeneration => "?",
+            EffectType.Haste => "?",
+            EffectType.Strength => "??",
+            EffectType.IronSkin => "??",
+            EffectType.Bleed => "??",
+            EffectType.Burning => "??",
+            EffectType.Blessed => "?",
+            EffectType.Weakness => "?",
+            EffectType.Slow => "??",
+            EffectType.Fragile => "??",
+            _ => "�E"
         };
     }
 
@@ -230,3 +230,4 @@ public class HudRenderer
         _messageList.Items.Clear();
     }
 }
+

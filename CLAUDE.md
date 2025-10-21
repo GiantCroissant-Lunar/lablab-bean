@@ -1,4 +1,4 @@
-# Claude Code Instructions
+﻿# Claude Code Instructions
 
 Welcome to the Lablab-Bean project!
 

@@ -181,3 +181,4 @@ public class HudService
         return "[" + new string('=', filled) + new string(' ', empty) + "]";
     }
 }
+

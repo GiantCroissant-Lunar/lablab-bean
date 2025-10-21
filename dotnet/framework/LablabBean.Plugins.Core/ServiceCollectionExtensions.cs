@@ -26,8 +26,24 @@ public static class ServiceCollectionExtensions
         // Core plugin services
         services.AddSingleton<PluginRegistry>();
         services.AddSingleton<ServiceRegistry>();
+        services.AddSingleton<EventBus>();
         services.AddSingleton<IPluginRegistry>(sp => sp.GetRequiredService<PluginRegistry>());
-        services.AddSingleton<IRegistry>(sp => sp.GetRequiredService<ServiceRegistry>());
+        services.AddSingleton<IRegistry>(sp =>
+        {
+            var registry = sp.GetRequiredService<ServiceRegistry>();
+            var eventBus = sp.GetRequiredService<EventBus>();
+            
+            // Register EventBus in the ServiceRegistry so plugins can access it via IRegistry
+            registry.Register<IEventBus>(eventBus, new ServiceMetadata
+            {
+                Priority = 1000, // Framework service
+                Name = "EventBus",
+                Version = "1.0.0"
+            });
+            
+            return registry;
+        });
+        services.AddSingleton<IEventBus>(sp => sp.GetRequiredService<EventBus>());
         
         // Observability services
         services.AddSingleton<PluginSystemMetrics>();

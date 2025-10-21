@@ -60,5 +60,12 @@
     <!-- Roguelike Libraries -->
     <PackageVersion Include="GoRogue" Version="3.0.0-beta09" />
     <PackageVersion Include="TheSadRogue.Primitives" Version="1.6.0-rc3" />
+
+    <!-- Testing -->
+    <PackageVersion Include="xunit" Version="2.5.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.0" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
   </ItemGroup>
 </Project>

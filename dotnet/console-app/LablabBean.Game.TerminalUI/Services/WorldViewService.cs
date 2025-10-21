@@ -132,7 +132,7 @@ public class WorldViewService
                     }
                     else
                     {
-                        glyph = '▓';  // Dimmer wall (medium shade)
+                        glyph = '▒';  // Dimmer wall (medium shade)
                     }
                 }
                 
