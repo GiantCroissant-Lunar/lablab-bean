@@ -86,19 +86,22 @@
 - 6 edge cases
 - 8 success criteria
 
-**Expanded Spec**:
+**Final Expanded Spec**:
 - **6 contract assemblies** (Game, UI, Scene, Input, Config, Resource)
-- **77 functional requirements** (+40)
-- **7 user stories** (+3)
-- **24 edge cases** (+18)
-- **14 success criteria** (+6)
+- **1 source generator** (LablabBean.SourceGenerators.Proxy) + 2 attributes
+- **93 functional requirements** (+56 / +151%)
+- **8 user stories** (+4)
+- **28 edge cases** (+22)
+- **18 success criteria** (+10)
 
 **Rationale for Expansion**:
 - Gap analysis with cross-milo revealed 13 missing contracts
 - Scene, Input, Config, Resource are essential for functional dungeon crawler
-- All 4 new contracts are P1 priority based on dungeon crawler requirements
+- **Source generator is critical Tier 2 infrastructure** - eliminates 90%+ boilerplate code
+- All new contracts and source generator are P1 priority
 - Comprehensive contract foundation enables parallel plugin development
 - Better alignment with proven cross-milo architecture patterns
+- Without source generator, developers must manually write 3-5 lines per method (hundreds of lines total)
 
 ## Notes
 

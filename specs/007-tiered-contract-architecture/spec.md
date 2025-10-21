@@ -123,6 +123,23 @@ A plugin developer wants to load game assets (dungeon map data, sprite sheets, t
 
 ---
 
+### User Story 8 - Plugin Developer Uses Source Generator for Proxy Services (Priority: P1)
+
+A plugin developer wants to create a proxy service for their contract without writing manual delegation boilerplate. They need a source generator that automatically implements all interface methods by delegating to the registry based on attributes.
+
+**Why this priority**: Source generators eliminate hundreds of lines of repetitive proxy delegation code. This is Tier 2 infrastructure that makes all contracts practical to use. Without it, every service interface method requires 3-5 lines of manual delegation code, which is error-prone and tedious.
+
+**Independent Test**: Can be fully tested by creating a contract with `IService` interface, marking a partial class with `[RealizeService(typeof(IService))]` and `[SelectionStrategy(SelectionMode.HighestPriority)]`, building the project, and verifying the source generator creates the implementation.
+
+**Acceptance Scenarios**:
+
+1. **Given** a partial class is marked with `[RealizeService(typeof(IService))]`, **When** the project is built, **Then** the source generator creates proxy implementations for all interface methods
+2. **Given** a proxy service interface has methods, properties, and events, **When** the source generator runs, **Then** all members are implemented with proper delegation to `IRegistry.Get<T>()`
+3. **Given** a service interface uses generic type parameters and constraints, **When** the source generator runs, **Then** the generated code preserves all type parameters and constraints correctly
+4. **Given** a proxy service specifies `SelectionStrategy(SelectionMode.One)`, **When** the generated method is called, **Then** it uses `SelectionMode.One` when retrieving the service from the registry
+
+---
+
 ### Edge Cases
 
 **Event Bus**:
@@ -154,6 +171,12 @@ A plugin developer wants to load game assets (dungeon map data, sprite sheets, t
 - What happens when a resource fails to load? (Should publish `ResourceLoadFailedEvent` and throw exception from `LoadAsync`)
 - How does the system handle concurrent loads of the same resource? (Should deduplicate requests and return same cached instance)
 - What happens when a resource is unloaded while still in use? (Document lifecycle management, consider ref counting)
+
+**Source Generator**:
+- What happens when a partial class is missing the `IRegistry` field? (Should generate compile error with helpful message)
+- How does the source generator handle interface methods with ref/out parameters? (Should generate proper delegation with ref/out keywords)
+- What happens when an interface inherits from multiple base interfaces? (Should generate implementations for all inherited members)
+- How does the generator handle nullable reference types? (Should preserve nullable annotations in generated code)
 
 ## Requirements *(mandatory)*
 
@@ -249,22 +272,41 @@ A plugin developer wants to load game assets (dungeon map data, sprite sheets, t
 - **FR-065**: Resource service MUST publish `ResourceLoadFailedEvent` on load failure
 - **FR-066**: Resource contract MUST define supporting types: `ResourceMetadata`, `ResourceLoadOptions`
 
+#### Source Generator (Tier 2)
+
+- **FR-067**: System MUST provide a Roslyn source generator in `LablabBean.SourceGenerators.Proxy` assembly
+- **FR-068**: Source generator MUST detect partial classes marked with `[RealizeService(typeof(IService))]` attribute
+- **FR-069**: Source generator MUST generate implementations for all interface methods (including inherited members)
+- **FR-070**: Source generator MUST generate implementations for all interface properties (get and set accessors)
+- **FR-071**: Source generator MUST generate implementations for all interface events (add and remove accessors)
+- **FR-072**: Generated method implementations MUST delegate to `IRegistry.Get<T>(selectionMode)` where selectionMode comes from `[SelectionStrategy]` attribute
+- **FR-073**: Source generator MUST preserve generic type parameters and constraints in generated methods
+- **FR-074**: Source generator MUST preserve nullable reference type annotations in generated code
+- **FR-075**: Source generator MUST handle method parameters with default values correctly
+- **FR-076**: Source generator MUST handle ref and out parameters correctly in delegation
+- **FR-077**: Source generator MUST generate code that references `_registry` field (developer must provide this field)
+- **FR-078**: System MUST provide `[RealizeService(Type)]` attribute in `LablabBean.Plugins.Contracts`
+- **FR-079**: System MUST provide `[SelectionStrategy(SelectionMode)]` attribute in `LablabBean.Plugins.Contracts`
+- **FR-080**: Generated code MUST be added as source files during compilation (incremental source generation)
+- **FR-081**: Source generator MUST work with all supported SelectionMode values (One, HighestPriority, All)
+
 #### Registry Integration (Tier 2)
 
-- **FR-067**: Existing `IRegistry` interface MUST continue to support priority-based service selection
-- **FR-068**: Existing `IRegistry` interface MUST continue to support `SelectionMode.HighestPriority` for retrieving services
-- **FR-069**: Event bus MUST be retrievable from `IRegistry` using `Get<IEventBus>()`
-- **FR-070**: Service implementations MUST be registered via `IRegistry.Register<T>()` with priority metadata
-- **FR-071**: Multiple implementations of the same service contract MUST be supported via priority-based selection
+- **FR-082**: Existing `IRegistry` interface MUST continue to support priority-based service selection
+- **FR-083**: Existing `IRegistry` interface MUST continue to support `SelectionMode.HighestPriority` for retrieving services
+- **FR-084**: Event bus MUST be retrievable from `IRegistry` using `Get<IEventBus>()`
+- **FR-085**: Service implementations MUST be registered via `IRegistry.Register<T>()` with priority metadata
+- **FR-086**: Multiple implementations of the same service contract MUST be supported via priority-based selection
 
 #### Migration & Compatibility
 
-- **FR-072**: Existing plugins MUST continue to work during and after the transition (no breaking changes to `IRegistry`, `IPlugin`, `IPluginContext`)
-- **FR-073**: New contract assemblies MUST be added without removing existing plugin infrastructure
-- **FR-074**: Documentation MUST be updated to explain event-driven patterns and domain contracts
-- **FR-075**: Developer guide MUST include examples of creating plugins with event subscriptions
-- **FR-076**: Developer guide MUST include examples of implementing service contracts
-- **FR-077**: Developer guide MUST include examples of using Scene, Input, Config, and Resource contracts
+- **FR-087**: Existing plugins MUST continue to work during and after the transition (no breaking changes to `IRegistry`, `IPlugin`, `IPluginContext`)
+- **FR-088**: New contract assemblies MUST be added without removing existing plugin infrastructure
+- **FR-089**: Documentation MUST be updated to explain event-driven patterns and domain contracts
+- **FR-090**: Developer guide MUST include examples of creating plugins with event subscriptions
+- **FR-091**: Developer guide MUST include examples of implementing service contracts
+- **FR-092**: Developer guide MUST include examples of using Scene, Input, Config, and Resource contracts
+- **FR-093**: Developer guide MUST include examples of using source generator with `[RealizeService]` and `[SelectionStrategy]` attributes
 
 ### Key Entities *(include if feature involves data)*
 
@@ -279,6 +321,8 @@ A plugin developer wants to load game assets (dungeon map data, sprite sheets, t
 - **Input Action**: A logical game action (e.g., "MoveNorth", "Attack") mapped from raw input events (e.g., arrow key, spacebar).
 - **Config Section**: A hierarchical grouping of configuration values (e.g., "Graphics.Resolution", "Gameplay.Difficulty").
 - **Resource**: A game asset (sprite, tile set, dungeon map) that can be loaded asynchronously and cached.
+- **Proxy Service**: A partial class marked with `[RealizeService]` that gets interface implementations generated by the source generator. Developer writes the class declaration, source generator fills in method/property/event implementations.
+- **Source Generator**: A Roslyn analyzer that runs at compile-time to generate proxy service implementations. Part of Tier 2 infrastructure.
 
 ## Success Criteria *(mandatory)*
 
@@ -301,10 +345,16 @@ A plugin developer wants to load game assets (dungeon map data, sprite sheets, t
 - **SC-010**: Resource loading supports at least 50 concurrent async operations without deadlocks
 - **SC-011**: Resource cache hit rate exceeds 90% for repeated resource requests
 
+**Source Generator**:
+- **SC-012**: Source generator successfully generates proxy implementations for interfaces with 50+ methods without errors
+- **SC-013**: Generated proxy code compiles without warnings and passes all nullable reference type checks
+- **SC-014**: Developers can create a proxy service in under 30 seconds (write 10 lines of code, source generator fills in the rest)
+
 **Developer Experience**:
-- **SC-012**: Documentation includes at least 6 complete examples covering all contract domains (Game, UI, Scene, Input, Config, Resource)
-- **SC-013**: A developer unfamiliar with the codebase can create a working event-subscribing plugin in under 30 minutes using the documentation
-- **SC-014**: A developer can implement a complete dungeon loading workflow (scene + resources + config) in under 2 hours using the contracts
+- **SC-015**: Documentation includes at least 7 complete examples covering all contract domains and source generator usage
+- **SC-016**: A developer unfamiliar with the codebase can create a working event-subscribing plugin in under 30 minutes using the documentation
+- **SC-017**: A developer can implement a complete dungeon loading workflow (scene + resources + config) in under 2 hours using the contracts
+- **SC-018**: Using source generator reduces boilerplate code by at least 90% compared to manual proxy implementation
 
 ## Assumptions
 
@@ -326,12 +376,11 @@ A plugin developer wants to load game assets (dungeon map data, sprite sheets, t
 ## Out of Scope
 
 **Deferred to Future Iterations**:
-- Source generators for automatic proxy service generation (Spec 008)
-- Audio contract assembly (`LablabBean.Contracts.Audio`)
-- Analytics contract assembly (`LablabBean.Contracts.Analytics`)
-- Diagnostics contract assembly (`LablabBean.Contracts.Diagnostics`)
-- Resilience contract assembly (`LablabBean.Contracts.Resilience`)
-- Advanced contracts (GOAP, Recorder, Capability, Hosting, Terminal)
+- Audio contract assembly (`LablabBean.Contracts.Audio`) - Spec 008
+- Analytics contract assembly (`LablabBean.Contracts.Analytics`) - Spec 009
+- Diagnostics contract assembly (`LablabBean.Contracts.Diagnostics`) - Spec 010
+- Resilience contract assembly (`LablabBean.Contracts.Resilience`) - Future spec
+- Advanced contracts (GOAP, Recorder, Capability, Hosting, Terminal) - Future specs
 
 **Not Planned**:
 - Event bus persistence or durability guarantees (in-memory only)
@@ -374,10 +423,13 @@ A plugin developer wants to load game assets (dungeon map data, sprite sheets, t
 - The cross-milo project provides 15 contract assemblies; lablab-bean implements 6 core contracts (Game, UI, Scene, Input, Config, Resource) essential for dungeon crawlers
 - The existing `IRegistry` implementation in lablab-bean is already well-aligned with cross-milo patterns
 - Event-driven communication is the key differentiator from the current architecture
-- Source generators (used in cross-milo for proxy services) are deferred to Spec 008 to reduce initial complexity
+- **Source generator is INCLUDED in this spec** - critical Tier 2 infrastructure that eliminates boilerplate proxy code
 - The specification is technology-agnostic per the template guidelines, focusing on "what" not "how"
-- This spec expands the original scope from 2 contracts (Game, UI) to 6 contracts based on gap analysis with cross-milo
+- This spec expands the original scope from 2 contracts (Game, UI) to 6 contracts + source generator based on gap analysis with cross-milo
 - Scene, Input, Config, and Resource contracts are essential for a functional dungeon crawler and were missing from the original spec
+- Source generator was initially deferred but is now included as it's critical infrastructure (without it, developers must write 3-5 lines per method manually)
 - All contracts follow cross-milo naming conventions: generic `IService` within domain namespace (e.g., `LablabBean.Contracts.Scene.Services.IService`)
-- Implementation can be phased: Phase 1 (EventBus), Phase 2 (Game/UI events), Phase 3 (Scene/Input), Phase 4 (Config/Resource)
-- Total functional requirements: 77 (vs 37 in original spec) covering all 6 contract domains comprehensively
+- Implementation can be phased: Phase 1 (EventBus), Phase 2 (Game/UI events), Phase 3 (Source Generator + attributes), Phase 4 (Scene/Input/Config/Resource)
+- Total functional requirements: **93** (vs 37 in original spec) covering all 6 contract domains + source generator comprehensively
+- The source generator uses Roslyn incremental source generation for build performance
+- Generated proxy services follow the pattern from cross-milo: partial class with `[RealizeService]` and `[SelectionStrategy]` attributes
