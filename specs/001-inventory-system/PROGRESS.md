@@ -326,7 +326,7 @@ dotnet/framework/LablabBean.Game.Core/
 - DefenseBonus: Reduces damage taken
 - SpeedModifier: Affects turn order (can be negative)
 
-**Commit**: *(Pending)*
+**Commit**: `48fb26a` - feat: Phase 6 - Implement equipment system (weapons and armor)
 
 ---
 
