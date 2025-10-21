@@ -23,6 +23,11 @@ You are working on a dungeon crawler game with:
 - **R-CODE-001**: No hardcoded secrets
 - **R-CODE-002**: Use meaningful names
 - **R-CODE-003**: Comment non-obvious code
+- **R-CODE-004**: 🚨 **ALWAYS use relative paths** - Never absolute paths (Windows: `D:\...`, Unix: `/home/...`)
+  - Config files: Use `./` or `../` relative paths only
+  - Code: Use `Path.Combine()` with relative references
+  - Reason: Cross-platform compatibility (Windows/Mac/Linux)
+  - Use `/normalize-paths` command to fix existing absolute paths
 
 ### Testing Rules (R-TST)
 - **R-TST-001**: Test critical paths
@@ -192,7 +197,7 @@ python scripts/validate_docs.py  # Validate docs
 
 ---
 
-**Version**: 1.2.0
+**Version**: 1.3.0
 **Last Updated**: 2025-10-21
 **Sync Status**: ✅ Synced with base rules
-**Changes**: Added R-TOOL-003 (spec maintenance strategy)
+**Changes**: Added R-CODE-004 (cross-platform path rules)
