@@ -1,8 +1,8 @@
-# GitHub Copilot Adapter
+# Codex Adapter
 
 **Base-Version-Expected**: 1.0.0
 
-This adapter configures GitHub Copilot behavior for the Lablab-Bean project.
+This adapter configures Codex (OpenAI) behavior for the Lablab-Bean project.
 
 ## Quick Reference
 
@@ -14,10 +14,10 @@ You are working on a dungeon crawler game with:
 ## Core Rules to Follow
 
 ### Documentation Rules (R-DOC)
-- **R-DOC-001**: All docs require YAML front-matter
-- **R-DOC-002**: Write new docs to `docs/_inbox/` only
+- **R-DOC-001**: Write new docs to `docs/_inbox/` only
+- **R-DOC-002**: Include YAML front-matter in all docs
 - **R-DOC-003**: Check `docs/index/registry.json` before creating new docs
-- **R-DOC-004**: Only one canonical doc per concept
+- **R-DOC-004**: Update existing canonical docs instead of duplicating
 
 ### Code Rules (R-CODE)
 - **R-CODE-001**: No hardcoded secrets
@@ -26,11 +26,15 @@ You are working on a dungeon crawler game with:
 
 ### Testing Rules (R-TST)
 - **R-TST-001**: Test critical paths
-- **R-TST-002**: Builds must pass
+- **R-TST-002**: Builds must pass before commit
 
 ### Git Rules (R-GIT)
-- **R-GIT-001**: Descriptive commit messages
+- **R-GIT-001**: Use descriptive commit messages
 - **R-GIT-002**: Never commit secrets
+
+### Process Rules (R-PRC)
+- **R-PRC-001**: Document architecture decisions as ADRs
+- **R-PRC-002**: Document breaking changes
 
 ### Security Rules (R-SEC)
 - **R-SEC-001**: Validate external input
@@ -55,7 +59,7 @@ When implementing new features, you MUST follow the Spec-Kit workflow:
 
 ### Available Commands
 
-**For Copilot Chat (CLI-based):**
+**For Codex (CLI-based):**
 - `/speckit.constitution` - Establish project principles (one-time setup)
 - `/speckit.specify` - Define features (WHAT & WHY)
 - `/speckit.clarify` - Ask up to 5 clarification questions
@@ -67,7 +71,7 @@ When implementing new features, you MUST follow the Spec-Kit workflow:
 
 ### Task Runner Alternative
 
-For Copilot in IDE (without slash command support), use task runner:
+If Codex CLI doesn't support slash commands, use task runner:
 
 ```bash
 task speckit:specify
@@ -79,6 +83,41 @@ task speckit:implement
 **Full Documentation:** See `.agent/integrations/spec-kit.md`
 
 **Important:** Spec-Kit commands must follow `.agent/base/` rules (R-DOC, R-CODE, R-TST, etc.)
+
+## Documentation Workflow
+
+When creating documentation:
+
+1. **Check registry first**: Review `docs/index/registry.json`
+2. **Write to inbox**: Save to `docs/_inbox/YYYY-MM-DD-title--DOC-YYYY-NNNNN.md`
+3. **Include front-matter**:
+   ```yaml
+   ---
+   doc_id: DOC-2025-XXXXX
+   title: Your Title
+   doc_type: guide|spec|adr|rfc|plan|finding|glossary|reference
+   status: draft
+   canonical: false
+   created: 2025-10-21
+   tags: [relevant, tags]
+   summary: >
+     One-line description
+   source:
+     author: agent
+     agent: codex
+     model: [model-name]
+   ---
+   ```
+
+## Principles to Follow
+
+See `.agent/base/10-principles.md` for full list. Key principles:
+
+- **P-1**: Documentation-First Development
+- **P-2**: Clear Code Over Clever Code
+- **P-3**: Testing Matters
+- **P-4**: Security Consciousness
+- **P-10**: When in doubt, ask
 
 ## Tech Stack
 
@@ -107,23 +146,24 @@ lablab-bean/
 │   ├── memory/constitution.md
 │   ├── scripts/
 │   └── templates/
-├── .claude/commands/          # Slash commands (external, for reference)
+├── .codex/commands/           # Codex slash commands
 └── .agent/                    # Agent instructions (this system)
     ├── base/                  # Canonical rules
-    ├── adapters/copilot.md    # This file
+    ├── adapters/codex.md      # This file
     └── integrations/          # External integrations
         └── spec-kit.md
 ```
 
-## Copilot-Specific Notes
+## Codex-Specific Notes
 
-When generating code suggestions:
+When generating code:
 
-1. **Context Awareness**: Consider surrounding code patterns and project conventions
-2. **Documentation**: Include JSDoc/XML comments for public APIs
-3. **Type Safety**: Prefer strongly-typed solutions in both C# and TypeScript
-4. **Error Handling**: Include appropriate try-catch blocks and null checks
-5. **Testing**: Suggest test cases when generating new functions
+1. **Context Awareness**: Consider the full project context before suggesting code
+2. **Type Safety**: Prefer strongly-typed solutions in both C# and TypeScript
+3. **Error Handling**: Include appropriate try-catch blocks and null checks
+4. **Documentation**: Generate JSDoc/XML comments for public APIs
+5. **Testing**: Suggest test cases when implementing new functionality
+6. **Idiomatic Code**: Follow language-specific best practices (.NET conventions, TypeScript patterns)
 
 ## Common Tasks
 
@@ -145,6 +185,11 @@ npm test             # Run frontend tests
 dotnet test          # Run backend tests
 ```
 
+### Documentation
+```bash
+python scripts/validate_docs.py  # Validate docs
+```
+
 ## References
 
 ### Agent System
@@ -161,7 +206,7 @@ dotnet test          # Run backend tests
 
 ---
 
-**Version**: 1.1.0
+**Version**: 1.0.0
 **Last Updated**: 2025-10-21
 **Sync Status**: ✅ Synced with base rules
-**Changes**: Added R-TOOL rules and Spec-Kit integration
+**Initial Release**: Complete adapter with R-TOOL rules and Spec-Kit integration

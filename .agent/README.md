@@ -14,9 +14,10 @@ Multi-agent instruction system for Lablab-Bean project.
 │   ├── 30-glossary.md    # Domain terminology
 │   └── 40-documentation.md # Documentation standards
 ├── adapters/             # Agent-specific implementations
-│   ├── claude.md         # Claude Code
-│   ├── copilot.md        # GitHub Copilot
-│   └── windsurf.md       # Windsurf/Codeium
+│   ├── claude.md         # Claude Code (v1.2.0, with Spec-Kit)
+│   ├── copilot.md        # GitHub Copilot (v1.1.0, with Spec-Kit)
+│   ├── windsurf.md       # Windsurf/Codeium (v1.1.0, with Spec-Kit)
+│   └── codex.md          # OpenAI Codex (v1.0.0, with Spec-Kit)
 ├── integrations/         # External tool integrations
 │   └── spec-kit.md       # GitHub Spec-Kit (SDD methodology)
 └── meta/                 # Versioning and governance
@@ -32,6 +33,7 @@ Agents discover rules via pointer files:
 - `/CLAUDE.md` → `.agent/adapters/claude.md`
 - `/.github/copilot-instructions.md` → `.agent/adapters/copilot.md`
 - `/.windsurf/rules.md` → `.agent/adapters/windsurf.md`
+- `/.codex/rules.md` → `.agent/adapters/codex.md` (planned)
 
 ## Rule Categories
 
@@ -41,6 +43,7 @@ Agents discover rules via pointer files:
 - **R-DOC-xxx**: Documentation conventions
 - **R-GIT-xxx**: Git workflow
 - **R-PRC-xxx**: Process guidelines
+- **R-TOOL-xxx**: Tool integration (e.g., Spec-Kit)
 
 ## Version Sync
 
