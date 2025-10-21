@@ -1,3 +1,4 @@
+using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Services;
 using LablabBean.Game.Core.Systems;
 using LablabBean.Game.Core.Worlds;
@@ -70,8 +71,8 @@ public class DungeonCrawlerService : IDisposable
             Y = 0,
             Width = Dim.Fill(),
             Height = Dim.Fill(),
-            ReadOnly = false,  // Allow selection
-            CanFocus = true,   // Allow focus for selection
+            ReadOnly = true,
+            CanFocus = false,
             WordWrap = true,
             ColorScheme = new ColorScheme()
             {
@@ -279,10 +280,63 @@ public class DungeonCrawlerService : IDisposable
         {
             _worldViewService.Render(_gameStateManager.WorldManager.CurrentWorld, _gameStateManager.CurrentMap);
             _hudService.Update(_gameStateManager.WorldManager.CurrentWorld);
+            
+            // Update level display
+            if (_gameStateManager.LevelManager != null)
+            {
+                var levelManager = _gameStateManager.LevelManager;
+                _hudService.UpdateLevelDisplay(
+                    levelManager.CurrentLevel,
+                    levelManager.PersonalBestDepth,
+                    levelManager.CurrentLevel * 30 // 30 feet per level
+                );
+            }
         }
         
         // Ensure game window keeps focus
         _gameWindow?.SetFocus();
+    }
+
+    /// <summary>
+    /// Processes NPC turns until it's the player's turn again
+    /// </summary>
+    private void ProcessNPCTurns()
+    {
+        if (!_isRunning || _gameStateManager.CurrentMap == null)
+            return;
+
+        var world = _gameStateManager.WorldManager.CurrentWorld;
+        int maxIterations = 100; // Safety limit to prevent infinite loops
+        int iterations = 0;
+
+        // Keep processing until it's the player's turn or we hit the safety limit
+        while (!_gameStateManager.IsPlayerTurn() && iterations < maxIterations)
+        {
+            AddDebugLog("Processing NPC turn...");
+            _gameStateManager.Update();
+            
+            // Render after each NPC action
+            if (_gameStateManager.CurrentMap != null)
+            {
+                _worldViewService.Render(_gameStateManager.WorldManager.CurrentWorld, _gameStateManager.CurrentMap);
+                _hudService.Update(_gameStateManager.WorldManager.CurrentWorld);
+            }
+            
+            iterations++;
+            
+            // Small delay to make NPC actions visible (optional, can be removed for instant processing)
+            System.Threading.Thread.Sleep(50);
+        }
+
+        if (iterations >= maxIterations)
+        {
+            AddDebugLog("WARNING: Hit max iterations in ProcessNPCTurns");
+            _logger.LogWarning("ProcessNPCTurns hit maximum iterations limit");
+        }
+        else if (iterations > 0)
+        {
+            AddDebugLog($"Processed {iterations} NPC turns");
+        }
     }
 
     /// <summary>
@@ -355,11 +409,54 @@ public class DungeonCrawlerService : IDisposable
                 actionTaken = _gameStateManager.HandlePlayerMove(1, 1);
                 break;
 
+            // Pickup item
+            case Key.G:
+            case Key.g:
+                AddDebugLog("Attempting to pick up item(s)");
+                var pickupMessages = _gameStateManager.HandlePlayerPickup();
+                foreach (var message in pickupMessages)
+                {
+                    AddDebugLog(message);
+                }
+                // Action is taken if an item was actually picked up (energy consumed)
+                if (pickupMessages.Any(m => m.StartsWith("Picked up")))
+                {
+                    actionTaken = true;
+                }
+                break;
+
+            // Use/Consume item
+            case Key.U:
+            case Key.u:
+                AddDebugLog("Opening item use menu");
+                var useMessage = _gameStateManager.HandlePlayerUseItem();
+                if (!string.IsNullOrEmpty(useMessage))
+                {
+                    AddDebugLog(useMessage);
+                    // Check if the action was successful (not an error message)
+                    if (!useMessage.StartsWith("Cannot") && !useMessage.StartsWith("Already") && !useMessage.StartsWith("No"))
+                    {
+                        actionTaken = true;
+                    }
+                }
+                break;
+
             // Mode switching
             case Key.E:
             case Key.e:
                 ToggleMode();
                 return true;
+
+            // Staircase interaction (use '>' and '<' directly)
+            case (Key)'>':
+                AddDebugLog("Attempting to descend stairs");
+                actionTaken = _gameStateManager.HandleStaircaseInteraction(StaircaseDirection.Down);
+                break;
+            
+            case (Key)'<':
+                AddDebugLog("Attempting to ascend stairs");
+                actionTaken = _gameStateManager.HandleStaircaseInteraction(StaircaseDirection.Up);
+                break;
 
             // Quit
             case Key.Q:
@@ -376,6 +473,10 @@ public class DungeonCrawlerService : IDisposable
             AddDebugLog("Action taken, updating game");
             // Update the game after player action
             Update();
+            
+            // Continue processing NPC turns until it's the player's turn again
+            ProcessNPCTurns();
+            
             return true;
         }
 

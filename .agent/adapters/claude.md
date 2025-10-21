@@ -43,6 +43,7 @@ You are working on a dungeon crawler game with:
 ### Tool Integration Rules (R-TOOL)
 - **R-TOOL-001**: Use Spec-Kit for feature development
 - **R-TOOL-002**: Use task runner (`task` command) for operations
+- **R-TOOL-003**: Follow spec maintenance strategy (update vs create new)
 
 ## Documentation Workflow
 
@@ -191,7 +192,7 @@ python scripts/validate_docs.py  # Validate docs
 
 ---
 
-**Version**: 1.1.0
+**Version**: 1.2.0
 **Last Updated**: 2025-10-21
 **Sync Status**: ✅ Synced with base rules
-**Changes**: Added Spec-Kit integration
+**Changes**: Added R-TOOL-003 (spec maintenance strategy)

@@ -37,3 +37,42 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
+
+  # Python code quality - Ruff (replaces black, flake8, isort, and more)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--fix]
+      # Run the formatter (replaces black)
+      - id: ruff-format
+
+  # Optional: Type checking with mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        additional_dependencies: []
+        args: [--ignore-missing-imports, --no-strict-optional]
+
+  # Custom hooks (also available in git-hooks/ directory)
+  - repo: local
+    hooks:
+      # Validate agent pointer files are up to date
+      - id: validate-pointer-files
+        name: Validate agent pointer files
+        entry: bash git-hooks/validate-agent-pointers
+        language: system
+        pass_filenames: false
+        files: ^(.agent/|CLAUDE\.md|AGENTS\.md|\.github/copilot-instructions\.md|\.windsurf/rules\.md)
+        always_run: false
+
+      # Python code quality (alternative to black/flake8/isort repos above)
+      # Uncomment to use git-hooks/python-check instead of individual tools
+      # - id: python-check
+      #   name: Python code quality
+      #   entry: bash git-hooks/python-check
+      #   language: system
+      #   types: [python]
+      #   pass_filenames: false

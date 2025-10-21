@@ -48,14 +48,25 @@ public struct Combat
 
 /// <summary>
 /// Tag component for enemy entities
+/// Can inflict status effects on attack
 /// </summary>
 public struct Enemy
 {
     public string Type { get; set; }
+    
+    // Status effect attack properties
+    public EffectType? InflictsEffect { get; set; }
+    public int? EffectProbability { get; set; }  // 0-100 percentage
+    public int? EffectMagnitude { get; set; }
+    public int? EffectDuration { get; set; }
 
     public Enemy(string type)
     {
         Type = type;
+        InflictsEffect = null;
+        EffectProbability = null;
+        EffectMagnitude = null;
+        EffectDuration = null;
     }
 }
 

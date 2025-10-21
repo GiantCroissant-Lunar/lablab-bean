@@ -113,4 +113,13 @@ public class ActorSystem
             AccumulateEnergy(world);
         }
     }
+
+    /// <summary>
+    /// Process status effects for an actor at the start of their turn
+    /// Returns messages for display
+    /// </summary>
+    public List<string> ProcessActorEffects(World world, Entity actor, StatusEffectSystem statusEffectSystem)
+    {
+        return statusEffectSystem.ProcessEffects(world, actor);
+    }
 }
