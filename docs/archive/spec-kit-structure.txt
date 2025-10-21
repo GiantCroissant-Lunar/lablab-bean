@@ -1,0 +1,71 @@
+┌─────────────────────────────────────────────────────────────────┐
+│                   SPEC-KIT PROJECT STRUCTURE                    │
+└─────────────────────────────────────────────────────────────────┘
+
+lablab-bean/
+│
+├─� Root Documentation (Start Here!)
+│  ├── SPEC-KIT-QUICKSTART.md ⭐ 5-minute quick start
+│  ├── SPEC-KIT-SETUP-SUMMARY.md
+│  └── README.md (updated with spec-kit section)
+│
+├─� docs/
+│  ├── SPEC-KIT-UTILIZATION.md ⭐ Complete strategy guide
+│  │
+│  └── specs/ (Specifications)
+│      ├── README.md ⭐ Specs directory guide
+│      ├── dungeon-generation-system.md ⭐ Example spec
+│      └── monster-template-example.md ⭐ Template usage
+│
+└─� templates/ (Code Generation)
+   ├── entity/
+   │   └── monster.tmpl ⭐ Monster code generator
+   └── docs/
+       └── spec-template.tmpl ⭐ Spec doc generator
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         USAGE PATHS                             │
+└─────────────────────────────────────────────────────────────────┘
+
+Path 1: New Developer
+  1. Read: SPEC-KIT-QUICKSTART.md (5 min)
+  2. Example: docs/specs/dungeon-generation-system.md
+  3. Try: Copy template and create monster
+
+Path 2: Document Feature
+  1. Guide: docs/specs/README.md
+  2. Copy: docs/specs/dungeon-generation-system.md
+  3. Edit: Fill in your feature details
+
+Path 3: Generate Code
+  1. Guide: docs/specs/monster-template-example.md
+  2. Copy: templates/entity/monster.tmpl
+  3. Replace: {{.Variables}} with values
+
+Path 4: Complete Understanding
+  1. Strategy: docs/SPEC-KIT-UTILIZATION.md
+  2. Examples: All files in docs/specs/
+  3. Templates: All files in templates/
+
+┌─────────────────────────────────────────────────────────────────┐
+│                      FILE PURPOSES                              │
+└─────────────────────────────────────────────────────────────────┘
+
+Documentation:
+  SPEC-KIT-QUICKSTART.md         → Fast start (5 min)
+  docs/SPEC-KIT-UTILIZATION.md   → Complete guide
+  docs/specs/README.md           → Specs overview
+  SPEC-KIT-SETUP-SUMMARY.md      → What was created
+
+Specifications:
+  dungeon-generation-system.md   → Real spec example
+  monster-template-example.md    → How to use templates
+
+Templates:
+  templates/entity/monster.tmpl  → Generate monsters
+  templates/docs/spec-template.tmpl → Generate specs
+
+Updated:
+  README.md                      → Added spec-kit info
+  HANDOVER.md                    → Added reference
+
