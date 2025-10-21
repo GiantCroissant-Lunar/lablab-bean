@@ -1,4 +1,5 @@
 using LablabBean.Infrastructure.Extensions;
+using LablabBean.Plugins.Core;
 using LablabBean.Reactive.Extensions;
 using LablabBean.Windows;
 using Microsoft.Extensions.Configuration;
@@ -30,9 +31,18 @@ try
     var services = new ServiceCollection();
     services.AddLablabBeanInfrastructure(configuration);
     services.AddLablabBeanReactive();
+    
+    // Add plugin system (note: requires manual start/stop since not using Generic Host)
+    services.AddPluginSystem(configuration);
+    
     services.AddSingleton<RootScreen>();
 
     var serviceProvider = services.BuildServiceProvider();
+
+    // TODO: Start plugin system manually when needed
+    // var pluginService = serviceProvider.GetServices<IHostedService>()
+    //     .FirstOrDefault(s => s.GetType().Name.Contains("PluginLoader"));
+    // if (pluginService != null) await pluginService.StartAsync(CancellationToken.None);
 
     // Configure SadConsole
     var builder = new Builder()
