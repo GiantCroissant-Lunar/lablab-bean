@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -24,6 +24,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Console", "console-app\LablabBean.Console\LablabBean.Console.csproj", "{20000000-0000-0000-0000-000000000001}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Windows", "windows-app\LablabBean.Windows\LablabBean.Windows.csproj", "{30000000-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Contracts", "framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj", "{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Core", "framework\LablabBean.Plugins.Core\LablabBean.Plugins.Core.csproj", "{8991F22A-E659-4CE9-97A8-78AA7C288D3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +67,14 @@ Global
 		{30000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8991F22A-E659-4CE9-97A8-78AA7C288D3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8991F22A-E659-4CE9-97A8-78AA7C288D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8991F22A-E659-4CE9-97A8-78AA7C288D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8991F22A-E659-4CE9-97A8-78AA7C288D3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{10000000-0000-0000-0000-000000000001} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
@@ -73,5 +85,7 @@ Global
 		{10000000-0000-0000-0000-000000000006} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
 		{20000000-0000-0000-0000-000000000001} = {C1C1C1C1-1C1C-1C1C-1C1C-1C1C1C1C1C1C}
 		{30000000-0000-0000-0000-000000000001} = {A1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{8991F22A-E659-4CE9-97A8-78AA7C288D3D} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
 	EndGlobalSection
 EndGlobal
