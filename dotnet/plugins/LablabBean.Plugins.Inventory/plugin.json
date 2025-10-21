@@ -1,0 +1,17 @@
+{
+  "id": "inventory",
+  "name": "Inventory System",
+  "version": "1.0.0",
+  "description": "Complete inventory management system with pickup, use, and equip functionality. Migrated from core game systems.",
+  "author": "Lablab Bean Team",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.Inventory.dll,LablabBean.Plugins.Inventory.InventoryPlugin",
+    "dotnet.sadconsole": "LablabBean.Plugins.Inventory.dll,LablabBean.Plugins.Inventory.InventoryPlugin"
+  },
+  "dependencies": [],
+  "capabilities": ["inventory", "items", "equipment"],
+  "priority": 100,
+  "permissions": {
+    "profile": "Standard"
+  }
+}
