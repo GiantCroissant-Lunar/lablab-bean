@@ -1,15 +1,55 @@
 {
-  "generated_at": "2025-10-20T13:40:00.000000Z",
-  "total_docs": 14,
+  "generated_at": "2025-10-21T00:25:22.301250Z",
+  "total_docs": 22,
   "by_type": {
-    "guide": 8,
-    "reference": 5,
-    "finding": 1
+    "reference": 3,
+    "guide": 14,
+    "finding": 2,
+    "plan": 1,
+    "spec": 2
   },
   "by_status": {
-    "active": 14
+    "active": 22
   },
   "docs": [
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "doc_id": "DOC-2025-00018",
+      "title": "Lablab Bean Architecture",
+      "doc_type": "reference",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "architecture",
+        "overview",
+        "structure"
+      ],
+      "created": "2025-10-20",
+      "summary": "Multi-platform development toolkit architecture including task automation, web terminal, .NET console/windows apps, and shared framework.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "bccacd35056208ab1883c1f56a24718845e985b75038927beb4e8b5738fa6624",
+      "simhash": "14576372975366030268"
+    },
+    {
+      "path": "docs/CONTRIBUTING.md",
+      "doc_id": "DOC-2025-00019",
+      "title": "Contributing to Lablab Bean",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "contributing",
+        "development",
+        "workflow"
+      ],
+      "created": "2025-10-20",
+      "summary": "Guidelines and instructions for contributing to Lablab Bean including setup, workflow, and coding standards.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "fe36655d8118b6e3ffd4d4317104c754d57c229958f48cfc2d1be702cbb6a03d",
+      "simhash": "10024992973143302719"
+    },
     {
       "path": "docs/DOCUMENTATION-SCHEMA.md",
       "doc_id": "DOC-2025-00001",
@@ -17,9 +57,93 @@
       "doc_type": "guide",
       "status": "active",
       "canonical": true,
-      "tags": ["docs", "schema", "meta"],
+      "tags": [
+        "docs",
+        "schema",
+        "meta"
+      ],
       "created": "2025-10-20",
-      "summary": "Mandatory front-matter schema for all documentation files"
+      "summary": "Mandatory front-matter schema for all documentation files",
+      "supersedes": [],
+      "related": [],
+      "sha256": "5da67da05a49c4e3d35c997255c2df56f1d8b125317245c82467512fa8061dc9",
+      "simhash": "10019465408784828932"
+    },
+    {
+      "path": "docs/ORGANIZATION.md",
+      "doc_id": "DOC-2025-00020",
+      "title": "Project Organization",
+      "doc_type": "reference",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "organization",
+        "structure",
+        "file-layout"
+      ],
+      "created": "2025-10-20",
+      "summary": "File organization and directory structure of the Lablab Bean project.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "db625b61d6baf8b5ea1e9afeba162d56c733a95c5bf6cc3f49ddacd3f4afc7c3",
+      "simhash": "1877102604862332567"
+    },
+    {
+      "path": "docs/QUICK-REFERENCE.md",
+      "doc_id": "DOC-2025-00016",
+      "title": "Documentation Quick Reference",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "reference",
+        "quickstart",
+        "cheatsheet"
+      ],
+      "created": "2025-10-20",
+      "summary": "Quick reference for the documentation system",
+      "supersedes": [],
+      "related": [],
+      "sha256": "32b0c0aebfd003c4e4b793d6aea73b35cc0724b334ff52acaa65249dc965d506",
+      "simhash": "14635647607408379408"
+    },
+    {
+      "path": "docs/QUICKSTART-DEV.md",
+      "doc_id": "DOC-2025-00021",
+      "title": "Quick Start - Development Mode",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "quickstart",
+        "development",
+        "hot-reload"
+      ],
+      "created": "2025-10-20",
+      "summary": "Get up and running with hot reload in development mode.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "04b35b5159f1dfc2968ade779930c6ac3ef2bd8b4366fa8c8439b82fac6ce977",
+      "simhash": "10006898147794177854"
+    },
+    {
+      "path": "docs/QUICKSTART.md",
+      "doc_id": "DOC-2025-00022",
+      "title": "Quick Start Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "quickstart",
+        "getting-started",
+        "release"
+      ],
+      "created": "2025-10-20",
+      "summary": "Get started with Lablab Bean in 3 steps: build, start, and access.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "5bc1b64f1b6d8f0e2b58750a250308f8daa107e590f0c14a6c59e4a648ea9e3f",
+      "simhash": "9834892765972851303"
     },
     {
       "path": "docs/README.md",
@@ -28,141 +152,300 @@
       "doc_type": "guide",
       "status": "active",
       "canonical": true,
-      "tags": ["readme", "navigation"],
+      "tags": [
+        "readme",
+        "navigation"
+      ],
       "created": "2025-10-20",
-      "summary": "Central navigation and overview of lablab-bean documentation"
-    },
-    {
-      "path": "docs/ARCHITECTURE.md",
-      "doc_id": "DOC-2025-00003",
-      "title": "Lablab Bean Architecture",
-      "doc_type": "reference",
-      "status": "active",
-      "canonical": true,
-      "tags": ["architecture", "overview", "structure"],
-      "created": "2025-10-20",
-      "summary": "Overall architecture and project structure of lablab-bean"
-    },
-    {
-      "path": "docs/CONTRIBUTING.md",
-      "doc_id": "DOC-2025-00004",
-      "title": "Contributing to Lablab Bean",
-      "doc_type": "guide",
-      "status": "active",
-      "canonical": true,
-      "tags": ["contributing", "development", "guidelines"],
-      "created": "2025-10-20",
-      "summary": "Guidelines and instructions for contributing to the project"
-    },
-    {
-      "path": "docs/DEVELOPMENT.md",
-      "doc_id": "DOC-2025-00005",
-      "title": "Development Guide",
-      "doc_type": "guide",
-      "status": "active",
-      "canonical": true,
-      "tags": ["development", "hot-reload", "workflow"],
-      "created": "2025-10-20",
-      "summary": "Development workflow including hot reload setup and best practices"
-    },
-    {
-      "path": "docs/DEBUGGING_NOTES.md",
-      "doc_id": "DOC-2025-00006",
-      "title": "Debugging Notes - Stack Testing",
-      "doc_type": "finding",
-      "status": "active",
-      "canonical": true,
-      "tags": ["debugging", "troubleshooting", "issues"],
-      "created": "2025-10-20",
-      "summary": "Debugging notes and solutions for common stack testing issues"
-    },
-    {
-      "path": "docs/MIGRATION.md",
-      "doc_id": "DOC-2025-00007",
-      "title": "Migration Guide",
-      "doc_type": "guide",
-      "status": "active",
-      "canonical": true,
-      "tags": ["migration", "upgrade", "structure"],
-      "created": "2025-10-20",
-      "summary": "Guide for migrating to new file organization and testing structure"
-    },
-    {
-      "path": "docs/TESTING.md",
-      "doc_id": "DOC-2025-00008",
-      "title": "Testing Guide",
-      "doc_type": "guide",
-      "status": "active",
-      "canonical": true,
-      "tags": ["testing", "playwright", "e2e"],
-      "created": "2025-10-20",
-      "summary": "Complete guide for testing the Lablab Bean stack with Playwright"
-    },
-    {
-      "path": "docs/ORGANIZATION.md",
-      "doc_id": "DOC-2025-00009",
-      "title": "Project Organization",
-      "doc_type": "reference",
-      "status": "active",
-      "canonical": true,
-      "tags": ["organization", "structure", "directories"],
-      "created": "2025-10-20",
-      "summary": "File organization and directory structure of the project"
-    },
-    {
-      "path": "docs/PROJECT_SETUP.md",
-      "doc_id": "DOC-2025-00010",
-      "title": "Project Setup Summary",
-      "doc_type": "reference",
-      "status": "active",
-      "canonical": true,
-      "tags": ["setup", "tools", "configuration"],
-      "created": "2025-10-20",
-      "summary": "Overview of project setup including all integrated tools and configurations"
-    },
-    {
-      "path": "docs/QUICKSTART.md",
-      "doc_id": "DOC-2025-00011",
-      "title": "Quick Start Guide",
-      "doc_type": "guide",
-      "status": "active",
-      "canonical": true,
-      "tags": ["quickstart", "getting-started", "user"],
-      "created": "2025-10-20",
-      "summary": "Quick start guide for users to get up and running in 3 steps"
+      "summary": "Central navigation and overview of lablab-bean documentation",
+      "supersedes": [],
+      "related": [],
+      "sha256": "2cb366969d6a7a662b023dfcbcd62cbecc5e961f7dabe7a7aec7a2b28bd62794",
+      "simhash": "10163655652470888596"
     },
     {
       "path": "docs/RELEASE.md",
-      "doc_id": "DOC-2025-00012",
+      "doc_id": "DOC-2025-00023",
       "title": "Release & Deployment Guide",
       "doc_type": "guide",
       "status": "active",
       "canonical": true,
-      "tags": ["release", "deployment", "artifacts"],
+      "tags": [
+        "release",
+        "deployment",
+        "versioning",
+        "artifacts"
+      ],
       "created": "2025-10-20",
-      "summary": "Guide for building and running the stack using versioned artifacts"
+      "summary": "Build and run the Lablab Bean stack using versioned artifacts.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "fa4e33d98454bab2552e0bab0cff400f2531d87cece109e32b867d8eebafea2c",
+      "simhash": "12271366693319010959"
     },
     {
-      "path": "docs/SETUP_COMPLETE.md",
-      "doc_id": "DOC-2025-00013",
-      "title": "Setup Complete - Lablab Bean",
+      "path": "docs/findings/terminal-gui-pm2-fixes.md",
+      "doc_id": "DOC-2025-00024",
+      "title": "Dungeon Crawler Fixes - Terminal.Gui and PM2",
+      "doc_type": "finding",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "terminal-gui",
+        "pm2",
+        "fixes",
+        "fov",
+        "input",
+        "debugging"
+      ],
+      "created": "2025-10-20",
+      "summary": "Fixed two critical issues: FOV/visibility rendering and player input control in Terminal.Gui v2 running under PM2.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "3bcb0a1130882b8000d8a0f0395f64a6019912ac2e454cf4f0472535bd001fc0",
+      "simhash": "752035839165535924"
+    },
+    {
+      "path": "docs/guides/debugging.md",
+      "doc_id": "DOC-2025-00025",
+      "title": "Debugging Notes - Stack Testing",
+      "doc_type": "finding",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "debugging",
+        "testing",
+        "troubleshooting",
+        "node-pty",
+        "terminal-gui"
+      ],
+      "created": "2025-10-20",
+      "summary": "Debugging notes and solutions for stack testing issues including node-pty compilation and Serilog configuration.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "b9caab391d5ae948edf674b8b454db0e0e4372a0938f2a8088fab5f5049b0067",
+      "simhash": "5282439710895993524"
+    },
+    {
+      "path": "docs/guides/development.md",
+      "doc_id": "DOC-2025-00026",
+      "title": "Development Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "development",
+        "hot-reload",
+        "pm2",
+        "workflow"
+      ],
+      "created": "2025-10-20",
+      "summary": "Development workflow including hot reload setup, PM2 orchestration, and best practices for fast iteration.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "3eeb434655f1f22cf9998609a6599775bf2e053019da075b1093dd8387d14553",
+      "simhash": "11123511735072212670"
+    },
+    {
+      "path": "docs/guides/file-organization-migration.md",
+      "doc_id": "DOC-2025-00027",
+      "title": "File Organization Migration Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "migration",
+        "file-organization",
+        "testing",
+        "playwright"
+      ],
+      "created": "2025-10-20",
+      "summary": "Guide for migrating to the new file organization and testing structure with Playwright and versioned artifacts.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "5a7d284272ff3401b54c839fd0689a86551f7306d1525a661e5f5b055e7bf31b",
+      "simhash": "796642343409359526"
+    },
+    {
+      "path": "docs/guides/pm2-hot-reload-migration.md",
+      "doc_id": "DOC-2025-00028",
+      "title": "PM2 Hot Reload Migration Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "migration",
+        "pm2",
+        "hot-reload",
+        "development"
+      ],
+      "created": "2025-10-20",
+      "summary": "Changes made to support local PM2 and hot reload development workflow.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "bac255b5da3f96f99ed499dff8aa7f77c664a33c1dd6bdcda96ee17cc4ed79b8",
+      "simhash": "11045682529550702239"
+    },
+    {
+      "path": "docs/guides/project-setup.md",
+      "doc_id": "DOC-2025-00029",
+      "title": "Project Setup Summary",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "setup",
+        "configuration",
+        "pre-commit",
+        "taskfile"
+      ],
+      "created": "2025-10-20",
+      "summary": "Overview of Lablab Bean project setup including all integrated tools and configurations.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "41dd4bcec45ef4a8dd676f93c1bcb592da401610094269e6e7d2c0a215dab2e9",
+      "simhash": "14599824463129162389"
+    },
+    {
+      "path": "docs/guides/spec-kit-quickstart.md",
+      "doc_id": "DOC-2025-00030",
+      "title": "Spec-Kit Quick Start Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "spec-kit",
+        "quickstart",
+        "templates",
+        "documentation"
+      ],
+      "created": "2025-10-20",
+      "summary": "5-minute guide to using Spec-Kit in Lablab Bean for specification templates and code generation.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "2999a416e5e5ce42ec4eac5a08f40e20a7284f9a21bf4aba659b8de2037c229d",
+      "simhash": "7718266765005760173"
+    },
+    {
+      "path": "docs/guides/spec-kit-utilization.md",
+      "doc_id": "DOC-2025-00031",
+      "title": "Spec-Kit Utilization Plan",
+      "doc_type": "plan",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "spec-kit",
+        "planning",
+        "templates",
+        "code-generation"
+      ],
+      "created": "2025-10-20",
+      "summary": "Plan for leveraging spec-kit for better project structure and code generation workflows.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "2edcd7ab104b039b2f5463e9c8763521f98455c4efeb13d97d7c420577e83bd9",
+      "simhash": "17225367799151146525"
+    },
+    {
+      "path": "docs/guides/testing.md",
+      "doc_id": "DOC-2025-00032",
+      "title": "Testing Guide",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "testing",
+        "playwright",
+        "e2e",
+        "automation"
+      ],
+      "created": "2025-10-20",
+      "summary": "Complete guide for end-to-end testing with Playwright for the web terminal interface.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "3223d666fa4367a9c14ed67cf5be3093026d487f75820cb8c80a0725331eb3cd",
+      "simhash": "16888023286106964670"
+    },
+    {
+      "path": "docs/specs/dungeon-crawler-features.md",
+      "doc_id": "DOC-2025-00033",
+      "title": "Dungeon Crawler - Feature Implementation Summary",
+      "doc_type": "spec",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "dungeon-crawler",
+        "features",
+        "roguelike",
+        "game-design"
+      ],
+      "created": "2025-10-20",
+      "summary": "Fully functional ASCII roguelike dungeon crawler with procedural generation, enemy AI, fog of war, line of sight, and audio support.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "4763dd05af300c7355519c59e7f67cc9bf3f7a8047f2955efa78da7f104c3485",
+      "simhash": "12109562571852076692"
+    },
+    {
+      "path": "docs/specs/dungeon-generation-system.md",
+      "doc_id": "DOC-2025-00034",
+      "title": "Dungeon Generation System Specification",
+      "doc_type": "spec",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "dungeon-generation",
+        "procedural",
+        "fov",
+        "fog-of-war",
+        "rooms"
+      ],
+      "created": "2025-10-20",
+      "summary": "Procedurally generated dungeons with rooms connected by L-shaped corridors, fog of war mechanics, and field of view calculations.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "cc91f21cbfd9317504dae3fc0e352c8c8e2bf5c636057b7e51cba873aac26379",
+      "simhash": "7929940641211733237"
+    },
+    {
+      "path": "docs/specs/monster-template-example.md",
+      "doc_id": "DOC-2025-00035",
+      "title": "Monster Template Example",
+      "doc_type": "guide",
+      "status": "active",
+      "canonical": true,
+      "tags": [
+        "templates",
+        "monsters",
+        "entities",
+        "code-generation"
+      ],
+      "created": "2025-10-20",
+      "summary": "Example guide for using monster template to generate new monster types with spec-kit.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "c8f59f84621d8bd74f3b7ab92f9752b70ea1449dc8683e5c4776ef0ba338f9bf",
+      "simhash": "6295025945977775805"
+    },
+    {
+      "path": "docs/specs/README.md",
+      "doc_id": "DOC-2025-00036",
+      "title": "Project Specifications Index",
       "doc_type": "reference",
       "status": "active",
       "canonical": true,
-      "tags": ["setup", "completion", "reference"],
+      "tags": [
+        "specifications",
+        "index",
+        "reference",
+        "spec-kit"
+      ],
       "created": "2025-10-20",
-      "summary": "Summary of what was added during the initial project setup"
-    },
-    {
-      "path": "docs/SUMMARY.md",
-      "doc_id": "DOC-2025-00014",
-      "title": "Project Summary",
-      "doc_type": "reference",
-      "status": "active",
-      "canonical": true,
-      "tags": ["summary", "refactoring", "history"],
-      "created": "2025-10-20",
-      "summary": "Summary of major refactoring and changes made to the project"
+      "summary": "Index and overview of all formal specifications for major systems and features in the Lablab Bean project.",
+      "supersedes": [],
+      "related": [],
+      "sha256": "c0bece2969ceb33d5e83aff689154ecdce7ae6471d3ea0db55d82b9c8f77b8d7",
+      "simhash": "10343727917667651102"
     }
   ]
 }

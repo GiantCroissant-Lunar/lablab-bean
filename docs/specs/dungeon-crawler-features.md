@@ -1,3 +1,16 @@
+---
+doc_id: DOC-2025-00033
+title: Dungeon Crawler - Feature Implementation Summary
+doc_type: spec
+status: active
+canonical: true
+created: 2025-10-20
+tags: [dungeon-crawler, features, roguelike, game-design]
+summary: >
+  Fully functional ASCII roguelike dungeon crawler with procedural generation,
+  enemy AI, fog of war, line of sight, and audio support.
+---
+
 # Dungeon Crawler - Feature Implementation Summary
 
 ## Overview

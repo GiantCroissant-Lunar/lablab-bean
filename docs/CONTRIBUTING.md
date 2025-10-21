@@ -1,3 +1,16 @@
+---
+doc_id: DOC-2025-00019
+title: Contributing to Lablab Bean
+doc_type: guide
+status: active
+canonical: true
+created: 2025-10-20
+tags: [contributing, development, workflow]
+summary: >
+  Guidelines and instructions for contributing to Lablab Bean including
+  setup, workflow, and coding standards.
+---
+
 # Contributing to Lablab Bean
 
 Thank you for your interest in contributing to Lablab Bean! This document provides guidelines and instructions for contributing.

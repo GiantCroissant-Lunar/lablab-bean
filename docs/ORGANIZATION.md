@@ -1,3 +1,15 @@
+---
+doc_id: DOC-2025-00020
+title: Project Organization
+doc_type: reference
+status: active
+canonical: true
+created: 2025-10-20
+tags: [organization, structure, file-layout]
+summary: >
+  File organization and directory structure of the Lablab Bean project.
+---
+
 # Project Organization
 
 This document describes the file organization and structure of the Lablab Bean project.

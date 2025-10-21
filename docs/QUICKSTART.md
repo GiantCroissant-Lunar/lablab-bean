@@ -1,6 +1,18 @@
+---
+doc_id: DOC-2025-00022
+title: Quick Start Guide
+doc_type: guide
+status: active
+canonical: true
+created: 2025-10-20
+tags: [quickstart, getting-started, release]
+summary: >
+  Get started with Lablab Bean in 3 steps: build, start, and access.
+---
+
 # Quick Start Guide
 
-## Get Started in 3 Steps
+## 🚀 Get Started in 3 Steps
 
 ### 1. Build the Release
 ```bash
@@ -13,253 +25,122 @@ task stack-run
 ```
 
 ### 3. Access Your Apps
-- **Web App**: http://localhost:3000
-- **Console App**: Running in PM2
-- **Windows App**: Available in artifacts
+- 🌐 **Web App**: http://localhost:3000
+- 💻 **Console App**: Running in PM2
+- 🎮 **Windows App**: Available in artifacts
 
 ---
 
-## Prerequisites
+## ⚡ One-Command Start
 
-- **Task**: [Install Task](https://taskfile.dev/installation/)
-- **PM2**: `npm install -g pm2`
-- **.NET 8 SDK**: [Download here](https://dotnet.microsoft.com/download)
-- **Node.js 18+** and **pnpm 8+**
+```bash
+task release-and-run
+```
 
-## Installation
-
-### Option 1: Automated Setup (Recommended)
-**Windows (PowerShell):**
+Or use the PowerShell script:
 ```powershell
-.\setup.ps1
+.\build-and-run.ps1
 ```
 
-**Linux/macOS:**
+---
+
+## 📊 Essential Commands
+
+| Command | Description |
+|---------|-------------|
+| `task stack-status` | Check if stack is running |
+| `task stack-logs` | View live logs |
+| `task stack-stop` | Stop the stack |
+| `task stack-restart` | Restart the stack |
+| `task list-versions` | List available versions |
+
+---
+
+## 🔍 Monitoring
+
+### View All Logs
 ```bash
-chmod +x setup.sh
-./setup.sh
+task stack-logs
 ```
 
-### Option 2: Manual Setup
-
-1. **Install dependencies:**
-   ```bash
-   task install
-   ```
-
-2. **Set up pre-commit hooks:**
-   ```bash
-   task pre-commit-install
-   ```
-
-3. **Build the application:**
-   ```bash
-   task build
-   ```
-
-## First Run
-
-Run the application:
+### View Specific App Logs
 ```bash
-task run
+task stack-logs-web      # Web app only
+task stack-logs-console  # Console app only
 ```
 
-Or directly:
+### PM2 Dashboard
 ```bash
-./bin/lablab-bean --help
+task stack-monit
 ```
 
-## Basic Commands
+---
 
-### View Available Tasks
+## 🛠️ Troubleshooting
+
+### Stack won't start?
 ```bash
-task --list
+# Check if artifacts exist
+task list-versions
+
+# Rebuild if needed
+task build-release
+
+# Try starting again
+task stack-run
 ```
 
-### Build and Run
+### Need to clean restart?
 ```bash
-task build
-task run
+task stack-delete    # Remove from PM2
+task build-release   # Rebuild
+task stack-run       # Start fresh
 ```
 
-### Run Tests
+---
+
+## 📦 What Gets Built?
+
+The build creates versioned artifacts in:
+```
+build/_artifacts/<version>/publish/
+├── console/    # Self-contained .NET console app
+├── windows/    # Self-contained .NET Windows app
+└── website/    # Built Astro website + Node.js
+```
+
+---
+
+## 🎯 Development vs Production
+
+### Development (Hot Reload)
 ```bash
-task test
+cd website
+pnpm dev
 ```
 
-### Check Code Quality
+### Production (Versioned Artifacts)
 ```bash
-task check
+task release-and-run
 ```
 
-This runs:
-- Code formatting
-- Linting
-- Tests
-- Static analysis
+---
 
-### Format Code
-```bash
-task fmt
-```
+## 📚 More Information
 
-### Run Linter
-```bash
-task lint
-```
+- **Full Release Guide**: [RELEASE.md](RELEASE.md)
+- **Project README**: [README.md](README.md)
+- **All Tasks**: `task --list`
 
-## Using Speck-kit
+---
 
-### Initialize Speck-kit
-```bash
-./bin/lablab-bean speck init
-```
+## 💡 Tips
 
-### Generate Code from Template
-```bash
-./bin/lablab-bean speck generate model User
-```
+1. **Version Management**: Set `LABLAB_VERSION` env var to use specific version
+2. **Logs Location**: Check `logs/` directory for historical logs
+3. **Version Info**: Each build includes `version.json` with metadata
+4. **PM2 Commands**: All standard PM2 commands work (e.g., `pm2 list`, `pm2 monit`)
 
-### Configure Templates
+---
 
-Edit `.lablab-bean.yaml`:
-```yaml
-speck:
-  enabled: true
-  project_name: lablab-bean
-  output_dir: ./generated
-  templates:
-    api: ./templates/api.tmpl
-    model: ./templates/model.tmpl
-```
-
-## Development Workflow
-
-1. **Make changes** to your code
-
-2. **Format and check:**
-   ```bash
-   task check
-   ```
-
-3. **Commit** (pre-commit hooks run automatically):
-   ```bash
-   git add .
-   git commit -m "feat: add new feature"
-   ```
-
-4. **Build and test:**
-   ```bash
-   task build
-   task test
-   ```
-
-## Common Tasks Reference
-
-| Task | Description |
-|------|-------------|
-| `task install` | Install dependencies and tools |
-| `task build` | Build the application |
-| `task run` | Build and run the application |
-| `task test` | Run tests |
-| `task test-coverage` | Run tests with coverage report |
-| `task lint` | Run linters |
-| `task fmt` | Format code |
-| `task check` | Run all checks |
-| `task clean` | Clean build artifacts |
-| `task pre-commit-install` | Install pre-commit hooks |
-| `task pre-commit-run` | Run pre-commit hooks manually |
-
-## Using Make (Alternative)
-
-If you prefer Make over Task:
-
-```bash
-make help        # Show available commands
-make install     # Install dependencies
-make build       # Build the application
-make run         # Run the application
-make test        # Run tests
-make check       # Run all checks
-```
-
-## Configuration
-
-The application uses `.lablab-bean.yaml` for configuration:
-
-```yaml
-app:
-  name: lablab-bean
-  version: 0.1.0
-  environment: development
-
-speck:
-  enabled: true
-  project_name: lablab-bean
-  output_dir: ./generated
-
-logging:
-  level: info
-  format: json
-```
-
-You can also use environment variables:
-```bash
-export LABLAB_BEAN_LOGGING_LEVEL=debug
-./bin/lablab-bean
-```
-
-## Troubleshooting
-
-### Task not found
-Install Task:
-```bash
-go install github.com/go-task/task/v3/cmd/task@latest
-```
-
-Add `$GOPATH/bin` to your PATH:
-```bash
-export PATH=$PATH:$(go env GOPATH)/bin
-```
-
-### Pre-commit hooks not working
-Install pre-commit:
-```bash
-pip install pre-commit
-```
-
-Then install hooks:
-```bash
-task pre-commit-install
-```
-
-### Build fails
-Clean and rebuild:
-```bash
-task clean
-task install
-task build
-```
-
-### Tests fail
-Run with verbose output:
-```bash
-go test -v ./...
-```
-
-## Next Steps
-
-- Read the full [README.md](README.md) for detailed documentation
-- Check [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
-- Explore the code in `cmd/` and `internal/` directories
-- Customize templates in `templates/` directory
-- Configure your own speck-kit templates
-
-## Getting Help
-
-- Run `task --list` to see all available tasks
-- Run `./bin/lablab-bean --help` for CLI help
-- Check the [README.md](README.md) for detailed documentation
-- Open an issue on GitHub for bugs or questions
-
-Happy coding! 🚀
+**Need help?** Run `task --list` to see all available commands.

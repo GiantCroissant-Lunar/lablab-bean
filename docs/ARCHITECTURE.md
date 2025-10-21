@@ -1,3 +1,16 @@
+---
+doc_id: DOC-2025-00018
+title: Lablab Bean Architecture
+doc_type: reference
+status: active
+canonical: true
+created: 2025-10-20
+tags: [architecture, overview, structure]
+summary: >
+  Multi-platform development toolkit architecture including task automation,
+  web terminal, .NET console/windows apps, and shared framework.
+---
+
 # Lablab Bean Architecture
 
 ## Overview
@@ -19,9 +32,10 @@ lablab-bean/
 ├── docs/                         # Documentation
 │   ├── ARCHITECTURE.md           # This file
 │   ├── CONTRIBUTING.md           # Contribution guidelines
-│   ├── PROJECT_SETUP.md          # Setup documentation
 │   ├── QUICKSTART.md             # Quick start guide
-│   └── SUMMARY.md                # Project summary
+│   ├── QUICKSTART-DEV.md         # Developer quick start
+│   ├── RELEASE.md                # Release documentation
+│   └── guides/                   # How-to guides
 ├── git-hooks/                    # Custom Git hooks
 │   ├── README.md
 │   ├── pre-commit
