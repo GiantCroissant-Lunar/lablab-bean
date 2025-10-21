@@ -330,9 +330,84 @@ dotnet/framework/LablabBean.Game.Core/
 
 ---
 
+## Phase 7: Polish & Integration ✅ COMPLETE
+
+**Status**: 3/3 tasks completed (100%)  
+**Completion Criteria**: ✅ Items spawn in dungeons, enemies drop loot, full gameplay loop functional
+
+### Completed Tasks
+
+- ✅ **T043** [P]: Implement SpawnItemsInRooms() in ItemSpawnSystem
+  - Spawns items in 20-50% of dungeon rooms (35% chance per room)
+  - Uses weighted spawn table for variety:
+    - Consumables: 60% (Healing Potions, Greater Healing Potions)
+    - Weapons: 20% (Dagger, Iron Sword, Steel Sword)
+    - Armor: 15% (Leather, Chain Mail, Helmets, Shields)
+    - Accessories: 5% (Rings of Strength/Protection/Speed)
+  - Spawns at random positions within rooms
+  - Logs total items spawned across all rooms
+
+- ✅ **T044**: Implement SpawnEnemyLoot() in ItemSpawnSystem
+  - 30% chance for Healing Potion drop
+  - 10% chance for equipment drop (random from common items)
+  - 60% chance for no loot
+  - Spawns at enemy death position
+  - Logs loot drops for debugging
+
+- ✅ **T045**: Integrate item spawning with MapGenerator and CombatSystem
+  - GameStateManager calls SpawnItemsInRooms() after enemy spawning
+  - CombatSystem updated with ItemSpawnSystem dependency
+  - CombatSystem.HandleDeath() calls SpawnEnemyLoot() for Enemy entities
+  - Removed test item spawning code (now using procedural spawning)
+  - Player starts at 50/100 HP (kept for testing healing mechanics)
+
+### Files Modified
+
+```
+dotnet/framework/LablabBean.Game.Core/
+├── Systems/
+│   ├── ItemSpawnSystem.cs (Added: SpawnItemsInRooms(), SpawnEnemyLoot())
+│   └── CombatSystem.cs (Added: ItemSpawnSystem dependency, loot spawning on death)
+└── Services/
+    └── GameStateManager.cs (Integrated: SpawnItemsInRooms() in InitializePlayWorld())
+```
+
+### Technical Implementation Notes
+
+**Weighted Spawn System**:
+- Total weight: 100 (sums all item weights)
+- Roll random number 0-99
+- Select item based on cumulative weight ranges
+- Ensures desired drop rate distribution
+
+**Room Item Spawning**:
+- Skips first room (player spawn)
+- 35% chance per remaining room
+- Random position within room bounds
+- Typical 15-room dungeon: ~5 items spawned
+
+**Enemy Loot Drops**:
+- Only enemies (has Enemy component) drop loot
+- Spawns at death position (corpse location)
+- Common items more likely (basic weapons/armor)
+- Healing potions most common (30% drop rate)
+
+**Full Gameplay Loop**:
+1. Player enters dungeon → items scattered in rooms
+2. Player explores → finds and collects items
+3. Player equips gear → stats increase
+4. Player fights enemies → takes damage
+5. Player uses healing potions → restores health
+6. Enemies die → drop loot
+7. Player collects loot → stronger for next fight
+
+**Commit**: *(Pending)*
+
+---
+
 ## Progress Tracking
 
-**Total Progress**: 42/45 tasks (93%)
+**Total Progress**: 45/45 tasks (100%) ✅ COMPLETE!
 
 ### Phase Completion
 - ✅ **Phase 1**: Setup & Infrastructure (5/5 tasks) - **COMPLETE**
@@ -341,7 +416,7 @@ dotnet/framework/LablabBean.Game.Core/
 - ✅ **Phase 4**: User Story 2 - Inventory Display (6/6 tasks) - **COMPLETE** 🎉
 - ✅ **Phase 5**: User Story 3 - Consume Healing Potions (7/7 tasks) - **COMPLETE** 🎉
 - ✅ **Phase 6**: User Story 4 - Equip Weapons/Armor (8/8 tasks) - **COMPLETE** 🎉
-- ⏳ **Phase 7**: Polish & Integration (0/3 tasks) - **FINAL PHASE!**
+- ✅ **Phase 7**: Polish & Integration (3/3 tasks) - **COMPLETE** 🎉
 
 ### Milestones
 - ✅ **Phase 1 Complete**: Project structure ready
@@ -350,7 +425,8 @@ dotnet/framework/LablabBean.Game.Core/
 - ✅ **Phase 4 Complete**: Inventory now visible in HUD! 🎉
 - ✅ **Phase 5 Complete**: Consumable items working! 🎉
 - ✅ **Phase 6 Complete**: Equipment system working! 🎉
-- 🎯 **Final Milestone**: Complete Phase 7 (3 tasks) → FULL FEATURE COMPLETE!
+- ✅ **Phase 7 Complete**: Full integration complete! 🎉
+- 🏆 **FEATURE COMPLETE!** All 45 tasks delivered!
 
 ---
 

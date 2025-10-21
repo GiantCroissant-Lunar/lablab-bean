@@ -124,16 +124,14 @@ public class GameStateManager : IDisposable
 
         _logger.LogInformation("Created {EnemyCount} enemies across {RoomCount} rooms", totalEnemies, rooms.Count - 1);
 
-        // TESTING: Spawn some test items near the player for Phase 4 testing
-        _itemSpawnSystem.SpawnHealingPotion(world, new Point(playerSpawn.X + 1, playerSpawn.Y));
-        _itemSpawnSystem.SpawnHealingPotion(world, new Point(playerSpawn.X + 2, playerSpawn.Y));
-        _itemSpawnSystem.SpawnIronSword(world, new Point(playerSpawn.X, playerSpawn.Y + 1));
-        _logger.LogInformation("Spawned test items near player for inventory testing");
+        // Spawn items in rooms (20-50% of rooms get an item)
+        var roomBounds = rooms.Select(r => r.Bounds).ToList();
+        _itemSpawnSystem.SpawnItemsInRooms(world, roomBounds, random);
 
         // Calculate initial FOV with larger radius to see more of the dungeon
         _currentMap.CalculateFOV(playerSpawn, 20);
 
-        _logger.LogInformation("Play world initialized with player and enemies");
+        _logger.LogInformation("Play world initialized with player, enemies, and items");
     }
 
     /// <summary>

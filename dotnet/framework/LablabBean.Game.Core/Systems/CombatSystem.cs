@@ -12,11 +12,13 @@ public class CombatSystem
 {
     private readonly ILogger<CombatSystem> _logger;
     private readonly Random _random;
+    private readonly ItemSpawnSystem? _itemSpawnSystem;
 
-    public CombatSystem(ILogger<CombatSystem> logger)
+    public CombatSystem(ILogger<CombatSystem> logger, ItemSpawnSystem? itemSpawnSystem = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _random = new Random();
+        _itemSpawnSystem = itemSpawnSystem;
     }
 
     /// <summary>
@@ -92,6 +94,13 @@ public class CombatSystem
         _logger.LogInformation("{Entity} has been defeated!", entityName);
 
         OnEntityDied?.Invoke(entity);
+
+        // Spawn loot for enemies
+        if (entity.Has<Enemy>() && entity.Has<Position>() && _itemSpawnSystem != null)
+        {
+            var position = entity.Get<Position>();
+            _itemSpawnSystem.SpawnEnemyLoot(world, position.Point, _random);
+        }
 
         // Remove components that shouldn't exist on dead entities
         if (entity.Has<AI>())

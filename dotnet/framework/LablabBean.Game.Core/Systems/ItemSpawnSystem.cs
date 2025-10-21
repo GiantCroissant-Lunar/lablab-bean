@@ -82,6 +82,116 @@ public class ItemSpawnSystem
     {
         return SpawnItem(world, position, typeof(ItemDefinitions.IronSword));
     }
+
+    /// <summary>
+    /// Spawns items in dungeon rooms (20-50% chance per room)
+    /// Uses weighted spawn tables for variety
+    /// </summary>
+    public void SpawnItemsInRooms(World world, List<Rectangle> rooms, Random random)
+    {
+        int itemsSpawned = 0;
+
+        // Weighted spawn table for room items
+        var spawnTable = new List<(Type ItemType, int Weight)>
+        {
+            // Consumables (60% total)
+            (typeof(ItemDefinitions.HealingPotion), 40),
+            (typeof(ItemDefinitions.GreaterHealingPotion), 20),
+            
+            // Weapons (20% total)
+            (typeof(ItemDefinitions.Dagger), 8),
+            (typeof(ItemDefinitions.IronSword), 8),
+            (typeof(ItemDefinitions.SteelSword), 4),
+            
+            // Armor (15% total)
+            (typeof(ItemDefinitions.LeatherArmor), 6),
+            (typeof(ItemDefinitions.LeatherHelmet), 4),
+            (typeof(ItemDefinitions.WoodenShield), 3),
+            (typeof(ItemDefinitions.ChainMail), 2),
+            
+            // Accessories (5% total)
+            (typeof(ItemDefinitions.RingOfStrength), 2),
+            (typeof(ItemDefinitions.RingOfProtection), 2),
+            (typeof(ItemDefinitions.RingOfSpeed), 1)
+        };
+
+        int totalWeight = spawnTable.Sum(entry => entry.Weight);
+
+        // Spawn items in 20-50% of rooms
+        foreach (var room in rooms)
+        {
+            // Skip first room (player spawn)
+            if (room == rooms[0])
+                continue;
+
+            // 20-50% chance to spawn an item
+            if (random.Next(100) < 35)
+            {
+                // Pick random item from weighted table
+                int roll = random.Next(totalWeight);
+                int cumulativeWeight = 0;
+                Type? selectedItemType = null;
+
+                foreach (var (itemType, weight) in spawnTable)
+                {
+                    cumulativeWeight += weight;
+                    if (roll < cumulativeWeight)
+                    {
+                        selectedItemType = itemType;
+                        break;
+                    }
+                }
+
+                if (selectedItemType != null)
+                {
+                    // Spawn at random position in room
+                    int x = random.Next(room.X + 1, room.X + room.Width - 1);
+                    int y = random.Next(room.Y + 1, room.Y + room.Height - 1);
+                    var position = new Point(x, y);
+
+                    SpawnItem(world, position, selectedItemType);
+                    itemsSpawned++;
+                }
+            }
+        }
+
+        _logger.LogInformation("Spawned {ItemCount} items across {RoomCount} rooms", itemsSpawned, rooms.Count);
+    }
+
+    /// <summary>
+    /// Spawns loot when an enemy dies
+    /// 30% chance for healing potion, 10% chance for equipment
+    /// </summary>
+    public void SpawnEnemyLoot(World world, Point position, Random random)
+    {
+        int roll = random.Next(100);
+
+        if (roll < 30)
+        {
+            // 30% chance: Healing potion
+            SpawnItem(world, position, typeof(ItemDefinitions.HealingPotion));
+            _logger.LogDebug("Enemy dropped Healing Potion at ({X}, {Y})", position.X, position.Y);
+        }
+        else if (roll < 40)
+        {
+            // 10% chance: Random equipment
+            var equipmentTable = new[]
+            {
+                typeof(ItemDefinitions.Dagger),
+                typeof(ItemDefinitions.IronSword),
+                typeof(ItemDefinitions.LeatherArmor),
+                typeof(ItemDefinitions.LeatherHelmet),
+                typeof(ItemDefinitions.WoodenShield)
+            };
+
+            var selectedEquipment = equipmentTable[random.Next(equipmentTable.Length)];
+            SpawnItem(world, position, selectedEquipment);
+            
+            var itemName = selectedEquipment.Name.Replace("ItemDefinitions.", "").Replace("+", " ");
+            _logger.LogDebug("Enemy dropped {ItemName} at ({X}, {Y})", itemName, position.X, position.Y);
+        }
+        // 60% chance: No loot
+    }
 }
 
 /// <summary>
