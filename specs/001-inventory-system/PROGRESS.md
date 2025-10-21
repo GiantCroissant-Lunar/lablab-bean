@@ -150,7 +150,8 @@ dotnet/framework/LablabBean.Game.TerminalUI/
 - Equipped: "Iron Sword [E]"
 - Empty: "(Empty)"
 
-**Commit**: *(Pending)*
+**Commit**: `5f7dbc9` - feat: Phase 4 - Implement inventory display in HUD
+**Test Setup**: `f235891` - test: Add test items for Phase 4 inventory display verification
 
 ---
 
@@ -200,6 +201,43 @@ Phase 3 implementation needs:
 3. 🔍 Locate DungeonCrawlerService for input handling
 4. 🔍 Review Transform/Position component usage for item positioning
 5. 🔍 Check HUD message log for feedback display
+
+---
+
+## 🧪 Testing Phase 4 - Inventory Display
+
+To test the inventory display functionality:
+
+1. **Start the game**:
+   ```bash
+   dotnet run --project dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj
+   ```
+
+2. **Initial state**: Inventory panel shows "Inventory (0/20)" and "(Empty)"
+
+3. **Test items spawned**: 
+   - 2 Healing Potions at player location + 1 and + 2
+   - 1 Iron Sword at player location + 1 vertical
+
+4. **Pick up items**:
+   - Move adjacent to items (already adjacent on spawn)
+   - Press 'G' to pick up
+   - Verify debug log shows "Picked up X"
+
+5. **Verify inventory display**:
+   - ✅ Inventory count updates: "(1/20)", "(2/20)", "(3/20)"
+   - ✅ Items appear in list: "Healing Potion", "Iron Sword"
+   - ✅ Stackable items show count: "Healing Potion (2)" after picking up second potion
+   - ✅ Real-time updates after each pickup
+
+6. **Test full inventory** (future):
+   - Pick up 20 items
+   - Verify "(20/20) (FULL)" appears in title
+   - Verify "Inventory is full!" message on pickup attempt
+
+7. **Test equipped items** (Phase 6):
+   - Equip iron sword (when equip feature is implemented)
+   - Verify "[E]" marker appears: "Iron Sword [E]"
 
 ---
 
