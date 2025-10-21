@@ -334,7 +334,7 @@ tasks:
   show-version:
     desc: Show the current version that will be used
     cmds:
-      - cmd: node -e "const cfg = require('./ecosystem.config.js'); console.log('Current version:', cfg.apps[0].env.LABLAB_VERSION);"
+      - cmd: node -e "const cfg = require('./build/config/ecosystem.config.js'); console.log('Current version:', cfg.apps[0].env.LABLAB_VERSION);"
         ignore_error: true
 
   stack-run:

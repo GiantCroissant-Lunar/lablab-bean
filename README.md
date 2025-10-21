@@ -5,6 +5,7 @@ A multi-platform development toolkit featuring task automation, web terminal, an
 ## Features
 
 - 🔨 **Task Automation**: Powered by [Task](https://taskfile.dev)
+- 📝 **Spec-Kit**: Template-based code generation and specifications
 - 🪝 **Pre-commit Hooks**: Automated code quality checks
 - 🌐 **Web Terminal**: Astro.js + xterm.js + node-pty
 - 💻 **Console App**: Terminal.Gui v2 TUI application
@@ -17,6 +18,10 @@ A multi-platform development toolkit featuring task automation, web terminal, an
 ```
 lablab-bean/
 ├── docs/                    # Documentation
+│   └── specs/              # Feature specifications
+├── templates/              # Code generation templates
+│   ├── entity/            # Entity templates (monsters, items)
+│   └── docs/              # Documentation templates
 ├── git-hooks/              # Custom Git hooks
 ├── website/                # Node.js workspace (pnpm)
 │   ├── apps/web/          # Astro.js web app with terminal
@@ -94,7 +99,7 @@ The stack includes:
 - 💻 **Console App** - Terminal.Gui TUI
 - 🎮 **Windows App** - SadConsole GUI
 
-See [docs/RELEASE.md](docs/RELEASE.md) for complete release documentation.
+See [RELEASE.md](docs/RELEASE.md) for complete release documentation.
 
 ### 🛠️ Manual Component Development
 
@@ -204,23 +209,64 @@ task pre-commit-run
 
 ## Speck-kit Integration
 
-Speck-kit provides template-based code generation. Configuration is in `.lablab-bean.yaml`.
+Spec-kit provides template-based code generation and standardized specifications. Configuration is in `.lablab-bean.yaml`.
 
-### Initialize Speck-kit
+### Quick Start
+
+**New to spec-kit?** Start here:
+```bash
+# Read the 5-minute quick start guide
+code docs/guides/spec-kit-quickstart.md
+```
+
+### Initialize Spec-kit
 
 ```bash
 task speck-init
 ```
 
-### Generate from Template
+### Create a Specification
 
 ```bash
-task speck-generate TEMPLATE=model OUTPUT=user-model.md
+# Copy example specification
+copy docs\specs\dungeon-generation-system.md docs\specs\my-feature.md
+
+# Edit your specification
+code docs\specs\my-feature.md
 ```
+
+### Generate Code from Template
+
+```bash
+# Copy monster template (manual for now)
+copy templates\entity\monster.tmpl MyMonster.cs
+
+# Replace {{.Variables}} with actual values
+# See: docs/specs/monster-template-example.md (guide for using templates)
+```
+
+### Available Templates
+
+Located in `templates/`:
+- **entity/monster.tmpl**: Generate monster classes with stats, AI, and behavior
+- **docs/spec-template.tmpl**: Generate feature specifications with standard format
+
+### Available Specifications
+
+Located in `docs/specs/`:
+- **dungeon-generation-system.md**: Dungeon generation algorithm (implemented v0.0.2)
+- **monster-template-example.md**: How to use monster templates
+- **README.md**: Specifications directory guide
+
+### Documentation
+
+- **docs/guides/spec-kit-quickstart.md**: 5-minute quick start guide
+- **docs/guides/spec-kit-utilization.md**: Complete strategy and implementation plan
+- **docs/specs/**: Feature specifications and examples
 
 ### Configuration
 
-Edit `.lablab-bean.yaml` to configure speck-kit templates:
+Edit `.lablab-bean.yaml` to configure spec-kit templates:
 
 ```yaml
 speck:
@@ -234,11 +280,6 @@ speck:
     author: Your Name
     license: MIT
 ```
-
-### Available Templates
-
-- **model.tmpl**: Generate model documentation with fields and validation rules
-- **api.tmpl**: Generate API documentation with endpoints and examples
 
 ## Development Workflow
 
@@ -345,13 +386,110 @@ pre_commit:
   auto_install: true
 ```
 
+## Documentation
+
+This project uses a structured documentation system with organized categories:
+
+### 📁 Documentation Structure
+
+```
+docs/
+├── README.md                  # Documentation navigation
+├── ARCHITECTURE.md            # System architecture
+├── CONTRIBUTING.md            # Contribution guidelines
+├── ORGANIZATION.md            # Project organization
+├── DOCUMENTATION-SCHEMA.md    # Documentation standards
+├── QUICK-REFERENCE.md         # Quick reference guide
+│
+├── guides/                    # How-to guides and tutorials
+│   ├── development.md         # Development guide
+│   ├── debugging.md           # Debugging guide
+│   ├── testing.md             # Testing guide
+│   ├── project-setup.md       # Project setup
+│   ├── spec-kit-quickstart.md # Spec-kit quick start
+│   ├── spec-kit-utilization.md # Spec-kit detailed guide
+│   ├── agent-usage.md         # AI agent usage guide
+│   ├── pm2-hot-reload-migration.md # PM2 migration
+│   └── file-organization-migration.md # File organization migration
+│
+├── specs/                     # Feature specifications
+│   ├── dungeon-generation-system.md
+│   ├── dungeon-crawler-features.md
+│   └── monster-template-example.md
+│
+├── findings/                  # Research and analysis
+│   └── terminal-gui-pm2-fixes.md
+│
+├── archive/                   # Historical/superseded docs
+│   ├── handover.md
+│   ├── setup-complete.md
+│   ├── file-organization-changes.md
+│   └── ... (older versions)
+│
+└── index/
+    └── registry.json          # Machine-readable doc registry
+```
+
+### 🎯 Quick Links
+
+**Getting Started:**
+- [Quick Start](docs/QUICKSTART.md) - User quick start
+- [Developer Quick Start](docs/QUICKSTART-DEV.md) - Setup development environment
+- [Project Setup Guide](docs/guides/project-setup.md) - Detailed setup instructions
+
+**Development:**
+- [Development Guide](docs/guides/development.md) - Development workflow
+- [Testing Guide](docs/guides/testing.md) - Testing strategy
+- [Debugging Guide](docs/guides/debugging.md) - Troubleshooting
+
+**Spec-Kit:**
+- [Spec-Kit Quick Start](docs/guides/spec-kit-quickstart.md) - 5-minute intro
+- [Spec-Kit Utilization](docs/guides/spec-kit-utilization.md) - Complete guide
+- [Feature Specifications](docs/specs/) - All specs
+
+**Architecture:**
+- [Architecture](docs/ARCHITECTURE.md) - System architecture
+- [Organization](docs/ORGANIZATION.md) - Project structure
+- [Contributing](docs/CONTRIBUTING.md) - How to contribute
+
+### 📝 Documentation System Features
+
+- **Schema**: All docs include YAML front-matter ([DOCUMENTATION-SCHEMA.md](docs/DOCUMENTATION-SCHEMA.md))
+- **Registry**: Machine-readable doc registry at `docs/index/registry.json`
+- **Validation**: Automatic validation with duplicate detection
+- **Categories**: Organized into guides/, specs/, findings/, archive/
+
+**Validate documentation:**
+```bash
+python scripts/validate_docs.py
+```
+
+See [docs/README.md](docs/README.md) for complete documentation navigation.
+
+## AI Agent Instructions
+
+This project includes structured instructions for AI coding assistants:
+
+- **Claude Code**: [CLAUDE.md](CLAUDE.md) → [.agent/adapters/claude.md](.agent/adapters/claude.md)
+- **GitHub Copilot**: `.github/copilot-instructions.md` (coming soon)
+- **Windsurf**: `.windsurf/rules.md` (coming soon)
+
+The `.agent/` directory contains:
+- **Base Rules**: Core principles, normative rules, and glossary
+- **Adapters**: Agent-specific configurations
+- **Meta**: Versioning and governance
+
+See [.agent/README.md](.agent/README.md) for details.
+
 ## Contributing
 
 1. Install pre-commit hooks: `task pre-commit-install`
-2. Make your changes
-3. Run checks: `task check`
-4. Commit your changes (hooks will run automatically)
-5. Submit a pull request
+2. Read agent instructions if using AI assistants: [CLAUDE.md](CLAUDE.md)
+3. Make your changes
+4. Run checks: `task check`
+5. Validate documentation: `python scripts/validate_docs.py`
+6. Commit your changes (hooks will run automatically)
+7. Submit a pull request
 
 ## License
 
