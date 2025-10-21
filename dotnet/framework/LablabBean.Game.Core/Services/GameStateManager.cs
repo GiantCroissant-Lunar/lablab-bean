@@ -21,6 +21,7 @@ public class GameStateManager : IDisposable
     private readonly CombatSystem _combatSystem;
     private readonly AISystem _aiSystem;
     private readonly ActorSystem _actorSystem;
+    private readonly InventorySystem _inventorySystem;
 
     private DungeonMap? _currentMap;
     private bool _disposed;
@@ -36,7 +37,8 @@ public class GameStateManager : IDisposable
         MovementSystem movementSystem,
         CombatSystem combatSystem,
         AISystem aiSystem,
-        ActorSystem actorSystem)
+        ActorSystem actorSystem,
+        InventorySystem inventorySystem)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _worldManager = worldManager ?? throw new ArgumentNullException(nameof(worldManager));
@@ -44,6 +46,7 @@ public class GameStateManager : IDisposable
         _combatSystem = combatSystem ?? throw new ArgumentNullException(nameof(combatSystem));
         _aiSystem = aiSystem ?? throw new ArgumentNullException(nameof(aiSystem));
         _actorSystem = actorSystem ?? throw new ArgumentNullException(nameof(actorSystem));
+        _inventorySystem = inventorySystem ?? throw new ArgumentNullException(nameof(inventorySystem));
     }
 
     /// <summary>
@@ -281,6 +284,61 @@ public class GameStateManager : IDisposable
         });
 
         return moved;
+    }
+
+    /// <summary>
+    /// Handles player attempting to pick up items
+    /// Returns a list of messages describing what happened
+    /// </summary>
+    public List<string> HandlePlayerPickup()
+    {
+        var messages = new List<string>();
+
+        if (!_isInitialized || _currentMap == null)
+            return messages;
+
+        var world = _worldManager.GetWorld(GameMode.Play);
+        var query = new QueryDescription().WithAll<Player, Position, Actor, Inventory>();
+
+        world.Query(in query, (Entity playerEntity, ref Player player, ref Position pos, ref Actor actor, ref Inventory inventory) =>
+        {
+            if (!actor.CanAct)
+            {
+                messages.Add("You can't act yet!");
+                return;
+            }
+
+            // Get all pickupable items
+            var items = _inventorySystem.GetPickupableItems(world, playerEntity);
+
+            if (items.Count == 0)
+            {
+                messages.Add("There's nothing here to pick up.");
+                return;
+            }
+
+            // If only one item, pick it up directly
+            if (items.Count == 1)
+            {
+                var message = _inventorySystem.PickupItem(world, playerEntity, items[0]);
+                messages.Add(message);
+                actor.ConsumeEnergy();
+                return;
+            }
+
+            // Multiple items - add message for each
+            messages.Add($"There are {items.Count} items here:");
+            for (int i = 0; i < items.Count; i++)
+            {
+                var item = world.Get<Item>(items[i]);
+                var count = world.Has<Stackable>(items[i]) ? world.Get<Stackable>(items[i]).Count : 1;
+                var countStr = count > 1 ? $" x{count}" : "";
+                messages.Add($"  {i + 1}. {item.Name}{countStr}");
+            }
+            messages.Add("(Multiple item pickup to be implemented)");
+        });
+
+        return messages;
     }
 
     /// <summary>

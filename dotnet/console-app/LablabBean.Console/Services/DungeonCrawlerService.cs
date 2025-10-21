@@ -355,6 +355,22 @@ public class DungeonCrawlerService : IDisposable
                 actionTaken = _gameStateManager.HandlePlayerMove(1, 1);
                 break;
 
+            // Pickup item
+            case Key.G:
+            case Key.g:
+                AddDebugLog("Attempting to pick up item(s)");
+                var pickupMessages = _gameStateManager.HandlePlayerPickup();
+                foreach (var message in pickupMessages)
+                {
+                    AddDebugLog(message);
+                }
+                if (pickupMessages.Count > 0)
+                {
+                    Update();
+                    return true;
+                }
+                break;
+
             // Mode switching
             case Key.E:
             case Key.e:

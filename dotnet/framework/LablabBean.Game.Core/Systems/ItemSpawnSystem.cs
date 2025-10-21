@@ -17,6 +17,71 @@ public class ItemSpawnSystem
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
+
+    /// <summary>
+    /// Spawns an item at the specified position
+    /// </summary>
+    /// <typeparam name="T">ItemDefinition type (e.g., typeof(ItemDefinitions.HealingPotion))</typeparam>
+    public Entity SpawnItem(World world, Point position, Type itemDefinitionType)
+    {
+        var itemProp = itemDefinitionType.GetProperty("Item");
+        var renderableProp = itemDefinitionType.GetProperty("Renderable");
+
+        if (itemProp == null || renderableProp == null)
+            throw new ArgumentException($"Type {itemDefinitionType.Name} is not a valid ItemDefinition");
+
+        var item = (Item)itemProp.GetValue(null)!;
+        var renderable = (Renderable)renderableProp.GetValue(null)!;
+
+        // Create base entity with common components
+        var entity = world.Create(
+            item,
+            new Position(position),
+            renderable,
+            new Visible(true)
+        );
+
+        // Add optional components based on item type
+        var consumableProp = itemDefinitionType.GetProperty("Consumable");
+        if (consumableProp != null)
+        {
+            var consumable = (Consumable)consumableProp.GetValue(null)!;
+            world.Add(entity, consumable);
+        }
+
+        var equippableProp = itemDefinitionType.GetProperty("Equippable");
+        if (equippableProp != null)
+        {
+            var equippable = (Equippable)equippableProp.GetValue(null)!;
+            world.Add(entity, equippable);
+        }
+
+        var stackableProp = itemDefinitionType.GetProperty("Stackable");
+        if (stackableProp != null)
+        {
+            var stackable = (Stackable)stackableProp.GetValue(null)!;
+            world.Add(entity, stackable);
+        }
+
+        _logger.LogDebug("Spawned {ItemName} at position ({X}, {Y})", item.Name, position.X, position.Y);
+        return entity;
+    }
+
+    /// <summary>
+    /// Spawns a healing potion at the specified position (convenience method)
+    /// </summary>
+    public Entity SpawnHealingPotion(World world, Point position)
+    {
+        return SpawnItem(world, position, typeof(ItemDefinitions.HealingPotion));
+    }
+
+    /// <summary>
+    /// Spawns an iron sword at the specified position (convenience method)
+    /// </summary>
+    public Entity SpawnIronSword(World world, Point position)
+    {
+        return SpawnItem(world, position, typeof(ItemDefinitions.IronSword));
+    }
 }
 
 /// <summary>
