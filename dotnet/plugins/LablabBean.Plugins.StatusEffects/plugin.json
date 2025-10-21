@@ -1,0 +1,17 @@
+{
+  "id": "status-effects",
+  "name": "Status Effects System",
+  "version": "1.0.0",
+  "description": "Complete status effects system with buffs, debuffs, DoT, and HoT. Migrated from core game systems.",
+  "author": "Lablab Bean Team",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.StatusEffects.dll,LablabBean.Plugins.StatusEffects.StatusEffectsPlugin",
+    "dotnet.sadconsole": "LablabBean.Plugins.StatusEffects.dll,LablabBean.Plugins.StatusEffects.StatusEffectsPlugin"
+  },
+  "dependencies": [],
+  "capabilities": ["status-effects", "buffs", "debuffs", "dot", "hot"],
+  "priority": 100,
+  "permissions": {
+    "profile": "Standard"
+  }
+}
