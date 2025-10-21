@@ -401,7 +401,7 @@ dotnet/framework/LablabBean.Game.Core/
 6. Enemies die → drop loot
 7. Player collects loot → stronger for next fight
 
-**Commit**: *(Pending)*
+**Commit**: `50bb600` - feat: Phase 7 - Polish & Integration (FEATURE COMPLETE!)
 
 ---
 
