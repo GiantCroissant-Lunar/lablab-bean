@@ -431,6 +431,18 @@ public class GameStateManager : IDisposable
     }
 
     /// <summary>
+    /// Checks if it's the player's turn (player can act)
+    /// </summary>
+    public bool IsPlayerTurn()
+    {
+        if (!_isInitialized || CurrentMode != GameMode.Play)
+            return false;
+
+        var world = _worldManager.GetWorld(GameMode.Play);
+        return _actorSystem.IsPlayerTurn(world);
+    }
+
+    /// <summary>
     /// Updates player FOV
     /// </summary>
     private void UpdatePlayerFOV(World world)
