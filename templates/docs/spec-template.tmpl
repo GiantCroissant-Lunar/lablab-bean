@@ -1,0 +1,125 @@
+# {{.Title}} Specification
+
+**Version**: {{.Version}}
+**Status**: {{.Status}}
+**Author**: {{.Author}}
+**Date**: {{.Date}}
+
+## Overview
+
+{{.Overview}}
+
+## Requirements
+
+### Functional Requirements
+
+{{range $index, $req := .FunctionalRequirements}}
+- **REQ-{{printf "%03d" $index}}**: {{$req}}
+{{end}}
+
+### Non-Functional Requirements
+
+{{range $index, $req := .NonFunctionalRequirements}}
+- **NFREQ-{{printf "%03d" $index}}**: {{$req}}
+{{end}}
+
+## Architecture
+
+### Components
+
+{{range .Components}}
+- **{{.Name}}** (`{{.Path}}`): {{.Description}}
+{{end}}
+
+### Data Flow
+
+```
+{{.DataFlow}}
+```
+
+## Implementation Details
+
+{{.ImplementationDetails}}
+
+## Configuration
+
+```{{.ConfigLanguage}}
+{{.Configuration}}
+```
+
+## Files
+
+### Created Files
+{{range .CreatedFiles}}
+- `{{.}}`
+{{end}}
+
+### Modified Files
+{{range .ModifiedFiles}}
+- `{{.}}`
+{{end}}
+
+## Testing
+
+### Test Cases
+
+{{range $index, $test := .TestCases}}
+- **TC-{{printf "%03d" $index}}**: {{$test.Description}}
+  - Expected: {{$test.Expected}}
+  - Status: {{$test.Status}}
+{{end}}
+
+### Acceptance Criteria
+
+{{range .AcceptanceCriteria}}
+- [ ] {{.}}
+{{end}}
+
+## Performance
+
+{{.Performance}}
+
+## Known Issues
+
+{{range $index, $issue := .KnownIssues}}
+- **Issue #{{$index}}**: {{$issue.Description}}
+  - **Impact**: {{$issue.Impact}}
+  - **Priority**: {{$issue.Priority}}
+  - **Workaround**: {{$issue.Workaround}}
+{{end}}
+
+## Future Enhancements
+
+{{range $index, $enhancement := .FutureEnhancements}}
+{{$index}}. {{$enhancement}}
+{{end}}
+
+## Integration Points
+
+{{.IntegrationPoints}}
+
+## Debug Information
+
+### Logging
+```{{.LogLanguage}}
+{{.LoggingExample}}
+```
+
+## References
+
+{{range .References}}
+- {{.Title}}: {{.URL}}
+{{end}}
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+{{range .VersionHistory}}
+| {{.Version}} | {{.Date}} | {{.Changes}} |
+{{end}}
+
+---
+
+**Implementation Status**: {{.ImplementationStatus}}
+**Next Review**: {{.NextReview}}
