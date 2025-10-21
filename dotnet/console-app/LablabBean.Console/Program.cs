@@ -26,6 +26,7 @@ try
             services.AddSingleton<ActorSystem>();
             services.AddSingleton<InventorySystem>();
             services.AddSingleton<ItemSpawnSystem>();
+            services.AddSingleton<StatusEffectSystem>();
             services.AddSingleton<GameStateManager>();
 
             // Add Terminal.Gui rendering services

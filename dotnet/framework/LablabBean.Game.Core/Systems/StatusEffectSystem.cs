@@ -10,41 +10,39 @@ namespace LablabBean.Game.Core.Systems;
 /// </summary>
 public class StatusEffectSystem
 {
-    private readonly World _world;
     private readonly ILogger<StatusEffectSystem> _logger;
 
-    public StatusEffectSystem(World world, ILogger<StatusEffectSystem> logger)
+    public StatusEffectSystem(ILogger<StatusEffectSystem> logger)
     {
-        _world = world ?? throw new ArgumentNullException(nameof(world));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
     /// Apply a status effect to an entity using predefined definition
     /// </summary>
-    public EffectResult ApplyEffect(Entity entity, EffectDefinition definition, EffectSource source)
+    public EffectResult ApplyEffect(World world, Entity entity, EffectDefinition definition, EffectSource source)
     {
-        return ApplyEffect(entity, definition.Type, definition.DefaultMagnitude, definition.DefaultDuration, source);
+        return ApplyEffect(world, entity, definition.Type, definition.DefaultMagnitude, definition.DefaultDuration, source);
     }
 
     /// <summary>
     /// Apply a status effect to an entity with custom magnitude and duration
     /// </summary>
-    public EffectResult ApplyEffect(Entity entity, EffectType effectType, int magnitude, int duration, EffectSource source)
+    public EffectResult ApplyEffect(World world, Entity entity, EffectType effectType, int magnitude, int duration, EffectSource source)
     {
-        if (!_world.IsAlive(entity))
+        if (!world.IsAlive(entity))
             return EffectResult.Failed("Entity no longer exists");
 
         if (duration <= 0)
             return EffectResult.Failed("Effect duration must be at least 1 turn");
 
         // Ensure entity has StatusEffects component
-        if (!_world.Has<StatusEffects>(entity))
+        if (!world.Has<StatusEffects>(entity))
         {
-            _world.Add(entity, StatusEffects.CreateEmpty());
+            world.Add(entity, StatusEffects.CreateEmpty());
         }
 
-        ref var statusEffects = ref _world.Get<StatusEffects>(entity);
+        ref var statusEffects = ref world.Get<StatusEffects>(entity);
 
         // Check if max effects reached
         if (statusEffects.IsFull)
@@ -91,12 +89,12 @@ public class StatusEffectSystem
     /// <summary>
     /// Remove a specific effect type from an entity
     /// </summary>
-    public EffectResult RemoveEffect(Entity entity, EffectType effectType)
+    public EffectResult RemoveEffect(World world, Entity entity, EffectType effectType)
     {
-        if (!_world.IsAlive(entity) || !_world.Has<StatusEffects>(entity))
+        if (!world.IsAlive(entity) || !world.Has<StatusEffects>(entity))
             return EffectResult.Failed($"Not affected by {effectType}");
 
-        ref var statusEffects = ref _world.Get<StatusEffects>(entity);
+        ref var statusEffects = ref world.Get<StatusEffects>(entity);
         var removed = statusEffects.ActiveEffects.RemoveAll(e => e.Type == effectType);
 
         if (removed > 0)
@@ -111,12 +109,12 @@ public class StatusEffectSystem
     /// <summary>
     /// Remove all negative effects (debuffs and DoT) from an entity
     /// </summary>
-    public EffectResult RemoveAllNegativeEffects(Entity entity)
+    public EffectResult RemoveAllNegativeEffects(World world, Entity entity)
     {
-        if (!_world.IsAlive(entity) || !_world.Has<StatusEffects>(entity))
+        if (!world.IsAlive(entity) || !world.Has<StatusEffects>(entity))
             return EffectResult.Failed("No negative effects active");
 
-        ref var statusEffects = ref _world.Get<StatusEffects>(entity);
+        ref var statusEffects = ref world.Get<StatusEffects>(entity);
         var removed = statusEffects.ActiveEffects.RemoveAll(e => 
             e.Category == EffectCategory.DamageOverTime || 
             e.Category == EffectCategory.StatDebuff);
@@ -133,12 +131,12 @@ public class StatusEffectSystem
     /// <summary>
     /// Clear all effects from an entity (used on death)
     /// </summary>
-    public void ClearAllEffects(Entity entity)
+    public void ClearAllEffects(World world, Entity entity)
     {
-        if (!_world.IsAlive(entity) || !_world.Has<StatusEffects>(entity))
+        if (!world.IsAlive(entity) || !world.Has<StatusEffects>(entity))
             return;
 
-        ref var statusEffects = ref _world.Get<StatusEffects>(entity);
+        ref var statusEffects = ref world.Get<StatusEffects>(entity);
         statusEffects.ActiveEffects.Clear();
         _logger.LogDebug($"Cleared all effects from entity {entity.Id}");
     }
@@ -147,14 +145,14 @@ public class StatusEffectSystem
     /// Process all effects for an entity at turn start
     /// Returns feedback messages for display
     /// </summary>
-    public List<string> ProcessEffects(Entity entity)
+    public List<string> ProcessEffects(World world, Entity entity)
     {
         var messages = new List<string>();
 
-        if (!_world.IsAlive(entity) || !_world.Has<StatusEffects>(entity))
+        if (!world.IsAlive(entity) || !world.Has<StatusEffects>(entity))
             return messages;
 
-        ref var statusEffects = ref _world.Get<StatusEffects>(entity);
+        ref var statusEffects = ref world.Get<StatusEffects>(entity);
         var effectsToRemove = new List<int>();
 
         // Process each effect
@@ -166,11 +164,11 @@ public class StatusEffectSystem
             switch (effect.Category)
             {
                 case EffectCategory.DamageOverTime:
-                    messages.Add(ApplyDamageOverTime(entity, effect));
+                    messages.Add(ApplyDamageOverTime(world, entity, effect));
                     break;
 
                 case EffectCategory.HealingOverTime:
-                    messages.Add(ApplyHealingOverTime(entity, effect));
+                    messages.Add(ApplyHealingOverTime(world, entity, effect));
                     break;
             }
 
@@ -199,12 +197,12 @@ public class StatusEffectSystem
     /// Calculate total stat modifiers from all active effects
     /// Returns (attackMod, defenseMod, speedMod)
     /// </summary>
-    public (int attackMod, int defenseMod, int speedMod) CalculateStatModifiers(Entity entity)
+    public (int attackMod, int defenseMod, int speedMod) CalculateStatModifiers(World world, Entity entity)
     {
-        if (!_world.IsAlive(entity) || !_world.Has<StatusEffects>(entity))
+        if (!world.IsAlive(entity) || !world.Has<StatusEffects>(entity))
             return (0, 0, 0);
 
-        var statusEffects = _world.Get<StatusEffects>(entity);
+        var statusEffects = world.Get<StatusEffects>(entity);
         int attackMod = 0, defenseMod = 0, speedMod = 0;
 
         foreach (var effect in statusEffects.ActiveEffects)
@@ -246,26 +244,26 @@ public class StatusEffectSystem
     /// Calculate total stats including base and status effects
     /// Equipment bonuses should be handled by InventorySystem
     /// </summary>
-    public (int attack, int defense, int speed) CalculateTotalStats(Entity entity)
+    public (int attack, int defense, int speed) CalculateTotalStats(World world, Entity entity)
     {
         // Get base stats
         int baseAttack = 0, baseDefense = 0, baseSpeed = 100;
 
-        if (_world.Has<Actor>(entity))
+        if (world.Has<Actor>(entity))
         {
-            var actor = _world.Get<Actor>(entity);
+            var actor = world.Get<Actor>(entity);
             baseSpeed = actor.Speed;
         }
 
-        if (_world.Has<Combat>(entity))
+        if (world.Has<Combat>(entity))
         {
-            var combat = _world.Get<Combat>(entity);
+            var combat = world.Get<Combat>(entity);
             baseAttack = combat.Attack;
             baseDefense = combat.Defense;
         }
 
         // Get status effect modifiers
-        var (effectAttack, effectDefense, effectSpeed) = CalculateStatModifiers(entity);
+        var (effectAttack, effectDefense, effectSpeed) = CalculateStatModifiers(world, entity);
 
         // Calculate totals with minimums
         int totalAttack = Math.Max(1, baseAttack + effectAttack);
@@ -278,39 +276,39 @@ public class StatusEffectSystem
     /// <summary>
     /// Check if entity has a specific effect active
     /// </summary>
-    public bool HasEffect(Entity entity, EffectType effectType)
+    public bool HasEffect(World world, Entity entity, EffectType effectType)
     {
-        if (!_world.IsAlive(entity) || !_world.Has<StatusEffects>(entity))
+        if (!world.IsAlive(entity) || !world.Has<StatusEffects>(entity))
             return false;
 
-        var statusEffects = _world.Get<StatusEffects>(entity);
+        var statusEffects = world.Get<StatusEffects>(entity);
         return statusEffects.ActiveEffects.Any(e => e.Type == effectType);
     }
 
     /// <summary>
     /// Get all active effects for an entity
     /// </summary>
-    public List<StatusEffect> GetActiveEffects(Entity entity)
+    public List<StatusEffect> GetActiveEffects(World world, Entity entity)
     {
-        if (!_world.IsAlive(entity) || !_world.Has<StatusEffects>(entity))
+        if (!world.IsAlive(entity) || !world.Has<StatusEffects>(entity))
             return new List<StatusEffect>();
 
-        var statusEffects = _world.Get<StatusEffects>(entity);
+        var statusEffects = world.Get<StatusEffects>(entity);
         return new List<StatusEffect>(statusEffects.ActiveEffects);
     }
 
     /// <summary>
     /// Check if effect can be applied (not at max effects, unless refreshing existing)
     /// </summary>
-    public bool CanApplyEffect(Entity entity, EffectType effectType)
+    public bool CanApplyEffect(World world, Entity entity, EffectType effectType)
     {
-        if (!_world.IsAlive(entity))
+        if (!world.IsAlive(entity))
             return false;
 
-        if (!_world.Has<StatusEffects>(entity))
+        if (!world.Has<StatusEffects>(entity))
             return true;
 
-        var statusEffects = _world.Get<StatusEffects>(entity);
+        var statusEffects = world.Get<StatusEffects>(entity);
         
         // Can always refresh existing effect
         if (statusEffects.ActiveEffects.Any(e => e.Type == effectType))
@@ -320,28 +318,28 @@ public class StatusEffectSystem
         return !statusEffects.IsFull;
     }
 
-    private string ApplyDamageOverTime(Entity entity, StatusEffect effect)
+    private string ApplyDamageOverTime(World world, Entity entity, StatusEffect effect)
     {
-        if (!_world.Has<Health>(entity))
+        if (!world.Has<Health>(entity))
             return string.Empty;
 
-        ref var health = ref _world.Get<Health>(entity);
+        ref var health = ref world.Get<Health>(entity);
         int oldHealth = health.Current;
         health.Current = Math.Max(0, health.Current - effect.Magnitude);
         int actualDamage = oldHealth - health.Current;
 
-        bool isPlayer = _world.Has<Player>(entity);
+        bool isPlayer = world.Has<Player>(entity);
         string subject = isPlayer ? "You take" : "Enemy takes";
         
         return $"{subject} {actualDamage} damage from {effect.Type.ToString().ToLower()}.";
     }
 
-    private string ApplyHealingOverTime(Entity entity, StatusEffect effect)
+    private string ApplyHealingOverTime(World world, Entity entity, StatusEffect effect)
     {
-        if (!_world.Has<Health>(entity))
+        if (!world.Has<Health>(entity))
             return string.Empty;
 
-        ref var health = ref _world.Get<Health>(entity);
+        ref var health = ref world.Get<Health>(entity);
         int oldHealth = health.Current;
         health.Current = Math.Min(health.Maximum, health.Current + effect.Magnitude);
         int actualHealing = health.Current - oldHealth;
@@ -349,7 +347,7 @@ public class StatusEffectSystem
         if (actualHealing == 0)
             return string.Empty;
 
-        bool isPlayer = _world.Has<Player>(entity);
+        bool isPlayer = world.Has<Player>(entity);
         string subject = isPlayer ? "You heal" : "Enemy heals";
         
         return $"{subject} {actualHealing} HP from {effect.Type.ToString().ToLower()}.";

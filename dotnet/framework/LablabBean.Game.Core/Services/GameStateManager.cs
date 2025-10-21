@@ -23,6 +23,7 @@ public class GameStateManager : IDisposable
     private readonly ActorSystem _actorSystem;
     private readonly InventorySystem _inventorySystem;
     private readonly ItemSpawnSystem _itemSpawnSystem;
+    private readonly StatusEffectSystem _statusEffectSystem;
 
     private DungeonMap? _currentMap;
     private bool _disposed;
@@ -31,6 +32,7 @@ public class GameStateManager : IDisposable
     public GameWorldManager WorldManager => _worldManager;
     public DungeonMap? CurrentMap => _currentMap;
     public GameMode CurrentMode => _worldManager.CurrentMode;
+    public StatusEffectSystem StatusEffectSystem => _statusEffectSystem;
 
     public GameStateManager(
         ILogger<GameStateManager> logger,
@@ -40,7 +42,8 @@ public class GameStateManager : IDisposable
         AISystem aiSystem,
         ActorSystem actorSystem,
         InventorySystem inventorySystem,
-        ItemSpawnSystem itemSpawnSystem)
+        ItemSpawnSystem itemSpawnSystem,
+        StatusEffectSystem statusEffectSystem)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _worldManager = worldManager ?? throw new ArgumentNullException(nameof(worldManager));
@@ -50,6 +53,7 @@ public class GameStateManager : IDisposable
         _actorSystem = actorSystem ?? throw new ArgumentNullException(nameof(actorSystem));
         _inventorySystem = inventorySystem ?? throw new ArgumentNullException(nameof(inventorySystem));
         _itemSpawnSystem = itemSpawnSystem ?? throw new ArgumentNullException(nameof(itemSpawnSystem));
+        _statusEffectSystem = statusEffectSystem ?? throw new ArgumentNullException(nameof(statusEffectSystem));
     }
 
     /// <summary>
@@ -102,7 +106,8 @@ public class GameStateManager : IDisposable
             new BlocksMovement(true),
             new Name("Player"),
             new Inventory(maxCapacity: 20),
-            new EquipmentSlots()
+            new EquipmentSlots(),
+            StatusEffects.CreateEmpty()
         );
 
         _logger.LogInformation("Player created at {Position} with 50/100 HP for testing", playerSpawn);
@@ -163,7 +168,8 @@ public class GameStateManager : IDisposable
             new Renderable(GetEnemyGlyph(enemyType), GetEnemyColor(enemyType), Color.Black, 50),
             new Visible(true),
             new BlocksMovement(true),
-            new Name(enemyType)
+            new Name(enemyType),
+            StatusEffects.CreateEmpty()
         );
 
         _logger.LogDebug("Created {EnemyType} at {Position}", enemyType, position);
