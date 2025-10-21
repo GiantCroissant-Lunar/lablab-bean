@@ -74,12 +74,24 @@ public struct Consumable
     public ConsumableEffect Effect { get; set; }
     public int EffectValue { get; set; }
     public bool UsableOutOfCombat { get; set; }
+    
+    // Status effect properties
+    public EffectType? AppliesEffect { get; set; }
+    public int? EffectMagnitude { get; set; }
+    public int? EffectDuration { get; set; }
+    public EffectType? RemovesEffect { get; set; }
+    public bool RemovesAllNegativeEffects { get; set; }
 
     public Consumable(ConsumableEffect effect, int effectValue, bool usableOutOfCombat = true)
     {
         Effect = effect;
         EffectValue = effectValue;
         UsableOutOfCombat = usableOutOfCombat;
+        AppliesEffect = null;
+        EffectMagnitude = null;
+        EffectDuration = null;
+        RemovesEffect = null;
+        RemovesAllNegativeEffects = false;
     }
 }
 
@@ -91,7 +103,8 @@ public enum ConsumableEffect
     RestoreHealth,
     RestoreMana,
     IncreaseSpeed,
-    CurePoison
+    CurePoison,
+    ApplyStatusEffect  // New: for potions that apply buffs/debuffs
 }
 
 /// <summary>

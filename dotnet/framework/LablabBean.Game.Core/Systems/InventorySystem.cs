@@ -279,7 +279,7 @@ public class InventorySystem
     /// Uses a consumable item and applies its effect
     /// Returns a message describing the result
     /// </summary>
-    public string UseConsumable(World world, Entity playerEntity, Entity itemEntity)
+    public string UseConsumable(World world, Entity playerEntity, Entity itemEntity, StatusEffectSystem? statusEffectSystem = null)
     {
         if (!CanUseConsumable(world, playerEntity, itemEntity))
         {
@@ -288,7 +288,7 @@ public class InventorySystem
             {
                 var health = world.Get<Health>(playerEntity);
                 var itemConsumable = world.Get<Consumable>(itemEntity);
-                
+
                 if (itemConsumable.Effect == ConsumableEffect.RestoreHealth && health.Current >= health.Maximum)
                 {
                     return "Already at full health!";
@@ -301,28 +301,61 @@ public class InventorySystem
         var consumable = world.Get<Consumable>(itemEntity);
         string message = "";
 
-        // Apply consumable effect
-        switch (consumable.Effect)
+        // Check if this consumable applies a status effect
+        if (consumable.AppliesEffect.HasValue && statusEffectSystem != null)
         {
-            case ConsumableEffect.RestoreHealth:
-                message = ApplyHealingEffect(world, playerEntity, consumable.EffectValue, item.Name);
-                break;
+            var result = statusEffectSystem.ApplyEffect(
+                world,
+                playerEntity,
+                consumable.AppliesEffect.Value,
+                consumable.EffectMagnitude ?? EffectDefinitions.GetDefinition(consumable.AppliesEffect.Value).DefaultMagnitude,
+                consumable.EffectDuration ?? EffectDefinitions.GetDefinition(consumable.AppliesEffect.Value).DefaultDuration,
+                EffectSource.Consumable
+            );
             
-            case ConsumableEffect.RestoreMana:
-                message = $"You consume the {item.Name}. (Mana system not yet implemented)";
-                break;
-            
-            case ConsumableEffect.IncreaseSpeed:
-                message = $"You consume the {item.Name}. (Speed buff not yet implemented)";
-                break;
-            
-            case ConsumableEffect.CurePoison:
-                message = $"You consume the {item.Name}. (Poison system not yet implemented)";
-                break;
-            
-            default:
-                message = $"You consume the {item.Name}.";
-                break;
+            message = result.Message;
+        }
+        // Check if this consumable removes a specific status effect
+        else if (consumable.RemovesEffect.HasValue && statusEffectSystem != null)
+        {
+            var result = statusEffectSystem.RemoveEffect(world, playerEntity, consumable.RemovesEffect.Value);
+            message = result.Message;
+        }
+        // Check if this consumable removes all negative effects
+        else if (consumable.RemovesAllNegativeEffects && statusEffectSystem != null)
+        {
+            var result = statusEffectSystem.RemoveAllNegativeEffects(world, playerEntity);
+            message = result.Message;
+        }
+        // Apply traditional consumable effects
+        else
+        {
+            switch (consumable.Effect)
+            {
+                case ConsumableEffect.RestoreHealth:
+                    message = ApplyHealingEffect(world, playerEntity, consumable.EffectValue, item.Name);
+                    break;
+
+                case ConsumableEffect.RestoreMana:
+                    message = $"You consume the {item.Name}. (Mana system not yet implemented)";
+                    break;
+
+                case ConsumableEffect.IncreaseSpeed:
+                    message = $"You consume the {item.Name}. (Speed buff not yet implemented)";
+                    break;
+
+                case ConsumableEffect.CurePoison:
+                    message = $"You consume the {item.Name}. (Poison system not yet implemented)";
+                    break;
+
+                case ConsumableEffect.ApplyStatusEffect:
+                    message = $"You consume the {item.Name}.";
+                    break;
+
+                default:
+                    message = $"You consume the {item.Name}.";
+                    break;
+            }
         }
 
         // Handle stackable items - decrement count or remove
@@ -330,7 +363,7 @@ public class InventorySystem
         {
             var stackable = world.Get<Stackable>(itemEntity);
             stackable.Count--;
-            
+
             if (stackable.Count <= 0)
             {
                 // Remove from inventory and destroy entity
