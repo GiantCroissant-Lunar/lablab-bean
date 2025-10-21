@@ -17,6 +17,8 @@ Multi-agent instruction system for Lablab-Bean project.
 │   ├── claude.md         # Claude Code
 │   ├── copilot.md        # GitHub Copilot
 │   └── windsurf.md       # Windsurf/Codeium
+├── integrations/         # External tool integrations
+│   └── spec-kit.md       # GitHub Spec-Kit (SDD methodology)
 └── meta/                 # Versioning and governance
     ├── changelog.md      # Version history
     ├── versioning.md     # Version sync protocol

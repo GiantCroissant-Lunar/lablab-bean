@@ -104,3 +104,25 @@ All external input (user input, file input, network data) must be validated.
 Run with minimum required permissions. Don't use admin/root unless necessary.
 
 ---
+
+## R-TOOL-001: Spec-Kit for Feature Development
+For new features, agents MUST use Spec-Kit workflow when appropriate.
+
+**Workflow**: `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`
+
+**Reference**: `.agent/integrations/spec-kit.md`
+
+**Rationale**: Ensures consistent, documented, specification-driven development across all AI agents.
+
+---
+
+## R-TOOL-002: Task Runner Integration
+Agents MUST use project task runner (`task` command) for common operations when available.
+
+**Check available tasks**: `task --list`
+
+**Reference**: `Taskfile.yml`
+
+**Rationale**: Standardizes commands across development environments and agents.
+
+---

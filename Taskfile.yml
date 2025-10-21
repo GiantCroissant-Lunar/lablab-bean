@@ -91,20 +91,6 @@ tasks:
       - pre-commit autoupdate
       - echo "✓ Pre-commit hooks updated"
 
-  speck-init:
-    desc: Initialize speck-kit directories
-    cmds:
-      - echo "Initializing speck-kit..."
-      - mkdir -p {{.TEMPLATES_DIR}}
-      - mkdir -p {{.OUTPUT_DIR}}
-      - echo "✓ Speck-kit directories created"
-
-  speck-generate:
-    desc: "Generate from speck-kit template (usage: task speck-generate TEMPLATE=name OUTPUT=file)"
-    cmds:
-      - echo "Generating from template {{.TEMPLATE}}..."
-      - echo "Output{{.OUTPUT_DIR}}/{{.OUTPUT}}"
-      - echo "⚠ Template generation requires custom implementation"
 
   docker-build:
     desc: Build Docker image
@@ -498,6 +484,64 @@ tasks:
     dir: "{{.DOTNET_DIR}}"
     cmds:
       - jb cleanupcode LablabBean.sln || echo "⚠ JetBrains CLI not found"
+
+  # Spec-Kit Tasks (R-TOOL-001)
+  speckit:constitution:
+    desc: Create Spec-Kit constitution (one-time setup)
+    cmds:
+      - echo "Creating Spec-Kit constitution..."
+      - echo "Please provide your constitution requirements:"
+      - echo "Example: Create constitution extending .agent/base/ rules for data-driven dungeon crawler"
+      - echo ""
+      - echo "Run: /speckit.constitution in Claude Code"
+      - echo "Or: Use your AI agent's Spec-Kit integration"
+
+  speckit:specify:
+    desc: Create feature specification (WHAT & WHY)
+    cmds:
+      - echo "Creating feature specification..."
+      - echo "This command is for AI agents to invoke."
+      - echo ""
+      - echo "Usage in Claude Code: /speckit.specify"
+      - echo "Then describe your feature requirements (WHAT & WHY, not HOW)"
+
+  speckit:plan:
+    desc: Create technical plan (HOW)
+    cmds:
+      - echo "Creating technical implementation plan..."
+      - echo "This command is for AI agents to invoke."
+      - echo ""
+      - echo "Usage in Claude Code: /speckit.plan"
+      - echo "Requires an existing specification in specs/"
+
+  speckit:tasks:
+    desc: Generate task breakdown
+    cmds:
+      - echo "Generating task breakdown..."
+      - echo "This command is for AI agents to invoke."
+      - echo ""
+      - echo "Usage in Claude Code: /speckit.tasks"
+      - echo "Requires an existing plan in specs/"
+
+  speckit:implement:
+    desc: Execute implementation from tasks
+    cmds:
+      - echo "Executing implementation..."
+      - echo "This command is for AI agents to invoke."
+      - echo ""
+      - echo "Usage in Claude Code: /speckit.implement"
+      - echo "Requires an existing task list in specs/"
+
+  speckit:status:
+    desc: Show current Spec-Kit specifications
+    cmds:
+      - echo "Current Spec-Kit specifications:"
+      - echo ""
+      - cmd: powershell -Command "Get-ChildItem -Path 'specs' -Directory -ErrorAction SilentlyContinue | Select-Object Name, LastWriteTime | Format-Table -AutoSize"
+        ignore_error: true
+      - cmd: ls -lh specs/ 2>/dev/null || echo "No specs directory found"
+        platforms: [linux, darwin]
+        ignore_error: true
 
   help:
     desc: Show help

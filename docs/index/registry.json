@@ -1,15 +1,14 @@
 {
-  "generated_at": "2025-10-21T00:25:22.301250Z",
-  "total_docs": 22,
+  "generated_at": "2025-10-21T01:02:13.748712Z",
+  "total_docs": 20,
   "by_type": {
     "reference": 3,
-    "guide": 14,
+    "guide": 13,
     "finding": 2,
-    "plan": 1,
     "spec": 2
   },
   "by_status": {
-    "active": 22
+    "active": 20
   },
   "docs": [
     {
@@ -305,46 +304,6 @@
       "related": [],
       "sha256": "41dd4bcec45ef4a8dd676f93c1bcb592da401610094269e6e7d2c0a215dab2e9",
       "simhash": "14599824463129162389"
-    },
-    {
-      "path": "docs/guides/spec-kit-quickstart.md",
-      "doc_id": "DOC-2025-00030",
-      "title": "Spec-Kit Quick Start Guide",
-      "doc_type": "guide",
-      "status": "active",
-      "canonical": true,
-      "tags": [
-        "spec-kit",
-        "quickstart",
-        "templates",
-        "documentation"
-      ],
-      "created": "2025-10-20",
-      "summary": "5-minute guide to using Spec-Kit in Lablab Bean for specification templates and code generation.",
-      "supersedes": [],
-      "related": [],
-      "sha256": "2999a416e5e5ce42ec4eac5a08f40e20a7284f9a21bf4aba659b8de2037c229d",
-      "simhash": "7718266765005760173"
-    },
-    {
-      "path": "docs/guides/spec-kit-utilization.md",
-      "doc_id": "DOC-2025-00031",
-      "title": "Spec-Kit Utilization Plan",
-      "doc_type": "plan",
-      "status": "active",
-      "canonical": true,
-      "tags": [
-        "spec-kit",
-        "planning",
-        "templates",
-        "code-generation"
-      ],
-      "created": "2025-10-20",
-      "summary": "Plan for leveraging spec-kit for better project structure and code generation workflows.",
-      "supersedes": [],
-      "related": [],
-      "sha256": "2edcd7ab104b039b2f5463e9c8763521f98455c4efeb13d97d7c420577e83bd9",
-      "simhash": "17225367799151146525"
     },
     {
       "path": "docs/guides/testing.md",
