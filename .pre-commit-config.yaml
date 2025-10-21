@@ -37,3 +37,43 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
+
+  # Python code quality
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        args: [--max-line-length=88, --extend-ignore=E203]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: [--profile=black]
+
+  # Custom hooks (also available in git-hooks/ directory)
+  - repo: local
+    hooks:
+      # Validate agent pointer files are up to date
+      - id: validate-pointer-files
+        name: Validate agent pointer files
+        entry: bash git-hooks/validate-agent-pointers
+        language: system
+        pass_filenames: false
+        files: ^(.agent/|CLAUDE\.md|AGENTS\.md|\.github/copilot-instructions\.md|\.windsurf/rules\.md)
+        always_run: false
+
+      # Python code quality (alternative to black/flake8/isort repos above)
+      # Uncomment to use git-hooks/python-check instead of individual tools
+      # - id: python-check
+      #   name: Python code quality
+      #   entry: bash git-hooks/python-check
+      #   language: system
+      #   types: [python]
+      #   pass_filenames: false
