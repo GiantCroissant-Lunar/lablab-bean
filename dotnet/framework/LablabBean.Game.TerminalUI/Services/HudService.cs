@@ -15,6 +15,7 @@ public class HudService
 {
     private readonly ILogger<HudService> _logger;
     private readonly FrameView _hudFrame;
+    private readonly Label _levelLabel;
     private readonly Label _healthLabel;
     private readonly Label _statsLabel;
     private readonly FrameView _inventoryFrame;
@@ -38,11 +39,21 @@ public class HudService
             CanFocus = false  // HUD should not steal focus from game
         };
 
+        // Level display (at the top)
+        _levelLabel = new Label
+        {
+            X = 1,
+            Y = 0,
+            Width = Dim.Fill(2),
+            Height = 2,
+            Text = "Level: 1\nDepth: -30 ft"
+        };
+
         // Health display
         _healthLabel = new Label
         {
             X = 1,
-            Y = 1,
+            Y = 3,
             Width = Dim.Fill(2),  // Leave margin for frame border
             Height = 3,
             Text = "Health: --/--"
@@ -52,7 +63,7 @@ public class HudService
         _statsLabel = new Label
         {
             X = 1,
-            Y = 5,
+            Y = 7,
             Width = Dim.Fill(2),  // Leave margin for frame border
             Height = 5,
             Text = "Stats:\n  ATK: --\n  DEF: --\n  SPD: --"
@@ -62,7 +73,7 @@ public class HudService
         _inventoryFrame = new FrameView("Inventory (0/20)")
         {
             X = 1,
-            Y = 11,
+            Y = 13,
             Width = Dim.Fill(2),
             Height = Dim.Fill(2),
             CanFocus = false
@@ -78,7 +89,7 @@ public class HudService
         };
 
         _inventoryFrame.Add(_inventoryLabel);
-        _hudFrame.Add(_healthLabel, _statsLabel, _inventoryFrame);
+        _hudFrame.Add(_levelLabel, _healthLabel, _statsLabel, _inventoryFrame);
     }
 
     /// <summary>
@@ -111,6 +122,19 @@ public class HudService
                           $"  DEF: {combat.Defense}\n" +
                           $"  SPD: {actor.Speed}\n" +
                           $"  NRG: {actor.Energy}";
+    }
+
+    /// <summary>
+    /// Updates the level display
+    /// </summary>
+    public void UpdateLevelDisplay(int currentLevel, int personalBest, int depthInFeet)
+    {
+        _levelLabel.Text = $"Level: {currentLevel}\nDepth: -{depthInFeet} ft";
+        
+        if (currentLevel > personalBest)
+        {
+            _levelLabel.Text += " NEW!";
+        }
     }
 
     /// <summary>

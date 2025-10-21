@@ -1,3 +1,4 @@
+using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Services;
 using LablabBean.Game.Core.Systems;
 using LablabBean.Game.Core.Worlds;
@@ -279,6 +280,17 @@ public class DungeonCrawlerService : IDisposable
         {
             _worldViewService.Render(_gameStateManager.WorldManager.CurrentWorld, _gameStateManager.CurrentMap);
             _hudService.Update(_gameStateManager.WorldManager.CurrentWorld);
+            
+            // Update level display
+            if (_gameStateManager.LevelManager != null)
+            {
+                var levelManager = _gameStateManager.LevelManager;
+                _hudService.UpdateLevelDisplay(
+                    levelManager.CurrentLevel,
+                    levelManager.PersonalBestDepth,
+                    levelManager.CurrentLevel * 30 // 30 feet per level
+                );
+            }
         }
         
         // Ensure game window keeps focus
@@ -434,6 +446,17 @@ public class DungeonCrawlerService : IDisposable
             case Key.e:
                 ToggleMode();
                 return true;
+
+            // Staircase interaction (use '>' and '<' directly)
+            case (Key)'>':
+                AddDebugLog("Attempting to descend stairs");
+                actionTaken = _gameStateManager.HandleStaircaseInteraction(StaircaseDirection.Down);
+                break;
+            
+            case (Key)'<':
+                AddDebugLog("Attempting to ascend stairs");
+                actionTaken = _gameStateManager.HandleStaircaseInteraction(StaircaseDirection.Up);
+                break;
 
             // Quit
             case Key.Q:

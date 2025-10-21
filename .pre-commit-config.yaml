@@ -38,24 +38,23 @@ repos:
         stages: [commit-msg]
         args: []
 
-  # Python code quality
-  - repo: https://github.com/psf/black
-    rev: 24.1.1
+  # Python code quality - Ruff (replaces black, flake8, isort, and more)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
     hooks:
-      - id: black
-        language_version: python3
+      # Run the linter
+      - id: ruff
+        args: [--fix]
+      # Run the formatter (replaces black)
+      - id: ruff-format
 
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+  # Optional: Type checking with mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
     hooks:
-      - id: flake8
-        args: [--max-line-length=88, --extend-ignore=E203]
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: [--profile=black]
+      - id: mypy
+        additional_dependencies: []
+        args: [--ignore-missing-imports, --no-strict-optional]
 
   # Custom hooks (also available in git-hooks/ directory)
   - repo: local
