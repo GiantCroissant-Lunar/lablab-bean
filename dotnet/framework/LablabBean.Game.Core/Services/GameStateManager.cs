@@ -22,6 +22,7 @@ public class GameStateManager : IDisposable
     private readonly AISystem _aiSystem;
     private readonly ActorSystem _actorSystem;
     private readonly InventorySystem _inventorySystem;
+    private readonly ItemSpawnSystem _itemSpawnSystem;
 
     private DungeonMap? _currentMap;
     private bool _disposed;
@@ -38,7 +39,8 @@ public class GameStateManager : IDisposable
         CombatSystem combatSystem,
         AISystem aiSystem,
         ActorSystem actorSystem,
-        InventorySystem inventorySystem)
+        InventorySystem inventorySystem,
+        ItemSpawnSystem itemSpawnSystem)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _worldManager = worldManager ?? throw new ArgumentNullException(nameof(worldManager));
@@ -47,6 +49,7 @@ public class GameStateManager : IDisposable
         _aiSystem = aiSystem ?? throw new ArgumentNullException(nameof(aiSystem));
         _actorSystem = actorSystem ?? throw new ArgumentNullException(nameof(actorSystem));
         _inventorySystem = inventorySystem ?? throw new ArgumentNullException(nameof(inventorySystem));
+        _itemSpawnSystem = itemSpawnSystem ?? throw new ArgumentNullException(nameof(itemSpawnSystem));
     }
 
     /// <summary>
@@ -120,6 +123,12 @@ public class GameStateManager : IDisposable
         }
 
         _logger.LogInformation("Created {EnemyCount} enemies across {RoomCount} rooms", totalEnemies, rooms.Count - 1);
+
+        // TESTING: Spawn some test items near the player for Phase 4 testing
+        _itemSpawnSystem.SpawnHealingPotion(world, new Point(playerSpawn.X + 1, playerSpawn.Y));
+        _itemSpawnSystem.SpawnHealingPotion(world, new Point(playerSpawn.X + 2, playerSpawn.Y));
+        _itemSpawnSystem.SpawnIronSword(world, new Point(playerSpawn.X, playerSpawn.Y + 1));
+        _logger.LogInformation("Spawned test items near player for inventory testing");
 
         // Calculate initial FOV with larger radius to see more of the dungeon
         _currentMap.CalculateFOV(playerSpawn, 20);
