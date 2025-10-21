@@ -21,5 +21,9 @@ public interface IPluginHost
     /// <summary>
     /// Publish an event to the host event bus.
     /// </summary>
+    /// <remarks>
+    /// OBSOLETE: Use IEventBus.PublishAsync instead. This method is retained for backward compatibility.
+    /// </remarks>
+    [Obsolete("Use IEventBus.PublishAsync instead. Retrieve IEventBus from IRegistry.")]
     void PublishEvent<T>(T evt);
 }

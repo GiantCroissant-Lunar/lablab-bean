@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+#### Event-Driven Plugin Architecture (v1.0.0)
+- **IEventBus**: Pub-sub messaging infrastructure with 1.1M+ events/sec throughput
+- **Domain Contracts**: `LablabBean.Contracts.Game` and `LablabBean.Contracts.UI` assemblies
+- **Event Definitions**: Immutable record types for game and UI events
+- **Service Contracts**: Platform-independent service interfaces with priority-based selection
+- **Example Plugins**: Analytics, MockGame, and ReactiveUI demonstrating patterns
+- **Performance**: 0.003ms event latency (3,333x better than 10ms target)
+- **Documentation**: Complete developer guide with 3+ working examples
+- **Tests**: 29 passing tests covering event bus, contracts, and integration scenarios
+
+#### Project Infrastructure
 - Initial project setup with Go 1.21
 - Pre-commit hooks configuration with multiple linters and formatters
 - Task automation using Taskfile.yml

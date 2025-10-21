@@ -12,22 +12,27 @@ A multi-platform development toolkit featuring task automation, web terminal, an
 - 🎮 **Windows App**: SadConsole ASCII graphics application
 - ⚛️ **Reactive**: ReactiveUI, System.Reactive, R3
 - 🏗️ **Modern .NET**: .NET 8 with Microsoft.Extensions.*
+- 🔌 **Event-Driven Plugins**: Loosely coupled plugin architecture with pub-sub messaging (1.1M+ events/sec)
 
 ## Project Structure
 
 ```
 lablab-bean/
 ├── docs/                    # Documentation
+│   ├── plugins/            # Plugin development guides
 │   └── specs/              # Feature specifications
 ├── templates/              # Code generation templates
 │   ├── entity/            # Entity templates (monsters, items)
 │   └── docs/              # Documentation templates
 ├── git-hooks/              # Custom Git hooks
+├── plugins/                # Plugin implementations
+│   ├── examples/          # Example plugins
+│   └── */                 # Plugin projects
 ├── website/                # Node.js workspace (pnpm)
 │   ├── apps/web/          # Astro.js web app with terminal
 │   └── packages/terminal/ # Terminal backend (node-pty)
 └── dotnet/                # .NET 8 solution
-    ├── framework/         # Shared libraries
+    ├── framework/         # Shared libraries & contracts
     ├── console-app/       # Terminal.Gui app
     └── windows-app/       # SadConsole app
 ```
@@ -132,6 +137,41 @@ dotnet run
 cd dotnet/windows-app/LablabBean.Windows
 dotnet run
 ```
+
+## Plugin Development
+
+The project features an **event-driven plugin architecture** with exceptional performance (1.1M+ events/sec, 0.003ms latency).
+
+### Quick Start: Create Your First Plugin
+
+```bash
+cd plugins/
+dotnet new classlib -n YourPlugin -f net8.0
+```
+
+Add references and implement `IPlugin` interface. See the [Event-Driven Development Guide](docs/plugins/event-driven-development.md) for a complete tutorial.
+
+### Example Plugins
+
+- **Analytics Plugin**: Track game events without direct dependencies
+- **Mock Game Service**: Provide game mechanics with event publishing
+- **Reactive UI**: Auto-update UI on game events (no polling)
+
+See [plugins/examples/](plugins/examples/) for working examples.
+
+### Key Features
+
+- **Event Bus**: Pub-sub messaging with `IEventBus`
+- **Service Contracts**: Platform-independent interfaces
+- **Priority-Based Selection**: Multiple implementations with priority
+- **Loose Coupling**: Plugins communicate via events, not direct references
+
+### Documentation
+
+- **Developer Guide**: [docs/plugins/event-driven-development.md](docs/plugins/event-driven-development.md)
+- **Quickstart**: [specs/007-tiered-contract-architecture/quickstart.md](specs/007-tiered-contract-architecture/quickstart.md)
+- **Performance**: [specs/007-tiered-contract-architecture/performance-results.md](specs/007-tiered-contract-architecture/performance-results.md)
+- **Spec**: [specs/007-tiered-contract-architecture/spec.md](specs/007-tiered-contract-architecture/spec.md)
 
 ## Available Tasks
 

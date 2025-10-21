@@ -25,11 +25,12 @@ public sealed class PluginHost : IPluginHost
 
     public IServiceProvider Services => _services;
 
+    [Obsolete("Use IEventBus.PublishAsync instead. Retrieve IEventBus from IRegistry.")]
     public void PublishEvent<T>(T evt)
     {
-        // TODO: Implement event bus integration when MessagePipe or similar is added
-        // For now, just log the event
+        // Obsolete: Retained for backward compatibility
+        // Use IEventBus.PublishAsync instead
         var logger = _loggerFactory.CreateLogger<PluginHost>();
-        logger.LogDebug("Event published: {EventType}", typeof(T).Name);
+        logger.LogWarning("PublishEvent is obsolete. Use IEventBus.PublishAsync instead. Event type: {EventType}", typeof(T).Name);
     }
 }

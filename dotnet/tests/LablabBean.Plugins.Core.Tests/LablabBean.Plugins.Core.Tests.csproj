@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Core\LablabBean.Plugins.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.Game\LablabBean.Contracts.Game.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.UI\LablabBean.Contracts.UI.csproj" />
+    <ProjectReference Include="..\..\..\plugins\LablabBean.Plugins.Analytics\LablabBean.Plugins.Analytics.csproj" />
+    <ProjectReference Include="..\..\..\plugins\LablabBean.Plugins.MockGame\LablabBean.Plugins.MockGame.csproj" />
+    <ProjectReference Include="..\..\..\plugins\LablabBean.Plugins.ReactiveUI\LablabBean.Plugins.ReactiveUI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
