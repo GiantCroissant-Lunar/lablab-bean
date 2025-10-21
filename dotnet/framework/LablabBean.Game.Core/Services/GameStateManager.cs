@@ -24,6 +24,8 @@ public class GameStateManager : IDisposable
     private readonly InventorySystem _inventorySystem;
     private readonly ItemSpawnSystem _itemSpawnSystem;
     private readonly StatusEffectSystem _statusEffectSystem;
+    private LevelManager? _levelManager;
+    private DifficultyScalingSystem? _difficultyScaling;
 
     private DungeonMap? _currentMap;
     private bool _disposed;
@@ -33,6 +35,8 @@ public class GameStateManager : IDisposable
     public DungeonMap? CurrentMap => _currentMap;
     public GameMode CurrentMode => _worldManager.CurrentMode;
     public StatusEffectSystem StatusEffectSystem => _statusEffectSystem;
+    public LevelManager? LevelManager => _levelManager;
+    public int CurrentDungeonLevel => _levelManager?.CurrentLevel ?? 1;
 
     public GameStateManager(
         ILogger<GameStateManager> logger,
@@ -63,15 +67,23 @@ public class GameStateManager : IDisposable
     {
         _logger.LogInformation("Initializing new game with map size {Width}x{Height}", mapWidth, mapHeight);
 
-        // Generate a new map with rooms
-        var generator = new RoomDungeonGenerator();
-        var (map, rooms) = generator.Generate(mapWidth, mapHeight, maxRooms: 15, minRoomSize: 6, maxRoomSize: 12);
+        // Initialize difficulty scaling system
+        _difficultyScaling = new DifficultyScalingSystem(_worldManager.GetWorld(GameMode.Play));
+        
+        // Initialize level manager
+        var mapGenerator = new MapGenerator();
+        _levelManager = new LevelManager(_worldManager.GetWorld(GameMode.Play), mapGenerator, _difficultyScaling);
+
+        // Generate first level manually (don't use DescendLevel for initialization)
+        var map = mapGenerator.GenerateRoomsAndCorridors(80, 50);
+        var level = new DungeonLevel(1, map);
+        _levelManager.InitializeFirstLevel(level);
         _currentMap = map;
 
-        _logger.LogInformation("Generated dungeon with {RoomCount} rooms", rooms.Count);
+        _logger.LogInformation("Generated dungeon level 1");
 
-        // Initialize play mode world with room info
-        InitializePlayWorld(rooms);
+        // Initialize play mode world
+        InitializePlayWorld();
 
         // Initialize edit mode world (empty for now)
         _worldManager.ClearWorld(GameMode.Edit);
@@ -83,16 +95,15 @@ public class GameStateManager : IDisposable
     /// <summary>
     /// Initializes the play world with player and enemies
     /// </summary>
-    private void InitializePlayWorld(List<RoomDungeonGenerator.Room> rooms)
+    private void InitializePlayWorld()
     {
         var world = _worldManager.GetWorld(GameMode.Play);
-        world.Clear();
+        
+        if (_currentMap == null)
+            throw new InvalidOperationException("Cannot initialize play world without a map");
 
-        if (_currentMap == null || rooms.Count == 0)
-            throw new InvalidOperationException("Cannot initialize play world without a map and rooms");
-
-        // Spawn player in the first room
-        var playerSpawn = rooms[0].Center;
+        // Find spawn position (center of map or first walkable position)
+        var playerSpawn = FindPlayerSpawnPosition(_currentMap);
 
         // Create the player
         var player = world.Create(
@@ -112,26 +123,23 @@ public class GameStateManager : IDisposable
 
         _logger.LogInformation("Player created at {Position} with 50/100 HP for testing", playerSpawn);
 
-        // Create enemies in other rooms (1-3 per room)
+        // Create enemies across the map
         var random = new Random();
-        int totalEnemies = 0;
+        int enemyCount = 10 + (CurrentDungeonLevel * 2); // More enemies on deeper levels
         
-        for (int i = 1; i < rooms.Count; i++)
+        for (int i = 0; i < enemyCount; i++)
         {
-            int enemiesInRoom = random.Next(1, 4);
-            for (int j = 0; j < enemiesInRoom; j++)
+            var enemyPos = FindWalkablePosition(_currentMap, random);
+            if (enemyPos != playerSpawn) // Don't spawn on player
             {
-                var enemyPos = GetRandomPositionInRoom(rooms[i], random);
-                CreateEnemy(world, enemyPos, random);
-                totalEnemies++;
+                CreateEnemy(world, enemyPos, random, CurrentDungeonLevel);
             }
         }
 
-        _logger.LogInformation("Created {EnemyCount} enemies across {RoomCount} rooms", totalEnemies, rooms.Count - 1);
+        _logger.LogInformation("Created {EnemyCount} enemies on level {Level}", enemyCount, CurrentDungeonLevel);
 
-        // Spawn items in rooms (20-50% of rooms get an item)
-        var roomBounds = rooms.Select(r => r.Bounds).ToList();
-        _itemSpawnSystem.SpawnItemsInRooms(world, roomBounds, random);
+        // Spawn items across the map
+        SpawnItemsOnLevel(world, random);
 
         // Calculate initial FOV with larger radius to see more of the dungeon
         _currentMap.CalculateFOV(playerSpawn, 20);
@@ -140,33 +148,71 @@ public class GameStateManager : IDisposable
     }
 
     /// <summary>
-    /// Gets a random walkable position within a room
+    /// Find a suitable spawn position for the player
     /// </summary>
-    private Point GetRandomPositionInRoom(RoomDungeonGenerator.Room room, Random random)
+    private Point FindPlayerSpawnPosition(DungeonMap map)
     {
-        int x = random.Next(room.Bounds.X + 1, room.Bounds.X + room.Bounds.Width - 1);
-        int y = random.Next(room.Bounds.Y + 1, room.Bounds.Y + room.Bounds.Height - 1);
-        return new Point(x, y);
+        // Try center first
+        var center = new Point(map.Width / 2, map.Height / 2);
+        if (map.IsWalkable(center))
+            return center;
+
+        // Find first walkable position
+        for (int y = 1; y < map.Height - 1; y++)
+        {
+            for (int x = 1; x < map.Width - 1; x++)
+            {
+                var pos = new Point(x, y);
+                if (map.IsWalkable(pos))
+                    return pos;
+            }
+        }
+
+        return new Point(1, 1); // Fallback
     }
 
     /// <summary>
-    /// Creates a single enemy entity
+    /// Spawn items on the current level
     /// </summary>
-    private void CreateEnemy(World world, Point position, Random random)
+    private void SpawnItemsOnLevel(World world, Random random)
+    {
+        if (_currentMap == null)
+            return;
+
+        int itemCount = 5 + (CurrentDungeonLevel * 2); // More items on deeper levels
+        
+        for (int i = 0; i < itemCount; i++)
+        {
+            var itemPos = FindWalkablePosition(_currentMap, random);
+            
+            // Use difficulty scaling to determine if item should spawn
+            if (_difficultyScaling != null && _difficultyScaling.ShouldDropLoot(CurrentDungeonLevel))
+            {
+                // For now, spawn healing potions
+                // TODO: Extend with weighted spawn tables based on level
+                _itemSpawnSystem.SpawnHealingPotion(world, itemPos);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Creates a single enemy entity with level scaling
+    /// </summary>
+    private void CreateEnemy(World world, Point position, Random random, int dungeonLevel = 1)
     {
         // Random enemy type with special enemies
         var roll = random.Next(100);
         string enemyType;
         Enemy enemyComponent;
-        int health, attack, defense, speed;
+        int baseHealth, baseAttack, baseDefense, baseSpeed;
         
         if (roll < 20) // 20% chance for Toxic Spider
         {
             enemyType = "Toxic Spider";
-            health = 15;
-            attack = 3;
-            defense = 1;
-            speed = 90;
+            baseHealth = 15;
+            baseAttack = 3;
+            baseDefense = 1;
+            baseSpeed = 90;
             
             // Create enemy with poison attack (40% chance to poison for 5 turns)
             enemyComponent = new Enemy(enemyType)
@@ -182,19 +228,33 @@ public class GameStateManager : IDisposable
             // Normal enemies
             var normalEnemyTypes = new[] { "Goblin", "Orc", "Troll", "Skeleton" };
             enemyType = normalEnemyTypes[random.Next(normalEnemyTypes.Length)];
-            health = 30;
-            attack = 5;
-            defense = 2;
-            speed = 80 + random.Next(40);
+            baseHealth = 30;
+            baseAttack = 5;
+            baseDefense = 2;
+            baseSpeed = 80 + random.Next(40);
             enemyComponent = new Enemy(enemyType);
+        }
+
+        // Apply difficulty scaling
+        int scaledHealth = baseHealth;
+        int scaledAttack = baseAttack;
+        int scaledDefense = baseDefense;
+        int scaledSpeed = baseSpeed;
+
+        if (_difficultyScaling != null && dungeonLevel > 1)
+        {
+            scaledHealth = _difficultyScaling.CalculateScaledStat(baseHealth, dungeonLevel);
+            scaledAttack = _difficultyScaling.CalculateScaledStat(baseAttack, dungeonLevel);
+            scaledDefense = _difficultyScaling.CalculateScaledStat(baseDefense, dungeonLevel);
+            scaledSpeed = _difficultyScaling.CalculateScaledStat(baseSpeed, dungeonLevel);
         }
 
         var enemy = world.Create(
             enemyComponent,
             new Position(position),
-            new Health(health, health),
-            new Combat(attack, defense),
-            new Actor(speed),
+            new Health(scaledHealth, scaledHealth),
+            new Combat(scaledAttack, scaledDefense),
+            new Actor(scaledSpeed),
             new AI(AIBehavior.Chase),
             new Renderable(GetEnemyGlyph(enemyType), GetEnemyColor(enemyType), Color.Black, 50),
             new Visible(true),
@@ -203,16 +263,19 @@ public class GameStateManager : IDisposable
             StatusEffects.CreateEmpty()
         );
 
-        _logger.LogDebug("Created {EnemyType} at {Position}", enemyType, position);
+        _logger.LogDebug("Created {EnemyType} at {Position} (Level {Level}): {Health} HP, {Attack} ATK", 
+            enemyType, position, dungeonLevel, scaledHealth, scaledAttack);
     }
 
     /// <summary>
     /// Finds a random walkable position on the map
     /// </summary>
-    private Point FindWalkablePosition(DungeonMap map)
+    private Point FindWalkablePosition(DungeonMap map, Random? random = null)
     {
-        var random = new Random();
+        random ??= new Random();
         Point position;
+        int attempts = 0;
+        const int maxAttempts = 100;
 
         do
         {
@@ -220,7 +283,8 @@ public class GameStateManager : IDisposable
                 random.Next(1, map.Width - 1),
                 random.Next(1, map.Height - 1)
             );
-        } while (!map.IsWalkable(position));
+            attempts++;
+        } while (!map.IsWalkable(position) && attempts < maxAttempts);
 
         return position;
     }
@@ -495,6 +559,83 @@ public class GameStateManager : IDisposable
         {
             _currentMap.CalculateFOV(pos.Point, 20);
         });
+    }
+
+    /// <summary>
+    /// Handles player interaction with staircases
+    /// </summary>
+    public bool HandleStaircaseInteraction(StaircaseDirection direction)
+    {
+        if (!_isInitialized || _currentMap == null || _levelManager == null)
+        {
+            _logger.LogWarning("Cannot handle staircase interaction - game not initialized or no level manager");
+            return false;
+        }
+
+        var world = _worldManager.GetWorld(GameMode.Play);
+        var query = new QueryDescription().WithAll<Player, Position, Actor>();
+        bool actionTaken = false;
+
+        world.Query(in query, (Entity playerEntity, ref Player player, ref Position pos, ref Actor actor) =>
+        {
+            if (!actor.CanAct)
+            {
+                _logger.LogDebug("Player cannot act yet");
+                return;
+            }
+
+            // Check if player is on a staircase
+            if (!_levelManager.CanTransition(playerEntity, direction))
+            {
+                var oppositeDir = direction == StaircaseDirection.Down ? "upward" : "downward";
+                _logger.LogInformation("Player not on {Direction} staircase (may be on {Opposite} staircase or no staircase)", 
+                    direction, oppositeDir);
+                return;
+            }
+
+            // Perform transition
+            LevelTransitionResult result;
+            if (direction == StaircaseDirection.Down)
+            {
+                result = _levelManager.DescendLevel(playerEntity);
+            }
+            else
+            {
+                result = _levelManager.AscendLevel(playerEntity);
+            }
+
+            if (result.Success)
+            {
+                _logger.LogInformation("Level transition successful: {Message}", result.Message);
+                
+                // Update current map reference
+                _currentMap = _levelManager.GetCurrentMap();
+                
+                // Clear and reinitialize the world for the new level
+                world.Clear();
+                InitializePlayWorld();
+                
+                // Consume energy for the action
+                actor.ConsumeEnergy();
+                actionTaken = true;
+
+                if (result.NewRecordDepth)
+                {
+                    _logger.LogInformation("New record depth achieved: Level {Level}", result.NewLevel);
+                }
+
+                if (result.VictoryTriggered)
+                {
+                    _logger.LogInformation("Victory condition triggered!");
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Level transition failed: {Message}", result.Message);
+            }
+        });
+
+        return actionTaken;
     }
 
     public void Dispose()
