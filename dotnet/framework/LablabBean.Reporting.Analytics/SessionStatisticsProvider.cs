@@ -1,6 +1,6 @@
-using LablabBean.Reporting.Abstractions.Attributes;
-using LablabBean.Reporting.Abstractions.Contracts;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Attributes;
+using LablabBean.Reporting.Contracts.Contracts;
+using LablabBean.Reporting.Contracts.Models;
 using Microsoft.Extensions.Logging;
 
 namespace LablabBean.Reporting.Analytics;

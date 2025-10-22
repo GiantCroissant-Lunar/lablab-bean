@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace LablabBean.Reporting.SourceGen;
+namespace LablabBean.SourceGenerators.Reporting;
 
 /// <summary>
 /// Incremental source generator that discovers classes with [ReportProvider] attribute
@@ -17,8 +17,8 @@ namespace LablabBean.Reporting.SourceGen;
 [Generator]
 public class ReportProviderGenerator : IIncrementalGenerator
 {
-    private const string ReportProviderAttributeName = "LablabBean.Reporting.Abstractions.Attributes.ReportProviderAttribute";
-    private const string IReportProviderInterfaceName = "LablabBean.Reporting.Abstractions.Contracts.IReportProvider";
+    private const string ReportProviderAttributeName = "LablabBean.Reporting.Contracts.Attributes.ReportProviderAttribute";
+    private const string IReportProviderInterfaceName = "LablabBean.Reporting.Contracts.Contracts.IReportProvider";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -126,7 +126,7 @@ public class ReportProviderGenerator : IIncrementalGenerator
         sb.AppendLine();
         sb.AppendLine("using System;");
         sb.AppendLine("using System.Collections.Generic;");
-        sb.AppendLine("using LablabBean.Reporting.Abstractions.Contracts;");
+        sb.AppendLine("using LablabBean.Reporting.Contracts.Contracts;");
         sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
         sb.AppendLine();
         sb.AppendLine("namespace LablabBean.Reporting.Generated");

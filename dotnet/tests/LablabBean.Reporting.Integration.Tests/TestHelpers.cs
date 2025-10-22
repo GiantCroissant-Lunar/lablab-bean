@@ -4,7 +4,7 @@ using LablabBean.Reporting.Providers.Build;
 using LablabBean.Reporting.Analytics;
 using LablabBean.Reporting.Renderers.Html;
 using LablabBean.Reporting.Renderers.Csv;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Models;
 
 namespace LablabBean.Reporting.Integration.Tests;
 

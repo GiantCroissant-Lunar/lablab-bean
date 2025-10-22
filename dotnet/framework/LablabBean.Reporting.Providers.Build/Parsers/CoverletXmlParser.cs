@@ -1,5 +1,5 @@
 using System.Xml.Linq;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Models;
 using Microsoft.Extensions.Logging;
 
 namespace LablabBean.Reporting.Providers.Build.Parsers;

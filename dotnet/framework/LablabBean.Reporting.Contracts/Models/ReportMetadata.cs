@@ -1,6 +1,6 @@
 using System;
 
-namespace LablabBean.Reporting.Abstractions.Models;
+namespace LablabBean.Reporting.Contracts.Models;
 
 /// <summary>
 /// Metadata about a report provider.

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LablabBean.Reporting.Abstractions.Models;
+namespace LablabBean.Reporting.Contracts.Models;
 
 /// <summary>
 /// Data model for plugin system health reports.

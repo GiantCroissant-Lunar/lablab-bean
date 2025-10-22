@@ -8,7 +8,7 @@ using LablabBean.Game.TerminalUI.Services;
 using LablabBean.Infrastructure.Extensions;
 using LablabBean.Plugins.Core;
 using LablabBean.Reactive.Extensions;
-using LablabBean.Reporting.Abstractions.Contracts;
+using LablabBean.Reporting.Contracts.Contracts;
 using LablabBean.Reporting.Renderers.Html;
 using LablabBean.Reporting.Renderers.Csv;
 using LablabBean.Reporting.Providers.Build;

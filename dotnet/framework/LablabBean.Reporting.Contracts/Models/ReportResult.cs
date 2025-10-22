@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LablabBean.Reporting.Abstractions.Models;
+namespace LablabBean.Reporting.Contracts.Models;
 
 /// <summary>
 /// Result of report generation.

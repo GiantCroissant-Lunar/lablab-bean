@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LablabBean.Reporting.Abstractions\LablabBean.Reporting.Abstractions.csproj" />
+    <ProjectReference Include="..\LablabBean.Reporting.Contracts\LablabBean.Reporting.Contracts.csproj" />
   </ItemGroup>
 
   <!-- Embed template files as resources -->

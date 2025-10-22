@@ -1,6 +1,6 @@
 using System;
 
-namespace LablabBean.Reporting.Abstractions.Attributes;
+namespace LablabBean.Reporting.Contracts.Attributes;
 
 /// <summary>
 /// Marks a class as a report provider for compile-time discovery.

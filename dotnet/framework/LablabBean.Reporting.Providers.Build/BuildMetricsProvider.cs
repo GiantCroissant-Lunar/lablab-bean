@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using LablabBean.Reporting.Abstractions.Attributes;
-using LablabBean.Reporting.Abstractions.Contracts;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Attributes;
+using LablabBean.Reporting.Contracts.Contracts;
+using LablabBean.Reporting.Contracts.Models;
 using LablabBean.Reporting.Providers.Build.Parsers;
 using Microsoft.Extensions.Logging;
 

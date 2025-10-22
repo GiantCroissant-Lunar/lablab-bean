@@ -1,6 +1,6 @@
 using System.Text;
 using FluentAssertions;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Models;
 using LablabBean.Reporting.Renderers.Csv;
 using Microsoft.Extensions.Logging.Abstractions;
 

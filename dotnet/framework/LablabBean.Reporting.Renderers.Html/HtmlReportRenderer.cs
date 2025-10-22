@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text;
-using LablabBean.Reporting.Abstractions.Contracts;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Contracts;
+using LablabBean.Reporting.Contracts.Models;
 using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Runtime;

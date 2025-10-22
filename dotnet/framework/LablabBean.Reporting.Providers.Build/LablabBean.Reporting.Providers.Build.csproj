@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LablabBean.Reporting.Abstractions\LablabBean.Reporting.Abstractions.csproj" />
+    <ProjectReference Include="..\LablabBean.Reporting.Contracts\LablabBean.Reporting.Contracts.csproj" />
     <!-- Source generator reference -->
-    <ProjectReference Include="..\LablabBean.Reporting.SourceGen\LablabBean.Reporting.SourceGen.csproj" 
+    <ProjectReference Include="..\LablabBean.SourceGenerators.Reporting\LablabBean.SourceGenerators.Reporting.csproj" 
                       OutputItemType="Analyzer" 
                       ReferenceOutputAssembly="false" />
   </ItemGroup>

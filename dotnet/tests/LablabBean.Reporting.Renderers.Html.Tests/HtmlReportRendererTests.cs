@@ -1,5 +1,5 @@
 using FluentAssertions;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace LablabBean.Reporting.Renderers.Html.Tests;

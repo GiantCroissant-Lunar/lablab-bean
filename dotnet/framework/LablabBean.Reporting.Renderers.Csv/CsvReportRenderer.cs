@@ -2,8 +2,8 @@ using System.Globalization;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
-using LablabBean.Reporting.Abstractions.Contracts;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Contracts;
+using LablabBean.Reporting.Contracts.Models;
 using Microsoft.Extensions.Logging;
 
 namespace LablabBean.Reporting.Renderers.Csv;

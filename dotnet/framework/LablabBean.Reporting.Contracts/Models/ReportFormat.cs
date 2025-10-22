@@ -1,4 +1,4 @@
-namespace LablabBean.Reporting.Abstractions.Models;
+namespace LablabBean.Reporting.Contracts.Models;
 
 /// <summary>
 /// Supported report output formats.

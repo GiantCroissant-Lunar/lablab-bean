@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Models;
 
-namespace LablabBean.Reporting.Abstractions.Contracts;
+namespace LablabBean.Reporting.Contracts.Contracts;
 
 /// <summary>
 /// Renders report data to various output formats.

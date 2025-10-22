@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using LablabBean.Reporting.Abstractions.Models;
+using LablabBean.Reporting.Contracts.Models;
 
-namespace LablabBean.Reporting.Abstractions.Contracts;
+namespace LablabBean.Reporting.Contracts.Contracts;
 
 /// <summary>
 /// Orchestrates report generation by coordinating providers and renderers.
