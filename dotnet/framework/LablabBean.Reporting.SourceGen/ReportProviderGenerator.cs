@@ -1,0 +1,201 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+
+namespace LablabBean.Reporting.SourceGen;
+
+/// <summary>
+/// Incremental source generator that discovers classes with [ReportProvider] attribute
+/// and generates a static registry + DI extension methods.
+/// </summary>
+[Generator]
+public class ReportProviderGenerator : IIncrementalGenerator
+{
+    private const string ReportProviderAttributeName = "LablabBean.Reporting.Abstractions.Attributes.ReportProviderAttribute";
+    private const string IReportProviderInterfaceName = "LablabBean.Reporting.Abstractions.Contracts.IReportProvider";
+
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        // Register a syntax provider to find classes with [ReportProvider] attribute
+        var providerDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (node, _) => IsClassWithAttributes(node),
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
+            .Where(static m => m is not null)
+            .Select(static (m, _) => m!.Value);
+
+        // Collect all providers and generate the registry
+        var compilationAndProviders = context.CompilationProvider.Combine(providerDeclarations.Collect());
+
+        context.RegisterSourceOutput(compilationAndProviders, static (spc, source) => Execute(source.Left, source.Right, spc));
+    }
+
+    private static bool IsClassWithAttributes(SyntaxNode node)
+    {
+        return node is ClassDeclarationSyntax classDecl && classDecl.AttributeLists.Count > 0;
+    }
+
+    private static ProviderInfo? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    {
+        var classDecl = (ClassDeclarationSyntax)context.Node;
+        var semanticModel = context.SemanticModel;
+
+        // Get the symbol for the class
+        if (semanticModel.GetDeclaredSymbol(classDecl) is not INamedTypeSymbol classSymbol)
+            return null;
+
+        // Check if class has [ReportProvider] attribute
+        var reportProviderAttr = classSymbol.GetAttributes()
+            .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ReportProviderAttributeName);
+
+        if (reportProviderAttr == null)
+            return null;
+
+        // Extract attribute arguments (name, category, priority)
+        string? name = null;
+        string? category = null;
+        int priority = 0;
+
+        if (reportProviderAttr.ConstructorArguments.Length >= 1)
+            name = reportProviderAttr.ConstructorArguments[0].Value?.ToString();
+
+        if (reportProviderAttr.ConstructorArguments.Length >= 2)
+            category = reportProviderAttr.ConstructorArguments[1].Value?.ToString();
+
+        if (reportProviderAttr.ConstructorArguments.Length >= 3 && 
+            reportProviderAttr.ConstructorArguments[2].Value is int priorityValue)
+            priority = priorityValue;
+
+        // Validate: class must implement IReportProvider
+        var implementsInterface = classSymbol.AllInterfaces
+            .Any(i => i.ToDisplayString() == IReportProviderInterfaceName);
+
+        if (!implementsInterface)
+        {
+            // Generate diagnostic for missing interface implementation
+            return null; // We'll handle diagnostics separately if needed
+        }
+
+        // Validate: class must have a public constructor
+        var hasPublicConstructor = classSymbol.Constructors
+            .Any(c => c.DeclaredAccessibility == Accessibility.Public);
+
+        if (!hasPublicConstructor)
+        {
+            return null;
+        }
+
+        return new ProviderInfo(
+            FullTypeName: classSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            Name: name ?? classSymbol.Name,
+            Category: category ?? "Unknown",
+            Priority: priority,
+            Namespace: classSymbol.ContainingNamespace.ToDisplayString()
+        );
+    }
+
+    private static void Execute(Compilation compilation, ImmutableArray<ProviderInfo> providers, SourceProductionContext context)
+    {
+        if (providers.IsEmpty)
+            return;
+
+        // Sort providers by priority (lower number = higher priority)
+        var sortedProviders = providers
+            .OrderBy(p => p.Priority)
+            .ThenBy(p => p.Name)
+            .ToList();
+
+        // Generate the registry
+        var source = GenerateRegistrySource(sortedProviders);
+
+        context.AddSource("ReportProviderRegistry.g.cs", SourceText.From(source, Encoding.UTF8));
+    }
+
+    private static string GenerateRegistrySource(List<ProviderInfo> providers)
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine("// <auto-generated />");
+        sb.AppendLine("#nullable enable");
+        sb.AppendLine();
+        sb.AppendLine("using System;");
+        sb.AppendLine("using System.Collections.Generic;");
+        sb.AppendLine("using LablabBean.Reporting.Abstractions.Contracts;");
+        sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
+        sb.AppendLine();
+        sb.AppendLine("namespace LablabBean.Reporting.Generated");
+        sb.AppendLine("{");
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Auto-generated registry of report providers discovered at compile time.");
+        sb.AppendLine("    /// </summary>");
+        sb.AppendLine("    public static class ReportProviderRegistry");
+        sb.AppendLine("    {");
+        sb.AppendLine("        /// <summary>");
+        sb.AppendLine("        /// All discovered report providers with metadata.");
+        sb.AppendLine("        /// </summary>");
+        sb.AppendLine("        public static IReadOnlyList<ProviderRegistration> Providers { get; } = new[]");
+        sb.AppendLine("        {");
+
+        foreach (var provider in providers)
+        {
+            sb.AppendLine($"            new ProviderRegistration(");
+            sb.AppendLine($"                typeof({provider.FullTypeName}),");
+            sb.AppendLine($"                \"{EscapeString(provider.Name)}\",");
+            sb.AppendLine($"                \"{EscapeString(provider.Category)}\",");
+            sb.AppendLine($"                {provider.Priority}),");
+        }
+
+        sb.AppendLine("        };");
+        sb.AppendLine();
+        sb.AppendLine("        /// <summary>");
+        sb.AppendLine("        /// Registers all discovered report providers with the service collection.");
+        sb.AppendLine("        /// </summary>");
+        sb.AppendLine("        public static IServiceCollection AddReportProviders(this IServiceCollection services)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            foreach (var provider in Providers)");
+        sb.AppendLine("            {");
+        sb.AppendLine("                services.AddTransient(typeof(IReportProvider), provider.Type);");
+        sb.AppendLine("            }");
+        sb.AppendLine("            return services;");
+        sb.AppendLine("        }");
+        sb.AppendLine();
+        sb.AppendLine("        /// <summary>");
+        sb.AppendLine("        /// Gets all providers for a specific category.");
+        sb.AppendLine("        /// </summary>");
+        sb.AppendLine("        public static IEnumerable<ProviderRegistration> GetProvidersByCategory(string category)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            foreach (var provider in Providers)");
+        sb.AppendLine("            {");
+        sb.AppendLine("                if (string.Equals(provider.Category, category, StringComparison.OrdinalIgnoreCase))");
+        sb.AppendLine("                    yield return provider;");
+        sb.AppendLine("            }");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+        sb.AppendLine("    /// <summary>");
+        sb.AppendLine("    /// Registration information for a report provider.");
+        sb.AppendLine("    /// </summary>");
+        sb.AppendLine("    public record ProviderRegistration(Type Type, string Name, string Category, int Priority);");
+        sb.AppendLine("}");
+
+        return sb.ToString();
+    }
+
+    private static string EscapeString(string value)
+    {
+        return value.Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+    }
+
+    private readonly record struct ProviderInfo(
+        string FullTypeName,
+        string Name,
+        string Category,
+        int Priority,
+        string Namespace);
+}
