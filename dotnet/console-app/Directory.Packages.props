@@ -1,0 +1,15 @@
+<Project>
+  <!-- Import parent package versions -->
+  <Import Project="../Directory.Packages.props" />
+  
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Terminal.Gui for Console TUI -->
+    <PackageVersion Include="Terminal.Gui" Version="2.0.0-pre.2" />
+    
+    <!-- CLI command support -->
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+</Project>

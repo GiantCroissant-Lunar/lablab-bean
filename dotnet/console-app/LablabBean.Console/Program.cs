@@ -1,3 +1,5 @@
+using System.CommandLine;
+using LablabBean.Console.Commands;
 using LablabBean.Console.Services;
 using LablabBean.Game.Core.Services;
 using LablabBean.Game.Core.Systems;
@@ -12,6 +14,16 @@ using Serilog;
 
 try
 {
+    // Check if CLI arguments are provided (report commands)
+    if (args.Length > 0 && args[0] == "report")
+    {
+        var rootCommand = new RootCommand("LablabBean Console - Dungeon Crawler Game & Reporting Tool");
+        rootCommand.AddCommand(ReportCommand.Create());
+        
+        return await rootCommand.InvokeAsync(args);
+    }
+
+    // Otherwise, run interactive Terminal.Gui mode
     var host = Host.CreateDefaultBuilder(args)
         .UseLablabBeanInfrastructure()
         .ConfigureServices((context, services) =>
