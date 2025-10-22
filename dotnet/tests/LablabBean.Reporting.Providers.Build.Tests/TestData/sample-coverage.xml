@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CoverageSession>
+  <Summary numSequencePoints="500" visitedSequencePoints="425" numBranchPoints="120" visitedBranchPoints="98" sequenceCoverage="85" branchCoverage="81.67" maxCyclomaticComplexity="12" minCyclomaticComplexity="1" />
+  <Modules>
+    <Module hash="A1B2C3D4-E5F6-7890-ABCD-EF1234567890">
+      <ModulePath>D:\Build\LablabBean.Core.dll</ModulePath>
+      <ModuleName>LablabBean.Core</ModuleName>
+      <Files>
+        <File uid="1" fullPath="D:\Source\LablabBean.Core\Inventory\InventorySystem.cs" />
+        <File uid="2" fullPath="D:\Source\LablabBean.Core\StatusEffects\StatusEffectSystem.cs" />
+      </Files>
+      <Classes>
+        <Class>
+          <Summary numSequencePoints="150" visitedSequencePoints="135" numBranchPoints="40" visitedBranchPoints="36" sequenceCoverage="90" branchCoverage="90" maxCyclomaticComplexity="8" minCyclomaticComplexity="1" />
+          <FullName>LablabBean.Core.Inventory.InventorySystem</FullName>
+          <Methods>
+            <Method visited="true" cyclomaticComplexity="3" sequenceCoverage="100" branchCoverage="100" isConstructor="false" isStatic="false" isGetter="false" isSetter="false">
+              <Summary numSequencePoints="15" visitedSequencePoints="15" numBranchPoints="4" visitedBranchPoints="4" sequenceCoverage="100" branchCoverage="100" />
+              <MetadataToken>100663297</MetadataToken>
+              <Name>System.Void LablabBean.Core.Inventory.InventorySystem::AddItem(LablabBean.Core.Items.Item)</Name>
+              <FileRef uid="1" />
+              <SequencePoints>
+                <SequencePoint vc="10" uspid="0" ordinal="0" offset="0" sl="45" sc="9" el="45" ec="10" bec="0" bev="0" fileid="1" />
+                <SequencePoint vc="10" uspid="1" ordinal="1" offset="1" sl="46" sc="13" el="46" ec="50" bec="0" bev="0" fileid="1" />
+                <SequencePoint vc="10" uspid="2" ordinal="2" offset="9" sl="47" sc="13" el="47" ec="34" bec="0" bev="0" fileid="1" />
+              </SequencePoints>
+              <BranchPoints>
+                <BranchPoint vc="8" uspid="3" ordinal="0" offset="2" path="0" offsetchain="1" offsetend="9" sl="46" fileid="1" />
+                <BranchPoint vc="2" uspid="4" ordinal="1" offset="2" path="1" offsetchain="1" offsetend="9" sl="46" fileid="1" />
+              </BranchPoints>
+              <MethodPoint vc="10" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="45" ec="1" el="45" bec="0" bev="0" fileid="1" xmlns:p8="xsi" />
+            </Method>
+            <Method visited="true" cyclomaticComplexity="2" sequenceCoverage="85.71" branchCoverage="75" isConstructor="false" isStatic="false" isGetter="false" isSetter="false">
+              <Summary numSequencePoints="14" visitedSequencePoints="12" numBranchPoints="4" visitedBranchPoints="3" sequenceCoverage="85.71" branchCoverage="75" />
+              <MetadataToken>100663298</MetadataToken>
+              <Name>System.Boolean LablabBean.Core.Inventory.InventorySystem::RemoveItem(System.String)</Name>
+              <FileRef uid="1" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="200" visitedSequencePoints="160" numBranchPoints="50" visitedBranchPoints="38" sequenceCoverage="80" branchCoverage="76" maxCyclomaticComplexity="12" minCyclomaticComplexity="2" />
+          <FullName>LablabBean.Core.StatusEffects.StatusEffectSystem</FullName>
+          <Methods>
+            <Method visited="true" cyclomaticComplexity="5" sequenceCoverage="75" branchCoverage="62.5" isConstructor="false" isStatic="false" isGetter="false" isSetter="false">
+              <Summary numSequencePoints="20" visitedSequencePoints="15" numBranchPoints="8" visitedBranchPoints="5" sequenceCoverage="75" branchCoverage="62.5" />
+              <MetadataToken>100663320</MetadataToken>
+              <Name>System.Void LablabBean.Core.StatusEffects.StatusEffectSystem::ApplyEffect(LablabBean.Core.StatusEffects.StatusEffect)</Name>
+              <FileRef uid="2" />
+            </Method>
+          </Methods>
+        </Class>
+      </Classes>
+    </Module>
+  </Modules>
+</CoverageSession>

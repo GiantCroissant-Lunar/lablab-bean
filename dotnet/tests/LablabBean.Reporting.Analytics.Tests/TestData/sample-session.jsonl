@@ -1,0 +1,10 @@
+{"event":"game_start","timestamp":"2025-10-22T08:00:00Z","session_id":"test-session-001","player_level":5}
+{"event":"enemy_killed","timestamp":"2025-10-22T08:05:30Z","session_id":"test-session-001","enemy_type":"goblin","damage_dealt":45}
+{"event":"enemy_killed","timestamp":"2025-10-22T08:06:15Z","session_id":"test-session-001","enemy_type":"orc","damage_dealt":78}
+{"event":"player_death","timestamp":"2025-10-22T08:10:00Z","session_id":"test-session-001","cause":"poison"}
+{"event":"level_completed","timestamp":"2025-10-22T08:15:00Z","session_id":"test-session-001","level":1,"time_taken":900}
+{"event":"enemy_killed","timestamp":"2025-10-22T08:20:00Z","session_id":"test-session-001","enemy_type":"skeleton","damage_dealt":52}
+{"event":"item_collected","timestamp":"2025-10-22T08:22:00Z","session_id":"test-session-001","item_type":"health_potion"}
+{"event":"level_completed","timestamp":"2025-10-22T08:25:00Z","session_id":"test-session-001","level":2,"time_taken":600}
+{"event":"player_death","timestamp":"2025-10-22T08:28:00Z","session_id":"test-session-001","cause":"fall_damage"}
+{"event":"game_end","timestamp":"2025-10-22T08:30:00Z","session_id":"test-session-001","total_playtime":1800,"final_score":1250}
