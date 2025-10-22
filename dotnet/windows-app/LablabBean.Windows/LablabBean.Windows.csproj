@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="SadConsole" />
     <PackageReference Include="SadConsole.Host.MonoGame" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />

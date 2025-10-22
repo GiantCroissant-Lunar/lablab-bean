@@ -1,29 +1,26 @@
 using System.CommandLine;
 using LablabBean.Reporting.Abstractions.Contracts;
 using LablabBean.Reporting.Abstractions.Models;
-using LablabBean.Reporting.Renderers.Html;
-using LablabBean.Reporting.Renderers.Csv;
 using LablabBean.Reporting.Providers.Build;
 using LablabBean.Reporting.Analytics;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LablabBean.Console.Commands;
 
 public static class ReportCommand
 {
-    public static Command Create()
+    public static Command Create(IServiceProvider serviceProvider)
     {
         var reportCommand = new Command("report", "Generate reports from build/session/plugin data");
 
-        reportCommand.AddCommand(CreateBuildCommand());
-        reportCommand.AddCommand(CreateSessionCommand());
-        reportCommand.AddCommand(CreatePluginCommand());
+        reportCommand.AddCommand(CreateBuildCommand(serviceProvider));
+        reportCommand.AddCommand(CreateSessionCommand(serviceProvider));
+        reportCommand.AddCommand(CreatePluginCommand(serviceProvider));
 
         return reportCommand;
     }
 
-    private static Command CreateBuildCommand()
+    private static Command CreateBuildCommand(IServiceProvider serviceProvider)
     {
         var command = new Command("build", "Generate build metrics report");
 
@@ -47,13 +44,13 @@ public static class ReportCommand
 
         command.SetHandler(async (format, output, data) =>
         {
-            await HandleBuildReportAsync(format, output, data);
+            await HandleBuildReportAsync(serviceProvider, format, output, data);
         }, formatOption, outputOption, dataOption);
 
         return command;
     }
 
-    private static Command CreateSessionCommand()
+    private static Command CreateSessionCommand(IServiceProvider serviceProvider)
     {
         var command = new Command("session", "Generate game session statistics report");
 
@@ -77,13 +74,13 @@ public static class ReportCommand
 
         command.SetHandler(async (format, output, data) =>
         {
-            await HandleSessionReportAsync(format, output, data);
+            await HandleSessionReportAsync(serviceProvider, format, output, data);
         }, formatOption, outputOption, dataOption);
 
         return command;
     }
 
-    private static Command CreatePluginCommand()
+    private static Command CreatePluginCommand(IServiceProvider serviceProvider)
     {
         var command = new Command("plugin", "Generate plugin health report");
 
@@ -107,20 +104,29 @@ public static class ReportCommand
 
         command.SetHandler(async (format, output, data) =>
         {
-            await HandlePluginReportAsync(format, output, data);
+            await HandlePluginReportAsync(serviceProvider, format, output, data);
         }, formatOption, outputOption, dataOption);
 
         return command;
     }
 
-    private static async Task<int> HandleBuildReportAsync(string format, FileInfo output, DirectoryInfo? dataDir)
+    private static async Task<int> HandleBuildReportAsync(
+        IServiceProvider serviceProvider, 
+        string format, 
+        FileInfo output, 
+        DirectoryInfo? dataDir)
     {
         try
         {
             System.Console.WriteLine($"Generating build metrics report ({format})...");
 
-            // Use real data provider
-            var provider = new BuildMetricsProvider(NullLogger<BuildMetricsProvider>.Instance);
+            // Get provider from DI (automatically registered by source generator)
+            var provider = serviceProvider.GetService<BuildMetricsProvider>();
+            
+            if (provider == null)
+            {
+                throw new InvalidOperationException("BuildMetricsProvider not found. Ensure it's registered via AddReportProviders()");
+            }
             
             var request = new ReportRequest
             {
@@ -136,12 +142,19 @@ public static class ReportCommand
                 throw new InvalidOperationException("Provider returned unexpected data type");
             }
 
-            IReportRenderer renderer = format.ToLowerInvariant() switch
+            // Get renderer from DI
+            var renderers = serviceProvider.GetServices<IReportRenderer>().ToList();
+            var renderer = format.ToLowerInvariant() switch
             {
-                "html" => new HtmlReportRenderer(NullLogger<HtmlReportRenderer>.Instance),
-                "csv" => new CsvReportRenderer(NullLogger<CsvReportRenderer>.Instance),
+                "html" => renderers.FirstOrDefault(r => r.GetType().Name.Contains("Html")),
+                "csv" => renderers.FirstOrDefault(r => r.GetType().Name.Contains("Csv")),
                 _ => throw new ArgumentException($"Unsupported format: {format}")
             };
+
+            if (renderer == null)
+            {
+                throw new InvalidOperationException($"Renderer for format '{format}' not found");
+            }
 
             var result = await renderer.RenderAsync(request, buildData, CancellationToken.None);
 
@@ -179,14 +192,23 @@ public static class ReportCommand
         }
     }
 
-    private static async Task<int> HandleSessionReportAsync(string format, FileInfo output, FileInfo? dataFile)
+    private static async Task<int> HandleSessionReportAsync(
+        IServiceProvider serviceProvider,
+        string format, 
+        FileInfo output, 
+        FileInfo? dataFile)
     {
         try
         {
             System.Console.WriteLine($"Generating session statistics report ({format})...");
 
-            // Use real data provider
-            var provider = new SessionStatisticsProvider(NullLogger<SessionStatisticsProvider>.Instance);
+            // Get provider from DI
+            var provider = serviceProvider.GetService<SessionStatisticsProvider>();
+            
+            if (provider == null)
+            {
+                throw new InvalidOperationException("SessionStatisticsProvider not found. Ensure it's registered via AddReportProviders()");
+            }
             
             var request = new ReportRequest
             {
@@ -202,12 +224,19 @@ public static class ReportCommand
                 throw new InvalidOperationException("Provider returned unexpected data type");
             }
 
-            IReportRenderer renderer = format.ToLowerInvariant() switch
+            // Get renderer from DI
+            var renderers = serviceProvider.GetServices<IReportRenderer>().ToList();
+            var renderer = format.ToLowerInvariant() switch
             {
-                "html" => new HtmlReportRenderer(NullLogger<HtmlReportRenderer>.Instance),
-                "csv" => new CsvReportRenderer(NullLogger<CsvReportRenderer>.Instance),
+                "html" => renderers.FirstOrDefault(r => r.GetType().Name.Contains("Html")),
+                "csv" => renderers.FirstOrDefault(r => r.GetType().Name.Contains("Csv")),
                 _ => throw new ArgumentException($"Unsupported format: {format}")
             };
+
+            if (renderer == null)
+            {
+                throw new InvalidOperationException($"Renderer for format '{format}' not found");
+            }
 
             var result = await renderer.RenderAsync(request, sessionData, CancellationToken.None);
 
@@ -247,14 +276,23 @@ public static class ReportCommand
         }
     }
 
-    private static async Task<int> HandlePluginReportAsync(string format, FileInfo output, FileInfo? dataFile)
+    private static async Task<int> HandlePluginReportAsync(
+        IServiceProvider serviceProvider,
+        string format, 
+        FileInfo output, 
+        FileInfo? dataFile)
     {
         try
         {
             System.Console.WriteLine($"Generating plugin health report ({format})...");
 
-            // Use real data provider
-            var provider = new PluginHealthProvider(NullLogger<PluginHealthProvider>.Instance);
+            // Get provider from DI
+            var provider = serviceProvider.GetService<PluginHealthProvider>();
+            
+            if (provider == null)
+            {
+                throw new InvalidOperationException("PluginHealthProvider not found. Ensure it's registered via AddReportProviders()");
+            }
             
             var request = new ReportRequest
             {
@@ -270,12 +308,19 @@ public static class ReportCommand
                 throw new InvalidOperationException("Provider returned unexpected data type");
             }
 
-            IReportRenderer renderer = format.ToLowerInvariant() switch
+            // Get renderer from DI
+            var renderers = serviceProvider.GetServices<IReportRenderer>().ToList();
+            var renderer = format.ToLowerInvariant() switch
             {
-                "html" => new HtmlReportRenderer(NullLogger<HtmlReportRenderer>.Instance),
-                "csv" => new CsvReportRenderer(NullLogger<CsvReportRenderer>.Instance),
+                "html" => renderers.FirstOrDefault(r => r.GetType().Name.Contains("Html")),
+                "csv" => renderers.FirstOrDefault(r => r.GetType().Name.Contains("Csv")),
                 _ => throw new ArgumentException($"Unsupported format: {format}")
             };
+
+            if (renderer == null)
+            {
+                throw new InvalidOperationException($"Renderer for format '{format}' not found");
+            }
 
             var result = await renderer.RenderAsync(request, pluginData, CancellationToken.None);
 

@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Renderers.Csv\LablabBean.Reporting.Renderers.Csv.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Providers.Build\LablabBean.Reporting.Providers.Build.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Analytics\LablabBean.Reporting.Analytics.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Reporting.SourceGen\LablabBean.Reporting.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
