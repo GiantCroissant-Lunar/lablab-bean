@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\dotnet\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
-    <ProjectReference Include="..\..\dotnet\framework\LablabBean.Contracts.Scene\LablabBean.Contracts.Scene.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.Scene\LablabBean.Contracts.Scene.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

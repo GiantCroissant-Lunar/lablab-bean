@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\dotnet\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
-    <ProjectReference Include="..\..\dotnet\framework\LablabBean.Contracts.Game\LablabBean.Contracts.Game.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.Game\LablabBean.Contracts.Game.csproj" />
   </ItemGroup>
 
 </Project>
