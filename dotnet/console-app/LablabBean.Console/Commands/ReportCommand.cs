@@ -4,6 +4,7 @@ using LablabBean.Reporting.Abstractions.Models;
 using LablabBean.Reporting.Renderers.Html;
 using LablabBean.Reporting.Renderers.Csv;
 using LablabBean.Reporting.Providers.Build;
+using LablabBean.Reporting.Analytics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -184,23 +185,22 @@ public static class ReportCommand
         {
             System.Console.WriteLine($"Generating session statistics report ({format})...");
 
-            // Create sample data
-            var sampleData = new SessionStatisticsData
+            // Use real data provider
+            var provider = new SessionStatisticsProvider(NullLogger<SessionStatisticsProvider>.Instance);
+            
+            var request = new ReportRequest
             {
-                SessionId = Guid.NewGuid().ToString(),
-                SessionStartTime = DateTime.UtcNow.AddHours(-2),
-                SessionEndTime = DateTime.UtcNow,
-                TotalPlaytime = TimeSpan.FromHours(2),
-                TotalKills = 47,
-                TotalDeaths = 3,
-                TotalDamageDealt = 15420,
-                TotalDamageTaken = 8350,
-                ItemsCollected = 23,
-                LevelsCompleted = 5,
-                AchievementsUnlocked = 3,
-                AverageFrameRate = 60,
-                TotalLoadTime = TimeSpan.FromSeconds(12)
+                Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
+                OutputPath = output.FullName,
+                DataPath = dataFile?.FullName
             };
+            
+            var data = await provider.GetReportDataAsync(request);
+            
+            if (data is not SessionStatisticsData sessionData)
+            {
+                throw new InvalidOperationException("Provider returned unexpected data type");
+            }
 
             IReportRenderer renderer = format.ToLowerInvariant() switch
             {
@@ -209,20 +209,17 @@ public static class ReportCommand
                 _ => throw new ArgumentException($"Unsupported format: {format}")
             };
 
-            var request = new ReportRequest
-            {
-                Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
-                OutputPath = output.FullName,
-                DataPath = dataFile?.FullName
-            };
-
-            var result = await renderer.RenderAsync(request, sampleData, CancellationToken.None);
+            var result = await renderer.RenderAsync(request, sessionData, CancellationToken.None);
 
             if (result.IsSuccess)
             {
                 System.Console.ForegroundColor = ConsoleColor.Green;
                 System.Console.WriteLine($"✅ Report generated: {result.OutputPath}");
                 System.Console.ResetColor();
+                System.Console.WriteLine($"   Session: {sessionData.SessionId}");
+                System.Console.WriteLine($"   Playtime: {sessionData.TotalPlaytime}");
+                System.Console.WriteLine($"   K/D Ratio: {sessionData.KillDeathRatio:F2} ({sessionData.TotalKills} kills, {sessionData.TotalDeaths} deaths)");
+                System.Console.WriteLine($"   Levels: {sessionData.LevelsCompleted}");
                 if (result.FileSizeBytes > 0)
                 {
                     System.Console.WriteLine($"   File size: {result.FileSizeBytes:N0} bytes");
@@ -256,61 +253,22 @@ public static class ReportCommand
         {
             System.Console.WriteLine($"Generating plugin health report ({format})...");
 
-            // Create sample data
-            var sampleData = new PluginHealthData
+            // Use real data provider
+            var provider = new PluginHealthProvider(NullLogger<PluginHealthProvider>.Instance);
+            
+            var request = new ReportRequest
             {
-                TotalPlugins = 5,
-                RunningPlugins = 4,
-                FailedPlugins = 0,
-                DegradedPlugins = 1,
-                SuccessRate = 80.0m,
-                TotalMemoryUsageMB = 245,
-                TotalLoadTime = TimeSpan.FromMilliseconds(627),
-                Plugins = new List<PluginStatus>
-                {
-                    new PluginStatus
-                    {
-                        Name = "Analytics Plugin",
-                        Version = "1.0.0",
-                        State = "Running",
-                        MemoryUsageMB = 45,
-                        LoadDuration = TimeSpan.FromMilliseconds(150)
-                    },
-                    new PluginStatus
-                    {
-                        Name = "Logging Plugin",
-                        Version = "1.2.0",
-                        State = "Running",
-                        HealthStatusReason = "High memory usage",
-                        MemoryUsageMB = 120,
-                        LoadDuration = TimeSpan.FromMilliseconds(95)
-                    },
-                    new PluginStatus
-                    {
-                        Name = "Reporting Plugin",
-                        Version = "1.0.0",
-                        State = "Running",
-                        MemoryUsageMB = 35,
-                        LoadDuration = TimeSpan.FromMilliseconds(180)
-                    },
-                    new PluginStatus
-                    {
-                        Name = "Game Mechanics Plugin",
-                        Version = "2.1.3",
-                        State = "Running",
-                        MemoryUsageMB = 25,
-                        LoadDuration = TimeSpan.FromMilliseconds(102)
-                    },
-                    new PluginStatus
-                    {
-                        Name = "UI Theme Plugin",
-                        Version = "1.5.0",
-                        State = "Running",
-                        MemoryUsageMB = 20,
-                        LoadDuration = TimeSpan.FromMilliseconds(100)
-                    }
-                }
+                Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
+                OutputPath = output.FullName,
+                DataPath = dataFile?.FullName
             };
+            
+            var data = await provider.GetReportDataAsync(request);
+            
+            if (data is not PluginHealthData pluginData)
+            {
+                throw new InvalidOperationException("Provider returned unexpected data type");
+            }
 
             IReportRenderer renderer = format.ToLowerInvariant() switch
             {
@@ -319,20 +277,16 @@ public static class ReportCommand
                 _ => throw new ArgumentException($"Unsupported format: {format}")
             };
 
-            var request = new ReportRequest
-            {
-                Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
-                OutputPath = output.FullName,
-                DataPath = dataFile?.FullName
-            };
-
-            var result = await renderer.RenderAsync(request, sampleData, CancellationToken.None);
+            var result = await renderer.RenderAsync(request, pluginData, CancellationToken.None);
 
             if (result.IsSuccess)
             {
                 System.Console.ForegroundColor = ConsoleColor.Green;
                 System.Console.WriteLine($"✅ Report generated: {result.OutputPath}");
                 System.Console.ResetColor();
+                System.Console.WriteLine($"   Plugins: {pluginData.TotalPlugins} total ({pluginData.RunningPlugins} running, {pluginData.FailedPlugins} failed)");
+                System.Console.WriteLine($"   Success Rate: {pluginData.SuccessRate:F1}%");
+                System.Console.WriteLine($"   Memory: {pluginData.TotalMemoryUsageMB} MB");
                 if (result.FileSizeBytes > 0)
                 {
                     System.Console.WriteLine($"   File size: {result.FileSizeBytes:N0} bytes");
