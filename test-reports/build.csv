@@ -1,0 +1,15 @@
+﻿Section,Metric,Value
+Build Summary,Build Duration,00:05:00
+Build Summary,Start Time,2025-10-22 05:31:54
+Build Summary,End Time,2025-10-22 05:36:54
+Test Results,Total Tests,42
+Test Results,Passed Tests,40
+Test Results,Failed Tests,2
+Test Results,Skipped Tests,0
+Test Results,Pass Rate,95.20%
+Code Coverage,Line Coverage,85.50%
+Code Coverage,Branch Coverage,78.30%
+
+Failed Test Details,Test Name,Error Message
+Failed Test,LablabBean.Core.Tests.ExampleTest1,"Expected: 42, Actual: 43"
+Failed Test,LablabBean.Core.Tests.ExampleTest2,Null reference exception

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assemblies timestamp="10/22/2025 08:00:00">
+  <assembly name="LablabBean.Core.Tests" config-file="D:\Tests\LablabBean.Core.Tests.dll" test-framework="xUnit.net 2.5.3" run-date="2025-10-22" run-time="08:00:00" time="1.234" total="10" passed="8" failed="2" skipped="0" errors="0">
+    <collection total="5" passed="4" failed="1" skipped="0" name="Test collection for LablabBean.Core.Tests.InventoryTests" time="0.567">
+      <test name="LablabBean.Core.Tests.InventoryTests.AddItem_ShouldIncreaseCount" type="LablabBean.Core.Tests.InventoryTests" method="AddItem_ShouldIncreaseCount" time="0.123" result="Pass" />
+      <test name="LablabBean.Core.Tests.InventoryTests.RemoveItem_ShouldDecreaseCount" type="LablabBean.Core.Tests.InventoryTests" method="RemoveItem_ShouldDecreaseCount" time="0.089" result="Pass" />
+      <test name="LablabBean.Core.Tests.InventoryTests.StackItems_ShouldCombine" type="LablabBean.Core.Tests.InventoryTests" method="StackItems_ShouldCombine" time="0.145" result="Pass" />
+      <test name="LablabBean.Core.Tests.InventoryTests.MaxCapacity_ShouldThrow" type="LablabBean.Core.Tests.InventoryTests" method="MaxCapacity_ShouldThrow" time="0.098" result="Pass" />
+      <test name="LablabBean.Core.Tests.InventoryTests.InvalidItem_ShouldFail" type="LablabBean.Core.Tests.InventoryTests" method="InvalidItem_ShouldFail" time="0.112" result="Fail">
+        <failure exception-type="Xunit.Sdk.XunitException">
+          <message><![CDATA[Assert.Equal() Failure
+Expected: True
+Actual:   False]]></message>
+          <stack-trace><![CDATA[   at LablabBean.Core.Tests.InventoryTests.InvalidItem_ShouldFail() in D:\Tests\InventoryTests.cs:line 42]]></stack-trace>
+        </failure>
+      </test>
+    </collection>
+    <collection total="5" passed="4" failed="1" skipped="0" name="Test collection for LablabBean.Core.Tests.StatusEffectTests" time="0.667">
+      <test name="LablabBean.Core.Tests.StatusEffectTests.ApplyEffect_ShouldModifyStats" type="LablabBean.Core.Tests.StatusEffectTests" method="ApplyEffect_ShouldModifyStats" time="0.145" result="Pass" />
+      <test name="LablabBean.Core.Tests.StatusEffectTests.RemoveEffect_ShouldRestoreStats" type="LablabBean.Core.Tests.StatusEffectTests" method="RemoveEffect_ShouldRestoreStats" time="0.167" result="Pass" />
+      <test name="LablabBean.Core.Tests.StatusEffectTests.StackingEffects_ShouldCombine" type="LablabBean.Core.Tests.StatusEffectTests" method="StackingEffects_ShouldCombine" time="0.198" result="Pass" />
+      <test name="LablabBean.Core.Tests.StatusEffectTests.ExpiredEffect_ShouldAutoRemove" type="LablabBean.Core.Tests.StatusEffectTests" method="ExpiredEffect_ShouldAutoRemove" time="0.089" result="Pass" />
+      <test name="LablabBean.Core.Tests.StatusEffectTests.ConflictingEffects_ShouldFail" type="LablabBean.Core.Tests.StatusEffectTests" method="ConflictingEffects_ShouldFail" time="0.068" result="Fail">
+        <failure exception-type="System.InvalidOperationException">
+          <message><![CDATA[Conflicting status effects cannot be applied simultaneously]]></message>
+          <stack-trace><![CDATA[   at LablabBean.Core.StatusEffectSystem.ApplyEffect() in D:\Source\StatusEffectSystem.cs:line 78
+   at LablabBean.Core.Tests.StatusEffectTests.ConflictingEffects_ShouldFail() in D:\Tests\StatusEffectTests.cs:line 56]]></stack-trace>
+        </failure>
+      </test>
+    </collection>
+  </assembly>
+</assemblies>

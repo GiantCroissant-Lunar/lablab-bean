@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SessionStatistics - Session Statistics Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #f093fb;
+        }
+        
+        .metric-card.combat {
+            border-left-color: #ef4444;
+        }
+        
+        .metric-card.progression {
+            border-left-color: #10b981;
+        }
+        
+        .metric-card.performance {
+            border-left-color: #3b82f6;
+        }
+        
+        .metric-label {
+            font-size: 0.85em;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .metric-subtext {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #1f2937;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .stat-row:hover {
+            background: #f9fafb;
+        }
+        
+        .stat-label {
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .badge.combat {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge.progression {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge.performance {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        
+        .kd-ratio {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SessionStatistics</h1>
+            <div class="subtitle">Session Statistics Report • Generated 2025-10-22 05:36:53 UTC</div>
+        </div>
+        
+        <div class="content">
+            <!-- Session Info -->
+            <div class="section">
+                <h2>Session Information</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Session ID</div>
+                        <div class="metric-value" style="font-size: 1.2em;">698a0da8-a77f-45e0-9d1b-fa5c6e639140</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Playtime</div>
+                        <div class="metric-value">02:00:00</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Session Start</div>
+                        <div class="metric-value" style="font-size: 1em;">2025-10-22 03:36</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Session End</div>
+                        <div class="metric-value" style="font-size: 1em;">2025-10-22 05:36</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Combat Statistics -->
+            <div class="section">
+                <h2>Combat Statistics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card combat">
+                        <div class="metric-label">Total Kills</div>
+                        <div class="metric-value">47</div>
+                    </div>
+                    <div class="metric-card combat">
+                        <div class="metric-label">Total Deaths</div>
+                        <div class="metric-value">3</div>
+                    </div>
+                    <div class="metric-card combat">
+                        <div class="metric-label">K/D Ratio</div>
+                        <div class="kd-ratio">0</div>
+                    </div>
+                    <div class="metric-card combat">
+                        <div class="metric-label">Avg Damage/Kill</div>
+                        <div class="metric-value">0</div>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <div class="stat-row">
+                        <span class="stat-label">Total Damage Dealt</span>
+                        <span class="stat-value">15420 HP</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Damage Taken</span>
+                        <span class="stat-value">8350 HP</span>
+                    </div>
+                    <div class="stat-row" style="border-bottom: none;">
+                        <span class="stat-label">Damage Ratio (Dealt/Taken)</span>
+                        <span class="stat-value">1x</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progression -->
+            <div class="section">
+                <h2>Progression & Achievements</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card progression">
+                        <div class="metric-label">Items Collected</div>
+                        <div class="metric-value">23</div>
+                    </div>
+                    <div class="metric-card progression">
+                        <div class="metric-label">Levels Completed</div>
+                        <div class="metric-value">5</div>
+                    </div>
+                    <div class="metric-card progression">
+                        <div class="metric-label">Achievements Unlocked</div>
+                        <div class="metric-value">3</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Metrics -->
+            <div class="section">
+                <h2>Performance Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card performance">
+                        <div class="metric-label">Average FPS</div>
+                        <div class="metric-value">60</div>
+                        <div class="metric-subtext">
+                            Excellent
+                        </div>
+                    </div>
+                    <div class="metric-card performance">
+                        <div class="metric-label">Total Load Time</div>
+                        <div class="metric-value">12.00s</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Events Timeline -->
+            
+        </div>
+        
+        <div class="footer">
+            Generated by LablabBean Reporting System • Session 698a0da8-a77f-45e0-9d1b-fa5c6e639140
+        </div>
+    </div>
+</body>
+</html>

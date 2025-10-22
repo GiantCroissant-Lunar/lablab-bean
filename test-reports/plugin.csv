@@ -1,0 +1,12 @@
+﻿Plugin Name,Version,State,Memory (MB),Load Time,Health Reason
+Analytics Plugin,1.0.0,Running,45,00:00:00.1500000,
+Logging Plugin,1.2.0,Running,120,00:00:00.0950000,High memory usage
+Reporting Plugin,1.0.0,Running,35,00:00:00.1800000,
+Game Mechanics Plugin,2.1.3,Running,25,00:00:00.1020000,
+UI Theme Plugin,1.5.0,Running,20,00:00:00.1000000,
+
+Summary,Total Plugins,5
+Summary,Running Plugins,4
+Summary,Degraded Plugins,1
+Summary,Failed Plugins,0
+Summary,Total Memory (MB),245

@@ -11,6 +11,12 @@
     <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
     <ProjectReference Include="..\LablabBean.Game.TerminalUI\LablabBean.Game.TerminalUI.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Core\LablabBean.Plugins.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Contracts\LablabBean.Reporting.Contracts.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Reporting.Html\LablabBean.Plugins.Reporting.Html.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Reporting.Csv\LablabBean.Plugins.Reporting.Csv.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Providers.Build\LablabBean.Reporting.Providers.Build.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Analytics\LablabBean.Reporting.Analytics.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.SourceGenerators.Reporting\LablabBean.SourceGenerators.Reporting.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Serilog" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,6 +9,7 @@ using LablabBean.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SadConsole;
 using SadConsole.Configuration;
 using Serilog;
@@ -33,6 +34,13 @@ try
 
     // Build DI container
     var services = new ServiceCollection();
+    
+    // Add logging services
+    services.AddLogging(builder =>
+    {
+        builder.AddSerilog(dispose: true);
+    });
+    
     services.AddLablabBeanInfrastructure(configuration);
     services.AddLablabBeanReactive();
     
@@ -66,15 +74,17 @@ try
         .IsStartingScreenFocused(true)
         .ConfigureFonts(true);
 
-    // Start SadConsole
+    // Start SadConsole with a callback to set up the screen after initialization
     Game.Create(builder);
-    // Optionally set window title if supported by current SadConsole/MonoGame version
-    // (Removed direct assignment to avoid API mismatch)
-
-    // Create and set the starting screen using DI
-    var gameScreen = ActivatorUtilities.CreateInstance<GameScreen>(serviceProvider, width, height);
-    gameScreen.Initialize();
-    Game.Instance.Screen = gameScreen;
+    
+    // SadConsole is now initialized, safe to create screens
+    Game.Instance.Started += (sender, args) =>
+    {
+        // Create and set the starting screen using DI
+        var gameScreen = ActivatorUtilities.CreateInstance<GameScreen>(serviceProvider, width, height);
+        gameScreen.Initialize();
+        Game.Instance.Screen = gameScreen;
+    };
 
     Game.Instance.Run();
     Game.Instance.Dispose();

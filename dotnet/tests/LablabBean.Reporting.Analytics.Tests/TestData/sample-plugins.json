@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-10-22T08:30:00Z",
+  "plugins": [
+    {
+      "name": "InventoryPlugin",
+      "version": "1.2.0",
+      "status": "Running",
+      "loadTimeMs": 125,
+      "memoryUsageMB": 4.5,
+      "errorCount": 0
+    },
+    {
+      "name": "StatusEffectsPlugin",
+      "version": "1.1.0",
+      "status": "Running",
+      "loadTimeMs": 98,
+      "memoryUsageMB": 3.2,
+      "errorCount": 1
+    },
+    {
+      "name": "AnalyticsPlugin",
+      "version": "2.0.0",
+      "status": "Running",
+      "loadTimeMs": 156,
+      "memoryUsageMB": 5.8,
+      "errorCount": 0
+    },
+    {
+      "name": "AudioPlugin",
+      "version": "1.0.5",
+      "status": "Failed",
+      "loadTimeMs": 0,
+      "memoryUsageMB": 0.0,
+      "errorCount": 5,
+      "lastError": "Failed to initialize audio device"
+    }
+  ]
+}
