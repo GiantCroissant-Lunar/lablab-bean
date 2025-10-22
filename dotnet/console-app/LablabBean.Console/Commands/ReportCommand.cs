@@ -3,6 +3,7 @@ using LablabBean.Reporting.Abstractions.Contracts;
 using LablabBean.Reporting.Abstractions.Models;
 using LablabBean.Reporting.Renderers.Html;
 using LablabBean.Reporting.Renderers.Csv;
+using LablabBean.Reporting.Providers.Build;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -117,43 +118,22 @@ public static class ReportCommand
         {
             System.Console.WriteLine($"Generating build metrics report ({format})...");
 
-            // Create sample data for demonstration
-            var sampleData = new BuildMetricsData
+            // Use real data provider
+            var provider = new BuildMetricsProvider(NullLogger<BuildMetricsProvider>.Instance);
+            
+            var request = new ReportRequest
             {
-                BuildNumber = "1.0.0-build.001",
-                Repository = "lablab-bean",
-                Branch = "main",
-                CommitHash = "abc123def456",
-                BuildStartTime = DateTime.UtcNow.AddMinutes(-5),
-                BuildEndTime = DateTime.UtcNow,
-                BuildDuration = TimeSpan.FromMinutes(5),
-                TotalTests = 42,
-                PassedTests = 40,
-                FailedTests = 2,
-                SkippedTests = 0,
-                PassPercentage = 95.2m,
-                LineCoveragePercentage = 85.5m,
-                BranchCoveragePercentage = 78.3m,
-                FailedTestDetails = new List<TestResult>
-                {
-                    new TestResult
-                    {
-                        Name = "LablabBean.Core.Tests.ExampleTest1",
-                        ClassName = "LablabBean.Core.Tests.ExampleTests",
-                        Result = "Failed",
-                        Duration = TimeSpan.FromSeconds(0.5),
-                        ErrorMessage = "Expected: 42, Actual: 43"
-                    },
-                    new TestResult
-                    {
-                        Name = "LablabBean.Core.Tests.ExampleTest2",
-                        ClassName = "LablabBean.Core.Tests.ExampleTests",
-                        Result = "Failed",
-                        Duration = TimeSpan.FromSeconds(0.3),
-                        ErrorMessage = "Null reference exception"
-                    }
-                }
+                Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
+                OutputPath = output.FullName,
+                DataPath = dataDir?.FullName
             };
+            
+            var data = await provider.GetReportDataAsync(request);
+            
+            if (data is not BuildMetricsData buildData)
+            {
+                throw new InvalidOperationException("Provider returned unexpected data type");
+            }
 
             IReportRenderer renderer = format.ToLowerInvariant() switch
             {
@@ -162,20 +142,15 @@ public static class ReportCommand
                 _ => throw new ArgumentException($"Unsupported format: {format}")
             };
 
-            var request = new ReportRequest
-            {
-                Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
-                OutputPath = output.FullName,
-                DataPath = dataDir?.FullName
-            };
-
-            var result = await renderer.RenderAsync(request, sampleData, CancellationToken.None);
+            var result = await renderer.RenderAsync(request, buildData, CancellationToken.None);
 
             if (result.IsSuccess)
             {
                 System.Console.ForegroundColor = ConsoleColor.Green;
                 System.Console.WriteLine($"✅ Report generated: {result.OutputPath}");
                 System.Console.ResetColor();
+                System.Console.WriteLine($"   Tests: {buildData.TotalTests} ({buildData.PassedTests} passed, {buildData.FailedTests} failed)");
+                System.Console.WriteLine($"   Coverage: {buildData.LineCoveragePercentage:F1}% line, {buildData.BranchCoveragePercentage:F1}% branch");
                 if (result.FileSizeBytes > 0)
                 {
                     System.Console.WriteLine($"   File size: {result.FileSizeBytes:N0} bytes");

@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Abstractions\LablabBean.Reporting.Abstractions.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Renderers.Html\LablabBean.Reporting.Renderers.Html.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Renderers.Csv\LablabBean.Reporting.Renderers.Csv.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Providers.Build\LablabBean.Reporting.Providers.Build.csproj" />
   </ItemGroup>
 
   <ItemGroup>
