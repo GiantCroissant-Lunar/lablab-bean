@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// Plugin loader with AssemblyLoadContext isolation, lifecycle orchestration, and hot reload support.
 /// </summary>
-public sealed class PluginLoader : IDisposable
+public sealed class PluginLoader : IPluginLoader, IDisposable
 {
     private readonly ILogger<PluginLoader> _logger;
     private readonly ILoggerFactory _loggerFactory;
