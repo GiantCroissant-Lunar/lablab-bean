@@ -71,6 +71,7 @@
               "BuildWebsite",
               "Clean",
               "Compile",
+              "GenerateReports",
               "PrintVersion",
               "Publish",
               "PublishAll",
@@ -78,7 +79,8 @@
               "PublishWindows",
               "Release",
               "Restore",
-              "Test"
+              "Test",
+              "TestWithCoverage"
             ]
           }
         },
@@ -95,6 +97,7 @@
               "BuildWebsite",
               "Clean",
               "Compile",
+              "GenerateReports",
               "PrintVersion",
               "Publish",
               "PublishAll",
@@ -102,7 +105,8 @@
               "PublishWindows",
               "Release",
               "Restore",
-              "Test"
+              "Test",
+              "TestWithCoverage"
             ]
           }
         },

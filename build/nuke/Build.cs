@@ -110,6 +110,114 @@ class Build : NukeBuild
                 .EnableNoRestore());
         });
 
+    Target TestWithCoverage => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            TestResultsDirectory.CreateOrCleanDirectory();
+            
+            var testProjects = Solution.GetAllProjects("*.Tests");
+            
+            foreach (var testProject in testProjects)
+            {
+                var projectName = testProject.Name;
+                var testResultFile = TestResultsDirectory / $"{projectName}.trx";
+                
+                Serilog.Log.Information("Running tests for {Project}...", projectName);
+                
+                DotNetTest(s => s
+                    .SetProjectFile(testProject)
+                    .SetConfiguration(Configuration)
+                    .EnableNoBuild()
+                    .EnableNoRestore()
+                    .SetLoggers($"trx;LogFileName={testResultFile}")
+                    .SetDataCollector("XPlat Code Coverage")
+                    .SetResultsDirectory(TestResultsDirectory));
+            }
+            
+            Serilog.Log.Information("Test results saved to: {Path}", TestResultsDirectory);
+        });
+
+    Target GenerateReports => _ => _
+        .DependsOn(TestWithCoverage)
+        .Executes(() =>
+        {
+            TestReportsDirectory.CreateOrCleanDirectory();
+            
+            var reportingToolPath = SourceDirectory / "console-app" / "LablabBean.Console" / "bin" / Configuration / "net8.0" / "LablabBean.Console.dll";
+            
+            if (!System.IO.File.Exists(reportingToolPath))
+            {
+                Serilog.Log.Warning("Reporting tool not found at {Path}", reportingToolPath);
+                Serilog.Log.Information("Run 'nuke Compile' first to build the reporting tool");
+                return;
+            }
+            
+            Serilog.Log.Information("Generating build metrics report...");
+            
+            var buildReportPath = TestReportsDirectory / "build-metrics.html";
+            var sessionReportPath = TestReportsDirectory / "session-analytics.html";
+            var pluginReportPath = TestReportsDirectory / "plugin-metrics.html";
+            
+            try
+            {
+                DotNet($"{reportingToolPath} report build " +
+                      $"--output \"{buildReportPath}\" " +
+                      $"--data \"{TestResultsDirectory}\" " +
+                      $"--format html",
+                      workingDirectory: RootDirectory);
+                
+                Serilog.Log.Information("✅ Build metrics report: {Path}", buildReportPath);
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning("Build metrics report failed: {Message}", ex.Message);
+            }
+            
+            Serilog.Log.Information("Generating session analytics report...");
+            
+            try
+            {
+                DotNet($"{reportingToolPath} report session " +
+                      $"--output \"{sessionReportPath}\" " +
+                      $"--data \"{TestResultsDirectory}\" " +
+                      $"--format html",
+                      workingDirectory: RootDirectory);
+                
+                Serilog.Log.Information("✅ Session analytics report: {Path}", sessionReportPath);
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning("Session analytics report failed: {Message}", ex.Message);
+            }
+            
+            Serilog.Log.Information("Generating plugin metrics report...");
+            
+            try
+            {
+                DotNet($"{reportingToolPath} report plugin " +
+                      $"--output \"{pluginReportPath}\" " +
+                      $"--data \"{TestResultsDirectory}\" " +
+                      $"--format html",
+                      workingDirectory: RootDirectory);
+                
+                Serilog.Log.Information("✅ Plugin metrics report: {Path}", pluginReportPath);
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning("Plugin metrics report failed: {Message}", ex.Message);
+            }
+            
+            Serilog.Log.Information("\n╔════════════════════════════════════════╗");
+            Serilog.Log.Information("║     📊 REPORTS GENERATED! 🎉         ║");
+            Serilog.Log.Information("╚════════════════════════════════════════╝");
+            Serilog.Log.Information("Location: {Path}", TestReportsDirectory);
+            Serilog.Log.Information("  - build-metrics.html");
+            Serilog.Log.Information("  - session-analytics.html");
+            Serilog.Log.Information("  - plugin-metrics.html");
+            Serilog.Log.Information("════════════════════════════════════════\n");
+        });
+
     Target Publish => _ => _
         .DependsOn(Test)
         .Executes(() =>
