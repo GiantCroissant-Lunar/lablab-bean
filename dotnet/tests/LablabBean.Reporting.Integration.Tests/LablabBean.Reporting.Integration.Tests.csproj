@@ -21,8 +21,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Providers.Build\LablabBean.Reporting.Providers.Build.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Analytics\LablabBean.Reporting.Analytics.csproj" />
-    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Renderers.Html\LablabBean.Reporting.Renderers.Html.csproj" />
-    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Renderers.Csv\LablabBean.Reporting.Renderers.Csv.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Reporting.Html\LablabBean.Plugins.Reporting.Html.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Reporting.Csv\LablabBean.Plugins.Reporting.Csv.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,8 +2,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using LablabBean.Reporting.Providers.Build;
 using LablabBean.Reporting.Analytics;
-using LablabBean.Reporting.Renderers.Html;
-using LablabBean.Reporting.Renderers.Csv;
+using LablabBean.Plugins.Reporting.Html;
+using LablabBean.Plugins.Reporting.Csv;
 using LablabBean.Reporting.Contracts.Models;
 
 namespace LablabBean.Reporting.Integration.Tests;

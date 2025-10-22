@@ -1,10 +1,10 @@
 using System.Text;
 using FluentAssertions;
 using LablabBean.Reporting.Contracts.Models;
-using LablabBean.Reporting.Renderers.Csv;
+using LablabBean.Plugins.Reporting.Csv;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace LablabBean.Reporting.Renderers.Csv.Tests;
+namespace LablabBean.Plugins.Reporting.Csv.Tests;
 
 public class CsvReportRendererTests
 {

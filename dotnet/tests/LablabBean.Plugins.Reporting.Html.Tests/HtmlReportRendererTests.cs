@@ -1,8 +1,9 @@
 using FluentAssertions;
 using LablabBean.Reporting.Contracts.Models;
+using LablabBean.Plugins.Reporting.Html;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace LablabBean.Reporting.Renderers.Html.Tests;
+namespace LablabBean.Plugins.Reporting.Html.Tests;
 
 public class HtmlReportRendererTests
 {

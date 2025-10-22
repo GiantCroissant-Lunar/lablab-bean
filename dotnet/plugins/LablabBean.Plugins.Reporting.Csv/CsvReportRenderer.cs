@@ -6,7 +6,7 @@ using LablabBean.Reporting.Contracts.Contracts;
 using LablabBean.Reporting.Contracts.Models;
 using Microsoft.Extensions.Logging;
 
-namespace LablabBean.Reporting.Renderers.Csv;
+namespace LablabBean.Plugins.Reporting.Csv;
 
 /// <summary>
 /// CSV report renderer using CsvHelper.

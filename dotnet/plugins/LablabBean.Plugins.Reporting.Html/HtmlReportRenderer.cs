@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Runtime;
 
-namespace LablabBean.Reporting.Renderers.Html;
+namespace LablabBean.Plugins.Reporting.Html;
 
 /// <summary>
 /// HTML report renderer using Scriban templates.
@@ -122,7 +122,7 @@ public class HtmlReportRenderer : IReportRenderer
     private async Task<string> LoadEmbeddedTemplateAsync(string templateName, CancellationToken cancellationToken)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = $"LablabBean.Reporting.Renderers.Html.Templates.{templateName}";
+        var resourceName = $"LablabBean.Plugins.Reporting.Html.Templates.{templateName}";
 
         await using var stream = assembly.GetManifestResourceStream(resourceName);
         
