@@ -1,0 +1,114 @@
+name: Build and Test with Reports
+
+on:
+  push:
+    branches: [main, develop, feature/**]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-test:
+    name: Build, Test & Generate Reports
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        # Future: Add ubuntu-latest for Linux validation
+    
+    steps:
+      - name: 🔽 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # GitVersion needs full history
+      
+      - name: 🔧 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: 📦 Restore dependencies
+        run: dotnet restore dotnet/LablabBean.sln
+      
+      - name: 🏗️ Build solution
+        run: dotnet build dotnet/LablabBean.sln --configuration Release --no-restore
+      
+      - name: 🧪 Run tests with coverage
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target TestWithCoverage --configuration Release
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+      
+      - name: 📊 Generate reports
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports --configuration Release
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        continue-on-error: true
+      
+      - name: 📦 Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: build/_artifacts/*/test-results/
+          retention-days: 30
+      
+      - name: 📊 Upload HTML reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: html-reports-${{ matrix.os }}
+          path: build/_artifacts/*/test-reports/*.html
+          retention-days: 30
+      
+      - name: 📈 Upload CSV reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: csv-reports-${{ matrix.os }}
+          path: build/_artifacts/*/test-reports/*.csv
+          retention-days: 30
+      
+      - name: 📝 Summary
+        if: always()
+        run: |
+          echo "## 📊 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **OS**: ${{ matrix.os }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Number**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📈 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Test results" >> $GITHUB_STEP_SUMMARY
+          echo "- HTML reports (build, session, plugin metrics)" >> $GITHUB_STEP_SUMMARY
+          echo "- CSV exports" >> $GITHUB_STEP_SUMMARY
+
+  validate-linux:
+    name: Validate on Linux (Future)
+    runs-on: ubuntu-latest
+    if: false  # Enable when ready for Linux validation
+    
+    steps:
+      - name: 🔽 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔧 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: 📦 Restore dependencies
+        run: dotnet restore dotnet/LablabBean.sln
+      
+      - name: 🏗️ Build solution
+        run: dotnet build dotnet/LablabBean.sln --configuration Release --no-restore
+      
+      - name: 🧪 Run tests
+        run: dotnet test dotnet/LablabBean.sln --configuration Release --no-build --no-restore

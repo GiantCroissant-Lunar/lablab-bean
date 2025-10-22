@@ -148,17 +148,28 @@ class Build : NukeBuild
             
             if (!System.IO.File.Exists(reportingToolPath))
             {
-                Serilog.Log.Warning("Reporting tool not found at {Path}", reportingToolPath);
+                Serilog.Log.Error("❌ Reporting tool not found at {Path}", reportingToolPath);
                 Serilog.Log.Information("Run 'nuke Compile' first to build the reporting tool");
-                return;
+                throw new Exception("Reporting tool not built. Run 'nuke Compile' first.");
             }
+            
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+            var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? Version;
+            
+            var buildReportPath = TestReportsDirectory / $"build-metrics-{buildNumber}-{timestamp}.html";
+            var buildReportCsvPath = TestReportsDirectory / $"build-metrics-{buildNumber}-{timestamp}.csv";
+            var sessionReportPath = TestReportsDirectory / $"session-analytics-{buildNumber}-{timestamp}.html";
+            var sessionReportCsvPath = TestReportsDirectory / $"session-analytics-{buildNumber}-{timestamp}.csv";
+            var pluginReportPath = TestReportsDirectory / $"plugin-metrics-{buildNumber}-{timestamp}.html";
+            var pluginReportCsvPath = TestReportsDirectory / $"plugin-metrics-{buildNumber}-{timestamp}.csv";
+            
+            var latestBuildReportPath = TestReportsDirectory / "build-metrics-latest.html";
+            var latestSessionReportPath = TestReportsDirectory / "session-analytics-latest.html";
+            var latestPluginReportPath = TestReportsDirectory / "plugin-metrics-latest.html";
             
             Serilog.Log.Information("Generating build metrics report...");
             
-            var buildReportPath = TestReportsDirectory / "build-metrics.html";
-            var sessionReportPath = TestReportsDirectory / "session-analytics.html";
-            var pluginReportPath = TestReportsDirectory / "plugin-metrics.html";
-            
+            bool buildMetricsSuccess = false;
             try
             {
                 DotNet($"{reportingToolPath} report build " +
@@ -167,15 +178,29 @@ class Build : NukeBuild
                       $"--format html",
                       workingDirectory: RootDirectory);
                 
+                DotNet($"{reportingToolPath} report build " +
+                      $"--output \"{buildReportCsvPath}\" " +
+                      $"--data \"{TestResultsDirectory}\" " +
+                      $"--format csv",
+                      workingDirectory: RootDirectory);
+                
+                if (System.IO.File.Exists(buildReportPath))
+                {
+                    System.IO.File.Copy(buildReportPath, latestBuildReportPath, true);
+                }
+                
                 Serilog.Log.Information("✅ Build metrics report: {Path}", buildReportPath);
+                Serilog.Log.Information("✅ Build metrics CSV: {Path}", buildReportCsvPath);
+                buildMetricsSuccess = true;
             }
             catch (Exception ex)
             {
-                Serilog.Log.Warning("Build metrics report failed: {Message}", ex.Message);
+                Serilog.Log.Error("❌ Build metrics report failed: {Message}", ex.Message);
             }
             
             Serilog.Log.Information("Generating session analytics report...");
             
+            bool sessionSuccess = false;
             try
             {
                 DotNet($"{reportingToolPath} report session " +
@@ -184,15 +209,29 @@ class Build : NukeBuild
                       $"--format html",
                       workingDirectory: RootDirectory);
                 
+                DotNet($"{reportingToolPath} report session " +
+                      $"--output \"{sessionReportCsvPath}\" " +
+                      $"--data \"{TestResultsDirectory}\" " +
+                      $"--format csv",
+                      workingDirectory: RootDirectory);
+                
+                if (System.IO.File.Exists(sessionReportPath))
+                {
+                    System.IO.File.Copy(sessionReportPath, latestSessionReportPath, true);
+                }
+                
                 Serilog.Log.Information("✅ Session analytics report: {Path}", sessionReportPath);
+                Serilog.Log.Information("✅ Session analytics CSV: {Path}", sessionReportCsvPath);
+                sessionSuccess = true;
             }
             catch (Exception ex)
             {
-                Serilog.Log.Warning("Session analytics report failed: {Message}", ex.Message);
+                Serilog.Log.Error("❌ Session analytics report failed: {Message}", ex.Message);
             }
             
             Serilog.Log.Information("Generating plugin metrics report...");
             
+            bool pluginSuccess = false;
             try
             {
                 DotNet($"{reportingToolPath} report plugin " +
@@ -201,21 +240,49 @@ class Build : NukeBuild
                       $"--format html",
                       workingDirectory: RootDirectory);
                 
+                DotNet($"{reportingToolPath} report plugin " +
+                      $"--output \"{pluginReportCsvPath}\" " +
+                      $"--data \"{TestResultsDirectory}\" " +
+                      $"--format csv",
+                      workingDirectory: RootDirectory);
+                
+                if (System.IO.File.Exists(pluginReportPath))
+                {
+                    System.IO.File.Copy(pluginReportPath, latestPluginReportPath, true);
+                }
+                
                 Serilog.Log.Information("✅ Plugin metrics report: {Path}", pluginReportPath);
+                Serilog.Log.Information("✅ Plugin metrics CSV: {Path}", pluginReportCsvPath);
+                pluginSuccess = true;
             }
             catch (Exception ex)
             {
-                Serilog.Log.Warning("Plugin metrics report failed: {Message}", ex.Message);
+                Serilog.Log.Error("❌ Plugin metrics report failed: {Message}", ex.Message);
             }
             
             Serilog.Log.Information("\n╔════════════════════════════════════════╗");
             Serilog.Log.Information("║     📊 REPORTS GENERATED! 🎉         ║");
             Serilog.Log.Information("╚════════════════════════════════════════╝");
+            Serilog.Log.Information("Build: {Build} | Timestamp: {Timestamp}", buildNumber, timestamp);
             Serilog.Log.Information("Location: {Path}", TestReportsDirectory);
-            Serilog.Log.Information("  - build-metrics.html");
-            Serilog.Log.Information("  - session-analytics.html");
-            Serilog.Log.Information("  - plugin-metrics.html");
+            if (buildMetricsSuccess)
+            {
+                Serilog.Log.Information("  ✅ build-metrics-{0}-{1}.html/.csv", buildNumber, timestamp);
+            }
+            if (sessionSuccess)
+            {
+                Serilog.Log.Information("  ✅ session-analytics-{0}-{1}.html/.csv", buildNumber, timestamp);
+            }
+            if (pluginSuccess)
+            {
+                Serilog.Log.Information("  ✅ plugin-metrics-{0}-{1}.html/.csv", buildNumber, timestamp);
+            }
             Serilog.Log.Information("════════════════════════════════════════\n");
+            
+            if (!buildMetricsSuccess || !sessionSuccess || !pluginSuccess)
+            {
+                Serilog.Log.Warning("⚠️  Some reports failed to generate. Check logs above.");
+            }
         });
 
     Target Publish => _ => _

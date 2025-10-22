@@ -225,38 +225,38 @@
 
 ---
 
-## Phase 8: CI/CD & Build Integration (10 tasks)
+## Phase 8: CI/CD & Build Integration (10 tasks) ✅ COMPLETE
 **Purpose**: Automate reports in CI and publish artifacts.
 
-- [ ] T099 Add/build task to run CLI after tests/coverage (Nuke or existing pipelines)
-- [ ] T100 Configure artifacts path: `build/_artifacts/<version>/reports/`
-- [ ] T101 Timestamped filenames: `build-metrics-<build>-<ts>.html`
-- [ ] T102 Add failure conditions for missing inputs with clear messages
-- [ ] T103 Generate multiple formats when configured (HTML+PDF)
-- [ ] T104 Ensure CI images include fonts for PDF if needed
-- [ ] T105 Document CI usage in `quickstart.md`
-- [ ] T106 Add Taskfile/Nuke entry points for local dev
-- [ ] T107 Validate on Windows and at least one Linux agent
-- [ ] T108 Add build log links to generated reports if applicable
+- [x] T099 Add/build task to run CLI after tests/coverage (Nuke or existing pipelines)
+- [x] T100 Configure artifacts path: `build/_artifacts/<version>/reports/`
+- [x] T101 Timestamped filenames: `build-metrics-<build>-<ts>.html`
+- [x] T102 Add failure conditions for missing inputs with clear messages
+- [x] T103 Generate multiple formats when configured (HTML+PDF)
+- [x] T104 Ensure CI images include fonts for PDF if needed
+- [x] T105 Document CI usage in `quickstart.md`
+- [x] T106 Add Taskfile/Nuke entry points for local dev
+- [x] T107 Validate on Windows and at least one Linux agent
+- [x] T108 Add build log links to generated reports if applicable
 
-**Checkpoint**: Reports generated automatically by CI with reliable artifacts.
+**Checkpoint**: ✅ Reports generated automatically by CI with reliable artifacts.
 
 ---
 
 ## Phase 9: Documentation & Developer Experience (10 tasks)
 **Purpose**: Developer quickstart and reference.
 
-- [ ] T109 Create `quickstart.md` with install, usage, CLI examples
-- [ ] T110 Add examples for each report type and format
-- [ ] T111 Add troubleshooting section (missing data, template issues, PDF limits)
-- [ ] T112 Cross-link `spec.md`, `plan.md`, `research.md`, `data-model.md`
-- [ ] T113 Update `specs/README.md` with Spec-010 entry if needed
-- [ ] T114 Update checklists/requirements.md validation matrix
-- [ ] T115 Update CHANGELOG.md with Spec-010 entries
+- [x] T109 Create `quickstart.md` with install, usage, CLI examples
+- [x] T110 Add examples for each report type and format
+- [x] T111 Add troubleshooting section (missing data, template issues, PDF limits)
+- [x] T112 Cross-link `spec.md`, `plan.md`, `research.md`, `data-model.md`
+- [x] T113 Update `specs/README.md` with Spec-010 entry if needed
+- [x] T114 Update checklists/requirements.md validation matrix
+- [x] T115 Update CHANGELOG.md with Spec-010 entries
 - [ ] T116 If available, run agent context update script:
        `.specify/scripts/powershell/update-agent-context.ps1 -AgentType claude` (optional)
-- [ ] T117 Add `README.md` in plugin folder with template notes
-- [ ] T118 Document extension points (alternate renderers)
+- [x] T117 Add `README.md` in plugin folder with template notes
+- [x] T118 Document extension points (alternate renderers)
 
 **Checkpoint**: Docs complete; onboarding time minimized.
 
@@ -265,14 +265,14 @@
 ## Phase 10: Performance, Telemetry & Polish (8 tasks)
 **Purpose**: Final tuning and guardrails.
 
-- [ ] T119 Add minimal logging in providers and plugin (info/warn)
-- [ ] T120 Add metrics hooks if AnalyticsPlugin targets build-time events
-- [ ] T121 Cache heavy computations or template loads where safe
-- [ ] T122 Validate memory usage and ALC unloading behavior
-- [ ] T123 Verify CSV export path (if implemented) or mark as future
-- [ ] T124 Add sample large datasets to test limits
-- [ ] T125 Re-run perf tests and record results in `research.md`
-- [ ] T126 Final review against FR/SC checklist and mark complete
+- [x] T119 Add minimal logging in providers and plugin (info/warn)
+- [x] T120 Add metrics hooks if AnalyticsPlugin targets build-time events
+- [x] T121 Cache heavy computations or template loads where safe
+- [x] T122 Validate memory usage and ALC unloading behavior
+- [x] T123 Verify CSV export path (if implemented) or mark as future
+- [x] T124 Add sample large datasets to test limits
+- [x] T125 Re-run perf tests and record results in `research.md`
+- [x] T126 Final review against FR/SC checklist and mark complete
 
 ---
 

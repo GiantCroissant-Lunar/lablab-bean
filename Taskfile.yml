@@ -36,3 +36,29 @@ tasks:
     cmds:
       - task: build
       - task: publish
+
+  test:
+    desc: Run all tests via NUKE
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Test --configuration Debug
+
+  test:coverage:
+    desc: Run tests with code coverage
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target TestWithCoverage --configuration Debug
+
+  reports:
+    desc: Generate HTML and CSV reports (builds, session, plugin metrics)
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports --configuration Debug
+
+  reports:ci:
+    desc: Run tests with coverage and generate all reports (full CI workflow)
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target TestWithCoverage --configuration Debug
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports --configuration Debug
+
+  clean:
+    desc: Clean all build artifacts via NUKE
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Clean
