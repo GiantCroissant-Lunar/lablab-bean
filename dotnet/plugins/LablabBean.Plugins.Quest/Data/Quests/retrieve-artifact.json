@@ -1,0 +1,42 @@
+{
+  "description": "Eldrin the Sage has asked you to retrieve an ancient artifact from the fifth level of the dungeon.",
+  "flavorText": "The artifact holds great power. Be careful, adventurer.",
+  "id": "retrieve-artifact",
+  "name": "The Lost Artifact",
+  "objectives": [
+    {
+      "description": "Reach the fifth level of the dungeon",
+      "id": "reach-level-5",
+      "required": 1,
+      "target": "dungeon-level-5",
+      "type": "Reach"
+    },
+    {
+      "description": "Collect the Ancient Artifact",
+      "id": "collect-artifact",
+      "required": 1,
+      "target": "ancient-artifact",
+      "type": "Collect"
+    },
+    {
+      "description": "Return to Eldrin the Sage",
+      "id": "return-to-eldrin",
+      "required": 1,
+      "target": "eldrin-sage",
+      "type": "Talk"
+    }
+  ],
+  "prerequisites": {
+    "minLevel": 5,
+    "requiredItems": [],
+    "requiredQuests": []
+  },
+  "questGiverId": "eldrin-sage",
+  "rewards": {
+    "experiencePoints": 500,
+    "gold": 100,
+    "items": [
+      "scroll-of-wisdom"
+    ]
+  }
+}

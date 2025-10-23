@@ -1,0 +1,22 @@
+{
+  "author": "Lablab Bean Team",
+  "capabilities": [
+    "progression",
+    "leveling",
+    "experience",
+    "stats"
+  ],
+  "dependencies": [],
+  "description": "Character progression system with XP, leveling, and stat increases",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.Progression.dll,LablabBean.Plugins.Progression.ProgressionPlugin",
+    "dotnet.sadconsole": "LablabBean.Plugins.Progression.dll,LablabBean.Plugins.Progression.ProgressionPlugin"
+  },
+  "id": "progression",
+  "name": "Progression System",
+  "permissions": {
+    "profile": "Standard"
+  },
+  "priority": 100,
+  "version": "1.0.0"
+}

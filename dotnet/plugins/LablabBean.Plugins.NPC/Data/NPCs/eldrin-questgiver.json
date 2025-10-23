@@ -1,0 +1,17 @@
+{
+  "appearance": {
+    "description": "An elderly wizard in flowing blue robes",
+    "foreground": "Blue",
+    "glyph": "@"
+  },
+  "dialogueTreeId": "eldrin-dialogue",
+  "id": "eldrin-sage",
+  "isInteractable": true,
+  "name": "Eldrin the Sage",
+  "position": {
+    "level": 1,
+    "x": 10,
+    "y": 5
+  },
+  "role": "QuestGiver"
+}
