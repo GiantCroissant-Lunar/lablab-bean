@@ -2,85 +2,145 @@
 # See https://pre-commit.com for more information
 repos:
   # General file checks
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: check-merge-conflict
-      - id: check-case-conflict
-      - id: mixed-line-ending
-      - id: check-json
-      - id: check-toml
-      - id: detect-private-key
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-yaml
+  - id: check-added-large-files
+  - id: check-merge-conflict
+  - id: check-case-conflict
+  - id: mixed-line-ending
+  - id: check-json
+  - id: check-toml
+  - id: detect-private-key
 
   # Markdown linting
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.39.0
-    hooks:
-      - id: markdownlint
-        args: ['--fix']
+- repo: https://github.com/igorshubovych/markdownlint-cli
+  rev: v0.45.0
+  hooks:
+  - id: markdownlint
+    args: [--fix]
 
-  # YAML formatting
-  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.12.0
-    hooks:
-      - id: pretty-format-yaml
-        args: [--autofix, --indent, '2']
+  # YAML formatting (and JSON formatting)
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.15.0
+  hooks:
+  - id: pretty-format-yaml
+    args: [--autofix, --indent, '2']
+
+  # Add JSON pretty-formatting using pre-commit-hooks repo
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: pretty-format-json
+    args: [--autofix, --indent, '2']
 
   # Conventional Commits
-  - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.0.0
-    hooks:
-      - id: conventional-pre-commit
-        stages: [commit-msg]
-        args: []
+- repo: https://github.com/compilerla/conventional-pre-commit
+  rev: v4.3.0
+  hooks:
+  - id: conventional-pre-commit
+    stages: [commit-msg]
+    args: []
 
   # Python code quality - Ruff (replaces black, flake8, isort, and more)
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
-    hooks:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.14.1
+  hooks:
       # Run the linter
-      - id: ruff
-        args: [--fix]
+  - id: ruff
+    args: [--fix]
       # Run the formatter (replaces black)
-      - id: ruff-format
+  - id: ruff-format
 
   # Optional: Type checking with mypy
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
-    hooks:
-      - id: mypy
-        additional_dependencies: []
-        args: [--ignore-missing-imports, --no-strict-optional]
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.13.0
+  hooks:
+  - id: mypy
+    additional_dependencies: []
+    args: [--ignore-missing-imports, --no-strict-optional]
 
-  # Custom hooks (also available in git-hooks/ directory)
-  - repo: local
-    hooks:
-      # Prevent Windows 'nul' file from being committed
-      - id: prevent-nul-file
-        name: Prevent Windows nul file
-        entry: bash git-hooks/prevent-nul-file
-        language: system
-        pass_filenames: false
-        always_run: true
+  # Shell scripts: lint and format
+- repo: https://github.com/shellcheck-py/shellcheck-py
+  rev: v0.11.0.1
+  hooks:
+  - id: shellcheck
+    args: [-S, error]
+    files: ^(git-hooks/|scripts/).+\.(sh|bash)$
 
-      # Validate agent pointer files are up to date
-      - id: validate-pointer-files
-        name: Validate agent pointer files
-        entry: bash git-hooks/validate-agent-pointers
-        language: system
-        pass_filenames: false
-        files: ^(.agent/|CLAUDE\.md|AGENTS\.md|\.github/copilot-instructions\.md|\.windsurf/rules\.md)
-        always_run: false
+- repo: https://github.com/scop/pre-commit-shfmt
+  rev: v3.12.0-2
+  hooks:
+  - id: shfmt
+    args: [-w, -i, '2']
+    files: ^(git-hooks/|scripts/).+\.(sh|bash)$
 
-      # Python code quality (alternative to black/flake8/isort repos above)
+  # GitHub Actions workflow linter
+- repo: https://github.com/rhysd/actionlint
+  rev: v1.7.8
+  hooks:
+  - id: actionlint
+
+  # Web (website/) formatting via Prettier (+ Astro plugin)
+- repo: https://github.com/pre-commit/mirrors-prettier
+  rev: v4.0.0-alpha.8
+  hooks:
+  - id: prettier
+    files: ^website/.*\.(js|jsx|ts|tsx|json|css|md|astro)$
+    additional_dependencies:
+    - prettier@^3.1.1
+    - prettier-plugin-astro@^0.12.2
+
+  # Custom hooks (organized in git-hooks/ directory)
+- repo: local
+  hooks:
+      # General checks
+  - id: prevent-nul-file
+    name: Prevent Windows nul file
+    entry: python git-hooks/checks/general/prevent_nul_file.py
+    language: system
+    pass_filenames: false
+    always_run: true
+
+  - id: validate-pointer-files
+    name: Validate agent pointer files
+    entry: python git-hooks/checks/general/validate_agent_pointers.py
+    language: system
+    pass_filenames: false
+    files: ^(.agent/|CLAUDE\.md|AGENTS\.md|\.github/copilot-instructions\.md|\.windsurf/rules\.md)
+    always_run: false
+
+      # Optional: Additional security check with gitleaks
+      # - id: gitleaks
+      #   name: Gitleaks (Secret Detection)
+      #   entry: bash git-hooks/checks/general/gitleaks-check
+      #   language: system
+      #   pass_filenames: false
+      #   stages: [commit]
+
+      # .NET specific checks (uncomment if working with .NET code)
+      # - id: dotnet-format
+      #   name: .NET Format Check
+      #   entry: bash git-hooks/checks/dotnet/dotnet-format-check
+      #   language: system
+      #   files: \.(cs|csproj|sln)$
+      #   pass_filenames: false
+
+      # - id: one-type-per-file
+      #   name: One Type Per File Check
+      #   entry: bash git-hooks/checks/dotnet/one-type-per-file-check
+      #   language: system
+      #   files: \.cs$
+      #   pass_filenames: false
+
+      # Python code quality (alternative to ruff repos above)
       # Uncomment to use git-hooks/python-check instead of individual tools
       # - id: python-check
       #   name: Python code quality
-      #   entry: bash git-hooks/python-check
+      #   entry: bash git-hooks/checks/python/python-check
       #   language: system
       #   types: [python]
       #   pass_filenames: false
