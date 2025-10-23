@@ -50,9 +50,9 @@ public interface IService
     /// <summary>
     /// Log a diagnostic event.
     /// </summary>
-    /// <param name="event">Event to log</param>
+    /// <param name="diagnosticEvent">Event to log</param>
     /// <returns>Task representing the log operation</returns>
-    Task LogEventAsync(DiagnosticEvent @event);
+    Task LogEventAsync(DiagnosticEvent diagnosticEvent);
 
     /// <summary>
     /// Log a diagnostic event with basic information.
