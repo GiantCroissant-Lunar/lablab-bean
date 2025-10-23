@@ -1,0 +1,346 @@
+# Implementation Plan: Missing Service Contracts (SPEC-012)
+
+**Created**: 2025-10-23
+**Spec**: `specs/012-missing-service-contracts/spec.md`
+**Tasks**: `specs/012-missing-service-contracts/tasks.md`
+
+## Overview
+
+This plan outlines the implementation of 12 missing service contract projects, porting them from the Unity-based soy-bean reference implementation to .NET Standard 2.1 for the lablab-bean framework.
+
+## Quick Reference
+
+### Services Summary
+
+| Priority | Service | Purpose | Key Complexity |
+|----------|---------|---------|----------------|
+| **P1** | Diagnostic | System monitoring & observability | High - Many interfaces & types |
+| **P1** | ObjectPool | Memory efficiency & pooling | Medium - Generic types |
+| **P1** | Audio | Audio playback management | Medium - Unity abstractions |
+| **P2** | Localization | Multi-language support | Low - Standard patterns |
+| **P2** | PersistentStorage | Data persistence | Medium - Provider abstraction |
+| **P2** | Serialization | Object serialization | Medium - Format abstraction |
+| **P3** | Performance | Performance monitoring | Low - Metrics collection |
+| **P3** | Scheduler | Task scheduling | Medium - Timing patterns |
+| **P3** | Analytics | Event tracking | Low - Provider delegation |
+| **P3** | Firebase | Firebase integration | Medium - SDK abstraction |
+| **P3** | ServiceHealth | Service health monitoring | Low - Health checks |
+| **P3** | Resilience | Fault tolerance patterns | Medium - Polly alignment |
+
+## Implementation Strategy
+
+### Phased Approach
+
+**Phase 1: Foundation** (Est. 1-2 hours)
+- Create all 12 project structures
+- Set up .csproj files with correct references
+- Add to solution file
+- Verify solution loads
+
+**Phase 2: P1 Services** (Est. 4-6 hours)
+- Diagnostic (most complex - 2-3 hours)
+- ObjectPool (1-2 hours)
+- Audio (1-2 hours)
+- Build verification
+
+**Phase 3: P2 Services** (Est. 3-4 hours)
+- Localization (1 hour)
+- PersistentStorage (1-1.5 hours)
+- Serialization (1-1.5 hours)
+- Build verification
+
+**Phase 4: P3 Services** (Est. 4-6 hours)
+- Performance (30 min)
+- Scheduler (1-1.5 hours)
+- Analytics (30 min)
+- Firebase (1 hour)
+- ServiceHealth (30 min)
+- Resilience (1-1.5 hours)
+- Build verification
+
+**Phase 5: Finalization** (Est. 1 hour)
+- Full solution build
+- Generate proxy verification
+- Documentation
+
+**Total Estimated Time**: 13-19 hours
+
+## Key Adaptation Patterns
+
+### 1. UniTask → Task
+```csharp
+// Before (Unity)
+UniTask<T> MethodAsync(CancellationToken ct = default);
+
+// After (.NET Standard)
+Task<T> MethodAsync(CancellationToken ct = default);
+```
+
+### 2. UniRx → System.Reactive or Remove
+```csharp
+// Before (Unity)
+using UniRx;
+IObservable<T> Stream { get; }
+
+// After (.NET Standard) - Option 1: Use System.Reactive
+using System;
+IObservable<T> Stream { get; }
+
+// After (.NET Standard) - Option 2: Remove if not critical
+// Remove property entirely
+```
+
+### 3. GameObject → Abstract Types
+```csharp
+// Before (Unity)
+IGameObjectPool CreateGameObjectPool(GameObject prefab, ...);
+
+// After (.NET Standard)
+// Remove entirely - keep only generic IObjectPool<T>
+```
+
+### 4. ScriptableObject → Plain Classes
+```csharp
+// Before (Unity)
+public class Config : ScriptableObject { ... }
+
+// After (.NET Standard)
+public class Config { ... }
+```
+
+## Project Template
+
+Each contract project follows this structure:
+
+```
+LablabBean.Contracts.{Service}/
+├── LablabBean.Contracts.{Service}.csproj
+│   └── References:
+│       ├── LablabBean.Plugins.Contracts
+│       └── LablabBean.SourceGenerators.Proxy (Analyzer)
+├── Polyfills.cs (IsExternalInit for C# records)
+├── Services/
+│   ├── IService.cs (main interface)
+│   └── Proxy/
+│       └── Service.cs ([RealizeService] proxy)
+├── Models/ (optional - data models)
+├── Classes/ (optional - supporting classes)
+├── Enums/ (optional - enumerations)
+├── Interfaces/ (optional - additional interfaces)
+├── Events.cs (optional - event definitions)
+└── Extensions.cs (optional - extension methods)
+```
+
+## .csproj Template
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\LablabBean.SourceGenerators.Proxy\LablabBean.SourceGenerators.Proxy.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>12</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>
+```
+
+## Proxy Service Template
+
+```csharp
+using System;
+using LablabBean.Plugins.Contracts;
+using LablabBean.Plugins.Contracts.Attributes;
+
+namespace LablabBean.Contracts.{Service}.Services.Proxy;
+
+/// <summary>
+/// Proxy implementation of IService that delegates to the plugin registry.
+/// The actual implementation is generated by the ProxyServiceGenerator.
+/// </summary>
+[RealizeService(typeof(IService))]
+public partial class Service : IService
+{
+    private readonly IRegistry _registry;
+
+    public Service(IRegistry registry)
+    {
+        _registry = registry ?? throw new ArgumentNullException(nameof(registry));
+    }
+}
+```
+
+## Polyfills Template
+
+```csharp
+// ReSharper disable once CheckNamespace
+namespace System.Runtime.CompilerServices
+{
+    /// <summary>
+    /// Polyfill for IsExternalInit to enable init-only properties and records in netstandard2.1.
+    /// </summary>
+    internal static class IsExternalInit
+    {
+    }
+}
+```
+
+## Reference Paths
+
+### Soy-Bean Reference
+```
+ref-projects/soy-bean/packages/scoped-3208/com.giantcroissant.yokan.game/Runtime/Core/
+├── Diagnostic/
+├── ObjectPool/
+├── Audio/
+├── Localization/
+├── PersistentStorage/
+├── Serialization/
+├── Performance/
+├── Scheduler/
+├── Analytics/
+├── Firebase/
+├── ServiceHealth/
+└── Resilience/
+```
+
+### Lablab-Bean Target
+```
+dotnet/framework/
+├── LablabBean.Contracts.Diagnostic/
+├── LablabBean.Contracts.ObjectPool/
+├── LablabBean.Contracts.Audio/
+├── LablabBean.Contracts.Localization/
+├── LablabBean.Contracts.PersistentStorage/
+├── LablabBean.Contracts.Serialization/
+├── LablabBean.Contracts.Performance/
+├── LablabBean.Contracts.Scheduler/
+├── LablabBean.Contracts.Analytics/
+├── LablabBean.Contracts.Firebase/
+├── LablabBean.Contracts.ServiceHealth/
+└── LablabBean.Contracts.Resilience/
+```
+
+## Common Pitfalls to Avoid
+
+1. **Forgetting IsExternalInit Polyfill**
+   - Symptom: `CS0518: IsExternalInit not defined` when using records
+   - Fix: Add Polyfills.cs to every project
+
+2. **ImplicitUsings Issues**
+   - Symptom: `CS0246: Type not found` for common types
+   - Fix: Add explicit `using` statements
+
+3. **Unity Type References**
+   - Symptom: `CS0246: GameObject/Transform/AudioClip not found`
+   - Fix: Remove or abstract Unity-specific types
+
+4. **UniTask References**
+   - Symptom: `CS0246: UniTask not found`
+   - Fix: Replace with standard Task/ValueTask
+
+5. **Missing Proxy References**
+   - Symptom: Proxy service doesn't compile
+   - Fix: Ensure SourceGenerators.Proxy is referenced as Analyzer
+
+6. **Incorrect namespace**
+   - Symptom: Service not found or proxy doesn't generate
+   - Fix: Follow exact namespace pattern: `LablabBean.Contracts.{Service}.Services.Proxy`
+
+## Build Verification Checklist
+
+- [ ] All 12 projects added to `dotnet/LablabBean.sln`
+- [ ] Each project targets `netstandard2.1`
+- [ ] Each project has `LangVersion=12` and `ImplicitUsings=disable`
+- [ ] Each project references `LablabBean.Plugins.Contracts`
+- [ ] Each project references `LablabBean.SourceGenerators.Proxy` as Analyzer
+- [ ] Each project has Polyfills.cs file
+- [ ] Each project has IService interface in Services/
+- [ ] Each project has proxy Service class in Services/Proxy/
+- [ ] Proxy service has `[RealizeService(typeof(IService))]` attribute
+- [ ] Proxy service has `IRegistry _registry` field
+- [ ] All Unity types removed or abstracted
+- [ ] All UniTask replaced with Task
+- [ ] All UniRx replaced with System.Reactive or removed
+- [ ] Solution builds with 0 errors
+- [ ] Generated proxy files exist in obj/.../generated/
+
+## Testing Commands
+
+```bash
+# Test individual project build
+cd dotnet/framework/LablabBean.Contracts.Diagnostic
+dotnet build --verbosity minimal
+
+# Test all contract projects
+cd dotnet/framework
+for dir in LablabBean.Contracts.*/; do
+  dotnet build "$dir" --verbosity quiet || echo "FAILED: $dir"
+done
+
+# Test full solution
+cd dotnet
+dotnet build --verbosity minimal
+
+# Check generated files
+find dotnet/framework/LablabBean.Contracts.*/obj -name "*Service.g.cs" 2>/dev/null
+```
+
+## Prioritization Rationale
+
+### Priority 1 (Essential)
+- **Diagnostic**: Critical for production monitoring and debugging
+- **ObjectPool**: Performance optimization for memory-intensive scenarios
+- **Audio**: Core gameplay/UX feature
+
+### Priority 2 (Important)
+- **Localization**: User experience in multiple markets
+- **PersistentStorage**: Data persistence across sessions
+- **Serialization**: Data interchange and storage
+
+### Priority 3 (Supporting)
+- **Performance**: Monitoring, but less critical than Diagnostic
+- **Scheduler**: Timing operations, can be deferred
+- **Analytics**: Tracking, not blocking for core functionality
+- **Firebase**: Cloud features, optional for base functionality
+- **ServiceHealth**: Monitoring, can build on Diagnostic
+- **Resilience**: Fault tolerance, can be added incrementally
+
+## Rollout Strategy
+
+1. **Start with P1**: Immediate value, validates patterns
+2. **Complete P2**: Data services enable persistence features
+3. **Finish P3**: Complete ecosystem, nice-to-have features
+4. **Iterate**: Gather feedback, refine based on usage
+
+## Success Metrics
+
+- ✅ All 12 contract projects created
+- ✅ Zero build errors in solution
+- ✅ All proxy services generate correctly
+- ✅ All Unity dependencies removed
+- ✅ Consistent naming with SPEC-011
+- ✅ Documentation complete (inline XML comments)
+
+## Next Steps After Completion
+
+1. Create test projects for each service (optional)
+2. Implement actual service plugins (Tier 3/4)
+3. Create provider implementations for each service
+4. Document usage patterns and examples
+5. Integration with existing Lablab-Bean features
+
+## Resources
+
+- **SPEC-011**: .NET Naming and Architecture Adjustment
+- **SPEC-009**: Proxy Service Source Generator
+- **Reference**: `ref-projects/soy-bean` Unity implementation
+- **Pattern**: Four-Tier Architecture (Contracts → Proxies → Services → Providers)
