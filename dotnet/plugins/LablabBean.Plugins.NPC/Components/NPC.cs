@@ -1,7 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+
 namespace LablabBean.Plugins.NPC.Components;
 
 /// <summary>
 /// NPC component - represents a non-player character
+/// Enhanced for US3 with state management
 /// </summary>
 public struct NPC
 {
@@ -32,6 +37,7 @@ public struct NPC
 
     /// <summary>
     /// Custom state data for the NPC (JSON string)
+    /// Stores key-value pairs for remembering player choices
     /// </summary>
     public string? StateData { get; set; }
 
@@ -43,5 +49,60 @@ public struct NPC
         DialogueTreeId = dialogueTreeId;
         IsInteractable = true;
         StateData = null;
+    }
+
+    /// <summary>
+    /// Sets a state variable for this NPC
+    /// </summary>
+    public void SetState(string key, string value)
+    {
+        var state = GetStateDict();
+        state[key] = value;
+        StateData = JsonSerializer.Serialize(state);
+    }
+
+    /// <summary>
+    /// Gets a state variable value
+    /// </summary>
+    public string? GetState(string key)
+    {
+        var state = GetStateDict();
+        return state.TryGetValue(key, out var value) ? value : null;
+    }
+
+    /// <summary>
+    /// Checks if a state variable exists
+    /// </summary>
+    public bool HasState(string key)
+    {
+        var state = GetStateDict();
+        return state.ContainsKey(key);
+    }
+
+    /// <summary>
+    /// Clears all state variables
+    /// </summary>
+    public void ClearState()
+    {
+        StateData = null;
+    }
+
+    /// <summary>
+    /// Gets all state variables as a dictionary
+    /// </summary>
+    private Dictionary<string, string> GetStateDict()
+    {
+        if (string.IsNullOrEmpty(StateData))
+            return new Dictionary<string, string>();
+
+        try
+        {
+            return JsonSerializer.Deserialize<Dictionary<string, string>>(StateData)
+                ?? new Dictionary<string, string>();
+        }
+        catch
+        {
+            return new Dictionary<string, string>();
+        }
     }
 }
