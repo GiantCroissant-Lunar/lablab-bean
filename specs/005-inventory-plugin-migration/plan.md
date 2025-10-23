@@ -7,6 +7,7 @@
 - Write adapter in TerminalUI HUD to consume read model
 
 Phases:
+
 1) Boot empty plugin and DI service
 2) Port systems (spawn, pickup, use, equip)
 3) Wire HUD updates via events

@@ -21,24 +21,24 @@ using Microsoft.Extensions.Logging;
 public class MyPlugin : IPlugin
 {
     private ILogger? _logger;
-    
+
     public string Id => "my-plugin";
     public string Name => "My Plugin";
     public string Version => "1.0.0";
-    
+
     public Task InitializeAsync(IPluginContext context, CancellationToken ct = default)
     {
         _logger = context.Logger;
         _logger.LogInformation("Plugin initialized");
         return Task.CompletedTask;
     }
-    
+
     public Task StartAsync(CancellationToken ct = default)
     {
         _logger?.LogInformation("Plugin started");
         return Task.CompletedTask;
     }
-    
+
     public Task StopAsync(CancellationToken ct = default)
     {
         _logger?.LogInformation("Plugin stopped");
@@ -68,11 +68,11 @@ public class MyPlugin : IPlugin
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\..." />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Update="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -231,16 +231,16 @@ public Task InitializeAsync(IPluginContext context, CancellationToken ct)
 {
     // Get logger
     _logger = context.Logger;
-    
+
     // Read config
     var setting = context.Configuration["MyPlugin:Setting"];
-    
+
     // Register service (future)
     context.Registry.Register<IMyService, MyServiceImpl>(priority: 100);
-    
+
     // Access host (future)
     var eventBus = context.Host.EventBus;
-    
+
     return Task.CompletedTask;
 }
 ```
@@ -326,6 +326,7 @@ Discovery → Validation → Loading → Initialize → Start
 See: `dotnet/examples/LablabBean.Plugin.Demo/`
 
 A complete working example demonstrating:
+
 - Basic IPlugin implementation
 - Context usage (logger, config, registry, host)
 - Multi-profile support
@@ -340,6 +341,7 @@ Standalone console app for testing plugins without full game host.
 ---
 
 **Need Help?**
+
 - Check logs with Debug level enabled
 - Compare to demo plugin
 - Review Phase 5 completion report for troubleshooting

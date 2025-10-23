@@ -110,7 +110,7 @@ else
 // Player uses universal cure potion
 var result = statusEffectSystem.RemoveAllNegativeEffects(playerEntity);
 
-Console.WriteLine(result.Message); 
+Console.WriteLine(result.Message);
 // "All negative effects removed!" or "No negative effects active"
 ```
 
@@ -166,7 +166,7 @@ public void ProcessTurn(Entity entity)
     {
         _hudService.AddMessage(msg);
     }
-    
+
     // 2. Check if entity died from DoT
     var health = world.Get<Health>(entity);
     if (health.Current <= 0)
@@ -174,7 +174,7 @@ public void ProcessTurn(Entity entity)
         HandleDeath(entity);
         return; // Don't process turn if dead
     }
-    
+
     // 3. Entity takes turn actions
     ProcessEntityActions(entity);
 }
@@ -222,10 +222,10 @@ public int CalculateDamage(Entity attacker, Entity defender)
     // Get stats with all modifiers (base + equipment + effects)
     var (attackerAttack, _, _) = _statusEffectSystem.CalculateTotalStats(attacker);
     var (_, defenderDefense, _) = _statusEffectSystem.CalculateTotalStats(defender);
-    
+
     int baseDamage = attackerAttack - defenderDefense;
     int finalDamage = Math.Max(1, baseDamage); // Minimum 1 damage
-    
+
     return finalDamage;
 }
 ```
@@ -241,7 +241,7 @@ public int CalculateDamage(Entity attacker, Entity defender)
 public InventoryResult UseConsumable(Entity playerEntity, Entity itemEntity)
 {
     var consumable = world.Get<Consumable>(itemEntity);
-    
+
     // Check if consumable applies a status effect
     if (consumable.AppliesEffect.HasValue)
     {
@@ -252,18 +252,18 @@ public InventoryResult UseConsumable(Entity playerEntity, Entity itemEntity)
             duration: consumable.EffectDuration ?? 0,
             source: EffectSource.Consumable
         );
-        
+
         if (!result.Success)
         {
             return InventoryResult.Failed(result.Message);
         }
-        
+
         // Consume the item
         RemoveOrDecrementItem(playerEntity, itemEntity);
-        
+
         return InventoryResult.Succeeded(result.Message);
     }
-    
+
     // ... existing consumable logic (healing, etc.)
 }
 ```
@@ -279,7 +279,7 @@ if (consumable.RemovesEffect.HasValue)
         playerEntity,
         consumable.RemovesEffect.Value
     );
-    
+
     RemoveOrDecrementItem(playerEntity, itemEntity);
     return InventoryResult.Succeeded(result.Message);
 }
@@ -288,7 +288,7 @@ if (consumable.RemovesAllNegativeEffects)
 {
     // Universal cure
     var result = _statusEffectSystem.RemoveAllNegativeEffects(playerEntity);
-    
+
     RemoveOrDecrementItem(playerEntity, itemEntity);
     return InventoryResult.Succeeded(result.Message);
 }
@@ -334,8 +334,8 @@ public static readonly ItemDefinition Antidote = new()
 ```csharp
 // Create Toxic Spider enemy
 var toxicSpider = world.Create(
-    new Enemy 
-    { 
+    new Enemy
+    {
         EnemyType = "Toxic Spider",
         Behavior = AIBehavior.Chase,
         InflictsEffect = EffectType.Poison,
@@ -359,12 +359,12 @@ public void ProcessAttack(Entity attacker, Entity defender)
     // Calculate and apply damage
     int damage = CalculateDamage(attacker, defender);
     ApplyDamage(defender, damage);
-    
+
     // Check if attacker inflicts status effect
     if (world.Has<Enemy>(attacker))
     {
         var enemy = world.Get<Enemy>(attacker);
-        
+
         if (enemy.InflictsEffect.HasValue)
         {
             // Roll for effect application
@@ -378,7 +378,7 @@ public void ProcessAttack(Entity attacker, Entity defender)
                     duration: enemy.EffectDuration ?? 0,
                     source: EffectSource.EnemyAttack
                 );
-                
+
                 if (result.Success)
                 {
                     _hudService.AddMessage(result.Message);
@@ -396,7 +396,7 @@ public void ProcessAttack(Entity attacker, Entity defender)
 public void CastBuffSpell(Entity caster, Entity target)
 {
     var enemy = world.Get<Enemy>(caster);
-    
+
     if (enemy.InflictsEffect.HasValue)
     {
         var result = _statusEffectSystem.ApplyEffect(
@@ -406,7 +406,7 @@ public void CastBuffSpell(Entity caster, Entity target)
             duration: enemy.EffectDuration ?? 0,
             source: EffectSource.EnemySpell
         );
-        
+
         _hudService.AddMessage($"{enemy.EnemyType} casts a spell on ally!");
         _hudService.AddMessage(result.Message);
     }
@@ -427,7 +427,7 @@ public class HudService
 {
     private FrameView _statusEffectsFrame;
     private ListView _statusEffectsList;
-    
+
     public void CreateStatusEffectsPanel(View parent)
     {
         _statusEffectsFrame = new FrameView("Status Effects")
@@ -437,7 +437,7 @@ public class HudService
             Width = 30,
             Height = 8
         };
-        
+
         _statusEffectsList = new ListView
         {
             X = 0,
@@ -445,30 +445,30 @@ public class HudService
             Width = Dim.Fill(),
             Height = Dim.Fill()
         };
-        
+
         _statusEffectsFrame.Add(_statusEffectsList);
         parent.Add(_statusEffectsFrame);
     }
-    
+
     public void UpdateStatusEffects(Entity playerEntity, StatusEffectSystem statusEffectSystem)
     {
         var effects = statusEffectSystem.GetActiveEffects(playerEntity);
         var displayItems = new List<string>();
-        
+
         // Sort by duration (longest first)
         var sortedEffects = effects.OrderByDescending(e => e.Duration).Take(5);
-        
+
         foreach (var effect in sortedEffects)
         {
             var formatted = statusEffectSystem.FormatEffectForDisplay(effect);
             displayItems.Add(formatted);
         }
-        
+
         if (displayItems.Count == 0)
         {
             displayItems.Add("(No active effects)");
         }
-        
+
         _statusEffectsList.SetSource(displayItems);
     }
 }
@@ -489,9 +489,9 @@ public string FormatEffectForDisplay(StatusEffect effect)
         EffectColor.Yellow => "\x1b[33m",   // Yellow for healing
         _ => "\x1b[0m"                       // Default
     };
-    
+
     string reset = "\x1b[0m";
-    
+
     return $"{colorCode}{effect.DisplayName} ({effect.Duration}){reset}";
 }
 ```
@@ -508,7 +508,7 @@ private void OnPlayerTurnEnd()
     {
         _hudService.AddMessage(msg);
     }
-    
+
     // Update HUD display
     _hudService.UpdateStatusEffects(_playerEntity, _statusEffectSystem);
     _hudService.UpdateStats(_playerEntity, _statusEffectSystem);
@@ -528,22 +528,22 @@ public void ApplyEffect_AddsToActiveEffects()
     // Arrange
     var world = World.Create();
     var statusEffectSystem = new StatusEffectSystem(world);
-    
+
     var player = world.Create(
         new StatusEffects { ActiveEffects = new List<StatusEffect>(), MaxEffects = 10 }
     );
-    
+
     // Act
     var result = statusEffectSystem.ApplyEffect(
         player,
         EffectDefinitions.Poison,
         EffectSource.EnemyAttack
     );
-    
+
     // Assert
     Assert.True(result.Success);
     Assert.Contains("poisoned", result.Message.ToLower());
-    
+
     var effects = world.Get<StatusEffects>(player);
     Assert.Single(effects.ActiveEffects);
     Assert.Equal(EffectType.Poison, effects.ActiveEffects[0].Type);
@@ -555,16 +555,16 @@ public void RemoveEffect_RemovesFromActiveEffects()
     // Arrange
     var world = World.Create();
     var statusEffectSystem = new StatusEffectSystem(world);
-    
+
     var player = world.Create(
         new StatusEffects { ActiveEffects = new List<StatusEffect>(), MaxEffects = 10 }
     );
-    
+
     statusEffectSystem.ApplyEffect(player, EffectDefinitions.Poison, EffectSource.EnemyAttack);
-    
+
     // Act
     var result = statusEffectSystem.RemoveEffect(player, EffectType.Poison);
-    
+
     // Assert
     Assert.True(result.Success);
     var effects = world.Get<StatusEffects>(player);
@@ -581,21 +581,21 @@ public void ApplyEffect_SameType_RefreshesDuration()
     // Arrange
     var world = World.Create();
     var statusEffectSystem = new StatusEffectSystem(world);
-    
+
     var player = world.Create(
         new StatusEffects { ActiveEffects = new List<StatusEffect>(), MaxEffects = 10 }
     );
-    
+
     // Apply Strength (+5 ATK, 10 turns)
     statusEffectSystem.ApplyEffect(player, EffectDefinitions.Strength, EffectSource.Consumable);
-    
+
     // Wait 5 turns (simulate)
     var effects = world.Get<StatusEffects>(player);
     effects.ActiveEffects[0].Duration = 5;
-    
+
     // Act: Apply Strength again
     statusEffectSystem.ApplyEffect(player, EffectDefinitions.Strength, EffectSource.Consumable);
-    
+
     // Assert: Duration refreshed to 10, magnitude still 5
     effects = world.Get<StatusEffects>(player);
     Assert.Single(effects.ActiveEffects);
@@ -613,24 +613,24 @@ public void ProcessEffects_AppliesDamageOverTime()
     // Arrange
     var world = World.Create();
     var statusEffectSystem = new StatusEffectSystem(world);
-    
+
     var player = world.Create(
         new Health { Current = 50, Maximum = 100 },
         new StatusEffects { ActiveEffects = new List<StatusEffect>(), MaxEffects = 10 }
     );
-    
+
     statusEffectSystem.ApplyEffect(player, EffectDefinitions.Poison, EffectSource.EnemyAttack);
-    
+
     // Act: Process effects (simulates turn start)
     var messages = statusEffectSystem.ProcessEffects(player);
-    
+
     // Assert: Damage applied, duration decremented
     var health = world.Get<Health>(player);
     Assert.Equal(47, health.Current); // 50 - 3 poison damage
-    
+
     var effects = world.Get<StatusEffects>(player);
     Assert.Equal(4, effects.ActiveEffects[0].Duration); // 5 - 1
-    
+
     Assert.Contains("poison", messages[0].ToLower());
 }
 ```
@@ -657,7 +657,7 @@ var (attack, _, _) = StatusEffectSystem.CalculateTotalStats(playerEntity);
 // 5. Turn ends, effects process
 StatusEffectSystem.ProcessEffects(playerEntity);
 
-// Verify: 
+// Verify:
 // - Player takes 3 poison damage
 // - HUD shows "Poisoned (4)" (duration decremented)
 // - HUD shows "Strength (9)"
@@ -685,13 +685,13 @@ public void UseBuffPotion(Entity player, EffectType effectType)
         Console.WriteLine($"You already have {effectType} active.");
         Console.WriteLine("Using this potion will refresh the duration.");
     }
-    
+
     var result = statusEffectSystem.ApplyEffect(
         player,
         EffectDefinitions.GetDefinition(effectType),
         EffectSource.Consumable
     );
-    
+
     Console.WriteLine(result.Message);
 }
 ```
@@ -702,41 +702,41 @@ public void UseBuffPotion(Entity player, EffectType effectType)
 public void ShowActiveEffects(Entity entity)
 {
     var effects = statusEffectSystem.GetActiveEffects(entity);
-    
+
     if (effects.Count == 0)
     {
         Console.WriteLine("No active effects.");
         return;
     }
-    
+
     Console.WriteLine($"Active Effects ({effects.Count}):");
-    
+
     var buffs = effects.Where(e => e.Category == EffectCategory.StatBuff);
     var debuffs = effects.Where(e => e.Category == EffectCategory.StatDebuff);
     var dot = effects.Where(e => e.Category == EffectCategory.DamageOverTime);
     var hot = effects.Where(e => e.Category == EffectCategory.HealingOverTime);
-    
+
     if (buffs.Any())
     {
         Console.WriteLine("  Buffs:");
         foreach (var buff in buffs)
             Console.WriteLine($"    {buff.DisplayName} ({buff.Duration} turns)");
     }
-    
+
     if (debuffs.Any())
     {
         Console.WriteLine("  Debuffs:");
         foreach (var debuff in debuffs)
             Console.WriteLine($"    {debuff.DisplayName} ({debuff.Duration} turns)");
     }
-    
+
     if (dot.Any())
     {
         Console.WriteLine("  Damage Over Time:");
         foreach (var effect in dot)
             Console.WriteLine($"    {effect.DisplayName} (-{effect.Magnitude} HP/turn, {effect.Duration} turns)");
     }
-    
+
     if (hot.Any())
     {
         Console.WriteLine("  Healing Over Time:");
@@ -753,12 +753,12 @@ public int CalculateNetHealthChange(Entity entity)
 {
     var dotEffects = statusEffectSystem.GetDamageOverTimeEffects(entity);
     var hotEffects = statusEffectSystem.GetHealingOverTimeEffects(entity);
-    
+
     int totalDamage = dotEffects.Sum(e => e.Magnitude);
     int totalHealing = hotEffects.Sum(e => e.Magnitude);
-    
+
     int netChange = totalHealing - totalDamage;
-    
+
     Console.WriteLine($"Net HP change per turn: {netChange:+#;-#;0}");
     return netChange;
 }

@@ -31,13 +31,14 @@ After deeper research into FastReport's capabilities, I'm revising my initial as
 ## What is FastReport?
 
 **FastReport** is a full-featured reporting tool for .NET applications with:
+
 - **Open Source Version** (MIT License): `FastReport.OpenSource`
 - **Commercial Version**: `FastReport.Core` (26 export formats, advanced PDF)
 - **Active Development**: 2026.1.0 released, .NET 8 support
 - **Console Application Support**: Confirmed in official documentation
 - **Extensive Export Formats**: HTML, PDF, CSV, JSON, XML, Excel, Word, PowerPoint, etc.
 
-**GitHub**: https://github.com/FastReports/FastReport (4.8k+ stars)
+**GitHub**: <https://github.com/FastReports/FastReport> (4.8k+ stars)
 
 ---
 
@@ -68,6 +69,7 @@ After deeper research into FastReport's capabilities, I'm revising my initial as
 ### Data Source Support (Both Editions)
 
 ✅ **Input Data Sources** (available in both):
+
 - CSV, JSON, XML
 - MS SQL, MySQL, PostgreSQL, Oracle, SQLite
 - MongoDB, Couchbase, RavenDB
@@ -194,6 +196,7 @@ public class FastReportService : IReportingService
 ### Phase 1: FastReport Plugin Foundation (1 week) ✅
 
 **Tasks**:
+
 1. Create `LablabBean.Plugins.FastReport` project
 2. Add `FastReport.OpenSource` NuGet package (2026.1.0)
 3. Add `FastReport.OpenSource.Export.PdfSimple` plugin
@@ -202,6 +205,7 @@ public class FastReportService : IReportingService
 6. Add unit tests (template loading, data binding, export)
 
 **Dependencies**:
+
 ```xml
 <PackageReference Include="FastReport.OpenSource" Version="2026.1.0" />
 <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2026.1.2" />
@@ -214,12 +218,14 @@ public class FastReportService : IReportingService
 ### Phase 2: Report Templates & Data Providers (1-2 weeks)
 
 **Tasks**:
+
 1. Create report templates (`.frx` files):
    - Build metrics report
    - Test results report
    - Plugin system status report
    - Game session statistics report
 2. Implement data providers:
+
    ```csharp
    [ReportProvider("lablab.build-metrics", Category = "Build")]
    public static class BuildMetricsProvider
@@ -231,6 +237,7 @@ public class FastReportService : IReportingService
        }
    }
    ```
+
 3. Wire providers to FastReport templates
 4. Test report generation in console app
 
@@ -241,16 +248,19 @@ public class FastReportService : IReportingService
 ### Phase 3: Report Output Formats (1 week)
 
 **Tasks**:
+
 1. Implement export format selection:
    - HTML (for web viewing)
    - PDF (for distribution)
    - PNG (for screenshots/embedding)
 2. Add CLI commands:
+
    ```bash
    lablabbean report build --format html --output ./reports/build.html
    lablabbean report build --format pdf --output ./reports/build.pdf
    lablabbean report session --format html --output ./reports/session.html
    ```
+
 3. Integrate with Nuke build system (auto-generate reports)
 
 **Outcome**: Multi-format report generation from CLI and build scripts.
@@ -260,6 +270,7 @@ public class FastReportService : IReportingService
 ### Phase 4: Advanced Features (Optional, 1-2 weeks)
 
 **Tasks**:
+
 1. **Template Designer Integration**:
    - Document how to use FastReport Designer Community Edition
    - Create template design guide for contributors
@@ -311,6 +322,7 @@ public class FastReportService : IReportingService
 Start with `FastReport.OpenSource` (free), upgrade to `FastReport.Core` (commercial) if needed:
 
 **When to Upgrade**:
+
 - ❌ Need CSV/JSON/Excel export → Upgrade to Core
 - ❌ Need advanced PDF features (encryption, signing) → Upgrade to Core
 - ❌ Need Office format exports (DOCX, XLSX, PPTX) → Upgrade to Core
@@ -339,6 +351,7 @@ FastReport integrates perfectly as a lablab-bean plugin:
 **Resolution**: ❌ **INCORRECT ASSUMPTION**
 
 FastReport has **three separate products**:
+
 1. **FastReport .NET** - For WinForms, WPF, ASP.NET, **console apps**
 2. **FastReport VCL** - For Delphi (not relevant)
 3. **FastReport Unity** - For Unity (NFun-Report uses this)
@@ -352,6 +365,7 @@ Lablab-bean would use **FastReport .NET** (`FastReport.OpenSource` NuGet), which
 **Resolution**: ✅ **BOTH ARE VALUABLE**
 
 FastReport provides:
+
 - ✅ **HTML export** → View reports in browser or embed in web dashboards
 - ✅ **Image export** → PNG/JPEG for screenshots, embedding in docs
 - ✅ **PDF export** → Shareable, archival-quality reports
@@ -366,6 +380,7 @@ FastReport provides:
 **Resolution**: ✅ **REDUCES COMPLEXITY**
 
 **Without FastReport** (custom implementation):
+
 - Build custom report templating engine
 - Implement data binding system
 - Write PDF generation (using iTextSharp or similar)
@@ -374,6 +389,7 @@ FastReport provides:
 - Maintain all of the above
 
 **With FastReport**:
+
 - Add NuGet package
 - Create `.frx` templates (visual designer)
 - Call `report.Prepare()` and `report.Export()`
@@ -388,11 +404,13 @@ FastReport provides:
 ### Create SPEC-011: Reporting Infrastructure with FastReport
 
 **Run**:
+
 ```bash
 /speckit.specify
 ```
 
 **Specification Outline**:
+
 ```
 SPEC-011: Reporting Infrastructure with FastReport
 ├── Phase 0: Research & Planning (COMPLETE)
@@ -461,6 +479,7 @@ SPEC-011: Reporting Infrastructure with FastReport
 ### ✅ ADOPT FastReport.OpenSource as Reporting Plugin
 
 **Rationale**:
+
 1. **User Insight is Correct** - Don't reinvent the wheel
 2. **Mature, MIT-Licensed** - Production-ready, legally safe
 3. **Console Application Support** - Officially documented
@@ -469,6 +488,7 @@ SPEC-011: Reporting Infrastructure with FastReport
 6. **Upgrade Path** - Can move to FastReport.Core if needed
 
 **Updated Recommendation**:
+
 - ✅ Adopt NFun-Report's **attribute + source generator pattern** (Phases 1-2 from original plan)
 - ✅ Adopt **FastReport.OpenSource as reporting engine** (replaces custom export implementations)
 - ✅ Create **FastReport plugin** for lablab-bean (Phase 1 in revised plan)
@@ -476,6 +496,7 @@ SPEC-011: Reporting Infrastructure with FastReport
 - ✅ Integrate with **CLI and Nuke build** (Phase 3)
 
 **Timeline**:
+
 - Original Plan (Custom): 11-18 weeks
 - Revised Plan (FastReport): **3-5 weeks**
 
@@ -487,11 +508,13 @@ SPEC-011: Reporting Infrastructure with FastReport
 
 1. ✅ **Accept revised recommendation** (FastReport as plugin)
 2. ✅ **Run spec-kit commands**:
+
    ```bash
    /speckit.specify    # Generate SPEC-011
    /speckit.plan       # Create implementation plan
    /speckit.tasks      # Generate task breakdown
    ```
+
 3. ✅ **Start Phase 1**: Create FastReport plugin (1 week)
 4. ✅ **Validate with build metrics report** (proof of concept)
 5. ✅ **Expand to game statistics** (Phase 2)

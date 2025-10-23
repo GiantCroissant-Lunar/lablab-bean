@@ -136,28 +136,33 @@ As a developer, I need analytics event tracking so I can understand application 
 ## Requirements (mandatory)
 
 ### Plugin Architecture
+
 - **FR-001**: All plugins MUST follow naming pattern `LablabBean.Plugins.{Service}.{Provider}`.
 - **FR-002**: All plugins MUST target `net8.0` (consistent with existing plugins).
 - **FR-003**: All plugins MUST implement `IPlugin` interface with Initialize/Start/Stop lifecycle.
 - **FR-004**: All plugins MUST register their services with `IRegistry` in InitializeAsync.
 
 ### Tier 2: Proxy Services (Critical - Missing from SPEC-012)
+
 - **FR-005**: ALL contracts MUST have proxy services in `Services/Proxy/Service.cs`.
 - **FR-006**: Proxy services MUST use `[RealizeService(typeof(IService))]` attribute.
 - **FR-007**: Proxy services MUST delegate to `IRegistry` for service resolution.
 - **FR-008**: Proxy services MUST reference `LablabBean.SourceGenerators.Proxy` as analyzer.
 
 ### Tier 3: Service Implementations
+
 - **FR-009**: Each plugin SHOULD have a service implementation if business logic is needed.
 - **FR-010**: Services MAY delegate to Tier 4 providers if multiple backends exist.
 - **FR-011**: Services MUST implement the contract interface from Tier 1.
 
 ### Tier 4: Providers (Backend Implementations)
+
 - **FR-012**: Plugins with multiple backend options MUST use provider pattern.
 - **FR-013**: Provider interfaces SHOULD be defined in contract projects when applicable.
 - **FR-014**: Providers MUST be registered with `IRegistry` using appropriate keys/strategies.
 
 ### Build & Integration
+
 - **FR-015**: All plugins MUST build successfully with zero errors.
 - **FR-016**: All plugins MUST be added to the solution file.
 - **FR-017**: Plugins SHOULD have corresponding test projects.
@@ -166,6 +171,7 @@ As a developer, I need analytics event tracking so I can understand application 
 ## Gap Analysis: Contracts vs Plugins
 
 ### Contracts WITH existing plugins (7/18)
+
 1. ✅ **Analytics** → `LablabBean.Plugins.Analytics` (exists)
 2. ✅ **Config** → `LablabBean.Plugins.ConfigManager` (exists)
 3. ✅ **Input** → `LablabBean.Plugins.InputHandler` (exists)
@@ -175,6 +181,7 @@ As a developer, I need analytics event tracking so I can understand application 
 7. ✅ **UI** → `LablabBean.Plugins.ReactiveUI` (exists)
 
 ### Contracts MISSING plugins (11/18)
+
 8. ❌ **Audio** → NO PLUGIN
 9. ❌ **Diagnostic** → NO PLUGIN
 10. ❌ **Firebase** → NO PLUGIN
@@ -188,6 +195,7 @@ As a developer, I need analytics event tracking so I can understand application 
 18. ❌ **ServiceHealth** → NO PLUGIN
 
 ### CRITICAL: ALL Contracts Missing Tier 2 Proxies (18/18)
+
 All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files with `[RealizeService]` attributes.
 
 ## Plugins to Implement
@@ -195,6 +203,7 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 ### Priority 1: Essential Foundations
 
 #### 1. Resilience.Polly Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Resilience.Polly/`
 - **Purpose**: Implement resilience patterns using Polly library
 - **NuGet Packages**: `Polly`, `Polly.Extensions`
@@ -206,6 +215,7 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 - **Service**: `ResilienceService` - Coordinates policies and providers
 
 #### 2. Serialization.Json Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Serialization.Json/`
 - **Purpose**: JSON serialization using System.Text.Json
 - **NuGet Packages**: `System.Text.Json`
@@ -213,11 +223,13 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 - **Service**: `SerializationService` - Format routing and validation
 
 #### 3. Serialization.Xml Plugin (Optional)
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Serialization.Xml/`
 - **Purpose**: XML serialization using System.Xml.Serialization
 - **Provider**: `XmlSerializationProvider`
 
 #### 4. ObjectPool.Standard Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.ObjectPool.Standard/`
 - **Purpose**: Generic object pooling implementation
 - **NuGet Packages**: `Microsoft.Extensions.ObjectPool`
@@ -226,6 +238,7 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 ### Priority 2: Data & Storage
 
 #### 5. PersistentStorage.Json Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.PersistentStorage.Json/`
 - **Purpose**: JSON file-based storage
 - **NuGet Packages**: `System.Text.Json`
@@ -233,12 +246,14 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 - **Service**: `PersistentStorageService` - Provider coordination
 
 #### 6. PersistentStorage.LiteDB Plugin (Optional)
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.PersistentStorage.LiteDB/`
 - **Purpose**: Embedded database storage
 - **NuGet Packages**: `LiteDB`
 - **Provider**: `LiteDBStorageProvider`
 
 #### 7. Localization.Json Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Localization.Json/`
 - **Purpose**: JSON-based localization resources
 - **NuGet Packages**: `System.Text.Json`
@@ -246,6 +261,7 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 - **Service**: `LocalizationService` - Locale management, fallback logic
 
 #### 8. Scheduler.Standard Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Scheduler.Standard/`
 - **Purpose**: Task scheduling with System.Threading.Timer
 - **Provider**: `TimerSchedulerProvider`
@@ -254,18 +270,21 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 ### Priority 3: Monitoring & Diagnostics
 
 #### 9. Diagnostic.Console Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Diagnostic.Console/`
 - **Purpose**: Console-based diagnostic output
 - **Provider**: `ConsoleDiagnosticProvider`
 - **Service**: `DiagnosticService` - Event collection, provider coordination
 
 #### 10. Performance.Standard Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Performance.Standard/`
 - **Purpose**: Performance metrics collection
 - **NuGet Packages**: `System.Diagnostics.PerformanceCounter` (Windows), cross-platform alternatives
 - **Service**: `PerformanceService` - Metric aggregation, recommendations
 
 #### 11. ServiceHealth.Standard Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.ServiceHealth.Standard/`
 - **Purpose**: Service health monitoring
 - **Service**: `ServiceHealthService` - Health checks, status reporting
@@ -273,6 +292,7 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 ### Priority 4: Optional/Future
 
 #### 12. Audio.NAudio Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Audio.NAudio/`
 - **Purpose**: Audio playback using NAudio
 - **NuGet Packages**: `NAudio`
@@ -280,16 +300,19 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 - **Service**: `AudioService` - Playback lifecycle, volume mixing
 
 #### 13. Audio.BASS Plugin (Alternative)
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Audio.BASS/`
 - **Purpose**: Audio playback using BASS library
 - **Provider**: `BassAudioProvider`
 
 #### 14. Analytics.Console Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Analytics.Console/`
 - **Purpose**: Console logging for analytics events
 - **Service**: `AnalyticsService` - Event tracking (already exists, may just need update)
 
 #### 15. Firebase.Standard Plugin
+
 - **Location**: `dotnet/plugins/LablabBean.Plugins.Firebase.Standard/`
 - **Purpose**: Firebase integration for .NET
 - **NuGet Packages**: `FirebaseAdmin`, `Google.Cloud.Firestore`
@@ -331,7 +354,9 @@ All contracts created in SPEC-012 are missing `Services/Proxy/Service.cs` files 
 ## Implementation Phases
 
 ### Phase 0: CRITICAL - Add Missing Proxy Services
+
 Create Tier 2 proxy services for ALL 18 contracts:
+
 - Add `Services/Proxy/Service.cs` to each contract project
 - Apply `[RealizeService(typeof(IService))]` attribute
 - Reference SourceGenerators.Proxy analyzer
@@ -340,7 +365,9 @@ Create Tier 2 proxy services for ALL 18 contracts:
 **Estimated Time**: 3-4 hours
 
 ### Phase 1: Priority 1 Plugins (Essential)
+
 Implement core infrastructure plugins:
+
 - Resilience.Polly (most critical)
 - Serialization.Json
 - ObjectPool.Standard
@@ -348,7 +375,9 @@ Implement core infrastructure plugins:
 **Estimated Time**: 6-8 hours
 
 ### Phase 2: Priority 2 Plugins (Data & Storage)
+
 Implement data handling plugins:
+
 - PersistentStorage.Json
 - Localization.Json
 - Scheduler.Standard
@@ -356,7 +385,9 @@ Implement data handling plugins:
 **Estimated Time**: 5-7 hours
 
 ### Phase 3: Priority 3 Plugins (Monitoring)
+
 Implement diagnostic plugins:
+
 - Diagnostic.Console
 - Performance.Standard
 - ServiceHealth.Standard
@@ -364,7 +395,9 @@ Implement diagnostic plugins:
 **Estimated Time**: 4-6 hours
 
 ### Phase 4: Optional Plugins (Future)
+
 Implement remaining plugins as needed:
+
 - Audio.NAudio
 - Firebase.Standard
 - Additional providers
@@ -529,5 +562,5 @@ public class PollyRetryProvider : IRetryPolicy
 - **SPEC-012**: Missing Service Contracts
 - **Existing Plugins**: `dotnet/plugins/LablabBean.Plugins.Reporting.{Csv,Html}/`
 - **Four-Tier Architecture**: Contracts → Proxies → Services → Providers
-- **Polly Documentation**: https://github.com/App-vNext/Polly
-- **NAudio Documentation**: https://github.com/naudio/NAudio
+- **Polly Documentation**: <https://github.com/App-vNext/Polly>
+- **NAudio Documentation**: <https://github.com/naudio/NAudio>

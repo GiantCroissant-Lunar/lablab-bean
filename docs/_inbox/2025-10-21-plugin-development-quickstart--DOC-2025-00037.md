@@ -56,6 +56,7 @@ Edit `.csproj` file:
 ```
 
 **Key settings:**
+
 - `EnableDynamicLoading` - Required for AssemblyLoadContext isolation
 - Reference only `LablabBean.Plugins.Contracts` - Keep dependencies minimal
 - Copy `plugin.json` to output directory
@@ -81,6 +82,7 @@ Create `plugin.json` in your plugin directory:
 ```
 
 **Field reference:**
+
 - `id` - Unique lowercase identifier (kebab-case recommended)
 - `name` - Human-readable display name
 - `version` - Semantic version (MAJOR.MINOR.PATCH)
@@ -172,6 +174,7 @@ npm run console
 ```
 
 Check logs for:
+
 ```
 [Information] Initializing Your Feature Plugin v1.0.0
 [Information] Your Feature Plugin started
@@ -194,6 +197,7 @@ public Task InitializeAsync(IPluginContext context, CancellationToken ct)
 ```
 
 **Priority guidelines:**
+
 - Framework services: 1000+
 - Game plugins: 100-500
 - UI plugins: 50-99
@@ -345,16 +349,19 @@ See `dotnet/examples/PluginTestHarness/` for plugin testing patterns.
 ## Troubleshooting
 
 **Plugin not discovered:**
+
 - Ensure `plugin.json` exists in output directory
 - Check `Plugins:Paths` in `appsettings.json` includes your plugin directory
 - Verify `entryPoint` assembly and class name are correct
 
 **Type load errors:**
+
 - Ensure `EnableDynamicLoading=true` in `.csproj`
 - Only reference `LablabBean.Plugins.Contracts` (not Core assemblies)
 - Check that shared types are defined in Contracts project
 
 **Service registration fails:**
+
 - Verify service interface is public and shared across assemblies
 - Check priority conflicts (use unique priorities for critical services)
 - Ensure service is registered in `InitializeAsync`, not constructor

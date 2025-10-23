@@ -8,10 +8,12 @@
 ---
 
 ## Format: `[ID] [P] Description`
+
 - **[P]**: Can run in parallel (no ordering/dependency conflicts)
 - **[C]**: Critical path item
 
 ## Path Conventions
+
 - Proxy services: `dotnet/framework/LablabBean.Contracts.{Service}/Services/Proxy/Service.cs`
 - Plugin projects: `dotnet/plugins/LablabBean.Plugins.{Service}.{Provider}/`
 - Test projects: `dotnet/tests/LablabBean.Plugins.{Service}.{Provider}.Tests/`
@@ -281,6 +283,7 @@ public partial class Service : IService
 ```
 
 **Steps for each contract**:
+
 1. Create `Services/Proxy/` directory in contract project
 2. Create `Service.cs` file with template above
 3. Replace `{Service}` with actual service name
@@ -341,30 +344,35 @@ grep -r "Registry.Register" dotnet/plugins/LablabBean.Plugins.*/ --include="*Plu
 ## Success Metrics
 
 ### Phase 0: Proxy Services
+
 - ✅ 18/18 contracts have proxy services
 - ✅ All proxy services build successfully
 - ✅ Source generator produces delegation code
 - ✅ All contracts reference SourceGenerators.Proxy
 
 ### Phase 1: Essential Plugins
+
 - ✅ Resilience.Polly implements retry + circuit breaker
 - ✅ Serialization.Json handles JSON operations
 - ✅ ObjectPool.Standard provides pooling
 - ✅ All 3 plugins build with 0 errors
 
 ### Phase 2: Data Plugins
+
 - ✅ PersistentStorage.Json saves/loads files
 - ✅ Localization.Json supports multi-language
 - ✅ Scheduler.Standard schedules tasks
 - ✅ All 3 plugins build with 0 errors
 
 ### Phase 3: Monitoring Plugins
+
 - ✅ Diagnostic.Console outputs diagnostics
 - ✅ Performance.Standard collects metrics
 - ✅ ServiceHealth.Standard monitors health
 - ✅ All 3 plugins build with 0 errors
 
 ### Overall
+
 - ✅ Minimum 8 new plugins created
 - ✅ All plugins added to solution
 - ✅ Solution builds with 0 errors
@@ -375,12 +383,14 @@ grep -r "Registry.Register" dotnet/plugins/LablabBean.Plugins.*/ --include="*Plu
 ## Dependencies & References
 
 **Required for all tasks**:
+
 - SPEC-012 contracts must exist
 - Source generator must be functional
 - IPlugin interface must be defined
 - IRegistry interface must be defined
 
 **NuGet Packages**:
+
 - Polly (>= 8.0.0)
 - System.Text.Json (>= 8.0.0)
 - Microsoft.Extensions.ObjectPool (>= 8.0.0)

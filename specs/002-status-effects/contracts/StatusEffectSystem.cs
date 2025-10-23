@@ -39,12 +39,12 @@ public class StatusEffectSystem
     /// - Duration must be 1-99 turns
     /// - Magnitude must be non-zero
     /// - StatusEffects.Count must be < MaxEffects
-    /// 
+    ///
     /// Stacking Rules:
     /// - If same effect type already active: refresh duration to new value
     /// - If different effect type: add as new effect
     /// - Magnitude does NOT stack (prevents abuse)
-    /// 
+    ///
     /// Effects:
     /// - Adds StatusEffect to StatusEffects.ActiveEffects list
     /// - Returns feedback message ("You are poisoned!", "Strength increased!")
@@ -90,7 +90,7 @@ public class StatusEffectSystem
     /// Preconditions:
     /// - Target must have StatusEffects component
     /// - Effect of specified type must be active
-    /// 
+    ///
     /// Effects:
     /// - Removes first matching effect from ActiveEffects list
     /// - Returns feedback message ("Poison cured!")
@@ -134,7 +134,7 @@ public class StatusEffectSystem
     /// 3. Decrement all effect durations by 1
     /// 4. Remove expired effects (duration <= 0)
     /// 5. Return feedback messages for all processed effects
-    /// 
+    ///
     /// Called by ActorSystem at the start of each entity's turn.
     /// </remarks>
     public List<string> ProcessEffects(Entity entity);
@@ -162,11 +162,11 @@ public class StatusEffectSystem
     /// - Strength/Weakness → attack modifier
     /// - IronSkin/Fragile → defense modifier
     /// - Haste/Slow → speed modifier
-    /// 
+    ///
     /// Multiple effects stack additively:
     /// - Strength (+5) + Strength (+5) = +5 (same type refreshes, doesn't stack)
     /// - Strength (+5) + Weakness (-3) = +2 (different types stack)
-    /// 
+    ///
     /// Used by CombatSystem and ActorSystem.
     /// </remarks>
     public (int attackMod, int defenseMod, int speedMod) CalculateStatModifiers(Entity entity);
@@ -181,7 +181,7 @@ public class StatusEffectSystem
     /// - Base stats from Combat component
     /// - Equipment bonuses from EquipmentSlots (spec-001)
     /// - Status effect modifiers from StatusEffects
-    /// 
+    ///
     /// Enforces minimum values (attack/defense/speed >= 1).
     /// </remarks>
     public (int attack, int defense, int speed) CalculateTotalStats(Entity entity);

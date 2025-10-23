@@ -4,10 +4,10 @@
 
 Successfully implemented a **complete, production-ready status effects system** across 6 phases, adding rich tactical depth to the dungeon crawler game.
 
-**Timeline**: 6 Phases  
-**Systems Modified**: 5 (Combat, StatusEffect, Item, Enemy, HUD)  
-**Files Created/Modified**: 6 core files  
-**Total Code**: ~800+ lines  
+**Timeline**: 6 Phases
+**Systems Modified**: 5 (Combat, StatusEffect, Item, Enemy, HUD)
+**Files Created/Modified**: 6 core files
+**Total Code**: ~800+ lines
 **Status**: ✅ **COMPLETE & READY FOR PRODUCTION**
 
 ---
@@ -15,6 +15,7 @@ Successfully implemented a **complete, production-ready status effects system** 
 ## Quick Reference: What Was Built
 
 ### Core Capabilities
+
 - ✅ **12 Effect Types**: Poison, Strength, Haste, IronSkin, Weakness, Slow, Fragile, etc.
 - ✅ **Turn-Based Processing**: Effects tick damage/healing each turn, auto-expire
 - ✅ **Combat Integration**: Buffs/debuffs modify attack, defense, speed in real-time
@@ -28,18 +29,22 @@ Successfully implemented a **complete, production-ready status effects system** 
 ## Phase-by-Phase Breakdown
 
 ### Phase 1: Core Infrastructure ✅
+
 **Goal**: Create the foundational data structures
 
 **Files Created**:
+
 - `Components/StatusEffect.cs`
 
 **What Was Built**:
+
 - `StatusEffect` struct (Type, Magnitude, Duration, Category, Source, Color)
 - `StatusEffects` component (List of active effects per entity)
 - `EffectDefinition` struct (Templates for each effect type)
 - Enums: `EffectType`, `EffectCategory`, `EffectSource`, `EffectColor`
 
 **Key Code**:
+
 ```csharp
 public struct StatusEffect
 {
@@ -54,13 +59,16 @@ public struct StatusEffect
 ---
 
 ### Phase 2: Turn-Based Processing ✅
+
 **Goal**: Make effects tick each turn and expire automatically
 
 **Files Created**:
+
 - `Systems/StatusEffectSystem.cs`
 - `Components/EffectDefinitions.cs`
 
 **What Was Built**:
+
 - `StatusEffectSystem` class with full lifecycle management
 - `ProcessEffects()`: Ticks damage/healing, decrements duration, removes expired
 - `ApplyEffect()`: Adds new effects with validation
@@ -68,6 +76,7 @@ public struct StatusEffect
 - Effect definitions database with defaults for all 12 effect types
 
 **Key Methods**:
+
 ```csharp
 public void ProcessEffects(World world, CombatSystem combatSystem)
 public EffectApplicationResult ApplyEffect(World world, Entity entity, ...)
@@ -75,6 +84,7 @@ public bool CureEffect(World world, Entity entity, EffectType effectType)
 ```
 
 **Effect Processing Logic**:
+
 - Damage Over Time: `combatSystem.Heal(entity, -magnitude)` (negative heal = damage)
 - Healing Over Time: `combatSystem.Heal(entity, magnitude)`
 - Stat Buffs/Debuffs: Applied in combat calculation (Phase 6)
@@ -82,19 +92,23 @@ public bool CureEffect(World world, Entity entity, EffectType effectType)
 ---
 
 ### Phase 3: Consumables Integration ✅
+
 **Goal**: Let potions apply/cure effects
 
 **Files Modified**:
+
 - `Systems/ItemSystem.cs`
 - `Components/ItemDefinitions.cs`
 
 **What Was Built**:
+
 - Extended `ItemEffect` with `AppliesStatusEffect` and `CuresStatusEffect`
 - Added buff potions: Strength Potion, Speed Potion, Defense Potion
 - Added Antidote Potion (cures Poison)
 - Integrated with `StatusEffectSystem`
 
 **New Items**:
+
 ```csharp
 // Strength Potion: +5 ATK for 10 turns
 AppliesStatusEffect = EffectType.Strength,
@@ -106,6 +120,7 @@ CuresStatusEffect = EffectType.Poison
 ```
 
 **Usage Flow**:
+
 1. Player uses potion → `ItemSystem.UseItem()`
 2. Checks `AppliesStatusEffect` → Calls `StatusEffectSystem.ApplyEffect()`
 3. Effect added to player's `StatusEffects` component
@@ -114,14 +129,17 @@ CuresStatusEffect = EffectType.Poison
 ---
 
 ### Phase 4: Enemy Integration ✅
+
 **Goal**: Enemies can inflict status effects on attack
 
 **Files Modified**:
+
 - `Components/Enemy.cs`
 - `Systems/CombatSystem.cs`
 - `Components/EnemyDefinitions.cs`
 
 **What Was Built**:
+
 - Extended `Enemy` component with effect-inflicting data:
   - `InflictsEffect`: Which effect to apply (e.g., Poison)
   - `EffectProbability`: Chance to apply (e.g., 40%)
@@ -131,6 +149,7 @@ CuresStatusEffect = EffectType.Poison
 - Created **Toxic Spider** enemy (40% poison chance)
 
 **Combat Flow**:
+
 ```csharp
 // In CombatSystem.Attack()
 if (attacker.Has<Enemy>() && statusEffectSystem != null)
@@ -145,6 +164,7 @@ if (attacker.Has<Enemy>() && statusEffectSystem != null)
 ```
 
 **Toxic Spider**:
+
 - Type: "Toxic Spider"
 - Appearance: Purple 'x'
 - Inflicts: Poison (40% chance)
@@ -153,12 +173,15 @@ if (attacker.Has<Enemy>() && statusEffectSystem != null)
 ---
 
 ### Phase 5: HUD Display ✅
+
 **Goal**: Make effects visible to players
 
 **Files Modified**:
+
 - `Renderers/HudRenderer.cs`
 
 **What Was Built**:
+
 - Added `_effectsLabel` field (new UI element)
 - Repositioned layout (effects between health and stats)
 - `UpdateStatusEffects()`: Queries entity effects and builds display
@@ -166,6 +189,7 @@ if (attacker.Has<Enemy>() && statusEffectSystem != null)
 - Smart visibility: Hides section when no effects active
 
 **HUD Layout**:
+
 ```
 Health: 85/100
 HP%: 85%
@@ -180,6 +204,7 @@ Stats:
 ```
 
 **Effect Icons**:
+
 - ☠ Poison, ♥ Regeneration, ⚡ Haste, 💪 Strength
 - 🛡 IronSkin, 🩸 Bleed, 🔥 Burning, ✨ Blessed
 - ⬇ Weakness, 🐌 Slow, 💔 Fragile
@@ -187,27 +212,32 @@ Stats:
 ---
 
 ### Phase 6: Combat Stat Modifiers ✅
+
 **Goal**: Make buffs/debuffs actually affect combat
 
 **Files Modified**:
+
 - `Systems/CombatSystem.cs`
 - `Renderers/HudRenderer.cs`
 
 **What Was Built**:
 
 **In CombatSystem**:
+
 - `GetModifiedAttack()`: Applies Strength (+) and Weakness (-)
 - `GetModifiedDefense()`: Applies IronSkin (+) and Fragile (-)
 - `GetModifiedSpeed()`: Applies Haste (+) and Slow (-)
 - Integrated into `Attack()` calculation
 
 **In HudRenderer**:
+
 - Added `_combatSystem` reference
 - Enhanced `UpdatePlayerStats()` to show modifiers
 - `GetStatDiff()`: Formats difference (e.g., "+5", "-3")
 - Smart display: Only shows modifiers when stat effects active
 
 **Combat Integration**:
+
 ```csharp
 // Before Phase 6:
 int damage = CalculateDamage(attackerCombat.Attack, defenderCombat.Defense);
@@ -219,6 +249,7 @@ int damage = CalculateDamage(modifiedAttack, modifiedDefense);
 ```
 
 **HUD with Modifiers**:
+
 ```
 Stats:
   ATK: 10 (+5)    ← Shows buff
@@ -277,7 +308,7 @@ Stats:
 ### Scenario: Toxic Spider Encounter
 
 ```
-Turn 1: 
+Turn 1:
   Player explores dungeon → Enters room with Toxic Spider
   Spider attacks!
     Base damage: 5
@@ -286,14 +317,14 @@ Turn 1:
   HUD updates:
     Effects:
       ☠ Poison (5)
-    
+
 Turn 2:
   StatusEffectSystem.ProcessEffects() runs
     → Poison ticks: Player takes 3 damage
     → Duration decrements: 5 → 4
   Player HP: 100 → 97
   HUD updates: "☠ Poison (4)"
-  
+
 Turn 3:
   Player opens inventory → Uses Antidote Potion
   StatusEffectSystem.CureEffect(Poison) runs
@@ -310,14 +341,14 @@ Turn 4:
       💪 Strength (10)
     Stats:
       ATK: 10 (+5)
-      
+
 Turn 5-14:
   Player attacks with buff
     Base ATK: 10 → Modified ATK: 15
     Damage: ~7 → ~12 (71% increase!)
   Each turn: Duration decrements: 9, 8, 7...
   HUD shows countdown: (9), (8), (7)...
-  
+
 Turn 15:
   Strength expires (duration = 0)
   StatusEffectSystem removes it
@@ -350,18 +381,21 @@ Turn 15:
 ### Stat Modifier Formulas
 
 **Attack**:
+
 ```
 modified = base + Σ(Strength) - Σ(Weakness)
 final = Max(1, modified)  // Minimum 1 ATK
 ```
 
 **Defense**:
+
 ```
 modified = base + Σ(IronSkin) - Σ(Fragile)
 final = Max(0, modified)  // Can reach 0 (fully vulnerable)
 ```
 
 **Speed**:
+
 ```
 modified = base + Σ(Haste) - Σ(Slow)
 final = Max(1, modified)  // Minimum 1 SPD
@@ -398,12 +432,14 @@ final = Max(1, modified)  // Minimum 1 SPD
 ## Testing & Validation
 
 ### Compilation Status
+
 - ✅ Core project: Builds successfully
 - ✅ HudRenderer: No errors in our changes
 - ✅ CombatSystem: Builds successfully
 - ⚠️ SadConsole: 1 pre-existing error (unrelated to our work)
 
 ### Functional Testing Checklist
+
 - [x] Apply poison from enemy attack
 - [x] Poison ticks damage each turn
 - [x] Poison duration decrements
@@ -420,32 +456,36 @@ final = Max(1, modified)  // Minimum 1 SPD
 
 ## Impact on Gameplay
 
-### Before Status Effects:
+### Before Status Effects
+
 - **Combat**: Simple damage calculation, no variety
 - **Items**: Direct heal/damage only, no depth
 - **Enemies**: All mechanically identical, boring
 - **Strategy**: None - just mash attack button
 - **Difficulty**: Flat, no peaks/valleys
 
-### After Status Effects:
+### After Status Effects
+
 - **Combat**: Tactical buff/debuff management, varied outcomes
 - **Items**: Strategic timing decisions, resource management
 - **Enemies**: Unique abilities (poison, slow, etc.), interesting encounters
-- **Strategy**: 
+- **Strategy**:
   - When to buff (before boss?)
   - When to cure (endure or cleanse?)
   - Stack multiple buffs?
   - Save potions for emergencies?
 - **Difficulty**: Dynamic - can swing battles with smart play
 
-### Player Experience Transformation:
+### Player Experience Transformation
 
 **Old Combat Loop**:
+
 ```
 See enemy → Mash attack → Take damage → Maybe heal → Repeat
 ```
 
 **New Combat Loop**:
+
 ```
 See enemy → Assess threat (Toxic Spider = poison risk)
           → Buff before combat? (Strength for quick kill)
@@ -460,17 +500,20 @@ See enemy → Assess threat (Toxic Spider = poison risk)
 ## Performance Characteristics
 
 ### Memory
+
 - **Struct-based**: Effects stored as value types (no heap allocation)
 - **Component-oriented**: Only entities with StatusEffects checked
 - **Efficient**: ~40 bytes per effect × max 10 = ~400 bytes per entity
 
 ### CPU
+
 - **Turn Processing**: O(n × m) where n = entities with effects, m = effects per entity
 - **Combat Calculation**: O(m) where m = effects on entity (typically 1-3)
 - **HUD Update**: O(m) per frame (only for player, typically 1-3 effects)
 - **Lazy Evaluation**: Stats only calculated during actual combat
 
 ### Scalability
+
 - ✅ Supports 100+ entities with effects simultaneously
 - ✅ No performance regression vs. baseline
 - ✅ Clean separation of concerns (easy to extend)
@@ -479,7 +522,7 @@ See enemy → Assess threat (Toxic Spider = poison risk)
 
 ## Future Enhancement Opportunities
 
-### Potential Additions (Not in MVP):
+### Potential Additions (Not in MVP)
 
 1. **Advanced Effect Mechanics**
    - Effect resistance (% chance to resist)
@@ -510,11 +553,11 @@ See enemy → Assess threat (Toxic Spider = poison risk)
 
 ### What Was Accomplished
 
-✅ **Complete System**: All 6 phases implemented and integrated  
-✅ **Production Ready**: Builds successfully, no blockers  
-✅ **Fully Functional**: All mechanics working as designed  
-✅ **Player Tested**: Clear feedback loop from effects to HUD  
-✅ **Architecturally Sound**: Clean, extensible, maintainable code  
+✅ **Complete System**: All 6 phases implemented and integrated
+✅ **Production Ready**: Builds successfully, no blockers
+✅ **Fully Functional**: All mechanics working as designed
+✅ **Player Tested**: Clear feedback loop from effects to HUD
+✅ **Architecturally Sound**: Clean, extensible, maintainable code
 
 ### Key Achievements
 
@@ -529,6 +572,7 @@ See enemy → Assess threat (Toxic Spider = poison risk)
 The status effects system adds **significant strategic depth** to the dungeon crawler, transforming it from a basic hack-and-slash into a **tactical RPG** with meaningful choices, resource management, and varied encounters.
 
 **Players now have:**
+
 - ✅ Tactical decisions in every fight
 - ✅ Resource management challenges
 - ✅ Risk/reward calculations
@@ -539,11 +583,11 @@ The status effects system adds **significant strategic depth** to the dungeon cr
 
 ## 🎉 Status: COMPLETE & PRODUCTION READY! 🎉
 
-**Date Completed**: 2025-10-21  
-**Total Development Time**: 6 Phases  
-**Code Quality**: ✅ Clean, maintainable, extensible  
-**Test Status**: ✅ Compiles, functions as designed  
-**Documentation**: ✅ Comprehensive (this document)  
+**Date Completed**: 2025-10-21
+**Total Development Time**: 6 Phases
+**Code Quality**: ✅ Clean, maintainable, extensible
+**Test Status**: ✅ Compiles, functions as designed
+**Documentation**: ✅ Comprehensive (this document)
 
 **Ready for**: Player testing, balance tuning, content expansion
 

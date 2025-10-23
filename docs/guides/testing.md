@@ -68,6 +68,7 @@ task test-full
 ```
 
 This command will:
+
 1. Build the release
 2. Start the stack
 3. Wait for services to be ready
@@ -114,6 +115,7 @@ Configuration is in `website/playwright.config.ts`:
 ### Web Terminal Tests
 
 **Basic Functionality:**
+
 - ✅ Homepage loads correctly
 - ✅ Terminal component is visible
 - ✅ Terminal accepts user input
@@ -121,12 +123,14 @@ Configuration is in `website/playwright.config.ts`:
 - ✅ Terminal handles resize events
 
 **Command Execution:**
+
 - ✅ Execute `pwd` command
 - ✅ Execute `echo` command
 - ✅ Command output is displayed
 - ✅ Terminal history works (arrow up)
 
 **Advanced Features:**
+
 - ✅ Multiple terminal sessions
 - ✅ Terminal persistence
 - ✅ Responsive design (mobile, tablet, desktop)
@@ -156,6 +160,7 @@ build/_artifacts/<version>/
 ### Report Types
 
 **HTML Report** (`test-reports/html/index.html`):
+
 - Interactive web interface
 - Test results with screenshots
 - Video recordings
@@ -163,12 +168,14 @@ build/_artifacts/<version>/
 - Filter and search capabilities
 
 **JSON Report** (`test-reports/results.json`):
+
 - Machine-readable format
 - Complete test results
 - Timing information
 - Error details
 
 **JUnit XML** (`test-reports/junit.xml`):
+
 - CI/CD integration format
 - Compatible with Jenkins, GitLab CI, etc.
 - Test suite and case information
@@ -183,7 +190,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Feature Name', () => {
   test('should do something', async ({ page }) => {
     await page.goto('/');
-    
+
     // Your test code here
     const element = page.locator('selector');
     await expect(element).toBeVisible();
@@ -194,6 +201,7 @@ test.describe('Feature Name', () => {
 ### Best Practices
 
 1. **Use descriptive test names**
+
    ```typescript
    test('should execute echo command and display output', async ({ page }) => {
      // ...
@@ -201,21 +209,25 @@ test.describe('Feature Name', () => {
    ```
 
 2. **Wait for elements properly**
+
    ```typescript
    await expect(terminal).toBeVisible({ timeout: 10000 });
    ```
 
 3. **Add appropriate timeouts**
+
    ```typescript
    await page.waitForTimeout(2000); // For terminal to be ready
    ```
 
 4. **Use data-testid attributes**
+
    ```typescript
    const terminal = page.locator('[data-testid="terminal"]');
    ```
 
 5. **Clean up after tests**
+
    ```typescript
    test.afterEach(async ({ page }) => {
      await page.close();
@@ -233,6 +245,7 @@ task test-web-ui
 ```
 
 Features:
+
 - Watch mode
 - Time travel debugging
 - Pick locators
@@ -255,6 +268,7 @@ task test-web-debug
 ```
 
 Features:
+
 - Pause execution
 - Step through code
 - Inspect elements
@@ -282,32 +296,32 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      
+
       - name: Install pnpm
         run: npm install -g pnpm
-      
+
       - name: Install dependencies
         run: pnpm install
         working-directory: website
-      
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
         working-directory: website
-      
+
       - name: Build release
         run: task build-release
-      
+
       - name: Start stack
         run: task stack-run
-      
+
       - name: Run tests
         run: task test-web
-      
+
       - name: Upload test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -339,17 +353,20 @@ test:
 ### Tests Failing
 
 **Stack not running:**
+
 ```bash
 task stack-status
 pm2 status
 ```
 
 **Web app not accessible:**
+
 ```bash
 curl http://localhost:3000
 ```
 
 **Port already in use:**
+
 ```bash
 # Stop existing stack
 task stack-stop
@@ -445,7 +462,7 @@ test('should load quickly', async ({ page }) => {
   const start = Date.now();
   await page.goto('/');
   const loadTime = Date.now() - start;
-  
+
   expect(loadTime).toBeLessThan(3000); // 3 seconds
 });
 ```
@@ -457,7 +474,7 @@ test('should work on slow connection', async ({ page, context }) => {
   await context.route('**/*', route => {
     setTimeout(() => route.continue(), 100); // 100ms delay
   });
-  
+
   await page.goto('/');
   // Test functionality
 });
@@ -473,10 +490,10 @@ import AxeBuilder from '@axe-core/playwright';
 
 test('should not have accessibility violations', async ({ page }) => {
   await page.goto('/');
-  
+
   const accessibilityScanResults = await new AxeBuilder({ page })
     .analyze();
-  
+
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 ```

@@ -1,7 +1,7 @@
 # Performance Results: Tiered Contract Architecture
 
-**Date**: 2025-10-21  
-**Feature**: 007-tiered-contract-architecture  
+**Date**: 2025-10-21
+**Feature**: 007-tiered-contract-architecture
 **Test Environment**: .NET 8.0, Windows
 
 ## Summary
@@ -15,11 +15,13 @@ All performance targets from the specification have been **EXCEEDED** by signifi
 **Target**: Event publishing completes in under 10ms for events with up to 10 subscribers
 
 **Results**:
+
 - **Measured Latency**: **0.003ms** (3 microseconds)
 - **Target**: 10ms
 - **Performance Margin**: **3,333x faster than required**
 
 **Test Details**:
+
 - Configuration: 10 subscribers
 - Event Type: `EntitySpawnedEvent`
 - Execution: Sequential (by design for predictable ordering)
@@ -29,11 +31,13 @@ All performance targets from the specification have been **EXCEEDED** by signifi
 **Target**: Event bus handles at least 1,000 events per second
 
 **Results**:
+
 - **Measured Throughput**: **1,124,733 events/second** (1.1 million/sec)
 - **Target**: 1,000 events/second
 - **Performance Margin**: **1,124x faster than required**
 
 **Test Details**:
+
 - Event Count: 1,000 events
 - Total Time: 0.89ms
 - Average Time per Event: 0.001ms (1 microsecond)
@@ -55,6 +59,7 @@ All performance targets from the specification have been **EXCEEDED** by signifi
 **Configuration**: 10 concurrent tasks publishing 100 events each (1,000 total)
 
 **Results**:
+
 - **Throughput**: 274,266 events/second
 - **Thread Safety**: ✅ Confirmed (all events received correctly)
 - **Concurrent Performance**: ✅ Maintains >1,000 events/sec target
@@ -64,6 +69,7 @@ All performance targets from the specification have been **EXCEEDED** by signifi
 **Test**: 1,000 event publications
 
 **Results**:
+
 - **Total Memory**: 232.91 KB
 - **Per Event**: 238.50 bytes
 - **Assessment**: ✅ Minimal allocation, no memory leaks detected
@@ -73,6 +79,7 @@ All performance targets from the specification have been **EXCEEDED** by signifi
 **Test**: Event bus with one slow subscriber (50ms delay)
 
 **Results**:
+
 - **Total Time**: 60.07ms (includes slow subscriber)
 - **Behavior**: Sequential execution confirmed (by design)
 - **Assessment**: ✅ Predictable ordering maintained per spec
@@ -99,6 +106,7 @@ All performance targets from the specification have been **EXCEEDED** by signifi
 **Status**: ✅ **NO OPTIMIZATION NEEDED**
 
 The current implementation exceeds all performance targets by orders of magnitude. The design is:
+
 - Lock-free for reads (`ConcurrentDictionary`)
 - Minimal allocations
 - Simple and maintainable
@@ -128,6 +136,6 @@ The implementation is **production-ready** with no optimization needed.
 
 ---
 
-**Generated**: 2025-10-21  
-**Test Framework**: xUnit with FluentAssertions  
+**Generated**: 2025-10-21
+**Test Framework**: xUnit with FluentAssertions
 **Runtime**: .NET 8.0

@@ -1,7 +1,7 @@
 # Implementation Progress: Inventory System
 
-**Branch**: `001-inventory-system`  
-**Date Started**: 2025-10-21  
+**Branch**: `001-inventory-system`
+**Date Started**: 2025-10-21
 **Current Status**: Phase 3 Complete ✅ - MVP Milestone Reached! 🎉
 
 ---
@@ -14,7 +14,7 @@ Phases 1, 2, and 3 of the inventory system implementation are complete! The **MV
 
 ## Phase 1: Setup & Infrastructure ✅ COMPLETE
 
-**Status**: 5/5 tasks completed (100%)  
+**Status**: 5/5 tasks completed (100%)
 **Completion Criteria**: ✅ All systems registered, project compiles successfully
 
 ### Completed Tasks
@@ -31,14 +31,14 @@ Phases 1, 2, and 3 of the inventory system implementation are complete! The **MV
 
 ## Phase 2: Foundational Components ✅ COMPLETE
 
-**Status**: 8/8 tasks completed (100%)  
+**Status**: 8/8 tasks completed (100%)
 **Completion Criteria**: ✅ All components defined, player entity has inventory, project compiles
 
 ### Completed Tasks
 
 - ✅ **T006** [P]: Implement Item component struct - *Completed in Phase 1*
   - Name, Glyph, Description, Type, Weight properties
-  
+
 - ✅ **T007** [P]: Implement Consumable component struct - *Completed in Phase 1*
   - Effect, EffectValue, UsableOutOfCombat properties
   - ConsumableEffect enum: RestoreHealth, RestoreMana, IncreaseSpeed, CurePoison
@@ -88,7 +88,7 @@ dotnet/framework/LablabBean.Game.Core/
 
 ## Phase 4: User Story 2 - Inventory Display ✅ COMPLETE
 
-**Status**: 6/6 tasks completed (100%)  
+**Status**: 6/6 tasks completed (100%)
 **Completion Criteria**: ✅ Inventory panel displays all items with correct formatting, updates in real-time
 
 ### Completed Tasks
@@ -139,12 +139,14 @@ dotnet/framework/LablabBean.Game.TerminalUI/
 
 ### Technical Implementation Notes
 
-**Inventory Item Retrieval Challenge**: 
+**Inventory Item Retrieval Challenge**:
+
 - Arch ECS stores entity IDs as `int`, but queries need `Entity` structs
 - Solution: Query all items with Item component, filter by matching entity.Id
 - Alternative considered: Store Entity references directly (rejected due to struct mutability)
 
 **Display Format**:
+
 - Single item: "Healing Potion"
 - Stackable: "Healing Potion (3)"
 - Equipped: "Iron Sword [E]"
@@ -157,7 +159,7 @@ dotnet/framework/LablabBean.Game.TerminalUI/
 
 ## Phase 5: User Story 3 - Consume Healing Potions ✅ COMPLETE
 
-**Status**: 7/7 tasks completed (100%)  
+**Status**: 7/7 tasks completed (100%)
 **Completion Criteria**: ✅ Player can use healing potions, health restored correctly, items consumed, appropriate messages displayed
 
 ### Completed Tasks
@@ -204,11 +206,11 @@ dotnet/framework/LablabBean.Game.TerminalUI/
 ```
 dotnet/framework/LablabBean.Game.Core/
 ├── Systems/
-│   └── InventorySystem.cs (Added: GetConsumables(), CanUseConsumable(), 
+│   └── InventorySystem.cs (Added: GetConsumables(), CanUseConsumable(),
 │                                   UseConsumable(), ApplyHealingEffect(),
 │                                   RemoveItemFromInventory())
 └── Services/
-    └── GameStateManager.cs (Added: HandlePlayerUseItem(), 
+    └── GameStateManager.cs (Added: HandlePlayerUseItem(),
                                      player starts at 50/100 HP for testing)
 
 dotnet/console-app/LablabBean.Console/
@@ -219,17 +221,20 @@ dotnet/console-app/LablabBean.Console/
 ### Technical Implementation Notes
 
 **Consumable Effects**:
+
 - RestoreHealth: Fully implemented with healing calculation
 - RestoreMana: Placeholder message (not yet implemented)
 - IncreaseSpeed: Placeholder message (not yet implemented)
 - CurePoison: Placeholder message (not yet implemented)
 
 **Energy System Integration**:
+
 - Successfully using item consumes actor energy (turn-based)
 - Prevents using items when player can't act
 - Failed attempts (e.g., "Already at full health") don't consume energy
 
 **Item Selection**:
+
 - Currently uses first consumable in inventory automatically
 - TODO: Future enhancement to show selection menu for multiple consumables
 
@@ -239,7 +244,7 @@ dotnet/console-app/LablabBean.Console/
 
 ## Phase 6: User Story 4 - Equip Weapons and Armor ✅ COMPLETE
 
-**Status**: 8/8 tasks completed (100%)  
+**Status**: 8/8 tasks completed (100%)
 **Completion Criteria**: ✅ Player can equip/unequip weapons and armor, stats update correctly, old equipment unequipped automatically, messages displayed
 
 ### Completed Tasks
@@ -304,24 +309,29 @@ dotnet/framework/LablabBean.Game.Core/
 ### Technical Implementation Notes
 
 **Stat Calculation System**:
+
 - Base stats: ATK 10, DEF 5, SPD 100
 - Equipment bonuses add to base stats
 - Stats recalculated on every equip/unequip
 - Combat and Actor components updated immediately
 
 **Auto-Unequip**:
+
 - Equipping item in occupied slot automatically unequips old item
 - Old item remains in inventory (not dropped)
 - Player can manually unequip to empty slot (UnequipItem method exists)
 
 **Equipment Slots** (9 total):
+
 - MainHand, OffHand, Head, Chest, Legs, Feet, Hands, Accessory1, Accessory2
 
 **Two-Handed Weapons**:
+
 - TwoHanded flag exists in Equippable component
 - Logic not yet implemented (future enhancement)
 
 **Stat Bonuses**:
+
 - AttackBonus: Increases damage dealt
 - DefenseBonus: Reduces damage taken
 - SpeedModifier: Affects turn order (can be negative)
@@ -332,7 +342,7 @@ dotnet/framework/LablabBean.Game.Core/
 
 ## Phase 7: Polish & Integration ✅ COMPLETE
 
-**Status**: 3/3 tasks completed (100%)  
+**Status**: 3/3 tasks completed (100%)
 **Completion Criteria**: ✅ Items spawn in dungeons, enemies drop loot, full gameplay loop functional
 
 ### Completed Tasks
@@ -375,24 +385,28 @@ dotnet/framework/LablabBean.Game.Core/
 ### Technical Implementation Notes
 
 **Weighted Spawn System**:
+
 - Total weight: 100 (sums all item weights)
 - Roll random number 0-99
 - Select item based on cumulative weight ranges
 - Ensures desired drop rate distribution
 
 **Room Item Spawning**:
+
 - Skips first room (player spawn)
 - 35% chance per remaining room
 - Random position within room bounds
 - Typical 15-room dungeon: ~5 items spawned
 
 **Enemy Loot Drops**:
+
 - Only enemies (has Enemy component) drop loot
 - Spawns at death position (corpse location)
 - Common items more likely (basic weapons/armor)
 - Healing potions most common (30% drop rate)
 
 **Full Gameplay Loop**:
+
 1. Player enters dungeon → items scattered in rooms
 2. Player explores → finds and collects items
 3. Player equips gear → stats increase
@@ -410,6 +424,7 @@ dotnet/framework/LablabBean.Game.Core/
 **Total Progress**: 45/45 tasks (100%) ✅ COMPLETE!
 
 ### Phase Completion
+
 - ✅ **Phase 1**: Setup & Infrastructure (5/5 tasks) - **COMPLETE**
 - ✅ **Phase 2**: Foundational Components (8/8 tasks) - **COMPLETE**
 - ✅ **Phase 3**: User Story 1 - Item Pickup (8/8 tasks) - **COMPLETE** 🎉 MVP!
@@ -419,6 +434,7 @@ dotnet/framework/LablabBean.Game.Core/
 - ✅ **Phase 7**: Polish & Integration (3/3 tasks) - **COMPLETE** 🎉
 
 ### Milestones
+
 - ✅ **Phase 1 Complete**: Project structure ready
 - ✅ **Phase 2 Complete**: All components defined, player initialized
 - ✅ **Phase 3 Complete**: MVP - First playable feature! 🎉
@@ -433,12 +449,14 @@ dotnet/framework/LablabBean.Game.Core/
 ## Technical Notes
 
 ### Architecture Decisions
+
 - Using Arch ECS framework v1.3.3
 - Component-based design with struct components
 - Systems registered via Microsoft.Extensions.DependencyInjection
 - Entity references stored as `int` IDs in inventory lists
 
 ### Component Design
+
 - **Item**: Base component for all items (on ground or in inventory)
 - **Consumable**: Optional component for usable items
 - **Equippable**: Optional component for equipment
@@ -447,7 +465,9 @@ dotnet/framework/LablabBean.Game.Core/
 - **EquipmentSlots**: Player component with dictionary mapping slots to item IDs
 
 ### Next Phase Requirements
+
 Phase 3 implementation needs:
+
 1. ✅ Player entity with Inventory component (done in Phase 2)
 2. ✅ ItemDefinitions for spawning (done in Phase 2)
 3. 🔍 Locate DungeonCrawlerService for input handling
@@ -461,13 +481,14 @@ Phase 3 implementation needs:
 To test the inventory display functionality:
 
 1. **Start the game**:
+
    ```bash
    dotnet run --project dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj
    ```
 
 2. **Initial state**: Inventory panel shows "Inventory (0/20)" and "(Empty)"
 
-3. **Test items spawned**: 
+3. **Test items spawned**:
    - 2 Healing Potions at player location + 1 and + 2
    - 1 Iron Sword at player location + 1 vertical
 
@@ -498,11 +519,12 @@ To test the inventory display functionality:
 To test the consumable item functionality:
 
 1. **Start the game**:
+
    ```bash
    dotnet run --project dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj
    ```
 
-2. **Initial state**: 
+2. **Initial state**:
    - Player spawns at 50/100 HP (for testing)
    - 2 Healing Potions and 1 Iron Sword spawn nearby
    - HUD shows: "Health: 50/100"
@@ -534,6 +556,7 @@ To test the consumable item functionality:
    - Verify message: "No consumable items in inventory!"
 
 ### Expected Behavior
+
 - ✅ Health restored correctly
 - ✅ Stackable count decrements
 - ✅ Item removed when consumed completely
@@ -548,11 +571,12 @@ To test the consumable item functionality:
 To test the equipment system:
 
 1. **Start the game**:
+
    ```bash
    dotnet run --project dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj
    ```
 
-2. **Initial state**: 
+2. **Initial state**:
    - Player spawns at 50/100 HP
    - Base stats: ATK 10, DEF 5, SPD 100
    - 1 Iron Sword (+5 ATK) spawned nearby
@@ -593,6 +617,7 @@ To test the equipment system:
    - Message shows both changes: "DEF +10, SPD -10"
 
 ### Expected Behavior
+
 - ✅ Stats update immediately on equip
 - ✅ Old equipment auto-unequips when slot occupied
 - ✅ [E] marker shows in inventory for equipped items
@@ -608,7 +633,7 @@ None! Only 3 tasks remaining in Phase 7.
 
 ---
 
-**Ready for Final Phase**: Yes ✅  
+**Ready for Final Phase**: Yes ✅
 **Recommended Action**: Complete Phase 7 - Polish & Integration (item spawning in dungeons)
 
 ---
@@ -618,6 +643,7 @@ None! Only 3 tasks remaining in Phase 7.
 To test the item pickup functionality:
 
 1. **Spawn a test item** (add to GameStateManager.InitializeNewGame()):
+
    ```csharp
    var itemSpawnSystem = serviceProvider.GetRequiredService<ItemSpawnSystem>();
    itemSpawnSystem.SpawnHealingPotion(world, new Point(playerSpawn.X + 1, playerSpawn.Y));

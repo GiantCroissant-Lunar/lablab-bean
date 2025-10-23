@@ -24,7 +24,7 @@ public interface IReportingService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result containing output file path and any errors</returns>
     Task<ReportResult> GenerateReportAsync(string providerName, ReportRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Lists all available report providers.
     /// </summary>
@@ -33,6 +33,7 @@ public interface IReportingService
 ```
 
 **Implementation Example**:
+
 ```csharp
 using LablabBean.Reporting.Abstractions.Contracts;
 using LablabBean.Reporting.Abstractions.Models;
@@ -46,39 +47,39 @@ public class ReportingService : IReportingService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ReportingService> _logger;
-    
+
     public ReportingService(IServiceProvider serviceProvider, ILogger<ReportingService> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
-    
+
     public async Task<ReportResult> GenerateReportAsync(string providerName, ReportRequest request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Generating report: {ProviderName}, Format: {Format}", providerName, request.Format);
-        
+
         // Resolve provider by name
         var providerType = ReportProviderRegistry.Providers
             .FirstOrDefault(p => p.Name == providerName)?.Type;
-        
+
         if (providerType == null)
             return ReportResult.Failure($"Provider '{providerName}' not found");
-        
+
         var provider = (IReportProvider)_serviceProvider.GetRequiredService(providerType);
-        
+
         // Get data from provider
         var data = await provider.GetReportDataAsync(request, cancellationToken);
-        
+
         // Resolve renderer
         var renderer = _serviceProvider.GetRequiredService<IReportRenderer>();
-        
+
         // Render report
         var result = await renderer.RenderAsync(request, data, cancellationToken);
-        
+
         _logger.LogInformation("Report generated: {OutputPath}, Success: {Success}", result.OutputPath, result.IsSuccess);
         return result;
     }
-    
+
     public IEnumerable<ReportMetadata> GetAvailableProviders()
     {
         return ReportProviderRegistry.Providers
@@ -92,6 +93,7 @@ public class ReportingService : IReportingService
 ```
 
 **CLI Usage Example**:
+
 ```csharp
 // In CLI command handler
 var service = serviceProvider.GetRequiredService<IReportingService>();

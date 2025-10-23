@@ -63,6 +63,7 @@ For now, manually copy the template and replace variables:
 3. Save to appropriate location
 
 Example:
+
 ```csharp
 // Before (template)
 public class {{.Name}} : Monster
@@ -82,6 +83,7 @@ public class Dragon : Monster
 ## Pre-defined Monster Examples
 
 ### Dragon
+
 ```yaml
 Name: Dragon
 DisplayName: "Red Dragon"
@@ -99,6 +101,7 @@ GoldDropMax: 150
 ```
 
 ### Wraith
+
 ```yaml
 Name: Wraith
 DisplayName: "Shadow Wraith"
@@ -116,6 +119,7 @@ GoldDropMax: 60
 ```
 
 ### Slime
+
 ```yaml
 Name: Slime
 DisplayName: "Green Slime"
@@ -133,6 +137,7 @@ GoldDropMax: 15
 ```
 
 ### Mimic
+
 ```yaml
 Name: Mimic
 DisplayName: "Chest Mimic"
@@ -152,6 +157,7 @@ GoldDropMax: 200
 ## Directory Structure
 
 Generated monsters should be placed in:
+
 ```
 dotnet/framework/LablabBean.Game.Core/
 └── Monsters/
@@ -166,16 +172,19 @@ dotnet/framework/LablabBean.Game.Core/
 After generating a monster class:
 
 1. **Add to project**:
+
    ```bash
    # Monster class is automatically included in .csproj
    ```
 
 2. **Register in MonsterFactory** (if exists):
+
    ```csharp
    MonsterFactory.Register("dragon", typeof(Dragon));
    ```
 
 3. **Add to spawn tables**:
+
    ```csharp
    // In GameStateManager or similar
    var spawnTable = new Dictionary<string, int>
@@ -186,6 +195,7 @@ After generating a monster class:
    ```
 
 4. **Test in game**:
+
    ```bash
    task dotnet-run-console
    ```
@@ -195,6 +205,7 @@ After generating a monster class:
 The template includes TODO comments for customization:
 
 ### OnSpawn()
+
 ```csharp
 public override void OnSpawn()
 {
@@ -208,6 +219,7 @@ public override void OnSpawn()
 ```
 
 ### OnDeath()
+
 ```csharp
 public override void OnDeath()
 {
@@ -221,6 +233,7 @@ public override void OnDeath()
 ```
 
 ### CalculateAttackDamage()
+
 ```csharp
 public override int CalculateAttackDamage()
 {
@@ -239,6 +252,7 @@ public override int CalculateAttackDamage()
 When spec-kit is fully integrated:
 
 1. **YAML-based Monster Definitions**:
+
    ```yaml
    # monsters/dragon.yaml
    monster:
@@ -251,16 +265,19 @@ When spec-kit is fully integrated:
    ```
 
 2. **Batch Generation**:
+
    ```bash
    task gen-monsters-from-yaml FILE=monsters/*.yaml
    ```
 
 3. **Validation**:
+
    ```bash
    task validate-monster-stats
    ```
 
 4. **Documentation Generation**:
+
    ```bash
    task gen-monster-bestiary
    # Generates: docs/bestiary.md with all monsters
@@ -269,6 +286,7 @@ When spec-kit is fully integrated:
 ---
 
 **See Also**:
+
 - `docs/SPEC-KIT-UTILIZATION.md` - Full spec-kit guide
 - `templates/entity/monster.tmpl` - Monster template
 - `docs/specs/dungeon-generation-system.md` - Example specification

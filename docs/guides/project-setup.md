@@ -27,6 +27,7 @@ Automated code quality checks that run before each commit:
 - **YAML**: pretty-format-yaml with auto-fix
 
 **Usage:**
+
 ```bash
 task pre-commit-install  # Install hooks
 task pre-commit-run      # Run manually
@@ -37,6 +38,7 @@ task pre-commit-run      # Run manually
 Comprehensive task automation using [Task](https://taskfile.dev):
 
 **Key Tasks:**
+
 - `task install` - Install all dependencies and tools
 - `task build` - Build the application
 - `task run` - Build and run
@@ -49,6 +51,7 @@ Comprehensive task automation using [Task](https://taskfile.dev):
 - `task build-all` - Build for all platforms
 
 **View all tasks:**
+
 ```bash
 task --list
 ```
@@ -58,6 +61,7 @@ task --list
 Code generation and templating system:
 
 **Components:**
+
 - `internal/speck/speck.go` - Core speck-kit logic
 - `internal/cmd/speck.go` - CLI commands for speck-kit
 - `templates/` - Template files for code generation
@@ -65,6 +69,7 @@ Code generation and templating system:
   - `api.tmpl` - API handler template
 
 **Configuration:** `.lablab-bean.yaml`
+
 ```yaml
 speck:
   enabled: true
@@ -76,6 +81,7 @@ speck:
 ```
 
 **Usage:**
+
 ```bash
 ./bin/lablab-bean speck init
 ./bin/lablab-bean speck generate model User
@@ -146,6 +152,7 @@ lablab-bean/
 ### Quick Setup
 
 **Automated (Recommended):**
+
 ```bash
 # Windows
 .\setup.ps1
@@ -156,6 +163,7 @@ chmod +x setup.sh
 ```
 
 **Manual:**
+
 ```bash
 task install
 task pre-commit-install
@@ -176,15 +184,20 @@ task run
 
 1. **Make changes**
 2. **Check code:**
+
    ```bash
    task check
    ```
+
 3. **Commit** (hooks run automatically):
+
    ```bash
    git add .
    git commit -m "feat: add feature"
    ```
+
 4. **Build and test:**
+
    ```bash
    task build
    task test
@@ -253,6 +266,7 @@ docker-compose down
 ### Application Configuration
 
 Edit `.lablab-bean.yaml`:
+
 ```yaml
 app:
   name: lablab-bean
@@ -318,6 +332,7 @@ task bench
 ### Test Structure
 
 Tests follow Go conventions:
+
 - Test files: `*_test.go`
 - Test functions: `TestXxx(t *testing.T)`
 - Benchmark functions: `BenchmarkXxx(b *testing.B)`
@@ -332,6 +347,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 - **Build Job**: Builds the application
 
 Triggered on:
+
 - Push to `main` or `develop`
 - Pull requests to `main` or `develop`
 
@@ -360,18 +376,21 @@ Triggered on:
 ### Common Issues
 
 **Task not found:**
+
 ```bash
 go install github.com/go-task/task/v3/cmd/task@latest
 export PATH=$PATH:$(go env GOPATH)/bin
 ```
 
 **Pre-commit not working:**
+
 ```bash
 pip install pre-commit
 task pre-commit-install
 ```
 
 **Build fails:**
+
 ```bash
 task clean
 task install
@@ -379,6 +398,7 @@ task build
 ```
 
 **Tests fail:**
+
 ```bash
 go test -v ./...
 ```

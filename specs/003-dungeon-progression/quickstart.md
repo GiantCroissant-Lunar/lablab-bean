@@ -36,12 +36,12 @@ var result = levelManager.DescendLevel(playerEntity);
 if (result.Success)
 {
     Console.WriteLine(result.Message); // "Descending to Level 2..."
-    
+
     if (result.NewRecordDepth)
     {
         Console.WriteLine("New Record Depth: Level 2!");
     }
-    
+
     if (result.VictoryTriggered)
     {
         Console.WriteLine("You have reached the Victory Chamber!");
@@ -89,37 +89,37 @@ private void OnStaircaseInteraction(char key)
 {
     // Get staircase at player position
     var staircase = _levelManager.GetPlayerStaircase(_playerEntity);
-    
+
     if (staircase == null)
     {
         _hudService.AddMessage("You are not on a staircase.");
         return;
     }
-    
+
     var staircaseComp = _world.Get<Staircase>(staircase.Value);
-    
+
     // Validate key matches staircase direction
     if (key == '>' && staircaseComp.Direction != StaircaseDirection.Down)
     {
         _hudService.AddMessage("This is an upward staircase. Press '<' to ascend.");
         return;
     }
-    
+
     if (key == '<' && staircaseComp.Direction != StaircaseDirection.Up)
     {
         _hudService.AddMessage("This is a downward staircase. Press '>' to descend.");
         return;
     }
-    
+
     // Confirm transition
     if (ShowConfirmation($"{staircaseComp.Description}. Continue? (Y/N)"))
     {
         var result = staircaseComp.Direction == StaircaseDirection.Down
             ? _levelManager.DescendLevel(_playerEntity)
             : _levelManager.AscendLevel(_playerEntity);
-        
+
         _hudService.AddMessage(result.Message);
-        
+
         if (result.NewRecordDepth)
         {
             _hudService.AddMessage($"New Record Depth: Level {result.NewLevel}!");
@@ -276,23 +276,23 @@ public DungeonMap GenerateLevel(int levelNumber)
 {
     var map = GenerateRooms();
     var rooms = GetRooms();
-    
+
     var level = new DungeonLevel
     {
         LevelNumber = levelNumber,
         Map = map,
         Entities = new List<EntitySnapshot>()
     };
-    
+
     // Place staircases
     _levelManager.PlaceStaircases(level, rooms);
-    
+
     // Spawn enemies with scaling
     SpawnEnemies(map, rooms, levelNumber);
-    
+
     // Spawn items with scaling
     SpawnItems(map, rooms, levelNumber);
-    
+
     return map;
 }
 ```
@@ -302,10 +302,10 @@ public DungeonMap GenerateLevel(int levelNumber)
 ```csharp
 // Downward staircase
 var downStairs = world.Create(
-    new Staircase 
-    { 
-        Direction = StaircaseDirection.Down, 
-        TargetLevel = currentLevel + 1 
+    new Staircase
+    {
+        Direction = StaircaseDirection.Down,
+        TargetLevel = currentLevel + 1
     },
     new Position { X = 45, Y = 30 },
     new Renderable { Glyph = '>', ForegroundColor = Color.White }
@@ -315,10 +315,10 @@ var downStairs = world.Create(
 if (currentLevel > 1)
 {
     var upStairs = world.Create(
-        new Staircase 
-        { 
-            Direction = StaircaseDirection.Up, 
-            TargetLevel = currentLevel - 1 
+        new Staircase
+        {
+            Direction = StaircaseDirection.Up,
+            TargetLevel = currentLevel - 1
         },
         new Position { X = 5, Y = 5 },
         new Renderable { Glyph = '<', ForegroundColor = Color.White }
@@ -337,7 +337,7 @@ if (currentLevel > 1)
 public void UpdateLevelDisplay(int currentLevel, int personalBest)
 {
     var depthString = _difficultyScaling.GetDepthDisplayString(currentLevel);
-    
+
     _levelLabel.Text = $"Dungeon Level: {currentLevel}";
     _depthLabel.Text = depthString; // "Depth: -150 ft"
     _bestLabel.Text = $"Personal Best: Level {personalBest}";
@@ -351,12 +351,12 @@ public void UpdateLevelDisplay(int currentLevel, int personalBest)
 private void OnLevelTransition(LevelTransitionResult result)
 {
     _hudService.AddMessage(result.Message);
-    
+
     if (result.NewRecordDepth)
     {
         _hudService.AddMessage($"New Record Depth: Level {result.NewLevel}!", Color.Yellow);
     }
-    
+
     _hudService.UpdateLevelDisplay(result.NewLevel, _levelManager.PersonalBestDepth);
 }
 ```
@@ -372,7 +372,7 @@ private void OnLevelTransition(LevelTransitionResult result)
 if (levelManager.ShouldTransitionToVictoryChamber(currentLevel, StaircaseDirection.Down))
 {
     var victoryChamber = levelManager.GenerateVictoryChamber();
-    
+
     // Load victory chamber instead of level 21
     // Spawn final boss
     // Show victory message when boss defeated
@@ -390,14 +390,14 @@ public DungeonLevel GenerateVictoryChamber()
         Map = GenerateSingleLargeRoom(50, 30),
         Entities = new List<EntitySnapshot>()
     };
-    
+
     // Spawn final boss in center
     var bossPosition = new Position { X = 25, Y = 15 };
     var boss = CreateFinalBoss(bossPosition);
-    
+
     // Spawn treasure hoard
     SpawnVictoryTreasure(level);
-    
+
     return level;
 }
 
@@ -410,7 +410,7 @@ private Entity CreateFinalBoss(Position position)
         position,
         new Renderable { Glyph = 'D', ForegroundColor = Color.Red }
     );
-    
+
     return boss;
 }
 ```
@@ -439,10 +439,10 @@ public void CalculateScaledStat_Level5_Returns57PercentIncrease()
     var difficultyScaling = new DifficultyScalingSystem(world);
     int baseStat = 20;
     int level = 5;
-    
+
     // Act
     int scaledStat = difficultyScaling.CalculateScaledStat(baseStat, level);
-    
+
     // Assert
     Assert.Equal(32, scaledStat); // 20 × 1.57 ≈ 32
 }
@@ -452,10 +452,10 @@ public void CalculateLootDropRate_Level10_ReturnsCapped60Percent()
 {
     // Arrange
     var difficultyScaling = new DifficultyScalingSystem(world);
-    
+
     // Act
     double dropRate = difficultyScaling.CalculateLootDropRate(10);
-    
+
     // Assert
     Assert.Equal(0.60, dropRate); // Capped at 60%
 }
@@ -470,17 +470,17 @@ public void DescendLevel_SavesCurrentState_RestoresOnAscend()
     // Arrange
     var levelManager = new LevelManager(world, mapGenerator, difficultyScaling);
     var player = CreatePlayer();
-    
+
     // Kill an enemy on level 1
     var enemy = CreateEnemy(new Position { X = 10, Y = 10 });
     KillEnemy(enemy);
-    
+
     // Act: Descend to level 2
     levelManager.DescendLevel(player);
-    
+
     // Act: Ascend back to level 1
     levelManager.AscendLevel(player);
-    
+
     // Assert: Enemy still dead
     var enemiesOnLevel1 = GetEnemiesOnCurrentLevel();
     Assert.DoesNotContain(enemy, enemiesOnLevel1);
@@ -528,21 +528,21 @@ public void HandleStaircaseInput(char key)
 {
     var staircase = _levelManager.GetPlayerStaircase(_playerEntity);
     if (staircase == null) return;
-    
+
     var staircaseComp = _world.Get<Staircase>(staircase.Value);
     int targetLevel = staircaseComp.TargetLevel;
-    
+
     // Show confirmation
     string prompt = staircaseComp.Direction == StaircaseDirection.Down
         ? $"Descend to Level {targetLevel}? (Y/N)"
         : $"Ascend to Level {targetLevel}? (Y/N)";
-    
+
     if (ShowConfirmation(prompt))
     {
         var result = staircaseComp.Direction == StaircaseDirection.Down
             ? _levelManager.DescendLevel(_playerEntity)
             : _levelManager.AscendLevel(_playerEntity);
-        
+
         HandleTransitionResult(result);
     }
 }
@@ -555,10 +555,10 @@ public void HandleStaircaseInput(char key)
 public void ManageLevelCache()
 {
     int currentLevel = _levelManager.CurrentLevel;
-    
+
     // Keep only levels within ±5 of current
     _levelManager.EvictDistantLevels(keepRange: 5);
-    
+
     // Example: At level 10, keep levels 5-15, evict others
     int cachedCount = _levelManager.GetCachedLevelCount();
     Console.WriteLine($"Cached levels: {cachedCount}");
@@ -574,7 +574,7 @@ public void TrackPersonalBest(int newLevel)
     {
         // New record!
         _hudService.AddMessage($"New Record Depth: Level {newLevel}!", Color.Yellow);
-        
+
         // Save to player profile (future)
         SavePlayerProfile();
     }

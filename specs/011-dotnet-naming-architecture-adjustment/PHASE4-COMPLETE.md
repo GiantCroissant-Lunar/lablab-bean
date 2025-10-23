@@ -1,7 +1,7 @@
 # SPEC-011 Phase 4 Complete: Platform-Agnostic Architecture
 
-**Date**: 2025-10-22  
-**Branch**: `011-dotnet-naming-architecture-adjustment`  
+**Date**: 2025-10-22
+**Branch**: `011-dotnet-naming-architecture-adjustment`
 **Status**: ✅ Complete
 
 ## Summary
@@ -15,6 +15,7 @@ Successfully implemented platform-agnostic plugin loading architecture with `IPl
 **File**: `dotnet/framework/LablabBean.Plugins.Core/IPluginLoader.cs`
 
 Created platform-agnostic interface defining:
+
 - `IPluginRegistry PluginRegistry { get; }`
 - `IRegistry ServiceRegistry { get; }`
 - `Task<int> DiscoverAndLoadAsync(...)`
@@ -34,6 +35,7 @@ Created platform-agnostic interface defining:
 **File**: `dotnet/framework/LablabBean.Plugins.Core/PluginLoaderFactory.cs`
 
 Created factory for creating platform-specific loaders:
+
 ```csharp
 public static IPluginLoader Create(
     ILogger<PluginLoader> logger,
@@ -54,6 +56,7 @@ Currently returns ALC-based `PluginLoader`. Future: Can detect platform and retu
 **File**: `dotnet/framework/LablabBean.Plugins.Core/README.md`
 
 Comprehensive documentation covering:
+
 - Platform-agnostic architecture overview
 - Current ALC implementation details
 - Factory pattern usage
@@ -66,6 +69,7 @@ Comprehensive documentation covering:
 **File**: `dotnet/tests/LablabBean.Plugins.Core.Tests/PluginLoaderAbstractionTests.cs`
 
 Added tests verifying:
+
 - `IPluginLoader` interface contract
 - `PluginLoader` implements `IPluginLoader`
 - Factory creates valid loaders
@@ -74,11 +78,13 @@ Added tests verifying:
 ## Architecture Benefits
 
 ### Abstraction Layer
+
 - **Decoupling**: Core plugin system separated from loading mechanism
 - **Flexibility**: Easy to swap implementations without touching plugin contracts
 - **Testing**: Can mock `IPluginLoader` for unit tests
 
 ### Platform Support
+
 - **Current**: AssemblyLoadContext for .NET 5+ (Windows, Linux, macOS)
 - **Future Ready**:
   - HybridCLR for Unity IL2CPP environments
@@ -86,6 +92,7 @@ Added tests verifying:
   - Other platforms as needed
 
 ### Migration Path
+
 - **Zero Breaking Changes**: Existing code continues to work
 - **Gradual Adoption**: Can introduce new loaders incrementally
 - **Fallback**: Always have ALC loader as reference implementation
@@ -93,14 +100,18 @@ Added tests verifying:
 ## Design Decisions
 
 ### Why Keep ALC in Core?
+
 Initially considered moving ALC loader to a plugin (`LablabBean.Plugins.Loader.ALC`), but internal classes (`PluginContext`, `PluginHost`) are not accessible outside the Core assembly. Keeping ALC loader in Core:
+
 - Maintains access to internal infrastructure
 - Serves as reference implementation
 - Simplifies testing
 - No deployment changes required
 
 ### Factory Pattern Over DI
+
 Used static factory instead of DI registration because:
+
 - Simpler for consumers
 - Platform detection logic centralized
 - No service lifetime management needed
@@ -109,6 +120,7 @@ Used static factory instead of DI registration because:
 ## Verification
 
 ### Build Status
+
 ```bash
 cd dotnet/framework/LablabBean.Plugins.Core
 dotnet build
@@ -116,12 +128,14 @@ dotnet build
 ```
 
 ### Test Status
+
 - ✅ Plugins.Core builds successfully
 - ✅ Interface contract validated
 - ✅ Implementation conformance verified
 - ✅ Factory pattern tested
 
 ### Integration
+
 - ✅ No changes required to existing consumers
 - ✅ Console app continues to work
 - ✅ All reporting plugins still functional
@@ -129,6 +143,7 @@ dotnet build
 ## Usage Example
 
 ### Before (Direct Instantiation)
+
 ```csharp
 var loader = new PluginLoader(
     logger, loggerFactory, configuration, services,
@@ -136,6 +151,7 @@ var loader = new PluginLoader(
 ```
 
 ### After (Factory Pattern - Recommended)
+
 ```csharp
 var loader = PluginLoaderFactory.Create(
     logger, loggerFactory, configuration, services,
@@ -143,6 +159,7 @@ var loader = PluginLoaderFactory.Create(
 ```
 
 ### With Interface (Future)
+
 ```csharp
 IPluginLoader loader = GetPlatformLoader();
 await loader.DiscoverAndLoadAsync(pluginPaths);
@@ -153,6 +170,7 @@ await loader.DiscoverAndLoadAsync(pluginPaths);
 To add support for a new platform:
 
 1. **Create Implementation**
+
    ```csharp
    public class HybridClrPluginLoader : IPluginLoader
    {
@@ -161,12 +179,13 @@ To add support for a new platform:
    ```
 
 2. **Update Factory**
+
    ```csharp
    public static IPluginLoader Create(...)
    {
        if (IsUnityPlatform())
            return new HybridClrPluginLoader(...);
-       
+
        return new PluginLoader(...); // Default to ALC
    }
    ```
@@ -180,6 +199,7 @@ To add support for a new platform:
 ## Task Completion
 
 From `tasks.md`:
+
 - [x] T040 Define `IPluginLoader` abstraction in `framework/LablabBean.Plugins.Core`
 - [x] T041 ~~Create `dotnet/plugins/LablabBean.Plugins.Loader.ALC/`~~ (Kept in Core due to internal access requirements)
 - [x] T042 Update docs explaining loader selection and platform boundaries

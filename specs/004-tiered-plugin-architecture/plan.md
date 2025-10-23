@@ -3,9 +3,11 @@
 **Branch**: `004-tiered-plugin-architecture` | **Spec**: `./spec.md`
 
 ## Summary
+
 Adopt a tiered plugin architecture modeled after Winged Bean and PluginManoi: contracts in Tier 1/2 (netstandard2.1), loader/registry core also netstandard2.1 where possible, with host-specific loading in Tier 3/4 (net8.0). Provide a DungeonGame plugin as first consumer and prepare migrations for Inventory and Status Effects.
 
 ## Target Architecture (Tiers)
+
 - Tier 1: Contracts (netstandard2.1)
   - `LablabBean.Plugins.Contracts`
   - Interfaces: `IPlugin`, `IPluginRegistry`, `IPluginHost`, manifest models.
@@ -20,6 +22,7 @@ Adopt a tiered plugin architecture modeled after Winged Bean and PluginManoi: co
   - Future: Inventory, StatusEffects as separate plugins.
 
 ## Proposed Repository Layout
+
 ```
 dotnet/framework/
 ├── LablabBean.Plugins.Contracts/        # netstandard2.1
@@ -37,6 +40,7 @@ plugins/                                  # development plugins (optional)
 ```
 
 ## Phase Breakdown
+
 - Phase 0: Research & Constitution Check
   - Review `.agent/base/*` and Spec-Kit conventions.
   - Map prior art: CrossMilo contracts, PluginManoi loader/registry, Winged Bean hosts.
@@ -57,15 +61,17 @@ plugins/                                  # development plugins (optional)
   - Publish specs for Inventory and Status Effects pluginization.
 
 ## Risks & Mitigations
+
 - ALC unload complexity → keep references inside ALC; add unload tests.
 - Dependency cycles → explicit cycle detection; clear diagnostics.
 - DI collisions → plugin-only service namespaces; validate service keys.
 
 ## Project Integration Points
+
 - `dotnet/framework/LablabBean.Game.Core` will depend on contracts (for plugin-exposed services).
 - Hosts (`LablabBean.Console`, `LablabBean.Windows`) add loader hosted service.
 
 ## Deliverables
+
 - Contracts, Core libs, host integration, and demo plugin scaffolding.
 - Documentation: quickstart, research, tasks.
-

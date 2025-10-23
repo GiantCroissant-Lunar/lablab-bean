@@ -93,18 +93,21 @@ task release-and-run
 The stack consists of three main components:
 
 ### 1. Console App (`lablab-console`)
+
 - **Type**: Self-contained .NET application
 - **Location**: `build/_artifacts/<version>/publish/console/`
 - **Executable**: `LablabBean.Console.exe`
 - **Purpose**: Terminal UI / Console application
 
 ### 2. Windows App (`lablab-windows`)
+
 - **Type**: Self-contained .NET WPF application
 - **Location**: `build/_artifacts/<version>/publish/windows/`
 - **Executable**: `LablabBean.Windows.exe`
 - **Purpose**: Desktop GUI application
 
 ### 3. Web App (`lablab-web`)
+
 - **Type**: Astro + Node.js application
 - **Location**: `build/_artifacts/<version>/publish/website/`
 - **Entry Point**: `server/entry.mjs`
@@ -158,6 +161,7 @@ task test-full
 ```
 
 This will:
+
 1. Build the release
 2. Start the stack
 3. Wait for services to be ready
@@ -243,16 +247,19 @@ task list-versions
 ### Stack won't start
 
 1. Check if artifacts exist:
+
    ```bash
    task list-versions
    ```
 
 2. Check PM2 status:
+
    ```bash
    pm2 status
    ```
 
 3. View error logs:
+
    ```bash
    task stack-logs
    ```
@@ -260,21 +267,25 @@ task list-versions
 ### Tests failing
 
 1. Ensure stack is running:
+
    ```bash
    task stack-status
    ```
 
 2. Check web app is accessible:
+
    ```bash
    curl http://localhost:3000
    ```
 
 3. Run tests in headed mode to see what's happening:
+
    ```bash
    task test-web-headed
    ```
 
 4. Debug tests:
+
    ```bash
    task test-web-debug
    ```
@@ -295,12 +306,14 @@ task stack-run
 ## Development vs Production
 
 ### Development Mode
+
 - Uses `task stack-start` (from `website/` directory)
 - Runs from source with hot reload
 - Uses development dependencies
 - Uses `website/ecosystem.config.js`
 
 ### Production Mode
+
 - Uses `task stack-run` (from root directory)
 - Runs from versioned artifacts
 - Uses production dependencies only
@@ -365,7 +378,7 @@ Each release includes a `version.json` file with:
 
 1. Build your first release: `task build-release`
 2. Start the stack: `task stack-run`
-3. Open web interface: http://localhost:3000
+3. Open web interface: <http://localhost:3000>
 4. Run tests: `task test-web`
 5. Monitor with: `task stack-status`
 6. View test reports: `task test-report`

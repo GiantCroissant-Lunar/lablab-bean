@@ -1,7 +1,7 @@
 # Spec 008: Extended Contract Assemblies
 
-**Status**: Draft  
-**Prerequisites**: [Spec 007: Tiered Contract Architecture](../007-tiered-contract-architecture/spec.md) (Complete)  
+**Status**: Draft
+**Prerequisites**: [Spec 007: Tiered Contract Architecture](../007-tiered-contract-architecture/spec.md) (Complete)
 **Created**: 2025-10-21
 
 ## Overview
@@ -16,13 +16,16 @@ This specification extends the tiered contract architecture from Spec 007 by add
 ## Why These Contracts?
 
 ### Spec 007 Foundation
+
 Spec 007 established:
+
 - ✅ `IEventBus` - Event-driven communication (1.1M+ events/sec)
 - ✅ `LablabBean.Contracts.Game` - Game service contracts
 - ✅ `LablabBean.Contracts.UI` - UI service contracts
 - ✅ Event definitions and service patterns
 
 ### Spec 008 Extensions
+
 These 4 contracts are essential for a functional dungeon crawler:
 
 | Contract | Why Critical | Without It |
@@ -40,7 +43,7 @@ Spec 007 (Foundation)          Spec 008 (Extensions)
 ├── IRegistry                  ├── Input Contract
 ├── Game Contract              ├── Config Contract
 └── UI Contract                └── Resource Contract
-                               
+
 All use IEventBus for events ──┘
 All use IRegistry for services ─┘
 ```
@@ -79,24 +82,28 @@ All use IRegistry for services ─┘
 ## Implementation Phases
 
 ### Phase 1: Scene Contract (P1)
+
 - Scene loading/unloading
 - Camera and viewport management
 - Scene transition events
 - **Estimated**: 2-3 days
 
 ### Phase 2: Input Contract (P1)
+
 - Input scope stack
 - Input routing (topmost scope)
 - Action mapping
 - **Estimated**: 2-3 days
 
 ### Phase 3: Config Contract (P1)
+
 - Get/Set operations
 - Hierarchical sections
 - Change notifications
 - **Estimated**: 1-2 days
 
 ### Phase 4: Resource Contract (P1)
+
 - Async loading
 - Caching and preloading
 - Load success/failure events
@@ -107,6 +114,7 @@ All use IRegistry for services ─┘
 ## Out of Scope (Future Specs)
 
 Deferred to future specifications:
+
 - **Spec 009**: Audio, Analytics, Diagnostics contracts
 - **Spec 010**: Source generators for proxy services
 - **Spec 011**: Advanced resource features (streaming, compression)
@@ -115,15 +123,18 @@ Deferred to future specifications:
 ## References
 
 ### Gap Analysis Documents
+
 - [contract-gap-analysis.md](../../docs/_inbox/contract-gap-analysis.md) - Detailed gap analysis
 - [cross-milo-contract-adoption-analysis.md](../../docs/_inbox/cross-milo-contract-adoption-analysis.md) - Cross-milo patterns
 
 ### Related Specs
+
 - [Spec 007: Tiered Contract Architecture](../007-tiered-contract-architecture/spec.md) - Foundation
 - [Spec 001: Inventory System](../001-inventory-system/spec.md) - Example plugin
 - [Spec 002: Status Effects](../002-status-effects/spec.md) - Example plugin
 
 ### Cross-Milo Reference
+
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Scene/`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Input/`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Config/`
@@ -139,6 +150,6 @@ Deferred to future specifications:
 
 ---
 
-**Version**: 1.0.0  
-**Status**: Draft  
+**Version**: 1.0.0
+**Status**: Draft
 **Last Updated**: 2025-10-21

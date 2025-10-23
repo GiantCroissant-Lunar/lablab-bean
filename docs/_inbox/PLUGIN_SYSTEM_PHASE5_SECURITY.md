@@ -1,7 +1,7 @@
 # Plugin System Phase 5: Security & Sandboxing - Complete
 
-**Status**: ✅ Complete  
-**Date**: 2025-10-21  
+**Status**: ✅ Complete
+**Date**: 2025-10-21
 **Version**: 1.0.0
 
 ## 📋 Executive Summary
@@ -10,10 +10,10 @@ Phase 5 implements comprehensive security and sandboxing for the plugin system, 
 
 ## 🎯 Objectives Achieved
 
-✅ **Permission System** - Fine-grained access control with 20+ permissions  
-✅ **Resource Limits** - CPU, memory, threads, file handles, network connections  
-✅ **Sandboxed Execution** - Isolated plugin execution with timeout protection  
-✅ **Security Auditing** - Comprehensive logging of all security events  
+✅ **Permission System** - Fine-grained access control with 20+ permissions
+✅ **Resource Limits** - CPU, memory, threads, file handles, network connections
+✅ **Sandboxed Execution** - Isolated plugin execution with timeout protection
+✅ **Security Auditing** - Comprehensive logging of all security events
 ✅ **Trust Levels** - Configurable trust profiles (Untrusted, Standard, Elevated, Admin)
 
 ## 🏗️ Architecture
@@ -59,6 +59,7 @@ Plugin Operation Request
 ### 1. Permission System
 
 **20+ Granular Permissions:**
+
 - **File System**: Read, Write, Delete
 - **Network**: Access, Listen
 - **Registry**: Read, Write (Windows)
@@ -71,6 +72,7 @@ Plugin Operation Request
 - **Code**: Reflection, Unsafe Code
 
 **Permission Presets:**
+
 ```csharp
 PluginPermission.ReadOnly    // Safe read-only access
 PluginPermission.Standard    // Typical plugin needs
@@ -81,6 +83,7 @@ PluginPermission.Admin       // Full access (dangerous!)
 ### 2. Resource Limits
 
 **Configurable Per-Plugin:**
+
 - **Memory**: Max bytes (default: 100 MB)
 - **Threads**: Max thread count (default: 10)
 - **Execution Time**: Max duration (default: 5 minutes)
@@ -91,6 +94,7 @@ PluginPermission.Admin       // Full access (dangerous!)
 ### 3. Sandboxed Execution
 
 **Features:**
+
 - Permission checks before execution
 - Resource limit enforcement
 - Automatic timeout handling
@@ -100,6 +104,7 @@ PluginPermission.Admin       // Full access (dangerous!)
 ### 4. Security Auditing
 
 **Event Types Tracked:**
+
 - Permission granted/denied/revoked
 - Resource limit exceeded
 - Sandbox created/terminated
@@ -107,6 +112,7 @@ PluginPermission.Admin       // Full access (dangerous!)
 - Plugin loaded/unloaded
 
 **Query Capabilities:**
+
 - By plugin ID
 - By event type
 - By time range
@@ -117,6 +123,7 @@ PluginPermission.Admin       // Full access (dangerous!)
 ### New Files Created
 
 #### `PluginPermission.cs` (90 lines)
+
 ```csharp
 [Flags]
 public enum PluginPermission
@@ -125,7 +132,7 @@ public enum PluginPermission
     FileSystemRead = 1 << 0,
     FileSystemWrite = 1 << 1,
     // ... 20+ permissions
-    
+
     // Presets
     ReadOnly = FileSystemRead | RegistryRead | ...,
     Standard = ReadOnly | FileSystemWrite | ...,
@@ -144,6 +151,7 @@ public class PluginSecurityProfile
 ```
 
 #### `PluginSecurityManager.cs` (235 lines)
+
 ```csharp
 public class PluginSecurityManager
 {
@@ -157,6 +165,7 @@ public class PluginSecurityManager
 ```
 
 #### `PluginSandbox.cs` (220 lines)
+
 ```csharp
 public class PluginSandbox : IDisposable
 {
@@ -164,12 +173,13 @@ public class PluginSandbox : IDisposable
         Func<Task<T>> operation,
         PluginPermission requiredPermission,
         CancellationToken ct = default);
-        
+
     public void Terminate();  // Force-stop sandbox
 }
 ```
 
 #### `SecurityAuditLog.cs` (195 lines)
+
 ```csharp
 public class SecurityAuditLog
 {
@@ -184,6 +194,7 @@ public class SecurityAuditLog
 ### Modified Files
 
 #### `ServiceCollectionExtensions.cs`
+
 - Register `PluginSecurityManager`
 - Register `SecurityAuditLog`
 
@@ -329,18 +340,21 @@ dotnet run --project dotnet/examples/PluginSecurityDemo
 ## 🎯 Key Benefits
 
 ### For Host Applications
+
 - **Protection** - Guard against malicious plugins
 - **Isolation** - Sandbox prevents system-wide damage
 - **Control** - Fine-grained permission management
 - **Monitoring** - Track all security events
 
 ### For Plugin Developers
+
 - **Clear Boundaries** - Know what's allowed
 - **Trust Building** - Declare required permissions
 - **Fair Limits** - Reasonable resource constraints
 - **Transparency** - Understand denials
 
 ### For Operations
+
 - **Auditing** - Complete security event log
 - **Compliance** - Track access and violations
 - **Forensics** - Investigate security incidents
@@ -349,43 +363,51 @@ dotnet run --project dotnet/examples/PluginSecurityDemo
 ## 📐 Design Decisions
 
 ### 1. Flag-Based Permissions
-**Decision**: Use `[Flags]` enum for permissions  
-**Rationale**: Efficient bitwise operations, composable presets  
+
+**Decision**: Use `[Flags]` enum for permissions
+**Rationale**: Efficient bitwise operations, composable presets
 **Trade-off**: Limited to 64 permissions (sufficient for now)
 
 ### 2. Soft Limits
-**Decision**: Resource limits are advisory, not enforced by OS  
-**Rationale**: Cross-platform compatibility, simplicity  
+
+**Decision**: Resource limits are advisory, not enforced by OS
+**Rationale**: Cross-platform compatibility, simplicity
 **Trade-off**: Malicious plugin could exceed limits briefly
 
 ### 3. In-Process Sandboxing
-**Decision**: Use AssemblyLoadContext, not OS processes  
-**Rationale**: Performance, simplicity, .NET integration  
+
+**Decision**: Use AssemblyLoadContext, not OS processes
+**Rationale**: Performance, simplicity, .NET integration
 **Trade-off**: Less isolation than separate processes
 
 ### 4. Optional Security
-**Decision**: Security is opt-in per plugin  
-**Rationale**: Backward compatibility, flexibility  
+
+**Decision**: Security is opt-in per plugin
+**Rationale**: Backward compatibility, flexibility
 **Trade-off**: Defaults are permissive (must configure)
 
 ## 🔮 Future Enhancements
 
 ### Phase 5.1: Enhanced Sandboxing
+
 - OS-level process isolation
 - AppDomain-style security policies
 - Code Access Security (CAS) integration
 
 ### Phase 5.2: Permission Elevation
+
 - Dynamic permission requests
 - User consent dialogs
 - Temporary permission grants
 
 ### Phase 5.3: Advanced Limits
+
 - CPU time limits (affinity, throttling)
 - Disk I/O rate limiting
 - Network bandwidth limiting
 
 ### Phase 5.4: Security Policies
+
 - Policy files (JSON/XML)
 - Group-based permissions
 - Role-based access control (RBAC)
@@ -415,18 +437,21 @@ dotnet run --project dotnet/examples/PluginSecurityDemo
 ## 🎓 Lessons Learned
 
 ### What Went Well
+
 - Clean permission model with presets
 - Easy-to-use sandbox API
 - Comprehensive audit logging
 - Seamless DI integration
 
 ### Challenges
+
 - Cross-platform resource monitoring
 - Balancing security vs. usability
 - Performance impact of monitoring
 - Testing sandboxed scenarios
 
 ### Improvements for Next Time
+
 - Consider process-level isolation
 - Add permission request workflow
 - Implement policy file support
@@ -454,6 +479,7 @@ Phase 5 delivers production-grade security for the plugin system with:
 ---
 
 **Next Phase**: Phase 6 - Plugin Marketplace & Discovery
+
 - Plugin registry/marketplace
 - Version management
 - Dependency resolution

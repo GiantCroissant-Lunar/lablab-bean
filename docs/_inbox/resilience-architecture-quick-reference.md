@@ -110,18 +110,21 @@ The resilience implementation **already correctly follows** the Tier 1-4 pattern
 ## Key Points
 
 ### ✅ Tier 1 - Interface (Stable Contract)
+
 - Lives in **default ALC** (shared across host and plugins)
 - Never moves or changes namespace
 - Defines the public API consumers depend on
 - Includes `IService`, `ICircuitBreaker`, `IRetryPolicy` interfaces
 
 ### ✅ Tier 2 - Proxy (Delegation Layer)
+
 - Lives in **default ALC** (registered in DI at startup)
 - Uses `[RealizeService]` attribute for source generation
 - **Does almost nothing** except delegate to registry-selected Tier 3
 - Registered before plugins load; consumers get this instance
 
 ### ✅ Tier 3 - Real Service (Actual Implementation)
+
 - Lives in **plugin ALC**
 - Implements `IService` from Tier 1 (shared contract)
 - Contains actual resilience logic using Polly v8
@@ -129,6 +132,7 @@ The resilience implementation **already correctly follows** the Tier 1-4 pattern
 - Can be replaced/supplemented by other plugins
 
 ### ✅ Tier 4 - Providers (Building Blocks)
+
 - Lives in **plugin ALC**
 - Implement shared interfaces (`ICircuitBreaker`, `IRetryPolicy`)
 - Used internally by Tier 3 to build resilience patterns
@@ -145,6 +149,7 @@ return await implementation.ExecuteWithRetryAsync(...);
 ```
 
 Selection modes:
+
 - **First**: Use first registered implementation
 - **HighestPriority**: Use implementation with highest priority (default, priority=100)
 - **All**: (Future) Aggregate multiple implementations
@@ -159,7 +164,7 @@ IService interface (Tier 1)
 Proxy                Real Service
 (Tier 2)             (Tier 3)
 Default ALC          Plugin ALC
-                     
+
 Both implement the SAME interface from default ALC
 → No type identity issues
 → DI resolution works seamlessly
@@ -198,25 +203,27 @@ Both implement the SAME interface from default ALC
 ## Comparison: With vs Without Plugin Route
 
 ### With Plugin Route (Current - Tiered)
+
 ```
 Host:
   - Tier 1 (IService contract)
   - Tier 2 (Proxy)
-  
+
 Plugin:
   - Tier 3 (ResilienceService)
   - Tier 4 (PollyCircuitBreaker, PollyRetryPolicy)
-  
+
 Benefits: Extensible, replaceable, runtime selection
 ```
 
 ### Without Plugin Route (Alternative - Direct)
+
 ```
 Host:
   - Tier 1 (IService contract)
   - Tier 3 (ResilienceService) - directly in host
   - Tier 4 (Providers) - directly in host
-  
+
 No Tier 2 proxy needed
 No plugin, no registry, no late binding
 
@@ -258,5 +265,5 @@ plugins/LablabBean.Plugins.Resilience.Polly/
 
 ---
 
-**Status**: ✅ **Implementation Complete and Correct**  
+**Status**: ✅ **Implementation Complete and Correct**
 **Last Verified**: 2025-10-23

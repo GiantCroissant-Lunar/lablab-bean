@@ -24,7 +24,7 @@ namespace LablabBean.Contracts.Resilience.Services.Proxy;
 public partial class Service : IService
 {
     private readonly IRegistry _registry;
-    
+
     public Service(IRegistry registry)
     {
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
@@ -67,7 +67,7 @@ var host = Host.CreateDefaultBuilder(args)
     {
         // Step 1: Register plugin system (IRegistry)
         services.AddPluginSystem(context.Configuration);
-        
+
         // Step 2: Register resilience proxy (auto-generated!)
         services.AddResilienceServiceProxy();
     })
@@ -77,20 +77,24 @@ var host = Host.CreateDefaultBuilder(args)
 ## Benefits
 
 ### ✅ Zero Boilerplate
+
 - No manual `AddSingleton<IService>()` calls
 - No lambda expressions to write
 - No risk of typos in registration
 
 ### ✅ Type Safety
+
 - Compiler-verified at build time
 - IntelliSense support
 - Refactoring-safe
 
 ### ✅ Consistent Naming
+
 - Method name derived from namespace and interface: `Add{Domain}{Service}Proxy()`
 - Example: `IService` in `Resilience` → `AddResilienceServiceProxy()`
 
 ### ✅ Documentation Built-in
+
 - XML comments auto-generated
 - Usage notes included
 - Parameter descriptions
@@ -112,6 +116,7 @@ Pattern: `Add{DomainFromNamespace}{InterfaceWithoutI}Proxy()`
 **Location**: `framework/LablabBean.SourceGenerators.Proxy/DIExtensionsGenerator.cs`
 
 **Algorithm**:
+
 1. Scan for classes with `[RealizeService]` attribute
 2. Extract service interface type from attribute argument
 3. Derive namespace and interface name
@@ -178,6 +183,7 @@ if (configuration.GetValue<bool>("Features:Resilience"))
 **Symptom**: `AddResilienceServiceProxy()` not available in IntelliSense
 
 **Solutions**:
+
 1. Rebuild the `LablabBean.Contracts.Resilience` project
 2. Check that `[RealizeService]` attribute is present on proxy class
 3. Verify `LablabBean.SourceGenerators.Proxy` is referenced as `Analyzer`
@@ -196,6 +202,7 @@ if (configuration.GetValue<bool>("Features:Resilience"))
 **Symptom**: Source generator fails to compile
 
 **Check**:
+
 - Generator project targets `netstandard2.0`
 - No `required` keyword used (not supported in netstandard2.0)
 - All dependencies are compatible with analyzer restrictions
@@ -220,6 +227,7 @@ dotnet run
 ```
 
 Expected output:
+
 ```
 ✅ Resilience proxy registered via source-generated extension method
 ✅ IService resolved: Service
@@ -230,12 +238,14 @@ Expected output:
 ## Best Practices
 
 ### ✅ DO
+
 - Always call `AddPluginSystem()` before proxy registration
 - Use meaningful domain names in namespace
 - One `[RealizeService]` per interface
 - Keep proxy classes in `*.Proxy` namespace
 
 ### ❌ DON'T
+
 - Register proxy without `AddPluginSystem()`
 - Mix manual registration with generated methods
 - Use same interface in multiple domains
@@ -254,5 +264,5 @@ Expected output:
 - Tests: (TBD - integration tests for generator)
 
 ---
-**Last Updated**: 2025-10-23  
+**Last Updated**: 2025-10-23
 **Generator Version**: 1.0.0

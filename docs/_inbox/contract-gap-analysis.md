@@ -37,6 +37,7 @@ This document analyzes the gaps between lablab-bean's current contract implement
 | **Terminal** | ✅ CrossMilo.Contracts.Terminal | ❌ Missing | ❌ Gap |
 
 **Summary**:
+
 - Cross-Milo: 15 contract assemblies
 - Lablab-Bean: 2 contract assemblies (Game, UI) + 1 base (Plugins.Contracts)
 - **Gap: 13 missing contract domains**
@@ -55,6 +56,7 @@ This document analyzes the gaps between lablab-bean's current contract implement
 | **Attributes** | ✅ RealizeService, SelectionStrategy | ❌ Missing | ❌ Major Gap |
 
 **Summary**:
+
 - ✅ Complete: IRegistry, ServiceRegistry, SelectionMode, ServiceMetadata (4/8)
 - ❌ Missing: IEventBus, EventBus implementation, Source Generator, Attributes (4/8)
 
@@ -63,9 +65,11 @@ This document analyzes the gaps between lablab-bean's current contract implement
 ### 1. Missing Base Contracts (Tier 1)
 
 #### IEventBus Interface
+
 **Status**: ❌ **Critical Gap**
 
 **What's Missing**:
+
 ```csharp
 // Location: LablabBean.Plugins.Contracts/IEventBus.cs (DOES NOT EXIST)
 public interface IEventBus
@@ -76,6 +80,7 @@ public interface IEventBus
 ```
 
 **Impact**:
+
 - No event-driven communication between plugins
 - Plugins must use direct dependencies or polling
 - Cannot implement analytics, diagnostics, or other cross-cutting concerns
@@ -87,15 +92,18 @@ public interface IEventBus
 ### 2. Missing Source Generator (Tier 2)
 
 #### CrossMilo.SourceGenerators.Proxy
+
 **Status**: ❌ **Major Gap**
 
 **What's Missing**:
+
 - Roslyn source generator that automatically generates proxy service implementations
 - `[RealizeService(typeof(IService))]` attribute
 - `[SelectionStrategy(SelectionMode.HighestPriority)]` attribute
 - Automatic delegation to `IRegistry.Get<T>()`
 
 **Example of Generated Code** (from cross-milo):
+
 ```csharp
 // Developer writes this:
 [RealizeService(typeof(IService))]
@@ -120,6 +128,7 @@ public partial class ProxyService
 ```
 
 **Impact**:
+
 - Developers must manually write proxy delegation code
 - Increased boilerplate and maintenance burden
 - Inconsistent proxy patterns across services
@@ -134,11 +143,13 @@ public partial class ProxyService
 #### High Priority Contracts (Needed for Dungeon Crawler)
 
 ##### 3.1 LablabBean.Contracts.Scene
+
 **Status**: ❌ **High Priority Gap**
 
 **Cross-Milo Equivalent**: `CrossMilo.Contracts.Scene`
 
 **What It Provides**:
+
 ```csharp
 // Scene service interface
 public interface IService
@@ -160,6 +171,7 @@ public record Viewport(int Width, int Height);
 ```
 
 **Why Needed**:
+
 - Dungeon level/scene management
 - Camera and viewport control
 - World rendering coordination
@@ -170,11 +182,13 @@ public record Viewport(int Width, int Height);
 ---
 
 ##### 3.2 LablabBean.Contracts.Input
+
 **Status**: ❌ **High Priority Gap**
 
 **Cross-Milo Equivalent**: `CrossMilo.Contracts.Input`
 
 **What It Provides**:
+
 ```csharp
 // Input router (scope-based input handling)
 namespace Input.Router;
@@ -199,6 +213,7 @@ public record InputActionTriggeredEvent(string Action, DateTimeOffset Timestamp)
 ```
 
 **Why Needed**:
+
 - Keyboard input handling for dungeon navigation
 - Modal input scopes (menus, dialogs, in-game)
 - Action mapping (arrow keys → move north, 'i' → inventory)
@@ -209,11 +224,13 @@ public record InputActionTriggeredEvent(string Action, DateTimeOffset Timestamp)
 ---
 
 ##### 3.3 LablabBean.Contracts.Config
+
 **Status**: ❌ **High Priority Gap**
 
 **Cross-Milo Equivalent**: `CrossMilo.Contracts.Config`
 
 **What It Provides**:
+
 ```csharp
 public interface IService
 {
@@ -231,6 +248,7 @@ public record ConfigChangedEvent(string Key, string? OldValue, string? NewValue,
 ```
 
 **Why Needed**:
+
 - Game settings (difficulty, graphics, keybindings)
 - Plugin configuration
 - Runtime config reload
@@ -241,11 +259,13 @@ public record ConfigChangedEvent(string Key, string? OldValue, string? NewValue,
 ---
 
 ##### 3.4 LablabBean.Contracts.Audio
+
 **Status**: ❌ **Medium Priority Gap**
 
 **Cross-Milo Equivalent**: `CrossMilo.Contracts.Audio`
 
 **What It Provides**:
+
 ```csharp
 public interface IService
 {
@@ -265,6 +285,7 @@ public record AudioPlayOptions(float Volume = 1.0f, bool Loop = false);
 ```
 
 **Why Needed**:
+
 - Sound effects (combat, movement, item pickup)
 - Background music for dungeons
 - Audio feedback for UI interactions
@@ -277,11 +298,13 @@ public record AudioPlayOptions(float Volume = 1.0f, bool Loop = false);
 #### Medium Priority Contracts (Cross-Cutting Concerns)
 
 ##### 3.5 LablabBean.Contracts.Analytics
+
 **Status**: ❌ **Medium Priority Gap**
 
 **Cross-Milo Equivalent**: `CrossMilo.Contracts.Analytics`
 
 **What It Provides**:
+
 ```csharp
 public interface IService
 {
@@ -296,6 +319,7 @@ public record AnalyticsEventTrackedEvent(string EventName, DateTimeOffset Timest
 ```
 
 **Why Needed**:
+
 - Player behavior tracking
 - Game metrics (deaths, level completion times)
 - A/B testing support
@@ -306,11 +330,13 @@ public record AnalyticsEventTrackedEvent(string EventName, DateTimeOffset Timest
 ---
 
 ##### 3.6 LablabBean.Contracts.Diagnostics
+
 **Status**: ❌ **Medium Priority Gap**
 
 **Cross-Milo Equivalent**: `CrossMilo.Contracts.Diagnostics`
 
 **What It Provides**:
+
 ```csharp
 public interface IService
 {
@@ -325,6 +351,7 @@ public record ErrorCapturedEvent(Exception Error, DateTimeOffset Timestamp);
 ```
 
 **Why Needed**:
+
 - Error tracking and reporting
 - Debug breadcrumbs
 - Performance monitoring
@@ -335,11 +362,13 @@ public record ErrorCapturedEvent(Exception Error, DateTimeOffset Timestamp);
 ---
 
 ##### 3.7 LablabBean.Contracts.Resource
+
 **Status**: ❌ **Medium Priority Gap**
 
 **Cross-Milo Equivalent**: `CrossMilo.Contracts.Resource`
 
 **What It Provides**:
+
 ```csharp
 public interface IService
 {
@@ -355,6 +384,7 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 ```
 
 **Why Needed**:
+
 - Asset loading (sprites, tiles, data files)
 - Resource caching
 - Preloading for performance
@@ -367,26 +397,32 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 #### Lower Priority Contracts (Advanced Features)
 
 ##### 3.8 LablabBean.Contracts.Resilience
+
 **What It Provides**: Retry policies, circuit breakers, timeout handling
 **Priority**: 🟢 **P4 - Optional**
 
 ##### 3.9 LablabBean.Contracts.Recorder
+
 **What It Provides**: Replay recording/playback (URF format)
 **Priority**: 🟢 **P4 - Optional**
 
 ##### 3.10 LablabBean.Contracts.Capability
+
 **What It Provides**: Capability evaluation and decision making
 **Priority**: 🟢 **P4 - Optional**
 
 ##### 3.11 LablabBean.Contracts.Goap
+
 **What It Provides**: Goal-Oriented Action Planning for AI
 **Priority**: 🟢 **P4 - Optional**
 
 ##### 3.12 LablabBean.Contracts.Hosting
+
 **What It Provides**: Host lifecycle and environment abstraction
 **Priority**: 🟢 **P4 - Optional**
 
 ##### 3.13 LablabBean.Contracts.Terminal
+
 **What It Provides**: Terminal-specific rendering contracts
 **Priority**: 🟢 **P4 - Optional** (may be covered by UI contracts)
 
@@ -395,9 +431,11 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 ## Recommended Phased Implementation
 
 ### Phase 1: Foundation (Spec 007 - Current)
+
 **Goal**: Event-driven architecture basics
 
 ✅ Already in spec:
+
 - Add `IEventBus` to `LablabBean.Plugins.Contracts`
 - Implement `EventBus` in `LablabBean.Plugins.Core`
 - Update `LablabBean.Contracts.Game` with events
@@ -408,9 +446,11 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 ---
 
 ### Phase 2: Core Game Contracts
+
 **Goal**: Essential contracts for dungeon crawler
 
 🆕 Should add to spec:
+
 - `LablabBean.Contracts.Scene` - Level/dungeon management, camera, viewport
 - `LablabBean.Contracts.Input` - Input routing, mapping, scopes
 - `LablabBean.Contracts.Config` - Configuration management
@@ -419,6 +459,7 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 **Priority**: 🔴 **P1**
 
 **Justification**:
+
 - Scene: Required for dungeon navigation and world rendering
 - Input: Required for player controls and modal interactions
 - Config: Required for game settings and plugin configuration
@@ -427,9 +468,11 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 ---
 
 ### Phase 3: Source Generator
+
 **Goal**: Reduce boilerplate with automated proxy generation
 
 🆕 New infrastructure:
+
 - `LablabBean.SourceGenerators.Proxy` project
 - `[RealizeService]` attribute
 - `[SelectionStrategy]` attribute
@@ -438,6 +481,7 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 **Priority**: 🟠 **P2**
 
 **Benefits**:
+
 - Eliminates manual proxy delegation code
 - Ensures consistency across all services
 - Reduces bugs from manual delegation
@@ -448,9 +492,11 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 ---
 
 ### Phase 4: Cross-Cutting Contracts
+
 **Goal**: Analytics, diagnostics, audio
 
 🆕 Optional enhancements:
+
 - `LablabBean.Contracts.Analytics` - Player metrics
 - `LablabBean.Contracts.Diagnostics` - Error tracking
 - `LablabBean.Contracts.Audio` - Sound effects and music
@@ -460,9 +506,11 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 ---
 
 ### Phase 5: Advanced Contracts (Future)
+
 **Goal**: Advanced features as needed
 
 🆕 Optional future work:
+
 - `LablabBean.Contracts.Resilience`
 - `LablabBean.Contracts.Recorder`
 - `LablabBean.Contracts.Capability`
@@ -477,7 +525,9 @@ public record ResourceLoadFailedEvent(string ResourceId, Exception Error, DateTi
 ## Impact on Spec 007
 
 ### Current Spec Scope
+
 The current specification (`007-tiered-contract-architecture`) focuses on:
+
 - ✅ IEventBus foundation
 - ✅ LablabBean.Contracts.Game (already exists, add events)
 - ✅ LablabBean.Contracts.UI (already exists, add events)
@@ -487,6 +537,7 @@ The current specification (`007-tiered-contract-architecture`) focuses on:
 ### Recommended Spec Updates
 
 **Option A: Expand Spec 007 (Comprehensive)**
+
 - Include Phase 1 + Phase 2 + Phase 3
 - Add Scene, Input, Config, Resource contracts
 - Add source generator implementation
@@ -494,6 +545,7 @@ The current specification (`007-tiered-contract-architecture`) focuses on:
 - **Con**: Larger scope, longer implementation time
 
 **Option B: Keep Spec 007 Focused (Incremental)**
+
 - Keep current scope (IEventBus + Game/UI events only)
 - Create separate specs for:
   - Spec 008: Core Game Contracts (Scene, Input, Config, Resource)
@@ -504,6 +556,7 @@ The current specification (`007-tiered-contract-architecture`) focuses on:
 **Recommendation**: **Option A** - Expand Spec 007 to include Phase 1 + Phase 2, defer Phase 3 (source generator) to Spec 008
 
 **Rationale**:
+
 - Scene, Input, Config, Resource are all essential for a functional dungeon crawler
 - Without these contracts, the event bus has limited value (fewer events to publish)
 - Source generator is valuable but can be added later without blocking development
@@ -546,6 +599,7 @@ The current specification (`007-tiered-contract-architecture`) focuses on:
 ## References
 
 ### Cross-Milo Contract Files
+
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Scene/`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Input/`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Config/`
@@ -555,6 +609,7 @@ The current specification (`007-tiered-contract-architecture`) focuses on:
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.SourceGenerators.Proxy/`
 
 ### Lablab-Bean Current Files
+
 - `dotnet/framework/LablabBean.Contracts.Game/` (exists)
 - `dotnet/framework/LablabBean.Contracts.UI/` (exists)
 - `dotnet/framework/LablabBean.Plugins.Contracts/IRegistry.cs` (exists)

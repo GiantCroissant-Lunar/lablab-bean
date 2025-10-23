@@ -30,6 +30,7 @@ dotnet add reference ../../framework/LablabBean.Plugins.Contracts/LablabBean.Plu
 ```
 
 **Update .csproj**:
+
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
@@ -71,30 +72,30 @@ public class MyPlugin : IPlugin
     {
         _logger = context.Logger;
         _host = context.Host;
-        
+
         _logger.LogInformation("MyPlugin initialized");
-        
+
         // Register services if needed
         // context.Registry.Register<IMyService, MyService>(priority: 100);
-        
+
         return Task.CompletedTask;
     }
 
     public Task StartAsync(CancellationToken ct = default)
     {
         _logger?.LogInformation("MyPlugin started");
-        
+
         // Start background work, subscribe to events, etc.
-        
+
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken ct = default)
     {
         _logger?.LogInformation("MyPlugin stopping");
-        
+
         // Clean up resources
-        
+
         return Task.CompletedTask;
     }
 }
@@ -128,6 +129,7 @@ The `entryPoint` dictionary maps profile names to entry points:
 ```
 
 **Profiles**:
+
 - `dotnet.console` - Console host (Terminal.Gui)
 - `dotnet.sadconsole` - SadConsole host
 - `unity` - Unity engine (future)
@@ -181,6 +183,7 @@ Copy-Item "bin/Release/net8.0/*" -Destination $dest -Recurse -Force
 ## Step 5: Test
 
 ### Option 1: Test Harness
+
 ```bash
 # Add your plugin to plugins/my-plugin/
 # Run test harness
@@ -188,6 +191,7 @@ dotnet run --project .\dotnet\examples\PluginTestHarness
 ```
 
 ### Option 2: Full Host
+
 ```bash
 # Update appsettings.json
 {
@@ -262,7 +266,7 @@ public Task InitializeAsync(IPluginContext context, CancellationToken ct)
         priority: 100,
         singleton: true
     );
-    
+
     return Task.CompletedTask;
 }
 ```
@@ -316,6 +320,7 @@ private void OnPlayerMoved(PlayerMovedEvent evt)
 ### Enable Debug Logging
 
 **appsettings.json**:
+
 ```json
 {
   "Logging": {
@@ -330,18 +335,21 @@ private void OnPlayerMoved(PlayerMovedEvent evt)
 ### Common Issues
 
 #### Plugin Not Discovered
+
 - ✅ Check `plugin.json` is in plugin directory
 - ✅ Check plugin directory is under configured plugin path
 - ✅ Check manifest is valid JSON
 - ✅ Check `id`, `name`, `version` are present
 
 #### Plugin Not Loaded
+
 - ✅ Check entry point format: `"Assembly.dll,Namespace.Type"`
 - ✅ Check assembly and type names match exactly
 - ✅ Check profile matches configured profile
 - ✅ Check plugin implements `IPlugin` interface
 
 #### Type Cast Exception
+
 - ✅ Ensure `LablabBean.Plugins.Contracts` is referenced, not embedded
 - ✅ Check `EnableDynamicLoading=true` in .csproj
 - ✅ Don't copy contracts DLL to plugin directory (let it be shared)
@@ -349,6 +357,7 @@ private void OnPlayerMoved(PlayerMovedEvent evt)
 ## Best Practices
 
 ### ✅ DO
+
 - Use structured logging with semantic properties
 - Handle cancellation tokens properly
 - Register services with appropriate priority
@@ -357,6 +366,7 @@ private void OnPlayerMoved(PlayerMovedEvent evt)
 - Document your plugin's capabilities
 
 ### ❌ DON'T
+
 - Block in lifecycle methods
 - Catch and swallow exceptions silently
 - Depend on plugin load order (use explicit dependencies)
@@ -378,6 +388,7 @@ See `dotnet/examples/LablabBean.Plugin.Demo` for a complete working example.
 ## Troubleshooting
 
 For issues:
+
 1. Check logs with `Debug` level enabled
 2. Review [PLUGIN_SYSTEM_PHASE5_COMPLETE.md](PLUGIN_SYSTEM_PHASE5_COMPLETE.md) for known issues
 3. Compare your plugin to the demo plugin

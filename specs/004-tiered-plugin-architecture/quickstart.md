@@ -45,6 +45,7 @@ public sealed class DungeonGamePlugin : IPlugin
 ```
 
 Manifest: `plugin.json`
+
 ```json
 {
   "id": "lablab.dungeongame",
@@ -57,13 +58,16 @@ Manifest: `plugin.json`
 ```
 
 ## 2) Place Plugin
+
 - Build plugin to `./plugins/LablabBean.Plugins.DungeonGame/bin/Debug/net8.0/` (or copy to `./build/plugins`)
 - Ensure `plugin.json` is alongside the DLL.
 
 ## 3) Integrate Loader in Host (net8.0)
+
 - Console host (`dotnet/console-app/LablabBean.Console`):
   - Add a hosted service that scans `plugins/`, parses manifests, loads assemblies via ALC, and starts plugins.
   - Configure via `appsettings.json`:
+
 ```json
 {
   "plugins": {
@@ -74,12 +78,15 @@ Manifest: `plugin.json`
 ```
 
 ## 4) Run
+
 - Task: `task dotnet-run-console`
 - Verify logs show discovery and startup of `lablab.dungeongame`.
 
 ## 5) Hot Reload (optional)
+
 - Replace plugin DLL; the hosted service detects changes and reloads.
 
 ## References
+
 - Winged Bean plugin docs: `ref-projects/winged-bean/docs/*`
 - PluginManoi loader/registry tests: `ref-projects/plugin-manoi/dotnet/framework/tests/*`

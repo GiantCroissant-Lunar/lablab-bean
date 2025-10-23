@@ -30,17 +30,20 @@ dotnet run --project dotnet/examples/InventoryPluginDemo
 ### Plugin Features
 
 **Item Management**:
+
 - Pick up items from the game world
 - Manage inventory (max capacity: 20 items)
 - Query pickupable items within 1 tile
 
 **Consumables**:
+
 - Use potions and consumables
 - Health restoration
 - Automatic stack management
 - Status effect integration
 
 **Equipment**:
+
 - 9 equipment slots (weapon, armor, accessories)
 - Equip/unequip functionality
 - Automatic stat calculation (ATK/DEF/SPD bonuses)
@@ -183,6 +186,7 @@ All scenarios from the original inventory spec work:
 ## 🔒 Security
 
 **Permission Profile**: Standard
+
 - ✅ Service registration
 - ✅ Event publishing
 - ✅ Read-only operations
@@ -202,12 +206,14 @@ Safe for typical plugin scenarios.
 ## 🎯 Migration Path
 
 ### Current State
+
 - ✅ Plugin created and working
 - ✅ Public API defined
 - ✅ All features migrated
 - ✅ Demo validates functionality
 
 ### Integration Steps
+
 1. Load inventory plugin in host startup
 2. Retrieve `IInventoryService` from registry
 3. Replace direct `InventorySystem` calls with service calls
@@ -215,6 +221,7 @@ Safe for typical plugin scenarios.
 5. (Optional) Deprecate original `InventorySystem`
 
 ### Zero Breaking Changes
+
 - Original `LablabBean.Game.Core.Systems.InventorySystem` remains untouched
 - Can run both systems side-by-side during migration
 - No changes required to existing apps
@@ -223,11 +230,13 @@ Safe for typical plugin scenarios.
 ## 🔄 Next Steps
 
 **Immediate**:
+
 - Wire event notifications to `IPluginHost`
 - Update console app HUD (optional)
 - Add plugin loading configuration
 
 **Future**:
+
 - **Spec 006**: Status Effects Plugin Migration
 - Additional read models as needed
 - Performance optimization
@@ -245,9 +254,9 @@ Safe for typical plugin scenarios.
 
 ---
 
-**Version**: 1.0.0  
-**Spec**: 005-inventory-plugin-migration  
-**Status**: ✅ COMPLETE  
+**Version**: 1.0.0
+**Spec**: 005-inventory-plugin-migration
+**Status**: ✅ COMPLETE
 **Date**: 2025-10-21
 
 For detailed API documentation, see: `dotnet/plugins/LablabBean.Plugins.Inventory/README.md`

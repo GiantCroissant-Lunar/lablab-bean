@@ -15,22 +15,22 @@ public class DifficultyScalingSystem
 {
     /// <summary>Scaling factor per level (12% increase)</summary>
     private const double ScalingFactor = 1.12;
-    
+
     /// <summary>Base loot drop rate at level 1</summary>
     private const double BaseLootDropRate = 0.10;
-    
+
     /// <summary>Loot drop rate increase per level</summary>
     private const double LootDropRatePerLevel = 0.05;
-    
+
     /// <summary>Maximum loot drop rate (cap)</summary>
     private const double MaxLootDropRate = 0.60;
-    
+
     /// <summary>Maximum level for scaling (prevents overflow)</summary>
     private const int MaxScalingLevel = 30;
-    
+
     /// <summary>Feet per dungeon level for depth display</summary>
     private const int FeetPerLevel = 30;
-    
+
     private readonly World _world;
     private readonly Random _random;
 
@@ -52,7 +52,7 @@ public class DifficultyScalingSystem
     /// <returns>Scaled stat value</returns>
     /// <remarks>
     /// Formula: scaledStat = baseStat × (1.12 ^ (level - 1))
-    /// 
+    ///
     /// Examples:
     /// - Level 1: 20 HP → 20 HP (1.00x)
     /// - Level 5: 20 HP → 32 HP (1.57x)
@@ -78,7 +78,7 @@ public class DifficultyScalingSystem
     /// Scales the following components:
     /// - Health: Current and Maximum
     /// - Combat: Attack and Defense
-    /// 
+    ///
     /// Preserves:
     /// - Enemy type and behavior
     /// - Position
@@ -121,7 +121,7 @@ public class DifficultyScalingSystem
     /// <returns>Drop rate (0.0 to 1.0)</returns>
     /// <remarks>
     /// Formula: dropRate = min(0.10 + (level × 0.05), 0.60)
-    /// 
+    ///
     /// Examples:
     /// - Level 1: 10% drop rate
     /// - Level 5: 30% drop rate
@@ -219,22 +219,22 @@ public struct ScalingStats
 {
     /// <summary>Level number</summary>
     public int Level { get; set; }
-    
+
     /// <summary>Scaling multiplier (e.g., 1.57x for level 5)</summary>
     public double Multiplier { get; set; }
-    
+
     /// <summary>Loot drop rate (0.0 to 1.0)</summary>
     public double LootDropRate { get; set; }
-    
+
     /// <summary>Depth in feet</summary>
     public int DepthInFeet { get; set; }
-    
+
     /// <summary>Example enemy health (20 HP base)</summary>
     public int ExampleHealth { get; set; }
-    
+
     /// <summary>Example enemy attack (5 ATK base)</summary>
     public int ExampleAttack { get; set; }
-    
+
     /// <summary>Example enemy defense (2 DEF base)</summary>
     public int ExampleDefense { get; set; }
 }

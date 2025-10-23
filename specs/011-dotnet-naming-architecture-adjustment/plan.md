@@ -10,6 +10,7 @@
 This plan implements DOC-2025-00042 to standardize naming, introduce contract-level proxy services, convert reporting renderers to plugins, and prepare a platform-agnostic loader abstraction.
 
 Phases:
+
 - Phase 1: Simple renames (low risk)
   - `LablabBean.Reporting.Abstractions` → `LablabBean.Reporting.Contracts`
   - `LablabBean.Reporting.SourceGen` → `LablabBean.SourceGenerators.Reporting`
@@ -24,14 +25,14 @@ Phases:
 
 ## Technical Context
 
-**Language/Version**: .NET 8 (C# 12)  
-**Primary Dependencies**: Microsoft.CodeAnalysis 4.9.x (incremental generators), Microsoft.CodeAnalysis.Analyzers, Microsoft.Extensions.*; existing plugin system (`LablabBean.Plugins.Core`, `LablabBean.Plugins.Contracts`)  
-**Storage**: N/A  
-**Testing**: xUnit, FluentAssertions; source generator tests as needed  
+**Language/Version**: .NET 8 (C# 12)
+**Primary Dependencies**: Microsoft.CodeAnalysis 4.9.x (incremental generators), Microsoft.CodeAnalysis.Analyzers, Microsoft.Extensions.*; existing plugin system (`LablabBean.Plugins.Core`, `LablabBean.Plugins.Contracts`)
+**Storage**: N/A
+**Testing**: xUnit, FluentAssertions; source generator tests as needed
 **Target Platform**: Windows/Linux (CI), .NET SDK 8.x
-**Project Type**: Multi-project library + plugins  
-**Performance Goals**: No regression in build time; generator functions under typical solution load  
-**Constraints**: Zero breaking namespace errors; all solution tests pass post-rename  
+**Project Type**: Multi-project library + plugins
+**Performance Goals**: No regression in build time; generator functions under typical solution load
+**Constraints**: Zero breaking namespace errors; all solution tests pass post-rename
 **Scale/Scope**: Repository-wide naming for reporting assemblies and related plugins
 
 ## Constitution Check
@@ -107,4 +108,3 @@ directories captured above]
 |-----------|------------|-------------------------------------|
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
-

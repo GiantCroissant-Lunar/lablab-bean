@@ -25,6 +25,7 @@
 **Contract Location**: `specs/004-tiered-plugin-architecture/contracts/IPlugin.cs`
 
 **Verified Changes**:
+
 ```csharp
 // ✅ Correct IPluginContext pattern
 public interface IPlugin
@@ -57,6 +58,7 @@ public interface IPluginContext
 **Contract Location**: `specs/004-tiered-plugin-architecture/contracts/IRegistry.cs`
 
 **Verified Changes**:
+
 ```csharp
 // ✅ Complete service registry interface
 public interface IRegistry
@@ -96,6 +98,7 @@ public class ServiceMetadata
 **Contract Location**: `specs/004-tiered-plugin-architecture/contracts/PluginManifest.cs`
 
 **Verified Additions**:
+
 ```csharp
 public sealed class PluginManifest
 {
@@ -149,6 +152,7 @@ public sealed class PluginDependency
 **Spec Location**: `specs/004-tiered-plugin-architecture/spec.md` (FR-003)
 
 **Verified Specification**:
+
 ```markdown
 FR-003: Provide dependency resolution using **Kahn's topological sort algorithm**:
   - **Hard dependencies**: Missing → plugin excluded from load order, ERROR logged, FailureReason set
@@ -164,9 +168,11 @@ FR-003: Provide dependency resolution using **Kahn's topological sort algorithm*
 ## Additional Verifications
 
 ### ✅ FR-002: IPluginContext Integration
+
 **Spec Location**: `spec.md` line 50
 
 **Verified**:
+
 ```markdown
 FR-002: Implement plugin lifecycle: InitializeAsync(IPluginContext), StartAsync, StopAsync.
 Use IPluginContext to isolate ALC boundary (no direct IServiceCollection exposure).
@@ -177,9 +183,11 @@ Use IPluginContext to isolate ALC boundary (no direct IServiceCollection exposur
 ---
 
 ### ✅ FR-006: IRegistry Reference
+
 **Spec Location**: `spec.md` line 58
 
 **Verified**:
+
 ```markdown
 FR-006: Provide `IRegistry` for cross-ALC service registration
 (priority-based, runtime type matching, no compile-time coupling).
@@ -190,9 +198,11 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 ---
 
 ### ✅ Key Entities Updated
+
 **Spec Location**: `spec.md` lines 64-74
 
 **Verified Additions**:
+
 - ✅ IPluginContext: initialization context
 - ✅ IRegistry: cross-ALC service registry
 - ✅ ServiceMetadata: priority, name, version
@@ -253,6 +263,7 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 **Status**: ✅ **READY FOR IMPLEMENTATION**
 
 **Checklist**:
+
 - [x] IPlugin interface correctly designed
 - [x] IPluginContext isolates ALC boundary
 - [x] IRegistry contract complete
@@ -262,6 +273,7 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 - [x] Functional requirements updated
 
 **Estimated Implementation Time**: 16-20 hours
+
 - Phase 1: Contracts assembly (4h)
 - Phase 2: Core & Registry (6h)
 - Phase 3: Host loader (4h)
@@ -278,6 +290,7 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 **Rationale**: These specs depend on 004 completion. Once plugin infrastructure exists, migrations can be specified with concrete examples.
 
 **Next Steps for 005/006**:
+
 1. Wait for 004 implementation
 2. Add manifest examples with dependencies
 3. Define event schemas (IObservable patterns)
@@ -335,9 +348,11 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 ## Final Verdict
 
 ### Original Review Assessment
+
 ❌ **HOLD IMPLEMENTATION** - Critical blockers present
 
 ### Current Verification Assessment
+
 ✅ **APPROVE FOR IMPLEMENTATION** - All critical issues resolved
 
 ---
@@ -347,6 +362,7 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 **Other Agent's Response Quality**: ✅ **EXCELLENT**
 
 **Strengths**:
+
 1. **Complete fixes** - All critical issues addressed, not partial
 2. **Proper documentation** - Comments explain ALC isolation rationale
 3. **Backward compatibility** - EntryAssembly/EntryType preserved
@@ -354,6 +370,7 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 5. **Reference alignment** - Patterns match PluginManoi/WingedBean exactly
 
 **Code Quality**:
+
 - ✅ XML documentation comments
 - ✅ Semantic naming
 - ✅ Proper nullability annotations
@@ -361,6 +378,7 @@ FR-006: Provide `IRegistry` for cross-ALC service registration
 - ✅ Clear intent through comments
 
 **Architectural Decisions**:
+
 - ✅ IPluginContext boundary (ALC isolation)
 - ✅ IRegistry for cross-ALC services (runtime type matching)
 - ✅ Priority system for conflict resolution

@@ -1,7 +1,7 @@
 # Spec 009: Proxy Service Source Generator
 
-**Status**: 📋 Draft  
-**Created**: 2025-10-22  
+**Status**: 📋 Draft
+**Created**: 2025-10-22
 **Prerequisites**: Spec 007 ✅, Spec 008 ✅
 
 ## Overview
@@ -17,17 +17,17 @@ Every service interface method requires 3-5 lines of manual proxy delegation cod
 public partial class GameServiceProxy : Game.Services.IService
 {
     private readonly IRegistry _registry;
-    
+
     public void StartGame()
     {
         _registry.Get<Game.Services.IService>().StartGame();
     }
-    
+
     public Task ProcessTurnAsync(CancellationToken ct)
     {
         return _registry.Get<Game.Services.IService>().ProcessTurnAsync(ct);
     }
-    
+
     // ... 50 more methods like this ...
 }
 ```
@@ -45,7 +45,7 @@ Source generator automatically creates all implementations:
 public partial class GameServiceProxy
 {
     private readonly IRegistry _registry;
-    
+
     public GameServiceProxy(IRegistry registry)
     {
         _registry = registry;
@@ -61,13 +61,13 @@ public partial class GameServiceProxy
 
 ## Key Features
 
-✅ **Automatic Method Generation** - All interface methods implemented  
-✅ **Property & Event Support** - Get/set accessors, add/remove handlers  
-✅ **Generic Methods** - Type parameters and constraints preserved  
-✅ **Advanced Features** - ref/out/params, async, nullable, defaults  
-✅ **Selection Strategies** - Control service retrieval (One, HighestPriority, All)  
-✅ **Quality Code** - No warnings, nullable-safe, XML docs  
-✅ **Clear Diagnostics** - Helpful error messages with fix suggestions  
+✅ **Automatic Method Generation** - All interface methods implemented
+✅ **Property & Event Support** - Get/set accessors, add/remove handlers
+✅ **Generic Methods** - Type parameters and constraints preserved
+✅ **Advanced Features** - ref/out/params, async, nullable, defaults
+✅ **Selection Strategies** - Control service retrieval (One, HighestPriority, All)
+✅ **Quality Code** - No warnings, nullable-safe, XML docs
+✅ **Clear Diagnostics** - Helpful error messages with fix suggestions
 
 ## Documents
 
@@ -78,13 +78,14 @@ public partial class GameServiceProxy
 ## Quick Start (After Implementation)
 
 1. **Add attributes to your partial class**:
+
 ```csharp
 [RealizeService(typeof(MyContract.IService))]
 [SelectionStrategy(SelectionMode.HighestPriority)]
 public partial class MyServiceProxy
 {
     private readonly IRegistry _registry;
-    
+
     public MyServiceProxy(IRegistry registry) => _registry = registry;
 }
 ```
@@ -92,6 +93,7 @@ public partial class MyServiceProxy
 2. **Build the project** - Generator runs automatically
 
 3. **Use the proxy**:
+
 ```csharp
 var proxy = new MyServiceProxy(registry);
 proxy.SomeMethod(); // Automatically delegates to IRegistry

@@ -1,7 +1,7 @@
 # Event-Driven Plugin Development
 
-**Version**: 1.0.0  
-**Last Updated**: 2025-10-21  
+**Version**: 1.0.0
+**Last Updated**: 2025-10-21
 **Audience**: Plugin developers
 
 ## Overview
@@ -87,6 +87,7 @@ await eventBus.PublishAsync(new EntitySpawnedEvent(id, "goblin", position));
 ```
 
 **Key Features**:
+
 - **Sequential Execution**: Subscribers execute in order (predictable)
 - **Error Isolation**: One subscriber's exception doesn't affect others
 - **Thread-Safe**: Concurrent publishing supported
@@ -106,6 +107,7 @@ var entityId = await gameService.SpawnEntityAsync("player", new Position(5, 5));
 ```
 
 **Priority-Based Selection**:
+
 ```csharp
 // Register with priority
 context.Registry.Register<IService>(
@@ -132,13 +134,13 @@ public class AnalyticsPlugin : IPlugin
     public Task InitializeAsync(IPluginContext context, CancellationToken ct = default)
     {
         var eventBus = context.Registry.Get<IEventBus>();
-        
+
         eventBus.Subscribe<EntitySpawnedEvent>(evt =>
         {
             _spawnCount++;
             return Task.CompletedTask;
         });
-        
+
         eventBus.Subscribe<CombatEvent>(evt =>
         {
             _combatCount++;
@@ -166,7 +168,7 @@ public class GameService : LablabBean.Contracts.Game.Services.IService
 
         // Publish event
         await _eventBus.PublishAsync(new EntitySpawnedEvent(entityId, entityType, position));
-        
+
         return entityId;
     }
 }
@@ -216,6 +218,7 @@ public class ReactiveUIService : LablabBean.Contracts.UI.Services.IService
 ### ✅ DO
 
 **Keep event handlers fast**:
+
 ```csharp
 eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
 {
@@ -225,6 +228,7 @@ eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
 ```
 
 **Handle errors gracefully**:
+
 ```csharp
 eventBus.Subscribe<CombatEvent>(async evt =>
 {
@@ -241,6 +245,7 @@ eventBus.Subscribe<CombatEvent>(async evt =>
 ```
 
 **Use priority ranges appropriately**:
+
 - **1000+**: Framework services
 - **500-999**: High-priority plugins
 - **100-499**: Standard plugins
@@ -249,6 +254,7 @@ eventBus.Subscribe<CombatEvent>(async evt =>
 ### ❌ DON'T
 
 **Don't create circular event chains**:
+
 ```csharp
 // BAD: Infinite loop
 eventBus.Subscribe<EventA>(evt => eventBus.PublishAsync(new EventB()));
@@ -256,6 +262,7 @@ eventBus.Subscribe<EventB>(evt => eventBus.PublishAsync(new EventA()));
 ```
 
 **Don't perform heavy work in handlers**:
+
 ```csharp
 // BAD: Blocks other subscribers
 eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
@@ -336,7 +343,8 @@ See [performance-results.md](../../specs/007-tiered-contract-architecture/perfor
 
 **Cause**: Service not registered or wrong interface type
 
-**Solution**: 
+**Solution**:
+
 ```csharp
 // Use full namespace
 var service = context.Registry.Get<LablabBean.Contracts.Game.Services.IService>();
@@ -345,6 +353,7 @@ var service = context.Registry.Get<LablabBean.Contracts.Game.Services.IService>(
 ### Multiple implementations conflict
 
 **Solution**: Use priority-based selection
+
 ```csharp
 context.Registry.Register<IService>(service, new ServiceMetadata { Priority = 200 });
 ```
@@ -358,6 +367,6 @@ context.Registry.Register<IService>(service, new ServiceMetadata { Priority = 20
 
 ---
 
-**Time to first plugin**: ~30 minutes  
-**Difficulty**: Intermediate  
+**Time to first plugin**: ~30 minutes
+**Difficulty**: Intermediate
 **Questions?**: See project README for community links

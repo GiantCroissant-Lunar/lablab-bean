@@ -24,7 +24,7 @@ public interface IReportRenderer
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result containing output file path and any errors</returns>
     Task<ReportResult> RenderAsync(ReportRequest request, object data, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Gets supported output formats.
     /// </summary>
@@ -33,6 +33,7 @@ public interface IReportRenderer
 ```
 
 **Implementation Example (FastReport Plugin)**:
+
 ```csharp
 using FastReport;
 using FastReport.Export.Html;
@@ -50,25 +51,25 @@ public class FastReportRenderer : IReportRenderer
         ReportFormat.PDF,
         ReportFormat.PNG
     };
-    
+
     public async Task<ReportResult> RenderAsync(ReportRequest request, object data, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
-        
+
         try
         {
             var report = new Report();
-            
+
             // Load template (embedded or file)
             if (!string.IsNullOrEmpty(request.TemplatePath))
                 report.Load(request.TemplatePath);
             else
                 LoadEmbeddedTemplate(report, GetTemplateName(data));
-            
+
             // Register data
             report.RegisterData(data, "Data");
             report.Prepare();
-            
+
             // Export to format
             switch (request.Format)
             {
@@ -82,7 +83,7 @@ public class FastReportRenderer : IReportRenderer
                     report.Export(new ImageExport { ImageFormat = ImageExportFormat.Png }, request.OutputPath);
                     break;
             }
-            
+
             var fileInfo = new FileInfo(request.OutputPath);
             return ReportResult.Success(request.OutputPath, fileInfo.Length, stopwatch.Elapsed);
         }

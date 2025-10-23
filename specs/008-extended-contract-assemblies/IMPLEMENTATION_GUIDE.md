@@ -1,8 +1,8 @@
 # Extended Contract Assemblies - Implementation Guide
 
-**Spec**: 008-extended-contract-assemblies  
-**Status**: ✅ Complete  
-**Version**: 1.0.0  
+**Spec**: 008-extended-contract-assemblies
+**Status**: ✅ Complete
+**Version**: 1.0.0
 **Date**: 2025-10-22
 
 ## Overview
@@ -16,12 +16,14 @@ This guide provides implementation details for the 4 new contract assemblies tha
 **Purpose**: Scene/level management with camera and viewport control
 
 **Key Components**:
+
 - `Services.IService` - Scene loading and camera management
 - `Camera`, `Viewport`, `CameraViewport` - Camera and viewport models
 - `EntitySnapshot` - Entity rendering data
 - `SceneLoadedEvent`, `SceneUnloadedEvent`, `SceneLoadFailedEvent`
 
 **Example Usage**:
+
 ```csharp
 // Get scene service
 var sceneService = registry.Get<LablabBean.Contracts.Scene.Services.IService>();
@@ -46,6 +48,7 @@ var viewport = sceneService.GetCameraViewport();
 **Purpose**: Input routing with scope stack and action mapping
 
 **Key Components**:
+
 - `Router.IService<TInputEvent>` - Generic input router with scope stack
 - `Mapper.IService` - Action mapping from raw keys to logical actions
 - `IInputScope<T>` - Input handler interface
@@ -53,6 +56,7 @@ var viewport = sceneService.GetCameraViewport();
 - `InputActionTriggeredEvent`, `InputScopePushedEvent`, `InputScopePoppedEvent`
 
 **Example Usage**:
+
 ```csharp
 // Get input services
 var router = registry.Get<Input.Router.IService<InputEvent>>();
@@ -79,11 +83,13 @@ using (router.PushScope(myInputScope))
 **Purpose**: Configuration management with hierarchical sections and change notifications
 
 **Key Components**:
+
 - `Services.IService` - Configuration get/set with type conversion
 - `IConfigSection` - Hierarchical configuration sections
 - `ConfigChangedEvent`, `ConfigReloadedEvent`
 
 **Example Usage**:
+
 ```csharp
 // Get config service
 var config = registry.Get<LablabBean.Contracts.Config.Services.IService>();
@@ -100,7 +106,7 @@ var resolution = graphicsSection.Get<string>("resolution");
 config.Set("game:difficulty", "hard");
 
 // Listen for changes
-config.ConfigChanged += (sender, e) => 
+config.ConfigChanged += (sender, e) =>
 {
     Console.WriteLine($"Config changed: {e.Key} = {e.NewValue}");
 };
@@ -115,18 +121,20 @@ config.ConfigChanged += (sender, e) =>
 **Purpose**: Async resource loading with progress tracking and caching
 
 **Key Components**:
+
 - `Services.IService` - Async resource loader with progress
 - `LoadProgress` - Progress information (bytes loaded, percent complete)
 - `ResourceMetadata`, `ResourceLoadResult<T>` - Resource metadata
 - `ResourceLoadStartedEvent`, `ResourceLoadCompletedEvent`, `ResourceLoadFailedEvent`, `ResourceUnloadedEvent`
 
 **Example Usage**:
+
 ```csharp
 // Get resource service
 var resources = registry.Get<LablabBean.Contracts.Resource.Services.IService>();
 
 // Load with progress tracking
-var progress = new Progress<LoadProgress>(p => 
+var progress = new Progress<LoadProgress>(p =>
 {
     Console.WriteLine($"Loading {p.ResourceId}: {p.PercentComplete}%");
 });
@@ -134,11 +142,11 @@ var progress = new Progress<LoadProgress>(p =>
 var texture = await resources.LoadAsync<Texture>("player-sprite", progress);
 
 // Preload multiple resources
-await resources.PreloadAsync(new[] 
-{ 
-    "level-1-tileset", 
-    "enemy-sprites", 
-    "sound-effects" 
+await resources.PreloadAsync(new[]
+{
+    "level-1-tileset",
+    "enemy-sprites",
+    "sound-effects"
 }, progress);
 
 // Cache management
@@ -166,10 +174,11 @@ Each contract assembly includes a reference implementation plugin:
 
 ## Integration Tests
 
-**Location**: `dotnet/tests/LablabBean.Contracts.Integration.Tests`  
+**Location**: `dotnet/tests/LablabBean.Contracts.Integration.Tests`
 **Tests**: 11/11 passing ✅
 
 Integration tests validate:
+
 - All assemblies load correctly
 - Events are immutable across all contracts
 - Timestamps are set correctly
@@ -235,6 +244,6 @@ dotnet test dotnet/tests/LablabBean.Contracts.Integration.Tests
 
 ---
 
-**Total Tests**: 52/52 passing ✅  
-**Build Status**: Success (0 errors, 0 warnings)  
+**Total Tests**: 52/52 passing ✅
+**Build Status**: Success (0 errors, 0 warnings)
 **Status**: Production Ready

@@ -1,7 +1,7 @@
 # Release v0.0.3 - Player Movement Functional 🎮
 
-**Release Date:** 2025-10-20  
-**Tag:** v0.0.3  
+**Release Date:** 2025-10-20
+**Tag:** v0.0.3
 **Status:** ✅ Player movement working, dungeon fully explorable
 
 ---
@@ -17,6 +17,7 @@ After extensive debugging and Terminal.Gui API investigation, player movement is
 ## ✨ New Features
 
 ### 1. **Player Movement** 🎮
+
 - Arrow keys (↑ ↓ ← →) control movement
 - WASD keys also work
 - Map recenters on player position
@@ -24,6 +25,7 @@ After extensive debugging and Terminal.Gui API investigation, player movement is
 - Smooth dungeon exploration
 
 ### 2. **Debug Log Panel** 🔍
+
 - Real-time debug panel at bottom of screen
 - Bright yellow text for visibility
 - Shows all keyboard events
@@ -31,14 +33,16 @@ After extensive debugging and Terminal.Gui API investigation, player movement is
 - Essential for troubleshooting
 
 ### 3. **Enhanced FOV** 👁️
+
 - Field of view radius increased from 8 to 20 tiles
 - Multiple rooms visible at once
 - Better strategic overview
 - Corridors clearly visible
 
 ### 4. **Improved Fog of War** 🌫️
+
 - Visible areas: `.` (floor) `#` (wall)
-- Explored areas: `·` (floor) `▓` (wall)  
+- Explored areas: `·` (floor) `▓` (wall)
 - Unexplored: blank
 - Clear visual distinction between states
 
@@ -52,12 +56,14 @@ After extensive debugging and Terminal.Gui API investigation, player movement is
 Terminal.Gui v2 pre-71 changed the keyboard event API. The key is accessed via `e.KeyEvent.KeyValue` (an integer) instead of `e.Key` or `e.KeyCode`.
 
 **Solution:**
+
 1. Added debug panel to inspect events in real-time
 2. Used reflection to discover `KeyEvent.KeyValue` property
 3. Implemented integer-to-Key enum conversion
 4. Added fallbacks for other Terminal.Gui versions
 
 **Files Changed:**
+
 - `DungeonCrawlerService.cs` - Enhanced key extraction with reflection
 
 ### Critical: HUD Stealing Keyboard Focus
@@ -66,22 +72,26 @@ Terminal.Gui v2 pre-71 changed the keyboard event API. The key is accessed via `
 ListView in the HUD was capturing focus, preventing the game window from receiving keyboard input.
 
 **Solution:**
+
 1. Set `CanFocus = false` on HUD FrameView
 2. Set `CanFocus = false` on ListView
 3. Game window calls `SetFocus()` after layout and updates
 
 **Files Changed:**
+
 - `HudService.cs` - Focus management
 - `DungeonCrawlerService.cs` - SetFocus() calls
 
 ### Minor: Limited Visibility
 
 **Changes:**
+
 - Increased FOV radius from 8 to 20 tiles
 - Adjusted layout to accommodate debug panel
 - Improved glyph selection for fog of war
 
 **Files Changed:**
+
 - `GameStateManager.cs` - FOV radius
 - `WorldViewService.cs` - Rendering and layout
 - `WorldViewService.cs` - Fog of war glyphs
@@ -114,11 +124,13 @@ Documentation/
 ### How to Test
 
 1. **Start the dev stack:**
+
    ```bash
    task dev-stack
    ```
 
 2. **Open browser:**
+
    ```
    http://localhost:3000
    ```
@@ -187,11 +199,13 @@ e.Key -> Key (possible future versions)
 ## 🎯 What's Next
 
 ### Ready for Testing
+
 - ✅ Player movement
 - ⚠️ Combat system (implemented but not tested)
 - ⚠️ Monster AI (implemented but not tested)
 
 ### Future Enhancements
+
 - [ ] Color support for better visibility
 - [ ] Configurable FOV radius
 - [ ] Toggle-able debug panel (F12?)
@@ -203,6 +217,7 @@ e.Key -> Key (possible future versions)
 ## 🙏 Acknowledgments
 
 This release was made possible through:
+
 - Iterative debugging with real-time log panel
 - Terminal.Gui reflection to discover API structure
 - Patient testing to identify focus issues

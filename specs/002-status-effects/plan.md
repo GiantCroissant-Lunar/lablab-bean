@@ -8,6 +8,7 @@
 ## Summary
 
 Implement a comprehensive status effects system that adds tactical depth to combat through temporary buffs, debuffs, and damage/healing over time effects. The system will:
+
 - Support 8+ effect types (Poison, Regeneration, Strength, Weakness, Haste, Slow, Defense Boost, Defense Break)
 - Track turn-based duration for each effect (1-99 turns)
 - Apply damage/healing at turn start, modify combat stats dynamically
@@ -25,14 +26,14 @@ The system extends the existing ECS architecture with new components and systems
   the iteration process.
 -->
 
-**Language/Version**: C# / .NET 8  
-**Primary Dependencies**: Arch ECS (1.3.3), GoRogue (3.0.0-beta09), Terminal.Gui (2.0.0-pre.2), SadConsole (10.0.3)  
-**Storage**: In-memory ECS components (status effects stored per-entity)  
-**Testing**: xUnit, FluentAssertions (existing test infrastructure)  
+**Language/Version**: C# / .NET 8
+**Primary Dependencies**: Arch ECS (1.3.3), GoRogue (3.0.0-beta09), Terminal.Gui (2.0.0-pre.2), SadConsole (10.0.3)
+**Storage**: In-memory ECS components (status effects stored per-entity)
+**Testing**: xUnit, FluentAssertions (existing test infrastructure)
 **Target Platform**: Cross-platform console (Windows/Linux/macOS) via Terminal.Gui and Windows GUI via SadConsole
-**Project Type**: Desktop game application with dual rendering modes  
-**Performance Goals**: 60 FPS rendering, <1ms per status effect tick, instant HUD updates  
-**Constraints**: Turn-based gameplay, max 10 concurrent effects per entity, 99 turn maximum duration  
+**Project Type**: Desktop game application with dual rendering modes
+**Performance Goals**: 60 FPS rendering, <1ms per status effect tick, instant HUD updates
+**Constraints**: Turn-based gameplay, max 10 concurrent effects per entity, 99 turn maximum duration
 **Scale/Scope**: 10-30 entities with effects active simultaneously, 8+ effect types in MVP
 
 ## Constitution Check
@@ -111,4 +112,3 @@ dotnet/console-app/
 |-----------|------------|-------------------------------------|
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
-

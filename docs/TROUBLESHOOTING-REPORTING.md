@@ -28,7 +28,8 @@ Common issues and solutions for the LablabBean reporting system.
 **Symptom**: Command line reports "dotnet: command not found"
 
 **Solution**:
-1. Install .NET 8.0 SDK from https://dotnet.microsoft.com/download
+
+1. Install .NET 8.0 SDK from <https://dotnet.microsoft.com/download>
 2. Verify installation: `dotnet --version`
 3. Restart terminal to refresh PATH
 
@@ -37,6 +38,7 @@ Common issues and solutions for the LablabBean reporting system.
 **Symptom**: Cannot find LablabBean.Console project
 
 **Solution**:
+
 ```bash
 # Ensure you're in the project root
 cd /path/to/lablab-bean
@@ -55,6 +57,7 @@ task build
 **Solution**:
 
 Option 1: Install Task runner
+
 ```bash
 # Windows (Chocolatey)
 choco install go-task
@@ -67,6 +70,7 @@ brew install go-task
 ```
 
 Option 2: Use Nuke directly
+
 ```bash
 pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports
 ```
@@ -76,12 +80,14 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Gene
 ### Issue: "Reporting tool not found"
 
 **Symptom**:
+
 ```
 ❌ Reporting tool not found at D:\...\LablabBean.Console.dll
 Run 'nuke Compile' first to build the reporting tool
 ```
 
 **Solution**:
+
 ```bash
 # Build the console application
 task build
@@ -100,28 +106,31 @@ ls dotnet/console-app/LablabBean.Console/bin/Debug/net8.0/LablabBean.Console.dll
 **Solutions**:
 
 1. **Check data path**:
+
    ```bash
    # Ensure data directory exists
    ls build/_artifacts/*/test-results
-   
+
    # If missing, run tests first
    task test:coverage
    ```
 
 2. **Check output directory permissions**:
+
    ```bash
    # Create output directory
    mkdir -p reports
-   
+
    # Generate report
    lablabbean.exe report build --output reports/test.html
    ```
 
 3. **Check for missing dependencies**:
+
    ```bash
    # Restore NuGet packages
    dotnet restore dotnet/LablabBean.sln
-   
+
    # Rebuild
    task build
    ```
@@ -133,12 +142,14 @@ ls dotnet/console-app/LablabBean.Console/bin/Debug/net8.0/LablabBean.Console.dll
 **Solutions**:
 
 1. **Check file size**:
+
    ```bash
    ls -lh reports/*.html
    # Should be ~10-20 KB for HTML reports
    ```
 
 2. **Verify content**:
+
    ```bash
    # Check if file contains HTML
    head -n 5 reports/build-metrics.html
@@ -146,6 +157,7 @@ ls dotnet/console-app/LablabBean.Console/bin/Debug/net8.0/LablabBean.Console.dll
    ```
 
 3. **Regenerate report**:
+
    ```bash
    # Delete and regenerate
    rm reports/build-metrics.html
@@ -157,6 +169,7 @@ ls dotnet/console-app/LablabBean.Console/bin/Debug/net8.0/LablabBean.Console.dll
 ### Issue: "Using sample data" message
 
 **Symptom**:
+
 ```
 ℹ️ No test results found at specified path
 📊 Using sample data for demonstration
@@ -167,6 +180,7 @@ ls dotnet/console-app/LablabBean.Console/bin/Debug/net8.0/LablabBean.Console.dll
 **To use real data**:
 
 **Build Metrics**:
+
 ```bash
 # Run tests first to generate test results
 task test:coverage
@@ -178,6 +192,7 @@ lablabbean.exe report build \
 ```
 
 **Session Analytics**:
+
 ```bash
 # Provide analytics log file
 lablabbean.exe report session \
@@ -186,6 +201,7 @@ lablabbean.exe report session \
 ```
 
 **Plugin Health**:
+
 ```bash
 # Provide plugin health JSON
 lablabbean.exe report plugin \
@@ -200,24 +216,27 @@ lablabbean.exe report plugin \
 **Solutions**:
 
 1. **Run tests with coverage collector**:
+
    ```bash
    # Use Nuke target that includes coverage
    nuke TestWithCoverage
-   
+
    # Or use dotnet test directly
    dotnet test --collect:"XPlat Code Coverage"
    ```
 
 2. **Check coverage files**:
+
    ```bash
    # Look for coverage.cobertura.xml files
    find build/_artifacts -name "coverage.cobertura.xml"
-   
+
    # Should find files like:
    # build/_artifacts/*/test-results/{GUID}/coverage.cobertura.xml
    ```
 
 3. **Install coverlet**:
+
    ```bash
    # Should be included in test projects, but verify:
    dotnet add package coverlet.collector
@@ -230,6 +249,7 @@ lablabbean.exe report plugin \
 **Solutions**:
 
 1. **Clean and rebuild**:
+
    ```bash
    task clean
    task test:coverage
@@ -237,12 +257,14 @@ lablabbean.exe report plugin \
    ```
 
 2. **Check test result timestamps**:
+
    ```bash
    # Verify .trx files are recent
    ls -lt build/_artifacts/*/test-results/*.trx
    ```
 
 3. **Check test project references**:
+
    ```bash
    # Ensure test projects are in solution
    dotnet sln list | grep Tests
@@ -263,6 +285,7 @@ lablabbean.exe report plugin \
    - Look for specific error messages
 
 2. **Verify continue-on-error**:
+
    ```yaml
    # In .github/workflows/build-and-test.yml
    - name: 📊 Generate reports
@@ -270,12 +293,14 @@ lablabbean.exe report plugin \
    ```
 
 3. **Check artifact paths**:
+
    ```yaml
    # Ensure paths use wildcards for version
    path: build/_artifacts/*/test-reports/
    ```
 
 4. **Test locally first**:
+
    ```bash
    # Simulate CI environment
    $env:BUILD_NUMBER="123"
@@ -294,6 +319,7 @@ lablabbean.exe report plugin \
    - Check: `du -sh build/_artifacts/*/test-reports/`
 
 2. **Verify paths exist**:
+
    ```yaml
    # Add debug step before upload
    - name: List files
@@ -301,6 +327,7 @@ lablabbean.exe report plugin \
    ```
 
 3. **Check retention settings**:
+
    ```yaml
    retention-days: 30  # Ensure this is set
    ```
@@ -312,21 +339,24 @@ lablabbean.exe report plugin \
 **Solutions**:
 
 1. **Path separators**:
+
    ```csharp
    // Use Nuke's path construction
    AbsolutePath path = RootDirectory / "build" / "reports";
-   
+
    // Not:
    string path = "build\\reports";  // Windows only!
    ```
 
 2. **Case sensitivity**:
+
    ```bash
    # Linux is case-sensitive
    # Ensure consistent casing in paths
    ```
 
 3. **Line endings**:
+
    ```bash
    # Configure git to handle line endings
    git config core.autocrlf input
@@ -341,12 +371,14 @@ lablabbean.exe report plugin \
 **Solutions**:
 
 1. **Check data size**:
+
    ```bash
    # Large test result files can slow generation
    du -sh build/_artifacts/*/test-results/
    ```
 
 2. **Parallel generation**:
+
    ```bash
    # Generate reports in parallel (PowerShell)
    Start-Job { lablabbean.exe report build --output reports/build.html }
@@ -366,6 +398,7 @@ lablabbean.exe report plugin \
 **Solutions**:
 
 1. **Split large reports**:
+
    ```bash
    # Generate reports separately instead of all at once
    lablabbean.exe report build --output reports/build.html
@@ -374,6 +407,7 @@ lablabbean.exe report plugin \
    ```
 
 2. **Increase memory limits** (if using containers):
+
    ```yaml
    resources:
      limits:
@@ -492,7 +526,7 @@ When reporting issues, include:
 - 🐛 **Bug Reports**: [GitHub Issues](https://github.com/your-org/lablab-bean/issues)
 - 💬 **Questions**: [GitHub Discussions](https://github.com/your-org/lablab-bean/discussions)
 - 📖 **Documentation**: [Reporting Docs](../specs/010-fastreport-reporting/)
-- 📧 **Email**: support@lablabbean.dev
+- 📧 **Email**: <support@lablabbean.dev>
 
 ## Frequently Asked Questions
 
@@ -522,8 +556,8 @@ When reporting issues, include:
 
 ---
 
-**Last Updated**: 2025-10-22  
-**Version**: 1.0.0  
+**Last Updated**: 2025-10-22
+**Version**: 1.0.0
 **Status**: Production-ready ✅
 
 Still having issues? [Open an issue](https://github.com/your-org/lablab-bean/issues) and we'll help! 🚀

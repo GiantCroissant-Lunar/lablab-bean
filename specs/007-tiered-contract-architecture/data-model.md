@@ -1,7 +1,7 @@
 # Data Model: Tiered Contract Architecture
 
-**Date**: 2025-10-21  
-**Feature**: 007-tiered-contract-architecture  
+**Date**: 2025-10-21
+**Feature**: 007-tiered-contract-architecture
 **Phase**: 1 - Design & Contracts
 
 ## Overview
@@ -41,7 +41,7 @@ This document defines the data models, events, and service interfaces for the ti
 
 ### IEventBus Interface
 
-**Assembly**: `LablabBean.Plugins.Contracts`  
+**Assembly**: `LablabBean.Plugins.Contracts`
 **Namespace**: `LablabBean.Plugins.Contracts`
 
 ```csharp
@@ -72,6 +72,7 @@ public interface IEventBus
 ```
 
 **Design Notes**:
+
 - Generic type constraint `where T : class` ensures events are reference types
 - Sequential execution (not parallel) ensures predictable ordering
 - No unsubscribe mechanism in initial version (subscribers live for app lifetime)
@@ -83,8 +84,8 @@ public interface IEventBus
 
 ### Assembly: LablabBean.Contracts.Game
 
-**Target Framework**: net8.0  
-**Dependencies**: `LablabBean.Plugins.Contracts`  
+**Target Framework**: net8.0
+**Dependencies**: `LablabBean.Plugins.Contracts`
 **Namespace Root**: `LablabBean.Contracts.Game`
 
 ### Game Service Interface
@@ -297,8 +298,8 @@ public enum GameStateType
 
 ### Assembly: LablabBean.Contracts.UI
 
-**Target Framework**: net8.0  
-**Dependencies**: `LablabBean.Plugins.Contracts`  
+**Target Framework**: net8.0
+**Dependencies**: `LablabBean.Plugins.Contracts`
 **Namespace Root**: `LablabBean.Contracts.UI`
 
 ### UI Service Interface
@@ -447,7 +448,7 @@ public enum InputType
 
 ### EventBus Class
 
-**Assembly**: `LablabBean.Plugins.Core`  
+**Assembly**: `LablabBean.Plugins.Core`
 **Namespace**: `LablabBean.Plugins.Core`
 
 ```csharp
@@ -471,7 +472,7 @@ public sealed class EventBus : IEventBus
             throw new ArgumentNullException(nameof(eventData));
 
         var eventType = typeof(T);
-        
+
         if (!_subscribers.TryGetValue(eventType, out var handlers))
         {
             // No subscribers - this is valid, just return
@@ -487,9 +488,9 @@ public sealed class EventBus : IEventBus
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, 
-                    "Event subscriber failed for {EventType}. Event: {@Event}", 
-                    eventType.Name, 
+                _logger.LogError(ex,
+                    "Event subscriber failed for {EventType}. Event: {@Event}",
+                    eventType.Name,
                     eventData);
             }
         }
@@ -501,7 +502,7 @@ public sealed class EventBus : IEventBus
             throw new ArgumentNullException(nameof(handler));
 
         var eventType = typeof(T);
-        
+
         // Wrap typed handler in object handler
         Func<object, Task> wrappedHandler = obj => handler((T)obj);
 
@@ -526,6 +527,7 @@ public sealed class EventBus : IEventBus
 ## Validation Rules
 
 ### Event Validation
+
 - ✅ All events MUST be `record` types
 - ✅ All events MUST have `DateTimeOffset Timestamp` property
 - ✅ All events MUST provide convenience constructor without timestamp
@@ -533,12 +535,14 @@ public sealed class EventBus : IEventBus
 - ✅ All event properties MUST be read-only (record enforces this)
 
 ### Service Interface Validation
+
 - ✅ Service interfaces MUST be named `IService` within domain namespace
 - ✅ Service interfaces MUST use async methods for I/O operations
 - ✅ Service interfaces MUST be technology-agnostic (no UI framework dependencies)
 - ✅ Service interfaces MUST document when events are published
 
 ### Contract Assembly Validation
+
 - ✅ Contract assemblies MUST only reference `LablabBean.Plugins.Contracts`
 - ✅ Contract assemblies MUST target net8.0
 - ✅ Contract assemblies MUST follow namespace pattern: `LablabBean.Contracts.{Domain}`
@@ -572,6 +576,7 @@ Plugin Implementations
 ## Next Steps
 
 Phase 1 design complete. Ready to generate:
+
 1. ✅ `data-model.md` - This document
 2. ⏭️ `contracts/` - Interface definition files
 3. ⏭️ `quickstart.md` - Developer guide

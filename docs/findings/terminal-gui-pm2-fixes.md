@@ -21,16 +21,19 @@ Fixed two critical issues: FOV/visibility and player input control.
 
 ### ✅ Issue #2: Player Cannot Be Controlled (NEW - FIXED)
 
-**Problem**: 
+**Problem**:
+
 - Arrow keys and WASD keys did not move the player
 - Input events not being processed correctly
 
 **Root Cause**:
+
 - Terminal.Gui KeyEventEventArgs API changed between versions
 - Original reflection code using `GetProperty("KeyCode")` wasn't working
 - The property name varies between Terminal.Gui versions
 
 **Solution**:
+
 - Enhanced reflection approach to try multiple property names
 - Try `KeyCode` first, fall back to `Key`
 - Added comprehensive debug logging
@@ -38,11 +41,13 @@ Fixed two critical issues: FOV/visibility and player input control.
 
 ### ⚠️ Issue #1: Only One Room Visible (PARTIALLY FIXED)
 
-**Problem**: 
+**Problem**:
+
 - Player could only see one room instead of the full dungeon with multiple rooms
 - Explored areas looked identical to currently visible areas
 
 **Root Causes**:
+
 1. FOV (Field of View) radius was too small at 8 tiles
 2. Fog of war rendering used the same glyphs for visible and explored areas
 
@@ -59,14 +64,14 @@ private void OnWindowKeyDown(object? sender, Terminal.Gui.KeyEventEventArgs e)
 {
     // Try different properties to find the key value
     Key? keyValue = null;
-    
+
     // Try KeyCode property first
     var keyCodeProp = e.GetType().GetProperty("KeyCode");
     if (keyCodeProp != null)
     {
         keyValue = keyCodeProp.GetValue(e) as Key?;
     }
-    
+
     // Try Key property as fallback
     if (!keyValue.HasValue)
     {
@@ -76,7 +81,7 @@ private void OnWindowKeyDown(object? sender, Terminal.Gui.KeyEventEventArgs e)
             keyValue = keyProp.GetValue(e) as Key?;
         }
     }
-    
+
     if (keyValue.HasValue && OnKeyDown(keyValue.Value))
     {
         e.Handled = true;
@@ -84,7 +89,8 @@ private void OnWindowKeyDown(object? sender, Terminal.Gui.KeyEventEventArgs e)
 }
 ```
 
-**Impact**: 
+**Impact**:
+
 - Input handling now works across Terminal.Gui versions
 - Arrow keys and WASD now control player movement
 - Comprehensive logging helps debug input issues
@@ -94,6 +100,7 @@ private void OnWindowKeyDown(object? sender, Terminal.Gui.KeyEventEventArgs e)
 **File**: `dotnet/console-app/LablabBean.Console/Services/DungeonCrawlerService.cs`
 
 Added logging at key points:
+
 - Key event received (line 75, 81)
 - OnKeyDown called (line 109)
 - Movement direction (lines 122-136)
@@ -104,6 +111,7 @@ Added logging at key points:
 **File**: `dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs`
 
 **Changes**:
+
 - Line 121: Initial FOV calculation on game start
 - Line 316: Player FOV update during movement
 
@@ -140,7 +148,8 @@ if (map.FogOfWar.IsExplored(worldPos))
 }
 ```
 
-**Impact**: 
+**Impact**:
+
 - Clear visual distinction between active visibility and memory
 - Entities (player, monsters) only show in current FOV, not in explored areas
 - Creates proper roguelike fog of war experience
@@ -150,11 +159,12 @@ if (map.FogOfWar.IsExplored(worldPos))
 ### How to Test Player Control
 
 1. Start the development stack:
+
    ```bash
    task dev-stack
    ```
 
-2. Open browser to http://localhost:3000
+2. Open browser to <http://localhost:3000>
 
 3. Try moving the player:
    - **Arrow keys**: ↑ ↓ ← →
@@ -162,6 +172,7 @@ if (map.FogOfWar.IsExplored(worldPos))
    - **Diagonal** (numpad): Home, PageUp, End, PageDown
 
 4. Check logs to verify input is being processed:
+
    ```bash
    cd dotnet/console-app/LablabBean.Console/logs
    Get-Content -Tail 50 *.log | Select-String "key|move"
@@ -176,6 +187,7 @@ if (map.FogOfWar.IsExplored(worldPos))
 ### Debugging Input Issues
 
 If keys still don't work, check logs for:
+
 - `"Key event received"` - confirms events are firing
 - `"Got key from KeyCode"` or `"Got key from Key"` - confirms extraction works
 - `"OnKeyDown called with key"` - confirms key handler is called
@@ -183,6 +195,7 @@ If keys still don't work, check logs for:
 - `"Action taken"` - confirms move was successful
 
 If you see warnings like:
+
 - `"Could not extract key from event"` - Key extraction failed
 - `"Cannot handle key - running: False"` - Game not initialized
 - `"No action taken for key"` - Key not mapped to action
@@ -192,6 +205,7 @@ If you see warnings like:
 ### Terminal.Gui Version Compatibility
 
 The reflection-based approach handles different Terminal.Gui versions:
+
 - **v1.x**: Uses `KeyEventEventArgs.KeyCode`
 - **v2.x**: May use `KeyEventEventArgs.Key`
 - **Current (pre-71)**: Uses reflection to find the right property
@@ -213,6 +227,7 @@ This makes the code resilient to API changes.
 ### Future Enhancements
 
 Potential improvements for later:
+
 1. **Direct Property Access**: Once Terminal.Gui API stabilizes
 2. **Key Rebinding**: Allow users to customize controls
 3. **Mouse Support**: Click to move/interact
@@ -221,6 +236,7 @@ Potential improvements for later:
 ## Build & Deployment
 
 ### Build Commands
+
 ```bash
 # Stop dev stack (releases file locks)
 cd website && pnpm pm2 stop all
@@ -233,6 +249,7 @@ task dev-stack
 ```
 
 ### Files Modified
+
 - `dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs` - FOV radius
 - `dotnet/framework/LablabBean.Game.TerminalUI/Services/WorldViewService.cs` - Fog of war
 - `dotnet/console-app/LablabBean.Console/Services/DungeonCrawlerService.cs` - Input handling
@@ -241,9 +258,9 @@ task dev-stack
 
 ## Status
 
-✅ **FIXED** - Player input now works with debug logging  
-⚠️ **PARTIALLY FIXED** - FOV improved but may need further adjustment  
-🧪 **READY FOR TESTING** - Development stack running with changes  
+✅ **FIXED** - Player input now works with debug logging
+⚠️ **PARTIALLY FIXED** - FOV improved but may need further adjustment
+🧪 **READY FOR TESTING** - Development stack running with changes
 📝 **DOCUMENTED** - All changes documented
 
 ## Next Steps
@@ -256,7 +273,6 @@ task dev-stack
 
 ---
 
-**Date**: 2025-10-20 23:36  
-**Developer**: AI Assistant  
+**Date**: 2025-10-20 23:36
+**Developer**: AI Assistant
 **Session**: Dungeon Crawler Bug Fixes - Input & Visibility
-

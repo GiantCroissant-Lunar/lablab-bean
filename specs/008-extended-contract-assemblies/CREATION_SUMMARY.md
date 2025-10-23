@@ -1,7 +1,7 @@
 # Spec 008 Creation Summary
 
-**Created**: 2025-10-21  
-**Status**: Draft  
+**Created**: 2025-10-21
+**Status**: Draft
 **Prerequisites**: Spec 007 (Complete)
 
 ## What Was Created
@@ -86,12 +86,14 @@ Based on gap analysis with cross-milo reference architecture:
 ## Relationship to Spec 007
 
 ### Spec 007 Foundation (Complete)
+
 - ✅ `IEventBus` - Event infrastructure (1.1M+ events/sec)
 - ✅ `LablabBean.Contracts.Game` - Game service contracts
 - ✅ `LablabBean.Contracts.UI` - UI service contracts
 - ✅ Example plugins and documentation
 
 ### Spec 008 Extensions (Draft)
+
 - 🔲 `LablabBean.Contracts.Scene` - Scene management
 - 🔲 `LablabBean.Contracts.Input` - Input routing
 - 🔲 `LablabBean.Contracts.Config` - Configuration
@@ -102,21 +104,25 @@ Based on gap analysis with cross-milo reference architecture:
 ## Implementation Phases
 
 ### Phase 1: Scene Contract (2-3 days)
+
 - Scene loading/unloading
 - Camera and viewport management
 - Scene transition events
 
 ### Phase 2: Input Contract (2-3 days)
+
 - Input scope stack
 - Input routing (topmost scope)
 - Action mapping
 
 ### Phase 3: Config Contract (1-2 days)
+
 - Get/Set operations
 - Hierarchical sections
 - Change notifications
 
 ### Phase 4: Resource Contract (2-3 days)
+
 - Async loading
 - Caching and preloading
 - Load success/failure events
@@ -126,6 +132,7 @@ Based on gap analysis with cross-milo reference architecture:
 ## Quality Validation
 
 ### Specification Completeness
+
 - ✅ All mandatory sections completed
 - ✅ User scenarios with acceptance criteria
 - ✅ Functional requirements (69 total)
@@ -135,6 +142,7 @@ Based on gap analysis with cross-milo reference architecture:
 - ✅ Technology-agnostic design
 
 ### Alignment with Spec 007
+
 - ✅ Uses same event patterns (immutable records)
 - ✅ Uses same service patterns (`IService` naming)
 - ✅ Uses same infrastructure (`IEventBus`, `IRegistry`)
@@ -144,12 +152,14 @@ Based on gap analysis with cross-milo reference architecture:
 ## Next Steps
 
 ### Immediate Actions
+
 1. **Review spec.md** - Validate requirements and success criteria
 2. **Run `/speckit.plan`** - Generate implementation plan
 3. **Run `/speckit.tasks`** - Generate dependency-ordered task list
 4. **Create data-model.md** - Define entity relationships
 
 ### Implementation Workflow
+
 1. **Phase 1**: Implement Scene contract (2-3 days)
 2. **Phase 2**: Implement Input contract (2-3 days)
 3. **Phase 3**: Implement Config contract (1-2 days)
@@ -160,14 +170,17 @@ Based on gap analysis with cross-milo reference architecture:
 ## References
 
 ### Gap Analysis Documents
+
 - [contract-gap-analysis.md](../../docs/_inbox/contract-gap-analysis.md)
 - [cross-milo-contract-adoption-analysis.md](../../docs/_inbox/cross-milo-contract-adoption-analysis.md)
 
 ### Related Specs
+
 - [Spec 007: Tiered Contract Architecture](../007-tiered-contract-architecture/spec.md) - Foundation (Complete)
 - [Spec 007: COMPLETION.md](../007-tiered-contract-architecture/COMPLETION.md) - Validation report
 
 ### Cross-Milo Reference
+
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Scene/`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Input/`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Config/`
@@ -183,7 +196,7 @@ The specification provides a comprehensive design for 4 critical contract assemb
 
 ---
 
-**Created By**: Cascade AI  
-**Date**: 2025-10-21  
-**Version**: 1.0.0  
+**Created By**: Cascade AI
+**Date**: 2025-10-21
+**Version**: 1.0.0
 **Status**: Draft for Review

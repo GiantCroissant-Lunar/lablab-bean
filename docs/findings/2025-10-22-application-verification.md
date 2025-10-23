@@ -1,6 +1,6 @@
 # Application Verification After Spec Implementation
 
-**Date**: 2025-10-22  
+**Date**: 2025-10-22
 **Task**: Verify console and Windows applications still run after implementing specs
 
 ## Summary
@@ -10,13 +10,15 @@ Successfully verified both applications after completing spec implementations (s
 ## Applications Tested
 
 ### 1. LablabBean.Console (Terminal UI)
+
 - **Status**: ✅ Running Successfully
 - **Location**: `dotnet/console-app/LablabBean.Console`
 - **Issues Found**: None
 - **Build Status**: Clean build with 1 warning (ref mismatch in GameWorldManager)
 
 ### 2. LablabBean.Windows (SadConsole/MonoGame)
-- **Status**: ✅ Running Successfully  
+
+- **Status**: ✅ Running Successfully
 - **Location**: `dotnet/windows-app/LablabBean.Windows`
 - **Issues Found and Fixed**: 2 issues
 - **Build Status**: Clean build
@@ -24,7 +26,9 @@ Successfully verified both applications after completing spec implementations (s
 ## Issues Found and Resolved
 
 ### Issue 1: Missing MonoGame.Framework Dependency
+
 **Error**:
+
 ```
 System.IO.FileNotFoundException: Could not load file or assembly 'MonoGame.Framework, Version=3.8.1.303'
 ```
@@ -32,15 +36,19 @@ System.IO.FileNotFoundException: Could not load file or assembly 'MonoGame.Frame
 **Root Cause**: `SadConsole.Host.MonoGame` package reference didn't automatically pull in `MonoGame.Framework.DesktopGL` as a transitive dependency.
 
 **Fix**:
+
 1. Added `MonoGame.Framework.DesktopGL` version `3.8.1.303` to `Directory.Packages.props`
 2. Added explicit package reference in `LablabBean.Windows.csproj`
 
 **Files Modified**:
+
 - `dotnet/Directory.Packages.props` - Added MonoGame package version
 - `dotnet/windows-app/LablabBean.Windows/LablabBean.Windows.csproj` - Added package reference
 
 ### Issue 2: Missing Logger Service Registration
+
 **Error**:
+
 ```
 System.InvalidOperationException: Unable to resolve service for type 'Microsoft.Extensions.Logging.ILogger`1[LablabBean.Game.SadConsole.Screens.GameScreen]'
 ```
@@ -48,6 +56,7 @@ System.InvalidOperationException: Unable to resolve service for type 'Microsoft.
 **Root Cause**: The Windows app wasn't using the Generic Host pattern (unlike Console app), so logging services weren't automatically registered.
 
 **Fix**: Added explicit logging service registration in `Program.cs`:
+
 ```csharp
 services.AddLogging(builder =>
 {
@@ -56,10 +65,13 @@ services.AddLogging(builder =>
 ```
 
 **Files Modified**:
+
 - `dotnet/windows-app/LablabBean.Windows/Program.cs` - Added logging configuration and using statement
 
 ### Issue 3: SadConsole Initialization Timing
+
 **Error**:
+
 ```
 System.NullReferenceException at SadConsole.ScreenSurface..ctor
 ```
@@ -69,16 +81,19 @@ System.NullReferenceException at SadConsole.ScreenSurface..ctor
 **Fix**: Moved GameScreen creation into the `Game.Instance.Started` event handler to ensure SadConsole is fully initialized first.
 
 **Files Modified**:
+
 - `dotnet/windows-app/LablabBean.Windows/Program.cs` - Changed initialization order
 
 ## Verification Results
 
 ### Console App Log
+
 - Process running with PID: 47268
 - Successfully initialized Terminal.Gui interface
 - No errors or warnings in runtime
 
 ### Windows App Log
+
 ```
 2025-10-22 09:11:26.095 [INF] Initializing game screen
 2025-10-22 09:11:26.107 [INF] Initializing new game with map size 80x40
@@ -90,19 +105,22 @@ System.NullReferenceException at SadConsole.ScreenSurface..ctor
 ```
 
 ### Current Running Processes
+
 ```
 ProcessName           Id MainWindowTitle
 -----------           -- ---------------
-LablabBean.Console 47268                
+LablabBean.Console 47268
 LablabBean.Windows 31672 SadConsole Game
 ```
 
 ## Outstanding Warnings
 
 ### Minor Warning in GameWorldManager
+
 ```
 warning CS9198: Parameter 'in Entity entity' reference kind modifier doesn't match target 'ref Entity t0Component'
 ```
+
 - **File**: `dotnet/framework/LablabBean.Game.Core/Worlds/GameWorldManager.cs:72`
 - **Impact**: Low - doesn't affect functionality
 - **Action**: Can be addressed in future refactoring
@@ -116,12 +134,14 @@ All spec implementations (001-009) have not broken the existing application func
 ## Commands to Run Apps
 
 ### Console App
+
 ```powershell
 cd dotnet/console-app/LablabBean.Console
 dotnet run
 ```
 
 ### Windows App
+
 ```powershell
 cd dotnet/windows-app/LablabBean.Windows
 dotnet run

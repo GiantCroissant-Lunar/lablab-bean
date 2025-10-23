@@ -17,14 +17,14 @@ public class LevelManager
     private readonly MapGenerator _mapGenerator;
     private readonly DifficultyScalingSystem _difficultyScaling;
     private readonly Dictionary<int, DungeonLevel> _levelCache;
-    
+
     public int CurrentLevel { get; private set; }
     public int PersonalBestDepth { get; private set; }
     public bool EndlessModeEnabled { get; set; }
-    
+
     public const int MaxScalingLevel = 30;
     public const int VictoryLevel = 20;
-    
+
     public LevelManager(World world, MapGenerator mapGenerator, DifficultyScalingSystem difficultyScaling)
     {
         _world = world;
@@ -54,12 +54,12 @@ public class LevelManager
     /// 4. Place player at appropriate staircase
     /// 5. Update current level and personal best
     /// 6. Return feedback message
-    /// 
+    ///
     /// Preconditions:
     /// - Player must be on a staircase tile
     /// - Target level must be valid (1-30 for normal, unlimited for endless)
     /// - Direction must match staircase type
-    /// 
+    ///
     /// Effects:
     /// - Current level saved to cache
     /// - Target level loaded from cache or generated
@@ -358,9 +358,9 @@ public struct Rectangle
     public int Y { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
-    
+
     public (int x, int y) Center => (X + Width / 2, Y + Height / 2);
-    
+
     public bool Contains(int x, int y)
         => x >= X && x < X + Width && y >= Y && y < Y + Height;
 }

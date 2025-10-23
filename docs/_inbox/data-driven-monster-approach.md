@@ -18,6 +18,7 @@ summary: >
 ## Problem with Current Approach
 
 Generating a C# class for each monster type is:
+
 - ❌ Old-style OOP inheritance pattern
 - ❌ Requires recompilation for each change
 - ❌ Hard to balance (code changes vs data changes)
@@ -281,11 +282,13 @@ public void Update(GameTime gameTime)
 ## Benefits
 
 ### ✅ Designer-Friendly
+
 - Edit YAML files directly
 - No C# knowledge needed
 - Visual tools can edit YAML
 
 ### ✅ Hot-Reload
+
 ```csharp
 // In development mode
 if (DevMode && FileWatcher.Detected("data/monsters/"))
@@ -296,17 +299,20 @@ if (DevMode && FileWatcher.Detected("data/monsters/"))
 ```
 
 ### ✅ Easy Balancing
+
 - Change health: edit YAML, reload
 - No recompilation
 - Quick iteration
 
 ### ✅ Modding Support
+
 ```
 game/data/monsters/      ← Base game monsters
 mods/cool-mod/monsters/  ← Mod monsters
 ```
 
 ### ✅ Version Control Friendly
+
 ```diff
 # Clear diff of balance changes
 - health: 100
@@ -314,6 +320,7 @@ mods/cool-mod/monsters/  ← Mod monsters
 ```
 
 ### ✅ Component Composition
+
 ```yaml
 # Mix and match behaviors
 components:
@@ -386,7 +393,7 @@ loot:
     max: {{GoldDropMax}}
 ```
 
-### Usage:
+### Usage
 
 ```bash
 # Generate YAML data (not C# code!)
@@ -412,6 +419,7 @@ Now Spec-Kit generates **data**, not code!
 ## Example Full Implementation
 
 See:
+
 - `data/monsters/` - Monster data files
 - `MonsterDefinition.cs` - Data schema
 - `MonsterDatabase.cs` - Data loader
@@ -421,11 +429,13 @@ See:
 ## Performance
 
 **Loading Time:**
+
 - Parse all YAML: ~50ms for 100 monsters
 - Lazy loading: <1ms per monster
 - In-memory cache: No runtime overhead
 
 **Memory:**
+
 - Shared definitions: 1 instance per monster type
 - Runtime entities: Only spawned monsters
 

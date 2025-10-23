@@ -144,30 +144,35 @@ As a developer, I need service health monitoring so I can track the status of al
 ## Requirements (mandatory)
 
 ### Naming & Structure
+
 - **FR-001**: All contract projects MUST follow naming pattern `LablabBean.Contracts.{Service}`.
 - **FR-002**: All contract projects MUST target `netstandard2.1` for compatibility.
 - **FR-003**: All contract projects MUST use `ImplicitUsings=disable` and explicit using statements.
 - **FR-004**: All contract projects MUST include `IsExternalInit` polyfill for C# records.
 
 ### Contract Architecture
+
 - **FR-005**: Each service MUST have an `IService` interface in `Services/` directory.
 - **FR-006**: Each service MUST have supporting types in appropriate subdirectories (Classes/, Enums/, Models/).
 - **FR-007**: Each service SHOULD have Events defined if applicable.
 - **FR-008**: Each service MAY have Extensions defined for convenience methods.
 
 ### Proxy Services
+
 - **FR-009**: Each contract project MUST include proxy service with `[RealizeService]` attribute.
 - **FR-010**: Proxy services MUST be in `Services/Proxy/` namespace.
 - **FR-011**: Proxy services MUST reference `LablabBean.SourceGenerators.Proxy` as analyzer.
 - **FR-012**: Proxy services MUST delegate to `IRegistry` for service resolution.
 
 ### Adaptation from Unity
+
 - **FR-013**: Unity-specific types (GameObject, Transform, etc.) MUST be removed or abstracted.
 - **FR-014**: UniTask MUST be replaced with standard Task/ValueTask.
 - **FR-015**: UniRx observables MUST be replaced with System.Reactive or removed.
 - **FR-016**: ScriptableObject patterns MUST be replaced with plain C# classes or removed.
 
 ### Build & Verification
+
 - **FR-017**: All new contract projects MUST build successfully with zero errors.
 - **FR-018**: All new contract projects MUST be added to the solution file.
 - **FR-019**: All new contract projects SHOULD have corresponding test projects.
@@ -178,6 +183,7 @@ As a developer, I need service health monitoring so I can track the status of al
 ### Priority 1: Core Services (Essential)
 
 #### 1. Diagnostic Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Diagnostic/`
 - **Purpose**: System monitoring, performance tracking, health checks, observability
 - **Key Interfaces**: `IService`, `IDiagnosticProvider`, `IDiagnosticSpan`
@@ -186,6 +192,7 @@ As a developer, I need service health monitoring so I can track the status of al
 - **Adaptat ions**: Remove Unity-specific diagnostics, replace UniTask with Task
 
 #### 2. ObjectPool Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.ObjectPool/`
 - **Purpose**: Object pooling for memory efficiency and performance
 - **Key Interfaces**: `IService`, `IObjectPool<T>`
@@ -193,6 +200,7 @@ As a developer, I need service health monitoring so I can track the status of al
 - **Adaptations**: Remove `IGameObjectPool` (Unity-specific), keep generic `IObjectPool<T>`
 
 #### 3. Audio Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Audio/`
 - **Purpose**: Audio playback and management
 - **Key Interfaces**: `IService`
@@ -203,6 +211,7 @@ As a developer, I need service health monitoring so I can track the status of al
 ### Priority 2: Data Services
 
 #### 4. Localization Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Localization/`
 - **Purpose**: Multi-language support and string localization
 - **Key Interfaces**: `IService`
@@ -210,6 +219,7 @@ As a developer, I need service health monitoring so I can track the status of al
 - **Adaptations**: Use standard CultureInfo, replace UniTask with Task
 
 #### 5. PersistentStorage Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.PersistentStorage/`
 - **Purpose**: Data persistence across application sessions
 - **Key Interfaces**: `IService`
@@ -218,6 +228,7 @@ As a developer, I need service health monitoring so I can track the status of al
 - **Adaptations**: Replace UniTask with Task
 
 #### 6. Serialization Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Serialization/`
 - **Purpose**: Object serialization/deserialization
 - **Key Interfaces**: `IService`
@@ -226,24 +237,28 @@ As a developer, I need service health monitoring so I can track the status of al
 ### Priority 3: Supporting Services
 
 #### 7. Performance Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Performance/`
 - **Purpose**: Performance monitoring and profiling
 - **Key Interfaces**: `IService`
 - **Adaptations**: Remove Unity Profiler integration
 
 #### 8. Scheduler Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Scheduler/`
 - **Purpose**: Task scheduling and timing
 - **Key Interfaces**: `IService`
 - **Adaptations**: Replace UniTask with Task, use standard System.Threading.Timer
 
 #### 9. Analytics Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Analytics/`
 - **Purpose**: Event tracking and analytics
 - **Key Interfaces**: `IService`
 - **Adaptations**: Remove Unity Analytics specifics, keep provider-agnostic interface
 
 #### 10. Firebase Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Firebase/`
 - **Purpose**: Firebase integration (Remote Config, Analytics, etc.)
 - **Key Interfaces**: `IService`
@@ -251,12 +266,14 @@ As a developer, I need service health monitoring so I can track the status of al
 - **Adaptations**: Use .NET Firebase SDK patterns
 
 #### 11. ServiceHealth Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.ServiceHealth/`
 - **Purpose**: Service health monitoring and status tracking
 - **Key Interfaces**: `IService`
 - **Adaptations**: Replace UniTask with Task
 
 #### 12. Resilience Service
+
 - **Location**: `dotnet/framework/LablabBean.Contracts.Resilience/`
 - **Purpose**: Fault tolerance, retry logic, circuit breakers
 - **Key Interfaces**: `IService`, `IRetryPolicy`, `ICircuitBreaker`, `ITimeout`
@@ -296,34 +313,43 @@ As a developer, I need service health monitoring so I can track the status of al
 ## Implementation Phases
 
 ### Phase 1: Project Setup (All Services)
+
 Create all 12 contract projects with basic structure:
+
 - Create project directories
 - Create .csproj files with correct references
 - Add Polyfills.cs for IsExternalInit
 - Add to solution file
 
 ### Phase 2: Priority 1 Services (Diagnostic, ObjectPool, Audio)
+
 Implement interfaces and types for essential services:
+
 - Port interfaces from reference
 - Adapt Unity-specific types
 - Create supporting classes/enums
 - Add proxy services
 
 ### Phase 3: Priority 2 Services (Localization, PersistentStorage, Serialization)
+
 Implement interfaces and types for data services:
+
 - Port interfaces from reference
 - Adapt Unity-specific types
 - Create supporting classes/enums
 - Add proxy services
 
 ### Phase 4: Priority 3 Services (Performance, Scheduler, Analytics, Firebase, ServiceHealth, Resilience)
+
 Implement interfaces and types for supporting services:
+
 - Port interfaces from reference
 - Adapt Unity-specific types
 - Create supporting classes/enums
 - Add proxy services
 
 ### Phase 5: Build Verification
+
 - Build all contract projects individually
 - Build entire solution
 - Verify all proxy services generate correctly
@@ -334,6 +360,7 @@ Implement interfaces and types for supporting services:
 ### Unity to .NET Standard Adaptations
 
 #### UniTask → Task
+
 ```csharp
 // Unity (Before)
 UniTask<T> MethodAsync(CancellationToken ct = default);
@@ -343,6 +370,7 @@ Task<T> MethodAsync(CancellationToken ct = default);
 ```
 
 #### IObservable (UniRx) → System.Reactive
+
 ```csharp
 // Unity (Before)
 using UniRx;
@@ -355,6 +383,7 @@ IObservable<T> Stream { get; }
 ```
 
 #### GameObject/Component → Abstract Types
+
 ```csharp
 // Unity (Before)
 IGameObjectPool CreatePoolAsync(GameObject prefab, ...);
@@ -364,6 +393,7 @@ IGameObjectPool CreatePoolAsync(GameObject prefab, ...);
 ```
 
 #### ScriptableObject → Plain Classes
+
 ```csharp
 // Unity (Before)
 public class Settings : ScriptableObject { }

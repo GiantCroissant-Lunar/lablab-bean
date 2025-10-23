@@ -1,4 +1,5 @@
 # Tasks: Inventory Plugin Migration
+
 - [ ] Create plugin project and manifest
 - [ ] Define `IInventoryService` and read models
 - [ ] Register systems in `Initialize`

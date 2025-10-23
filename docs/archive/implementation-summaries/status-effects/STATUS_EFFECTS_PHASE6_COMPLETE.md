@@ -1,6 +1,6 @@
 # Phase 6 Complete: Combat Stat Modifiers & Final Integration
 
-## 🎉 Status Effects System - FULLY IMPLEMENTED!
+## 🎉 Status Effects System - FULLY IMPLEMENTED
 
 The complete status effects system is now integrated and functional across all game systems!
 
@@ -16,32 +16,35 @@ Phase 6 implements the final piece: **combat stat modifiers**. Buffs and debuffs
 
 **File**: `dotnet/framework/LablabBean.Game.Core/Systems/CombatSystem.cs`
 
-#### New Public Methods:
+#### New Public Methods
 
 ```csharp
 public int GetModifiedAttack(Entity entity, int baseAttack)
-public int GetModifiedDefense(Entity entity, int baseDefense)  
+public int GetModifiedDefense(Entity entity, int baseDefense)
 public int GetModifiedSpeed(Entity entity, int baseSpeed)
 ```
 
-#### Stat Modifier Logic:
+#### Stat Modifier Logic
 
 **Attack Modifiers:**
+
 - ✅ **Strength**: `+magnitude` to attack
 - ✅ **Weakness**: `-magnitude` to attack
 - Minimum: 1 (can't go to 0 or negative)
 
 **Defense Modifiers:**
+
 - ✅ **IronSkin**: `+magnitude` to defense
 - ✅ **Fragile**: `-magnitude` to defense
 - Minimum: 0 (can go to 0, fully exposed)
 
 **Speed Modifiers:**
+
 - ✅ **Haste**: `+magnitude` to speed
 - ✅ **Slow**: `-magnitude` to speed
 - Minimum: 1 (can't go to 0 or negative)
 
-#### Combat Integration:
+#### Combat Integration
 
 ```csharp
 // Before: Direct stat usage
@@ -57,7 +60,7 @@ int damage = CalculateDamage(modifiedAttack, modifiedDefense);
 
 **File**: `dotnet/framework/LablabBean.Game.SadConsole/Renderers/HudRenderer.cs`
 
-#### Enhanced Stats Display:
+#### Enhanced Stats Display
 
 Shows **modified values** when stat-modifying effects are active:
 
@@ -69,12 +72,14 @@ Stats:
   NRG: 100
 ```
 
-#### Smart Display Logic:
+#### Smart Display Logic
+
 - Only shows modifiers when stat-affecting effects are present
 - Uses **green (+)** for buffs, **red (-)** for debuffs (via formatting)
 - Falls back to base stats when no modifiers active
 
-#### New Methods:
+#### New Methods
+
 - `SetCombatSystem()`: Injects combat system for stat calculation
 - `GetStatDiff()`: Formats the difference (e.g., `(+5)`, `(-3)`)
 
@@ -132,6 +137,7 @@ Stats:
 ## Combat Examples
 
 ### Example 1: Poison DoT
+
 ```
 Turn 1: Spider poisons player (40% chance succeeded)
   → Player HP: 100/100
@@ -152,6 +158,7 @@ Turn 6: Poison expires
 ```
 
 ### Example 2: Strength Buff in Combat
+
 ```
 Before buff:
   Base ATK: 10, Enemy DEF: 5
@@ -172,6 +179,7 @@ After 10 turns:
 ```
 
 ### Example 3: Defense Debuff
+
 ```
 Enemy casts Fragile (-3 DEF for 5 turns):
   → HUD: "💔 Fragile (5)" and "DEF: 8 (-3)"
@@ -184,6 +192,7 @@ During combat:
 ```
 
 ### Example 4: Multiple Effects Stacking
+
 ```
 Player has:
   - Strength (+5 ATK)
@@ -214,12 +223,14 @@ Combat:
 ## Implementation Checklist
 
 ### ✅ Phase 1: Core Infrastructure
+
 - [x] StatusEffect struct
 - [x] StatusEffects component
 - [x] EffectDefinitions database
 - [x] Effect enums (Type, Category, Source, Color)
 
 ### ✅ Phase 2: Turn-Based Processing
+
 - [x] StatusEffectSystem
 - [x] ProcessEffects() method
 - [x] Tick damage/healing
@@ -227,24 +238,28 @@ Combat:
 - [x] Remove expired effects
 
 ### ✅ Phase 3: Consumables Integration
+
 - [x] ApplyEffect() for potions
 - [x] CureEffect() for antidotes
 - [x] ItemSystem integration
 - [x] Buff potions (Strength, Haste, etc.)
 
 ### ✅ Phase 4: Enemy Integration
+
 - [x] Enemy component with effect data
 - [x] CombatSystem integration
 - [x] Probability-based application
 - [x] Toxic Spider implementation
 
 ### ✅ Phase 5: HUD Display
+
 - [x] Effects label in HUD
 - [x] UpdateStatusEffects() method
 - [x] Effect icons (☠, ♥, ⚡, etc.)
 - [x] Duration display
 
 ### ✅ Phase 6: Combat Stat Modifiers
+
 - [x] GetModifiedAttack()
 - [x] GetModifiedDefense()
 - [x] GetModifiedSpeed()
@@ -259,18 +274,21 @@ Combat:
 ### Stat Modifier Calculations
 
 **Attack:**
+
 ```csharp
 modified = base + Σ(Strength.magnitude) - Σ(Weakness.magnitude)
 final = Max(1, modified)  // Minimum 1 ATK
 ```
 
 **Defense:**
+
 ```csharp
 modified = base + Σ(IronSkin.magnitude) - Σ(Fragile.magnitude)
 final = Max(0, modified)  // Can reach 0 (vulnerable)
 ```
 
 **Speed:**
+
 ```csharp
 modified = base + Σ(Haste.magnitude) - Σ(Slow.magnitude)
 final = Max(1, modified)  // Minimum 1 SPD
@@ -294,6 +312,7 @@ final = Max(1, modified)  // Minimum 1 SPD
 ## Testing Scenarios
 
 ### Scenario 1: Full Poison Flow
+
 1. Player enters room with Toxic Spider
 2. Spider attacks (roll: 35/100 < 40%) → Poison applied ✓
 3. HUD shows "☠ Poison (5)" ✓
@@ -303,6 +322,7 @@ final = Max(1, modified)  // Minimum 1 SPD
 7. HUD clears effects section ✓
 
 ### Scenario 2: Buff Potion
+
 1. Player drinks Strength Potion
 2. HUD shows "💪 Strength (10)" and "ATK: 10 (+5)" ✓
 3. Player attacks enemy → Deals increased damage ✓
@@ -310,6 +330,7 @@ final = Max(1, modified)  // Minimum 1 SPD
 5. HUD returns to normal "ATK: 10" ✓
 
 ### Scenario 3: Multiple Effects
+
 1. Player drinks Strength + IronSkin potions
 2. Spider poisons player
 3. HUD shows all 3 effects with icons ✓
@@ -322,11 +343,13 @@ final = Max(1, modified)  // Minimum 1 SPD
 ## Known Limitations & Future Enhancements
 
 ### Current Limitations
+
 - ⚠️ Speed modifiers don't affect turn order yet (turn-based system TBD)
 - ⚠️ No effect resistance/immunity system
 - ⚠️ Max 10 concurrent effects per entity
 
 ### Potential Future Enhancements
+
 1. **Effect Stacking Variants**
    - Limit same effect type (e.g., only 1 Strength buff)
    - Diminishing returns for stacking
@@ -349,7 +372,8 @@ final = Max(1, modified)  // Minimum 1 SPD
 
 ## Files Modified
 
-### Core System Files:
+### Core System Files
+
 1. ✅ `LablabBean.Game.Core/Systems/CombatSystem.cs`
    - Added stat modifier methods
    - Integrated into combat calculation
@@ -360,7 +384,8 @@ final = Max(1, modified)  // Minimum 1 SPD
    - Enhanced stats display with modifiers
    - Smart conditional display
 
-### Supporting Files (Previous Phases):
+### Supporting Files (Previous Phases)
+
 - ✅ `Components/StatusEffect.cs` (Phase 1)
 - ✅ `Systems/StatusEffectSystem.cs` (Phase 2)
 - ✅ `Systems/ItemSystem.cs` (Phase 3)
@@ -370,7 +395,8 @@ final = Max(1, modified)  // Minimum 1 SPD
 
 ## Success Metrics
 
-### ✅ Functional Requirements Met:
+### ✅ Functional Requirements Met
+
 - [x] Buffs increase combat effectiveness
 - [x] Debuffs decrease combat effectiveness
 - [x] Effects visible to player
@@ -381,7 +407,8 @@ final = Max(1, modified)  // Minimum 1 SPD
 - [x] Enemies inflict effects
 - [x] Antidotes cure effects
 
-### ✅ Quality Requirements Met:
+### ✅ Quality Requirements Met
+
 - [x] No performance regression
 - [x] Type-safe implementation
 - [x] Clean component-based design
@@ -405,21 +432,23 @@ final = Max(1, modified)  // Minimum 1 SPD
 └── Phase 6: Impact (Combat modifiers, stat effects) ← YOU ARE HERE
 ```
 
-### Impact on Gameplay:
+### Impact on Gameplay
 
 **Before Status Effects:**
+
 - Combat: Simple attack/defense math
 - Items: Direct heal/damage only
 - Enemies: All identical mechanics
 - Strategy: Button mashing
 
 **After Status Effects:**
+
 - Combat: Tactical buff/debuff gameplay
 - Items: Strategic potion timing
 - Enemies: Unique abilities (poison, etc.)
 - Strategy: Resource management, timing, counterplay
 
-### The Complete Player Experience:
+### The Complete Player Experience
 
 ```
 🎮 PLAYER STORY:
@@ -441,9 +470,10 @@ final = Max(1, modified)  // Minimum 1 SPD
 
 ---
 
-## 🎉 Status: COMPLETE!
+## 🎉 Status: COMPLETE
 
 All 6 phases implemented. The status effects system is:
+
 - ✅ **Fully Functional**: All mechanics working
 - ✅ **Fully Integrated**: Connected across all systems
 - ✅ **Fully Visible**: Complete player feedback

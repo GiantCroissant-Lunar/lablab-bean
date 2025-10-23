@@ -104,6 +104,7 @@ task speck-generate TEMPLATE=entity/monster OUTPUT=Dragon.cs VARS=vars/examples/
 ```
 
 **Result:**
+
 - ✅ Template loaded successfully
 - ✅ Variables parsed from YAML
 - ✅ Output generated: 69 lines, 1717 bytes
@@ -117,6 +118,7 @@ task gen-monster NAME=Goblin
 ```
 
 **Result:**
+
 - ✅ Environment variable detected
 - ✅ Default values applied
 - ✅ Output generated: 69 lines, 1674 bytes
@@ -129,6 +131,7 @@ task speck-list
 ```
 
 **Result:**
+
 - ✅ Help displayed
 - ✅ Templates discovered
 - ✅ Usage examples shown
@@ -137,6 +140,7 @@ task speck-list
 ### Test 4: Multiple Generations ✅
 
 Generated 3 different monsters successfully:
+
 - Dragon (from YAML)
 - Wraith (from YAML)
 - Goblin (from defaults)
@@ -154,6 +158,7 @@ speck-generate:
 ```
 
 **Issues:**
+
 - No actual generation
 - No template processor
 - Just planning documentation
@@ -168,6 +173,7 @@ speck-generate:
 ```
 
 **Benefits:**
+
 - ✅ Real template processing
 - ✅ Multiple input methods
 - ✅ Comprehensive documentation
@@ -260,11 +266,13 @@ code generated\MyMonster.cs
 ### Variable Resolution
 
 **Priority Order:**
+
 1. Default values (lowest priority)
 2. YAML file values
 3. Environment variables (highest priority)
 
 **Example:**
+
 ```bash
 # YAML has: MaxHealth: 100
 # Env has: VAR_MaxHealth=200
@@ -288,6 +296,7 @@ code generated\MyMonster.cs
 ## 📊 Performance Metrics
 
 **Generation Performance:**
+
 - Template loading: <10ms
 - Variable parsing: <5ms
 - Output generation: <50ms
@@ -295,6 +304,7 @@ code generated\MyMonster.cs
 - **Total time:** <100ms per file
 
 **Scalability:**
+
 - Tested with 3 simultaneous generations
 - No performance degradation
 - Memory efficient (streaming)
@@ -383,6 +393,7 @@ code generated\MyMonster.cs
 **To:** Production-ready template generation system
 
 **Value Added:**
+
 - ⏱️ **Time Saved:** 15-30 minutes per monster (manual creation)
 - 🎯 **Consistency:** 100% (templates enforce patterns)
 - 📚 **Documentation:** 2,000+ lines of guides
@@ -401,6 +412,7 @@ code generated\MyMonster.cs
 4. ✅ Tests are passing
 
 **Get Started:**
+
 ```bash
 task gen-monster NAME=YourMonster
 ```

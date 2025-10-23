@@ -82,7 +82,7 @@ MapView
 ### Room Generation Algorithm
 
 1. **Initialize**: Create empty map
-2. **Place Rooms**: 
+2. **Place Rooms**:
    - Generate 5-15 random room positions
    - Size: random 6-12 tiles width/height
    - Ensure no overlaps
@@ -123,11 +123,13 @@ const int FOVRadius = 20;  // Visibility range
 ## Files Modified/Created
 
 ### Created Files
+
 - `dotnet/framework/LablabBean.Game.Core/Maps/RoomDungeonGenerator.cs`
 - `dotnet/framework/LablabBean.Game.Core/Maps/FogOfWar.cs`
 - `dotnet/framework/LablabBean.Game.TerminalUI/Views/MapView.cs`
 
 ### Modified Files
+
 - `dotnet/framework/LablabBean.Game.Core/Maps/DungeonMap.cs`
 - `dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs`
 - `dotnet/framework/LablabBean.Game.TerminalUI/Services/WorldViewService.cs`
@@ -196,16 +198,19 @@ const int FOVRadius = 20;  // Visibility range
 ## Integration Points
 
 ### With Entity System
+
 - Spawns monsters in rooms (1-3 per room)
 - Player spawns in first generated room
 - Entities visible only within FOV
 
 ### With Rendering System
+
 - MapView renders dungeon from DungeonMap
 - Camera centers on player position
 - Buffer-based rendering for efficiency
 
 ### With Game State
+
 - GameStateManager owns DungeonMap instance
 - Updates FOV on player movement
 - Tracks fog of war state
@@ -213,21 +218,23 @@ const int FOVRadius = 20;  // Visibility range
 ## Debug Information
 
 ### Logging
+
 ```csharp
 _logger.LogInformation("Generated dungeon with {RoomCount} rooms", rooms.Count);
 _logger.LogDebug("FOV calculated for position ({X}, {Y}), radius {Radius}", x, y, radius);
 ```
 
 ### Debug Panel
+
 - Shows current FOV radius
 - Displays room count
 - Reports generation time
 
 ## References
 
-- **Roguelike Development**: http://www.roguebasin.com/
-- **Shadowcasting FOV**: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
-- **Dungeon Generation**: http://www.roguebasin.com/index.php?title=Dungeon-Building_Algorithm
+- **Roguelike Development**: <http://www.roguebasin.com/>
+- **Shadowcasting FOV**: <http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting>
+- **Dungeon Generation**: <http://www.roguebasin.com/index.php?title=Dungeon-Building_Algorithm>
 
 ## Version History
 

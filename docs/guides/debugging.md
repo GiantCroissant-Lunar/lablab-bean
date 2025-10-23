@@ -46,32 +46,41 @@ summary: >
 ## Current Stack Status
 
 ### Console App (Terminal.Gui)
+
 ```bash
 cd dotnet/console-app/LablabBean.Console
 dotnet run
 ```
+
 **Status**: ✅ Working
+
 - Displays welcome screen
 - Shows keyboard shortcuts
 - Status bar functional
 - ESC, F1, F5 keys work
 
 ### Website (Astro + xterm.js + node-pty)
+
 ```bash
 cd website
 pnpm dev
 ```
+
 **Status**: ⏳ Ready to test
+
 - Dependencies installed
 - node-pty compiled successfully
 - Ready for integration testing
 
 ### PM2 Stack Management
+
 ```bash
 cd website
 pnpm stack:start
 ```
+
 **Status**: ⏳ Ready to test
+
 - PM2 configured
 - ecosystem.config.js created
 - Needs testing with full stack
@@ -79,10 +88,12 @@ pnpm stack:start
 ## Next Steps
 
 1. **Test Website**
+
    ```bash
    cd website
    pnpm dev
    ```
+
    - Verify Astro server starts
    - Check xterm.js loads
    - Test WebSocket connection
@@ -93,9 +104,11 @@ pnpm stack:start
    - Test keyboard input forwarding
 
 3. **Test PM2 Stack**
+
    ```bash
    pnpm stack:start
    ```
+
    - Verify both processes start
    - Check logs with `pnpm pm2:logs`
    - Test process management
@@ -107,20 +120,24 @@ pnpm stack:start
 ## Files Modified for Compatibility
 
 ### Console App
+
 - `LablabBean.Console.csproj` - Excluded incompatible views
 - `Services/TerminalGuiService.cs` - Use SimpleWindow
 - `Views/SimpleWindow.cs` - New compatible window
 
 ### Website
+
 - `packages/terminal/package.json` - Upgraded node-pty to 1.1.0-beta17
 
 ### .NET Infrastructure
+
 - `Directory.Packages.props` - Added Serilog.Settings.Configuration
 - `LablabBean.Infrastructure.csproj` - Added Serilog package reference
 
 ## Testing Commands
 
 ### Individual Components
+
 ```bash
 # Console App
 cd dotnet/console-app/LablabBean.Console
@@ -136,6 +153,7 @@ dotnet run -- Compile
 ```
 
 ### Full Stack
+
 ```bash
 # Via PM2
 cd website

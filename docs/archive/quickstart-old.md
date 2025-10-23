@@ -3,17 +3,20 @@
 ## Get Started in 3 Steps
 
 ### 1. Build the Release
+
 ```bash
 task build-release
 ```
 
 ### 2. Start the Stack
+
 ```bash
 task stack-run
 ```
 
 ### 3. Access Your Apps
-- **Web App**: http://localhost:3000
+
+- **Web App**: <http://localhost:3000>
 - **Console App**: Running in PM2
 - **Windows App**: Available in artifacts
 
@@ -29,12 +32,15 @@ task stack-run
 ## Installation
 
 ### Option 1: Automated Setup (Recommended)
+
 **Windows (PowerShell):**
+
 ```powershell
 .\setup.ps1
 ```
 
 **Linux/macOS:**
+
 ```bash
 chmod +x setup.sh
 ./setup.sh
@@ -43,16 +49,19 @@ chmod +x setup.sh
 ### Option 2: Manual Setup
 
 1. **Install dependencies:**
+
    ```bash
    task install
    ```
 
 2. **Set up pre-commit hooks:**
+
    ```bash
    task pre-commit-install
    ```
 
 3. **Build the application:**
+
    ```bash
    task build
    ```
@@ -60,11 +69,13 @@ chmod +x setup.sh
 ## First Run
 
 Run the application:
+
 ```bash
 task run
 ```
 
 Or directly:
+
 ```bash
 ./bin/lablab-bean --help
 ```
@@ -72,38 +83,45 @@ Or directly:
 ## Basic Commands
 
 ### View Available Tasks
+
 ```bash
 task --list
 ```
 
 ### Build and Run
+
 ```bash
 task build
 task run
 ```
 
 ### Run Tests
+
 ```bash
 task test
 ```
 
 ### Check Code Quality
+
 ```bash
 task check
 ```
 
 This runs:
+
 - Code formatting
 - Linting
 - Tests
 - Static analysis
 
 ### Format Code
+
 ```bash
 task fmt
 ```
 
 ### Run Linter
+
 ```bash
 task lint
 ```
@@ -111,11 +129,13 @@ task lint
 ## Using Speck-kit
 
 ### Initialize Speck-kit
+
 ```bash
 ./bin/lablab-bean speck init
 ```
 
 ### Generate Code from Template
+
 ```bash
 ./bin/lablab-bean speck generate model User
 ```
@@ -123,6 +143,7 @@ task lint
 ### Configure Templates
 
 Edit `.lablab-bean.yaml`:
+
 ```yaml
 speck:
   enabled: true
@@ -138,17 +159,20 @@ speck:
 1. **Make changes** to your code
 
 2. **Format and check:**
+
    ```bash
    task check
    ```
 
 3. **Commit** (pre-commit hooks run automatically):
+
    ```bash
    git add .
    git commit -m "feat: add new feature"
    ```
 
 4. **Build and test:**
+
    ```bash
    task build
    task test
@@ -204,6 +228,7 @@ logging:
 ```
 
 You can also use environment variables:
+
 ```bash
 export LABLAB_BEAN_LOGGING_LEVEL=debug
 ./bin/lablab-bean
@@ -212,29 +237,37 @@ export LABLAB_BEAN_LOGGING_LEVEL=debug
 ## Troubleshooting
 
 ### Task not found
+
 Install Task:
+
 ```bash
 go install github.com/go-task/task/v3/cmd/task@latest
 ```
 
 Add `$GOPATH/bin` to your PATH:
+
 ```bash
 export PATH=$PATH:$(go env GOPATH)/bin
 ```
 
 ### Pre-commit hooks not working
+
 Install pre-commit:
+
 ```bash
 pip install pre-commit
 ```
 
 Then install hooks:
+
 ```bash
 task pre-commit-install
 ```
 
 ### Build fails
+
 Clean and rebuild:
+
 ```bash
 task clean
 task install
@@ -242,7 +275,9 @@ task build
 ```
 
 ### Tests fail
+
 Run with verbose output:
+
 ```bash
 go test -v ./...
 ```

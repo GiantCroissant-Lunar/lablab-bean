@@ -32,24 +32,28 @@ This plan outlines the implementation of 12 missing service contract projects, p
 ### Phased Approach
 
 **Phase 1: Foundation** (Est. 1-2 hours)
+
 - Create all 12 project structures
 - Set up .csproj files with correct references
 - Add to solution file
 - Verify solution loads
 
 **Phase 2: P1 Services** (Est. 4-6 hours)
+
 - Diagnostic (most complex - 2-3 hours)
 - ObjectPool (1-2 hours)
 - Audio (1-2 hours)
 - Build verification
 
 **Phase 3: P2 Services** (Est. 3-4 hours)
+
 - Localization (1 hour)
 - PersistentStorage (1-1.5 hours)
 - Serialization (1-1.5 hours)
 - Build verification
 
 **Phase 4: P3 Services** (Est. 4-6 hours)
+
 - Performance (30 min)
 - Scheduler (1-1.5 hours)
 - Analytics (30 min)
@@ -59,6 +63,7 @@ This plan outlines the implementation of 12 missing service contract projects, p
 - Build verification
 
 **Phase 5: Finalization** (Est. 1 hour)
+
 - Full solution build
 - Generate proxy verification
 - Documentation
@@ -68,6 +73,7 @@ This plan outlines the implementation of 12 missing service contract projects, p
 ## Key Adaptation Patterns
 
 ### 1. UniTask → Task
+
 ```csharp
 // Before (Unity)
 UniTask<T> MethodAsync(CancellationToken ct = default);
@@ -77,6 +83,7 @@ Task<T> MethodAsync(CancellationToken ct = default);
 ```
 
 ### 2. UniRx → System.Reactive or Remove
+
 ```csharp
 // Before (Unity)
 using UniRx;
@@ -91,6 +98,7 @@ IObservable<T> Stream { get; }
 ```
 
 ### 3. GameObject → Abstract Types
+
 ```csharp
 // Before (Unity)
 IGameObjectPool CreateGameObjectPool(GameObject prefab, ...);
@@ -100,6 +108,7 @@ IGameObjectPool CreateGameObjectPool(GameObject prefab, ...);
 ```
 
 ### 4. ScriptableObject → Plain Classes
+
 ```csharp
 // Before (Unity)
 public class Config : ScriptableObject { ... }
@@ -196,6 +205,7 @@ namespace System.Runtime.CompilerServices
 ## Reference Paths
 
 ### Soy-Bean Reference
+
 ```
 ref-projects/soy-bean/packages/scoped-3208/com.giantcroissant.yokan.game/Runtime/Core/
 ├── Diagnostic/
@@ -213,6 +223,7 @@ ref-projects/soy-bean/packages/scoped-3208/com.giantcroissant.yokan.game/Runtime
 ```
 
 ### Lablab-Bean Target
+
 ```
 dotnet/framework/
 ├── LablabBean.Contracts.Diagnostic/
@@ -297,16 +308,19 @@ find dotnet/framework/LablabBean.Contracts.*/obj -name "*Service.g.cs" 2>/dev/nu
 ## Prioritization Rationale
 
 ### Priority 1 (Essential)
+
 - **Diagnostic**: Critical for production monitoring and debugging
 - **ObjectPool**: Performance optimization for memory-intensive scenarios
 - **Audio**: Core gameplay/UX feature
 
 ### Priority 2 (Important)
+
 - **Localization**: User experience in multiple markets
 - **PersistentStorage**: Data persistence across sessions
 - **Serialization**: Data interchange and storage
 
 ### Priority 3 (Supporting)
+
 - **Performance**: Monitoring, but less critical than Diagnostic
 - **Scheduler**: Timing operations, can be deferred
 - **Analytics**: Tracking, not blocking for core functionality

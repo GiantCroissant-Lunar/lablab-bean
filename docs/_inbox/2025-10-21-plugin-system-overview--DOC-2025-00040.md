@@ -26,6 +26,7 @@ Comprehensive overview of the Lablab Bean plugin system, a tiered plugin archite
 ## Executive Summary
 
 The plugin system enables:
+
 - **Modular architecture** - Game features as independent, hot-swappable plugins
 - **Isolation** - Plugins run in separate AssemblyLoadContext (ALC) for memory isolation
 - **Extensibility** - Third-party plugins without recompiling core framework
@@ -80,6 +81,7 @@ The plugin system enables:
 **Purpose**: Minimal interface set shared across ALC boundaries
 
 **Key interfaces**:
+
 - `IPlugin` - Plugin lifecycle (Initialize → Start → Stop)
 - `IPluginContext` - Initialization context (Registry, Configuration, Logger, Host)
 - `IRegistry` - Service registration (cross-ALC, priority-based)
@@ -98,12 +100,14 @@ The plugin system enables:
 **Purpose**: Plugin loader, lifecycle management, and service registry
 
 **Key classes**:
+
 - `PluginLoader` - Discovery, validation, dependency resolution
 - `PluginLoadContext` - ALC isolation with shared assembly loading
 - `PluginRegistry` - Plugin metadata tracking
 - `ServiceCollectionExtensions` - DI integration
 
 **Lifecycle stages**:
+
 1. **Discovery** - Scan plugin paths for `plugin.json` manifests
 2. **Validation** - Parse manifests, validate required fields
 3. **Dependency Resolution** - Build dependency graph (topological sort)
@@ -113,6 +117,7 @@ The plugin system enables:
 7. **Shutdown** - Call `StopAsync` (cleanup)
 
 **Observability**:
+
 - Serilog structured logging
 - Plugin metrics (load time, service counts)
 - Health checks (plugin status monitoring)
@@ -124,17 +129,20 @@ The plugin system enables:
 **Purpose**: Metadata for discovery, validation, and dependency resolution
 
 **Required fields**:
+
 - `id` - Unique identifier
 - `name` - Display name
 - `version` - Semantic version
 - `entryPoint` - Profile-specific assembly/type
 
 **Optional fields**:
+
 - `dependencies` - Plugin dependencies with version ranges
 - `capabilities` - Capability tags for filtering
 - `priority` - Load priority (default: 100)
 
 **Example**:
+
 ```json
 {
   "id": "inventory",
@@ -154,49 +162,60 @@ The plugin system enables:
 ## Implementation Phases
 
 ### Phase 1: Contract Design ✅
+
 **Completed**: 2025-10-20
 
 **Deliverables**:
+
 - `IPlugin` interface with lifecycle methods
 - `IPluginContext` for initialization
 - Minimal contract surface (5 interfaces)
 
 ### Phase 2: Plugin Loader with ALC ✅
+
 **Completed**: 2025-10-20
 
 **Deliverables**:
+
 - `PluginLoadContext` with ALC isolation
 - `PluginLoader` with discovery and loading
 - Manifest parsing and validation
 - Generic Host integration
 
 ### Phase 3: Dependency Resolution ✅
+
 **Completed**: 2025-10-20
 
 **Deliverables**:
+
 - Topological sort for dependency graph
 - Version range validation
 - Circular dependency detection
 - Optional dependency support
 
 ### Phase 4: Observability ✅
+
 **Completed**: 2025-10-21
 
 **Deliverables**:
+
 - Serilog structured logging integration
 - Plugin metrics (load time, service counts)
 - Health checks for plugin monitoring
 - PluginAdminService for runtime inspection
 
 **Key files**:
+
 - `PluginMetrics.cs` - Performance and diagnostics
 - `PluginHealthCheck.cs` - ASP.NET Core health checks
 - `PluginAdminService.cs` - Admin API for plugin management
 
 ### Phase 5: Security & Production Readiness ✅
+
 **Completed**: 2025-10-21
 
 **Deliverables**:
+
 - Permission model design (manifest-based)
 - Plugin signature validation (planned)
 - Sandboxing strategy (future)
@@ -204,6 +223,7 @@ The plugin system enables:
 - Production deployment scripts
 
 **Key files**:
+
 - `Security/PluginPermissionValidator.cs` - Permission checking
 - `Security/PluginSignatureValidator.cs` - Signature verification (planned)
 - `scripts/deploy-demo-plugin.ps1` - Deployment automation
@@ -211,6 +231,7 @@ The plugin system enables:
 ## Current Status (2025-10-21)
 
 ### ✅ Implemented
+
 - [x] Plugin contracts (IPlugin, IPluginContext, IRegistry, IPluginHost)
 - [x] AssemblyLoadContext isolation
 - [x] Manifest-based discovery
@@ -224,11 +245,13 @@ The plugin system enables:
 - [x] Admin API for runtime inspection
 
 ### 🚧 In Progress
+
 - [ ] JSON schema validation for manifests
 - [ ] Plugin marketplace/catalog
 - [ ] Hot reload support (collectible ALCs)
 
 ### 📋 Planned (Future)
+
 - [ ] Plugin signature verification (cryptographic validation)
 - [ ] Full sandboxing (AppDomain-style isolation)
 - [ ] Plugin communication event bus
@@ -265,6 +288,7 @@ var renderer = registry.Get<IRenderer>(); // Gets SadConsoleRenderer (priority 2
 ```
 
 **Selection modes**:
+
 - `HighestPriority` - Return highest priority (default)
 - `One` - Require exactly one implementation
 - `All` - Use `GetAll()` instead
@@ -307,6 +331,7 @@ var renderer = registry.Get<IRenderer>(); // Gets SadConsoleRenderer (priority 2
 ```
 
 **Access in plugin**:
+
 ```csharp
 var config = context.Configuration.GetSection("Inventory");
 var maxItems = config.GetValue<int>("MaxItems", 100);
@@ -319,6 +344,7 @@ var maxItems = config.GetValue<int>("MaxItems", 100);
 See [Plugin Development Quick-Start Guide](./2025-10-21-plugin-development-quickstart--DOC-2025-00037.md) for step-by-step instructions.
 
 **Summary**:
+
 1. Create .NET 8 class library with `EnableDynamicLoading=true`
 2. Reference `LablabBean.Plugins.Contracts` only
 3. Create `plugin.json` manifest
@@ -335,11 +361,13 @@ dotnet run -- --plugin-path ../../../plugins/my-plugin
 ```
 
 **Integration test**: Run full application
+
 ```bash
 npm run console
 ```
 
 Check logs for:
+
 ```
 [Information] Discovered plugin: my-plugin v1.0.0
 [Information] Initializing my-plugin
@@ -349,6 +377,7 @@ Check logs for:
 ## Examples
 
 ### Production Plugins
+
 - **Inventory Plugin** - `dotnet/plugins/LablabBean.Plugins.Inventory/`
   - Full implementation example
   - Service registration
@@ -356,12 +385,14 @@ Check logs for:
   - Logging patterns
 
 ### Demo Plugins
+
 - **Demo Plugin** - `dotnet/examples/LablabBean.Plugin.Demo/`
   - Minimal template
   - Basic lifecycle demonstration
   - Copy-paste starting point
 
 ### Test Harnesses
+
 - **PluginTestHarness** - Unit test plugins in isolation
 - **PluginObservabilityDemo** - Metrics and health checks
 - **PluginSecurityDemo** - Permission validation
@@ -369,6 +400,7 @@ Check logs for:
 ## Performance Characteristics
 
 ### Plugin Load Time
+
 - **Discovery**: ~5-10ms per plugin (manifest parsing)
 - **Loading**: ~50-100ms per plugin (ALC creation + assembly load)
 - **Initialization**: Varies by plugin (typically <100ms)
@@ -376,11 +408,13 @@ Check logs for:
 **Total startup overhead**: ~100-200ms for 10 plugins
 
 ### Memory Footprint
+
 - **ALC overhead**: ~1-2 MB per plugin ALC
 - **Shared assemblies**: Loaded once (Contracts, Extensions.*)
 - **Service registry**: ~100 bytes per registered service
 
 ### Context Reduction
+
 - **Before**: Agent reads 15+ source files (5000+ LOC) to understand plugin system
 - **After**: Agent reads 3 markdown docs (~300 lines each) + 1 example plugin (~50 LOC)
 - **Reduction**: ~90% context usage for new plugin creation
@@ -400,6 +434,7 @@ Check logs for:
 ### Debug Logging
 
 Enable verbose plugin logging:
+
 ```json
 {
   "Serilog": {
@@ -415,18 +450,22 @@ Enable verbose plugin logging:
 ## Related Documentation
 
 ### Quick Start
+
 - [Plugin Development Quick-Start](./2025-10-21-plugin-development-quickstart--DOC-2025-00037.md) - 5-minute plugin creation guide
 
 ### API Reference
+
 - [Plugin Contracts API](./2025-10-21-plugin-contracts-api--DOC-2025-00038.md) - Complete interface documentation
 - [Plugin Manifest Schema](./2025-10-21-plugin-manifest-schema--DOC-2025-00039.md) - Manifest format reference
 
 ### Specifications
+
 - **Spec 004** - `specs/004-tiered-plugin-architecture/spec.md` - Original design specification
 - **Spec 005** - `specs/005-inventory-plugin-migration/` - Inventory plugin migration case study
 - **Spec 006** - `specs/006-status-effects-plugin-migration/` - Status effects migration
 
 ### Implementation
+
 - **Contracts** - `dotnet/framework/LablabBean.Plugins.Contracts/` - Interface definitions
 - **Core** - `dotnet/framework/LablabBean.Plugins.Core/` - Runtime implementation
 - **Examples** - `dotnet/examples/` - Demo plugins and test harnesses

@@ -143,36 +143,43 @@ A plugin developer wants to create a proxy service for their contract without wr
 ### Edge Cases
 
 **Event Bus**:
+
 - What happens when a plugin publishes an event but no subscribers exist? (Should complete successfully without errors)
 - How does the system handle a subscriber that throws an exception? (Error should be logged but other subscribers should continue to receive the event)
 - How does the system handle circular event dependencies (Plugin A publishes event that triggers Plugin B to publish event that Plugin A subscribes to)? (Should handle gracefully with proper async execution, but document as anti-pattern)
 - How does the system handle plugin unload when event subscriptions still exist? (Should handle gracefully, document subscription lifecycle)
 
 **Service Registry**:
+
 - What happens when a plugin tries to retrieve a service that has no registered implementation? (Should throw `InvalidOperationException` with clear error message)
 - What happens when multiple implementations of a service have the same priority? (Should return one deterministically, document priority tie-breaking strategy)
 
 **Scene Contract**:
+
 - What happens when a scene transition is requested while another transition is in progress? (Should queue or reject with clear error)
 - How does the system handle scene loading failures? (Should publish `SceneLoadFailedEvent` and maintain previous scene if possible)
 - What happens when camera boundaries exceed scene bounds? (Should clamp to valid viewport or throw descriptive error)
 
 **Input Contract**:
+
 - What happens when an input scope is pushed but never popped? (Should handle gracefully, document scope lifecycle best practices)
 - How does the system handle input when no scopes are registered? (Should throw clear error or route to default scope)
 - What happens when an input action has no mapped key binding? (Should return false from `TryGetAction`, document fallback patterns)
 
 **Config Contract**:
+
 - What happens when a config key doesn't exist? (Should return null or default value, not throw)
 - How does the system handle type mismatches in `Get<T>(key)`? (Should throw with clear error message indicating expected vs actual type)
 - What happens when config file is corrupted or missing? (Should use default values and log warning)
 
 **Resource Contract**:
+
 - What happens when a resource fails to load? (Should publish `ResourceLoadFailedEvent` and throw exception from `LoadAsync`)
 - How does the system handle concurrent loads of the same resource? (Should deduplicate requests and return same cached instance)
 - What happens when a resource is unloaded while still in use? (Document lifecycle management, consider ref counting)
 
 **Source Generator**:
+
 - What happens when a partial class is missing the `IRegistry` field? (Should generate compile error with helpful message)
 - How does the source generator handle interface methods with ref/out parameters? (Should generate proper delegation with ref/out keywords)
 - What happens when an interface inherits from multiple base interfaces? (Should generate implementations for all inherited members)
@@ -329,28 +336,33 @@ A plugin developer wants to create a proxy service for their contract without wr
 ### Measurable Outcomes
 
 **Event Bus Foundation**:
+
 - **SC-001**: Plugin developers can create an analytics plugin that tracks game events without any direct reference to the game plugin assembly
 - **SC-002**: Event publishing completes in under 10ms for events with up to 10 subscribers
 - **SC-003**: The event bus handles at least 1000 events per second without blocking the game loop
 - **SC-004**: All existing plugins continue to function without modification after the event bus is added
 
 **Domain Contracts**:
+
 - **SC-005**: Plugin developers can create two different UI implementations (e.g., Terminal.Gui and SadConsole) that both use the same game service contract
 - **SC-006**: Plugin developers can implement a new service contract with less than 5 lines of registration code
 - **SC-007**: A scene implementation can load a dungeon level and update the camera position in under 100ms
 - **SC-008**: Input scopes can be pushed and popped without memory leaks or orphaned subscriptions
 
 **Configuration & Resources**:
+
 - **SC-009**: Configuration changes trigger events within 10ms and all subscribers are notified
 - **SC-010**: Resource loading supports at least 50 concurrent async operations without deadlocks
 - **SC-011**: Resource cache hit rate exceeds 90% for repeated resource requests
 
 **Source Generator**:
+
 - **SC-012**: Source generator successfully generates proxy implementations for interfaces with 50+ methods without errors
 - **SC-013**: Generated proxy code compiles without warnings and passes all nullable reference type checks
 - **SC-014**: Developers can create a proxy service in under 30 seconds (write 10 lines of code, source generator fills in the rest)
 
 **Developer Experience**:
+
 - **SC-015**: Documentation includes at least 7 complete examples covering all contract domains and source generator usage
 - **SC-016**: A developer unfamiliar with the codebase can create a working event-subscribing plugin in under 30 minutes using the documentation
 - **SC-017**: A developer can implement a complete dungeon loading workflow (scene + resources + config) in under 2 hours using the contracts
@@ -376,6 +388,7 @@ A plugin developer wants to create a proxy service for their contract without wr
 ## Out of Scope
 
 **Deferred to Future Iterations**:
+
 - Audio contract assembly (`LablabBean.Contracts.Audio`) - Spec 008
 - Analytics contract assembly (`LablabBean.Contracts.Analytics`) - Spec 009
 - Diagnostics contract assembly (`LablabBean.Contracts.Diagnostics`) - Spec 010
@@ -383,6 +396,7 @@ A plugin developer wants to create a proxy service for their contract without wr
 - Advanced contracts (GOAP, Recorder, Capability, Hosting, Terminal) - Future specs
 
 **Not Planned**:
+
 - Event bus persistence or durability guarantees (in-memory only)
 - Event bus parallel subscriber execution (sequential only for predictable ordering)
 - Unsubscribe mechanism for events (subscribers live for app lifetime)

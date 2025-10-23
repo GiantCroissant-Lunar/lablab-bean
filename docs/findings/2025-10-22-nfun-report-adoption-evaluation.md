@@ -36,6 +36,7 @@ NFun-Report is a **professional reporting system** for Unity projects with FastR
 4. **Template System** - FastReport templates for PDF/HTML/Excel output
 
 **Core Components**:
+
 - `Plate.Reporting.Abstractions` - Marker attributes (netstandard2.1)
 - `Plate.Reporting.SourceGen` - Roslyn incremental generator
 - `Plate.Reporting.Unity` - Unity build report models
@@ -59,6 +60,7 @@ NFun-Report is a **professional reporting system** for Unity projects with FastR
 **Purpose**: Compile-time metadata for auto-discovery of reporting components.
 
 **Value Proposition**:
+
 - ✅ Type-safe report provider registration
 - ✅ Compile-time validation (missing providers = build error)
 - ✅ Zero-reflection runtime discovery (all providers known at compile time)
@@ -67,6 +69,7 @@ NFun-Report is a **professional reporting system** for Unity projects with FastR
 **Alignment with Lablab-bean**: ⭐⭐⭐⭐⭐ **EXCELLENT**
 
 Lablab-bean's plugin system already uses attribute-driven discovery. This pattern fits perfectly for:
+
 - Build metrics providers
 - Game statistics collectors
 - Performance profilers
@@ -79,11 +82,13 @@ Lablab-bean's plugin system already uses attribute-driven discovery. This patter
 **File**: `Plate.Reporting.SourceGen/Generators/ReportRegistryGenerator.cs`
 
 **What it does**:
+
 1. Scans compilation for classes/methods with report attributes
 2. Extracts metadata (IDs, versions, categories)
 3. Generates static `ReportRegistry` class with compile-time provider lists
 
 **Generated Output**:
+
 ```csharp
 namespace Plate.Reporting.Generated
 {
@@ -99,6 +104,7 @@ namespace Plate.Reporting.Generated
 ```
 
 **Benefits**:
+
 - ✅ Zero-reflection provider discovery
 - ✅ Compile-time errors for duplicate IDs
 - ✅ Minimal runtime overhead (static arrays)
@@ -115,6 +121,7 @@ This is the **most valuable component** for lablab-bean. The pattern is proven i
 **File**: `Plate.Reporting.Winged/WingedProviders.cs`
 
 **Example Providers**:
+
 ```csharp
 [ReportProvider("winged.resource-bundles", Name = "...", Version = "0.1")]
 public static class WingedResourceBundleProvider
@@ -130,12 +137,14 @@ public static class WingedRuntimeMetricsProvider
 ```
 
 **Pattern**:
+
 - Static classes with `[ReportProvider]` attributes
 - Load data from JSON files in artifact directories
 - Return strongly-typed aggregates
 - Graceful error handling (malformed JSON ignored)
 
 **Value Proposition**:
+
 - ✅ Clear provider contract
 - ✅ Version tracking per provider
 - ✅ Category-based organization
@@ -144,6 +153,7 @@ public static class WingedRuntimeMetricsProvider
 **Alignment with Lablab-bean**: ⭐⭐⭐⭐ **GOOD**
 
 The pattern is excellent, but implementations are Unity/Winged-specific. Lablab-bean would need:
+
 - Plugin metrics providers
 - Build metrics providers
 - Test result providers
@@ -193,6 +203,7 @@ NFun-Report's Unity integration (build reports, asset analysis, Editor windows) 
 **Current State**: Nuke build creates version JSON, but no comprehensive build reports.
 
 **Needs**:
+
 - Build duration metrics
 - Test result aggregation (pass/fail/skip counts)
 - Code coverage summaries
@@ -203,6 +214,7 @@ NFun-Report's Unity integration (build reports, asset analysis, Editor windows) 
 **NFun-Report Alignment**: ⭐⭐⭐⭐ **Good Pattern, Wrong Implementation**
 
 NFun-Report's provider pattern is ideal, but implementations are Unity-specific. Lablab-bean needs:
+
 ```csharp
 [ReportProvider("lablab.build-metrics", Category = "Build")]
 public static class BuildMetricsProvider
@@ -224,6 +236,7 @@ public static class TestResultsProvider
 **Current State**: AnalyticsPlugin tracks basic events (spawns, moves, combat), but no persistent reporting.
 
 **Needs**:
+
 - Player session statistics (playtime, actions per minute)
 - Combat analytics (kills, deaths, accuracy, damage)
 - Level progression (time per level, completion rate)
@@ -254,6 +267,7 @@ public static class CombatStatisticsProvider
 **Current State**: Plugin load times and memory tracked. No runtime performance metrics.
 
 **Needs**:
+
 - Frame time metrics (avg, min, max, P95, P99)
 - GC pressure tracking
 - Game tick timing
@@ -277,6 +291,7 @@ public static class PerformanceMetricsProvider
 **Current State**: Tests run via xUnit, coverage via coverlet. No aggregated reports.
 
 **Needs**:
+
 - Test result summaries (pass/fail/skip counts)
 - Test duration metrics
 - Code coverage reports (line/branch coverage %)
@@ -306,12 +321,14 @@ public static class CodeCoverageProvider
 ### ✅ 1. Reporting Abstractions (Attributes) - **ADOPT & ADAPT**
 
 **What to Adopt**:
+
 - Attribute pattern for marking report providers
 - Compile-time metadata extraction
 - Version tracking per provider
 - Category-based organization
 
 **How to Adapt**:
+
 ```csharp
 namespace LablabBean.Reporting.Abstractions;
 
@@ -340,11 +357,13 @@ public sealed class ReportExporterAttribute : Attribute
 ### ✅ 2. Source Generator - **ADOPT & ADAPT**
 
 **What to Adopt**:
+
 - Incremental generator pattern
 - Compile-time registry generation
 - Static arrays for zero-reflection lookup
 
 **How to Adapt**:
+
 ```csharp
 namespace LablabBean.Reporting.SourceGen;
 
@@ -359,6 +378,7 @@ public sealed class ReportRegistryGenerator : IIncrementalGenerator
 ```
 
 **Generated Output**:
+
 ```csharp
 namespace LablabBean.Reporting.Generated
 {
@@ -393,11 +413,13 @@ namespace LablabBean.Reporting.Generated
 **What to Adopt**: Provider pattern, NOT implementations.
 
 **What NOT to Adopt**:
+
 - Unity-specific providers
 - FastReport templates
 - Unity Editor integration
 
 **What TO Implement**:
+
 - Build metrics providers
 - Test result providers
 - Game statistics providers
@@ -410,12 +432,14 @@ namespace LablabBean.Reporting.Generated
 ### ❌ 5. FastReport Templates - **DO NOT ADOPT**
 
 **Reason**: FastReport is Unity-focused. Lablab-bean needs:
+
 - Console/terminal output (Spectre.Console, System.CommandLine)
 - Markdown reports (for GitHub Actions)
 - JSON/CSV export (for automation)
 - HTML reports (static files for CI/CD)
 
 **Alternative**: Use existing .NET libraries:
+
 - **Spectre.Console** - Terminal tables, charts, progress bars
 - **MarkdownBuilder** - Generate markdown reports
 - **System.Text.Json** - JSON export
@@ -432,6 +456,7 @@ namespace LablabBean.Reporting.Generated
 **Timeline**: 1 week
 
 **Tasks**:
+
 1. Create `LablabBean.Reporting.Abstractions` project (netstandard2.1)
 2. Define attributes:
    - `[ReportProvider(id)]`
@@ -451,6 +476,7 @@ namespace LablabBean.Reporting.Generated
 **Timeline**: 1-2 weeks
 
 **Tasks**:
+
 1. Create `LablabBean.Reporting.SourceGen` project (netstandard2.0)
 2. Adapt NFun-Report's `ReportRegistryGenerator`:
    - Scan for `[ReportProvider]` attributes
@@ -468,8 +494,10 @@ namespace LablabBean.Reporting.Generated
 **Timeline**: 2 weeks
 
 **Tasks**:
+
 1. Create `LablabBean.Reporting.Build` project
 2. Implement providers:
+
    ```csharp
    [ReportProvider("lablab.build-metrics", Category = "Build")]
    public static class BuildMetricsProvider { ... }
@@ -480,6 +508,7 @@ namespace LablabBean.Reporting.Generated
    [ReportProvider("lablab.code-coverage", Category = "Build")]
    public static class CodeCoverageProvider { ... }
    ```
+
 3. Integrate with Nuke build:
    - Capture build duration
    - Parse xUnit test results (XML output)
@@ -496,6 +525,7 @@ namespace LablabBean.Reporting.Generated
 **Timeline**: 2 weeks
 
 **Tasks**:
+
 1. Create `LablabBean.Reporting.Analytics` project
 2. Enhance existing `AnalyticsPlugin`:
    - Add session tracking (start time, end time, playtime)
@@ -503,6 +533,7 @@ namespace LablabBean.Reporting.Generated
    - Add level progression tracking
    - Export session data to JSON
 3. Implement providers:
+
    ```csharp
    [ReportProvider("lablab.game-stats", Category = "Analytics")]
    public static class GameStatisticsProvider { ... }
@@ -510,6 +541,7 @@ namespace LablabBean.Reporting.Generated
    [ReportProvider("lablab.combat-stats", Category = "Analytics")]
    public static class CombatStatisticsProvider { ... }
    ```
+
 4. Add exporters:
    - JSON export (for automation)
    - CSV export (for analysis in Excel)
@@ -524,6 +556,7 @@ namespace LablabBean.Reporting.Generated
 **Timeline**: 1 week
 
 **Tasks**:
+
 1. Create `LablabBean.Reporting.Exporters` project
 2. Implement exporters:
    - `JsonReportExporter` - System.Text.Json
@@ -542,16 +575,19 @@ namespace LablabBean.Reporting.Generated
 **Timeline**: 2 weeks
 
 **Tasks**:
+
 1. Create `LablabBean.Reporting.Performance` project
 2. Add runtime metrics collection:
    - Frame time tracking
    - GC metrics
    - Game tick timing
 3. Implement providers:
+
    ```csharp
    [ReportProvider("lablab.performance-metrics", Category = "Performance")]
    public static class PerformanceMetricsProvider { ... }
    ```
+
 4. Integrate with game loop
 
 **Outcome**: Runtime performance diagnostics.
@@ -641,6 +677,7 @@ namespace LablabBean.Reporting.Generated
    - Add performance profiling if bottlenecks identified
 
 **Success Metrics**:
+
 - ✅ Build reports generated in CI/CD
 - ✅ Test coverage visible in build artifacts
 - ✅ Game session statistics exportable to JSON/CSV
@@ -689,6 +726,7 @@ SPEC-011: Reporting Infrastructure
 ```
 
 **Use Spec-Kit Commands**:
+
 1. `/speckit.specify` - Create initial specification from requirements
 2. `/speckit.plan` - Generate detailed implementation plan
 3. `/speckit.tasks` - Generate task breakdown
@@ -714,6 +752,7 @@ SPEC-011: Reporting Infrastructure
 
 **Investment**: 6-10 weeks (phased)
 **Return**:
+
 - ✅ Comprehensive build reporting (CI/CD visibility)
 - ✅ Test coverage metrics (quality assurance)
 - ✅ Game session statistics (player engagement)
@@ -783,17 +822,20 @@ lablab-bean/dotnet/framework/
 ## References
 
 **NFun-Report Framework**:
+
 - `/ref-projects/nfun-report/dotnet/Plate.Reporting.Abstractions/`
 - `/ref-projects/nfun-report/dotnet/Plate.Reporting.SourceGen/`
 - `/ref-projects/nfun-report/dotnet/Plate.Reporting.Winged/`
 
 **Lablab-bean Existing Infrastructure**:
+
 - `/dotnet/framework/LablabBean.Plugins.Core/PluginMetrics.cs`
 - `/dotnet/framework/LablabBean.Plugins.Core/PluginHealthCheck.cs`
 - `/dotnet/framework/LablabBean.Plugins.Core/PluginAdminService.cs`
 - `/plugins/LablabBean.Plugins.Analytics/AnalyticsPlugin.cs`
 
 **Related Specifications**:
+
 - SPEC-009: Proxy Service Source Generator (proven source generator pattern)
 
 ---

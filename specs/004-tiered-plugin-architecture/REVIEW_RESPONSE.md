@@ -13,12 +13,14 @@
 **Problem**: Direct `IServiceCollection` exposure violated ALC isolation.
 
 **Fix Applied**:
+
 - Updated `contracts/IPlugin.cs` to use `IPluginContext` pattern
 - Changed signature: `Initialize(IServiceCollection, ...)` → `InitializeAsync(IPluginContext, ...)`
 - Created `IPluginContext` interface with `IRegistry`, `IConfiguration`, `ILogger`, `IPluginHost`
 - Updated `quickstart.md` with corrected example using `context.Registry.Register<T>()`
 
 **Files Modified**:
+
 - `specs/004-tiered-plugin-architecture/contracts/IPlugin.cs`
 - `specs/004-tiered-plugin-architecture/quickstart.md`
 - `specs/004-tiered-plugin-architecture/data-model.md`
@@ -30,6 +32,7 @@
 **Problem**: Cross-ALC service registry pattern was completely missing from contracts.
 
 **Fix Applied**:
+
 - Created `contracts/IRegistry.cs` with priority-based service registration
 - Added `SelectionMode` enum (One, HighestPriority, All)
 - Added `ServiceMetadata` class for priority, name, version
@@ -37,9 +40,11 @@
 - Updated `data-model.md` to include IRegistry interface
 
 **Files Created**:
+
 - `specs/004-tiered-plugin-architecture/contracts/IRegistry.cs` (NEW)
 
 **Files Modified**:
+
 - `specs/004-tiered-plugin-architecture/spec.md`
 - `specs/004-tiered-plugin-architecture/data-model.md`
 
@@ -50,6 +55,7 @@
 **Problem**: Manifest lacked multi-profile support, capabilities, priority, load strategy.
 
 **Fix Applied**:
+
 - Expanded `PluginManifest` with:
   - `Dictionary<string, string> EntryPoint` (multi-profile entry points)
   - `List<string> Capabilities` (feature flags)
@@ -61,6 +67,7 @@
 - Updated FR-001 in `spec.md` to reference expanded schema
 
 **Files Modified**:
+
 - `specs/004-tiered-plugin-architecture/contracts/PluginManifest.cs`
 - `specs/004-tiered-plugin-architecture/spec.md`
 
@@ -71,6 +78,7 @@
 **Problem**: Algorithm choice and cycle detection details were vague.
 
 **Fix Applied**:
+
 - Updated FR-003 in `spec.md` with explicit requirements:
   - **Algorithm**: Kahn's topological sort
   - **Hard deps**: Missing → exclude plugin, log ERROR
@@ -79,6 +87,7 @@
   - **Version selection**: Highest semantic version per plugin ID (NuGet.Versioning)
 
 **Files Modified**:
+
 - `specs/004-tiered-plugin-architecture/spec.md` (FR-003)
 
 ---
@@ -88,11 +97,13 @@
 **Problem**: Key entities list didn't reflect new contracts.
 
 **Fix Applied**:
+
 - Added `IPluginContext`, `IRegistry`, `ServiceMetadata` to key entities
 - Clarified `IPluginHost` and `IPlugin` in the list
 - Updated spec.md and data-model.md
 
 **Files Modified**:
+
 - `specs/004-tiered-plugin-architecture/spec.md`
 
 ---
@@ -100,18 +111,22 @@
 ## Remaining Work (Non-Blocking)
 
 ### 🟡 Hot Reload Implementation Details (P2)
+
 **Status**: Deferred to implementation phase
 **Reason**: P2 feature; algorithm is clear from PluginManoi reference
 
 ### 🟡 Metrics Specification (P2)
+
 **Status**: FR-009 marked as optional P2, OpenTelemetry recommended
 **Reason**: Not critical for MVP
 
 ### 🟢 Multi-Profile Support (LOW)
+
 **Status**: Manifest schema supports it; spec documents it
 **Reason**: Can be tested with Console + SadConsole in Phase 4
 
 ### 🟢 Contracts Assembly Creation (Implementation)
+
 **Status**: Spec contracts updated; actual projects deferred to implementation
 **Reason**: Will be created in implementation phase with correct `netstandard2.1` targeting
 
@@ -120,8 +135,10 @@
 ## Spec Readiness Status
 
 ### Spec 004: Tiered Plugin Architecture
+
 **Status**: ✅ **READY FOR IMPLEMENTATION**
 **Critical Blockers Resolved**: 2/2
+
 - ✅ IPlugin interface redesigned with IPluginContext
 - ✅ IRegistry contract added
 - ✅ Manifest schema expanded
@@ -132,8 +149,10 @@
 ---
 
 ### Spec 005: Inventory Plugin Migration
+
 **Status**: ⚠️ **DEPENDENT ON 004**
 **Next Actions**:
+
 1. Wait for 004 implementation to complete
 2. Add manifest example with ECS plugin dependency
 3. Define event schema (IObservable<InventoryChangedEvent>)
@@ -143,8 +162,10 @@
 ---
 
 ### Spec 006: Status Effects Plugin Migration
+
 **Status**: ⚠️ **DEPENDENT ON 004**
 **Next Actions**:
+
 1. Wait for 004 implementation to complete
 2. Add manifest example and turn integration strategy
 3. Define event schema (IObservable<EffectAppliedEvent>)
@@ -186,6 +207,7 @@
 **Implementation Readiness**: ✅ **READY TO PROCEED**
 
 All blocking architectural issues have been addressed. The contracts now follow the PluginManoi/WingedBean patterns correctly with:
+
 - ALC-safe IPluginContext boundary
 - Cross-ALC IRegistry for service registration
 - Multi-profile manifest schema

@@ -42,7 +42,7 @@ task dev-stack
 
 That's it! 🎉
 
-- **Web App**: http://localhost:3000 (hot reload enabled)
+- **Web App**: <http://localhost:3000> (hot reload enabled)
 - **PTY Backend**: Auto-rebuilds on changes
 - **Console App**: Running in development mode
 
@@ -79,24 +79,27 @@ task dev-stop
 
 ## What Has Hot Reload?
 
-✅ **Astro/React** - Instant hot reload  
-✅ **TypeScript (PTY)** - Auto-recompile  
+✅ **Astro/React** - Instant hot reload
+✅ **TypeScript (PTY)** - Auto-recompile
 ❌ **C# (.NET)** - Manual rebuild needed
 
 ## Troubleshooting
 
 ### Port 3000 already in use?
+
 ```bash
 task dev-stop
 task stack-stop
 ```
 
 ### Changes not showing?
+
 ```bash
 task dev-restart
 ```
 
 ### Something weird?
+
 ```bash
 # Nuclear option
 cd website

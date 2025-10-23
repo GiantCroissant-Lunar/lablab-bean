@@ -13,6 +13,7 @@ This document defines the complete data model for the inventory system using ECS
 ### Core Item Components
 
 #### Item Component
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -24,16 +25,16 @@ public struct Item
 {
     /// <summary>Item display name (e.g., "Healing Potion", "Iron Sword")</summary>
     public string Name { get; set; }
-    
+
     /// <summary>Visual representation character (e.g., '!', '/', '[')</summary>
     public char Glyph { get; set; }
-    
+
     /// <summary>Item description for tooltips/inspection</summary>
     public string Description { get; set; }
-    
+
     /// <summary>Item type for categorization</summary>
     public ItemType Type { get; set; }
-    
+
     /// <summary>Item weight (for future encumbrance system)</summary>
     public int Weight { get; set; }
 }
@@ -49,6 +50,7 @@ public enum ItemType
 ```
 
 #### Consumable Component
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -59,10 +61,10 @@ public struct Consumable
 {
     /// <summary>Type of consumable effect</summary>
     public ConsumableEffect Effect { get; set; }
-    
+
     /// <summary>Magnitude of effect (e.g., 30 HP for healing potion)</summary>
     public int EffectValue { get; set; }
-    
+
     /// <summary>Whether this consumable can be used outside of combat</summary>
     public bool UsableOutOfCombat { get; set; }
 }
@@ -77,6 +79,7 @@ public enum ConsumableEffect
 ```
 
 #### Equippable Component
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -87,16 +90,16 @@ public struct Equippable
 {
     /// <summary>Which equipment slot this item occupies</summary>
     public EquipmentSlot Slot { get; set; }
-    
+
     /// <summary>Attack bonus (for weapons)</summary>
     public int AttackBonus { get; set; }
-    
+
     /// <summary>Defense bonus (for armor)</summary>
     public int DefenseBonus { get; set; }
-    
+
     /// <summary>Speed modifier (negative = slower, positive = faster)</summary>
     public int SpeedModifier { get; set; }
-    
+
     /// <summary>Whether this item requires two hands (future: two-handed weapons)</summary>
     public bool TwoHanded { get; set; }
 }
@@ -116,6 +119,7 @@ public enum EquipmentSlot
 ```
 
 #### Stackable Component
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -127,7 +131,7 @@ public struct Stackable
 {
     /// <summary>Current number of items in this stack</summary>
     public int Count { get; set; }
-    
+
     /// <summary>Maximum stack size (e.g., 99 for potions)</summary>
     public int MaxStack { get; set; }
 }
@@ -136,6 +140,7 @@ public struct Stackable
 ### Player Inventory Components
 
 #### Inventory Component
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -147,19 +152,20 @@ public struct Inventory
 {
     /// <summary>List of item entity references</summary>
     public List<EntityReference> Items { get; set; }
-    
+
     /// <summary>Maximum number of items (20 for MVP)</summary>
     public int MaxCapacity { get; set; }
-    
+
     /// <summary>Current number of items (including stacks)</summary>
     public int CurrentCount => Items?.Count ?? 0;
-    
+
     /// <summary>Whether inventory is full</summary>
     public bool IsFull => CurrentCount >= MaxCapacity;
 }
 ```
 
 #### EquipmentSlots Component
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -171,7 +177,7 @@ public struct EquipmentSlots
 {
     /// <summary>Dictionary mapping slot type to equipped item entity (null if empty)</summary>
     public Dictionary<EquipmentSlot, EntityReference?> Slots { get; set; }
-    
+
     /// <summary>Initialize with empty slots</summary>
     public static EquipmentSlots CreateEmpty()
     {
@@ -197,10 +203,13 @@ public struct EquipmentSlots
 ## Entity Archetypes
 
 ### Item on Ground
+
 **Components**: `Item`, `Position`, `Renderable`, `Visible`
+
 - Optional: `Consumable`, `Equippable`, `Stackable`
 
 **Example**: Healing potion on dungeon floor
+
 ```csharp
 var itemEntity = world.Create(
     new Item { Name = "Healing Potion", Glyph = '!', Type = ItemType.Consumable },
@@ -213,18 +222,21 @@ var itemEntity = world.Create(
 ```
 
 ### Item in Inventory
+
 **Components**: `Item`, `Consumable` OR `Equippable`
+
 - Optional: `Stackable`
 - **No** `Position` component (not on map)
 
 **Example**: Sword in player inventory
+
 ```csharp
 var swordEntity = world.Create(
     new Item { Name = "Iron Sword", Glyph = '/', Type = ItemType.Weapon },
-    new Equippable { 
-        Slot = EquipmentSlot.MainHand, 
-        AttackBonus = 5, 
-        DefenseBonus = 0 
+    new Equippable {
+        Slot = EquipmentSlot.MainHand,
+        AttackBonus = 5,
+        DefenseBonus = 0
     }
 );
 // Add to player's inventory
@@ -232,18 +244,21 @@ playerInventory.Items.Add(swordEntity.Reference());
 ```
 
 ### Equipped Item
+
 **Components**: Same as "Item in Inventory"
+
 - Referenced in player's `EquipmentSlots` component
 - Also present in player's `Inventory` component
 
 **Example**: Equipped armor
+
 ```csharp
 var armorEntity = world.Create(
     new Item { Name = "Leather Armor", Glyph = '[', Type = ItemType.Armor },
-    new Equippable { 
-        Slot = EquipmentSlot.Chest, 
-        AttackBonus = 0, 
-        DefenseBonus = 3 
+    new Equippable {
+        Slot = EquipmentSlot.Chest,
+        AttackBonus = 0,
+        DefenseBonus = 3
     }
 );
 // Add to inventory and equip
@@ -312,18 +327,21 @@ Drop                  - Item in inventory             - Add Position at player l
 ## Validation Rules
 
 ### Inventory Constraints
+
 - ✅ Max 20 items in inventory (enforced by `Inventory.MaxCapacity`)
 - ✅ Stackable items with same name share one slot (up to `Stackable.MaxStack`)
 - ✅ Cannot pickup if inventory full
 - ✅ Cannot drop equipped items (must unequip first)
 
 ### Equipment Constraints
+
 - ✅ Only one item per slot (except accessories: 2 slots)
 - ✅ Item's `Equippable.Slot` must match target slot
 - ✅ Equipping new item auto-unequips old item in same slot
 - ✅ Two-handed weapons occupy both MainHand and OffHand (future)
 
 ### Usage Constraints
+
 - ✅ Consumables can only be used once (then destroyed)
 - ✅ Cannot use healing potion at full health
 - ✅ Using item consumes player turn (energy cost)
@@ -369,16 +387,16 @@ var potions = world.Query(
 
 ```csharp
 public static (int attack, int defense, int speed) CalculateStats(
-    World world, 
+    World world,
     Entity playerEntity)
 {
     var baseCombat = world.Get<Combat>(playerEntity);
     var equipment = world.Get<EquipmentSlots>(playerEntity);
-    
+
     int totalAttack = baseCombat.Attack;
     int totalDefense = baseCombat.Defense;
     int totalSpeed = 100; // Base speed
-    
+
     foreach (var (slot, itemRef) in equipment.Slots)
     {
         if (itemRef.HasValue && world.Has<Equippable>(itemRef.Value))
@@ -389,7 +407,7 @@ public static (int attack, int defense, int speed) CalculateStats(
             totalSpeed += equippable.SpeedModifier;
         }
     }
-    
+
     return (totalAttack, totalDefense, totalSpeed);
 }
 ```
@@ -444,37 +462,45 @@ public static (int attack, int defense, int speed) CalculateStats(
 ### With Existing Systems
 
 #### CombatSystem
+
 - **Reads**: `EquipmentSlots` to calculate attack/defense
 - **Modification**: Update `CalculateDamage()` to include equipment bonuses
 
 #### MovementSystem
+
 - **No changes required**: Items on ground don't block movement
 
 #### ActorSystem
+
 - **Modification**: Item usage consumes energy (player turn)
 
 #### GameStateManager
+
 - **Modification**: Initialize player with `Inventory` and `EquipmentSlots` components
 - **Modification**: Handle item-related input (G, U keys)
 
 ### With New Systems
 
 #### InventorySystem
+
 - **Creates**: New system to handle all inventory operations
 - **Queries**: Items in inventory, items on ground, equipped items
 
 #### ItemSpawnSystem
+
 - **Creates**: New system to spawn items during map generation and enemy death
 - **Queries**: Room locations, enemy death events
 
 ## Performance Characteristics
 
 ### Memory Usage
+
 - **Per Item Entity**: ~100 bytes (components + entity overhead)
 - **100 Items**: ~10 KB
 - **Player Inventory**: ~2 KB (20 item references + metadata)
 
 ### Query Performance
+
 - **Items near player**: O(n) where n = items with Position (typically <50)
 - **Items in inventory**: O(1) access via `Inventory.Items` list
 - **Equipped item lookup**: O(1) dictionary access

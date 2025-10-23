@@ -68,4 +68,3 @@ Templates:
 Updated:
   README.md                      → Added spec-kit info
   HANDOVER.md                    → Added reference
-

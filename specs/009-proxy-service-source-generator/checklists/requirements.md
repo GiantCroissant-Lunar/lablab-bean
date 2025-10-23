@@ -1,7 +1,7 @@
 # Specification Quality Checklist: Proxy Service Source Generator
 
-**Purpose**: Validate specification completeness and quality before proceeding to planning  
-**Created**: 2025-10-22  
+**Purpose**: Validate specification completeness and quality before proceeding to planning
+**Created**: 2025-10-22
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -61,8 +61,8 @@
 
 **Overall**: ✅ **APPROVED** - Specification is complete and ready for planning
 
-**Reviewer**: AI Assistant  
-**Review Date**: 2025-10-22  
+**Reviewer**: AI Assistant
+**Review Date**: 2025-10-22
 **Next Step**: Proceed to `/speckit.plan`
 
 ## Notes

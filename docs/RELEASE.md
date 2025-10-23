@@ -85,18 +85,21 @@ task release-and-run
 The stack consists of three main components:
 
 ### 1. Console App (`lablab-console`)
+
 - **Type**: Self-contained .NET application
 - **Location**: `build/_artifacts/<version>/publish/console/`
 - **Executable**: `LablabBean.Console.exe`
 - **Purpose**: Terminal UI / Console application
 
 ### 2. Windows App (`lablab-windows`)
+
 - **Type**: Self-contained .NET WPF application
 - **Location**: `build/_artifacts/<version>/publish/windows/`
 - **Executable**: `LablabBean.Windows.exe`
 - **Purpose**: Desktop GUI application
 
 ### 3. Web App (`lablab-web`)
+
 - **Type**: Astro + Node.js application
 - **Location**: `build/_artifacts/<version>/publish/website/`
 - **Entry Point**: `server/entry.mjs`
@@ -167,16 +170,19 @@ task list-versions
 ### Stack won't start
 
 1. Check if artifacts exist:
+
    ```bash
    task list-versions
    ```
 
 2. Check PM2 status:
+
    ```bash
    pm2 status
    ```
 
 3. View error logs:
+
    ```bash
    task stack-logs
    ```
@@ -197,11 +203,13 @@ task stack-run
 ## Development vs Production
 
 ### Development Mode
+
 - Uses `task stack-start` (from `website/` directory)
 - Runs from source with hot reload
 - Uses development dependencies
 
 ### Production Mode
+
 - Uses `task stack-run` (from root directory)
 - Runs from versioned artifacts
 - Uses production dependencies only
@@ -242,5 +250,5 @@ Each release includes a `version.json` file with:
 
 1. Build your first release: `task build-release`
 2. Start the stack: `task stack-run`
-3. Open web interface: http://localhost:3000
+3. Open web interface: <http://localhost:3000>
 4. Monitor with: `task stack-status`

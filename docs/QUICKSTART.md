@@ -15,17 +15,20 @@ summary: >
 ## 🚀 Get Started in 3 Steps
 
 ### 1. Build the Release
+
 ```bash
 task build-release
 ```
 
 ### 2. Start the Stack
+
 ```bash
 task stack-run
 ```
 
 ### 3. Access Your Apps
-- 🌐 **Web App**: http://localhost:3000
+
+- 🌐 **Web App**: <http://localhost:3000>
 - 💻 **Console App**: Running in PM2
 - 🎮 **Windows App**: Available in artifacts
 
@@ -38,6 +41,7 @@ task release-and-run
 ```
 
 Or use the PowerShell script:
+
 ```powershell
 .\build-and-run.ps1
 ```
@@ -59,17 +63,20 @@ Or use the PowerShell script:
 ## 🔍 Monitoring
 
 ### View All Logs
+
 ```bash
 task stack-logs
 ```
 
 ### View Specific App Logs
+
 ```bash
 task stack-logs-web      # Web app only
 task stack-logs-console  # Console app only
 ```
 
 ### PM2 Dashboard
+
 ```bash
 task stack-monit
 ```
@@ -79,6 +86,7 @@ task stack-monit
 ## 🛠️ Troubleshooting
 
 ### Stack won't start?
+
 ```bash
 # Check if artifacts exist
 task list-versions
@@ -91,6 +99,7 @@ task stack-run
 ```
 
 ### Need to clean restart?
+
 ```bash
 task stack-delete    # Remove from PM2
 task build-release   # Rebuild
@@ -102,6 +111,7 @@ task stack-run       # Start fresh
 ## 📦 What Gets Built?
 
 The build creates versioned artifacts in:
+
 ```
 build/_artifacts/<version>/publish/
 ├── console/    # Self-contained .NET console app
@@ -114,12 +124,14 @@ build/_artifacts/<version>/publish/
 ## 🎯 Development vs Production
 
 ### Development (Hot Reload)
+
 ```bash
 cd website
 pnpm dev
 ```
 
 ### Production (Versioned Artifacts)
+
 ```bash
 task release-and-run
 ```

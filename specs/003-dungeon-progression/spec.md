@@ -222,6 +222,7 @@ The following are explicitly NOT included in this feature:
 **Current Version**: v1.0.0
 
 ### v1.0.0 (2025-10-21) - Initial Specification
+
 - Complete specification for multi-level dungeon progression
 - 5 user stories (P1-P3) covering descent, ascent, scaling, tracking, and victory
 - 20 functional requirements

@@ -107,17 +107,17 @@ public struct ItemDefinition
     public char Glyph { get; set; }
     public string Description { get; set; }
     public ItemType Type { get; set; }
-    
+
     // Consumable properties (if applicable)
     public ConsumableEffect? ConsumableEffect { get; set; }
     public int? ConsumableValue { get; set; }
-    
+
     // Equipment properties (if applicable)
     public EquipmentSlot? EquipmentSlot { get; set; }
     public int? AttackBonus { get; set; }
     public int? DefenseBonus { get; set; }
     public int? SpeedModifier { get; set; }
-    
+
     // Stackable properties
     public bool IsStackable { get; set; }
     public int MaxStackSize { get; set; }
@@ -148,14 +148,14 @@ public class SpawnTable
     {
         int roll = random.Next(_totalWeight);
         int cumulative = 0;
-        
+
         foreach (var (item, weight) in _entries)
         {
             cumulative += weight;
             if (roll < cumulative)
                 return item;
         }
-        
+
         return _entries[^1].item; // Fallback
     }
 
@@ -283,20 +283,20 @@ public static class ItemDefinitions
     public static SpawnTable CreateRoomSpawnTable()
     {
         var table = new SpawnTable();
-        
+
         // Consumables (higher weight = more common)
         table.Add(HealingPotion, 50);  // 50% of spawns
-        
+
         // Weapons (medium weight)
         table.Add(WoodenClub, 15);     // 15%
         table.Add(IronSword, 10);      // 10%
         table.Add(SteelSword, 5);      // 5% (rare)
-        
+
         // Armor (medium weight)
         table.Add(LeatherArmor, 10);   // 10%
         table.Add(IronHelmet, 8);      // 8%
         table.Add(ChainMail, 2);       // 2% (rare)
-        
+
         return table;
     }
 
@@ -337,7 +337,7 @@ public struct Rectangle
     public int Height { get; set; }
 
     public (int x, int y) Center => (X + Width / 2, Y + Height / 2);
-    
+
     public bool Contains(int x, int y)
         => x >= X && x < X + Width && y >= Y && y < Y + Height;
 }

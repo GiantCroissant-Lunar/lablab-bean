@@ -112,6 +112,7 @@ File: `specs/001-dungeon-crawler/plan.md`
 ### 3. AI Implementation
 
 Claude Code reads the specs and generates:
+
 - C# classes
 - Data models
 - Tests
@@ -124,12 +125,14 @@ Claude Code reads the specs and generates:
 ### 1. AI-Native Development
 
 Spec-Kit is designed for AI coding agents:
+
 - Claude Code
 - GitHub Copilot
 - Cursor
 - Windsurf
 
 Your development becomes:
+
 ```
 Write Spec → AI Generates Code → Review → Iterate
 ```
@@ -137,6 +140,7 @@ Write Spec → AI Generates Code → Review → Iterate
 ### 2. Living Documentation
 
 Specifications ARE the documentation:
+
 - Always up-to-date
 - Executable
 - Versioned with code
@@ -151,6 +155,7 @@ Monsters are defined in YAML files with stats and behaviors.
 ```
 
 AI generates:
+
 - YAML schema
 - Data loader
 - Entity factory
@@ -192,6 +197,7 @@ specify init --here --ai claude --force
 ```
 
 This creates:
+
 ```
 .specify/
 ├── memory/
@@ -296,12 +302,14 @@ task gen-monster NAME=Dragon
 ### Option A: Adopt Real Spec-Kit
 
 **Pros:**
+
 - AI-native development workflow
 - Living specifications
 - Constitution ensures quality
 - Data-driven by design
 
 **Cons:**
+
 - Learning curve
 - Requires Python/uv
 - Different workflow
@@ -309,6 +317,7 @@ task gen-monster NAME=Dragon
 ### Option B: Rename Our Tool
 
 Keep our template generator but:
+
 - Rename to `lablab-codegen` or `template-gen`
 - Remove "spec-kit" references
 - Use for config/data file generation only
@@ -327,6 +336,7 @@ Keep our template generator but:
    - Just rename our tool?
 
 2. **If adopting Spec-Kit:**
+
    ```bash
    uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
    specify init --here --ai claude --force
@@ -338,9 +348,9 @@ Keep our template generator but:
 
 ## Resources
 
-- **GitHub Spec-Kit:** https://github.com/github/spec-kit
-- **Documentation:** https://github.github.io/spec-kit/
-- **Video Overview:** https://www.youtube.com/watch?v=a9eR1xsfvHg
+- **GitHub Spec-Kit:** <https://github.com/github/spec-kit>
+- **Documentation:** <https://github.github.io/spec-kit/>
+- **Video Overview:** <https://www.youtube.com/watch?v=a9eR1xsfvHg>
 - **SDD Methodology:** `ref-projects/spec-kit/spec-driven.md`
 
 ---

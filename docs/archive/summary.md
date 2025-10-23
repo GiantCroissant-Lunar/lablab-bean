@@ -16,7 +16,9 @@ Successfully removed all Go-specific code and refactored the project into a **la
 ### ✅ Updated
 
 #### 1. **Taskfile.yml**
+
 Refactored to focus on general automation:
+
 - Removed all Go build/test tasks
 - Added validation tasks (YAML, Markdown)
 - Added format tasks
@@ -24,6 +26,7 @@ Refactored to focus on general automation:
 - Simplified to core automation features
 
 #### 2. **Pre-commit Configuration** (`.pre-commit-config.yaml`)
+
 - Removed Go-specific hooks
 - Kept general file checks (trailing whitespace, EOF, YAML/JSON validation, etc.)
 - Kept Markdown linting
@@ -32,26 +35,31 @@ Refactored to focus on general automation:
 - Added private key detection
 
 #### 3. **Templates**
+
 - **model.tmpl**: Changed from Go struct to Markdown documentation template
 - **api.tmpl**: Changed from Go HTTP handlers to API documentation template
 
 #### 4. **Configuration** (`.lablab-bean.yaml`)
+
 - Removed Go-specific settings
 - Simplified to project metadata
 - Updated speck-kit configuration
 - Added pre-commit configuration
 
 #### 5. **Setup Scripts**
+
 - **setup.ps1**: Removed Go installation checks, simplified to Task + pre-commit
 - **setup.sh**: Removed Go installation checks, simplified to Task + pre-commit
 
 #### 6. **Documentation**
+
 - **README.md**: Updated to reflect language-agnostic nature
 - Removed all Go-specific instructions
 - Updated task list
 - Updated workflow examples
 
 #### 7. **.gitignore**
+
 - Removed Go-specific ignores
 - Added general language ignores (Python, Node.js)
 - Added Task cache ignore
@@ -82,7 +90,9 @@ lablab-bean/
 ## What the Project Does Now
 
 ### 1. **Task Automation**
+
 Provides a comprehensive set of tasks for:
+
 - Project initialization
 - Pre-commit hook management
 - File validation (YAML, Markdown)
@@ -91,7 +101,9 @@ Provides a comprehensive set of tasks for:
 - Project information
 
 ### 2. **Pre-commit Hooks**
+
 Automatically checks:
+
 - Trailing whitespace
 - End-of-file fixers
 - YAML/JSON/TOML validation
@@ -102,7 +114,9 @@ Automatically checks:
 - YAML formatting
 
 ### 3. **Template Generation (Speck-kit)**
+
 Provides templates for:
+
 - Model documentation (fields, validation, examples)
 - API documentation (endpoints, requests, responses)
 
@@ -148,6 +162,7 @@ task pre-commit-update       # Update hooks
 ## Next Steps
 
 You can now:
+
 1. Customize templates in `templates/` for your needs
 2. Add more tasks to `Taskfile.yml`
 3. Configure speck-kit variables in `.lablab-bean.yaml`

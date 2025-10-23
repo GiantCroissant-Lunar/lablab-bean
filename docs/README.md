@@ -66,7 +66,7 @@ docs/
 
 ## 🔍 Finding What You Need
 
-### I want to...
+### I want to
 
 - **Understand the project structure** → See main [README.md](../README.md)
 - **Get started as a user** → See [QUICKSTART.md](../QUICKSTART.md)

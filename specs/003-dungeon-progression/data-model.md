@@ -22,15 +22,15 @@ public struct Staircase
 {
     /// <summary>Direction of the staircase</summary>
     public StaircaseDirection Direction { get; set; }
-    
+
     /// <summary>Target level number (for validation)</summary>
     public int TargetLevel { get; set; }
-    
+
     /// <summary>Glyph for rendering</summary>
     public char Glyph => Direction == StaircaseDirection.Down ? '>' : '<';
-    
+
     /// <summary>Description for interaction</summary>
-    public string Description => Direction == StaircaseDirection.Down 
+    public string Description => Direction == StaircaseDirection.Down
         ? $"Downward staircase to Level {TargetLevel}"
         : $"Upward staircase to Level {TargetLevel}";
 }
@@ -57,31 +57,31 @@ public class DungeonLevel
 {
     /// <summary>Level number (1-based)</summary>
     public int LevelNumber { get; set; }
-    
+
     /// <summary>Dungeon map data</summary>
     public DungeonMap Map { get; set; }
-    
+
     /// <summary>Entity snapshots for this level</summary>
     public List<EntitySnapshot> Entities { get; set; }
-    
+
     /// <summary>Upward staircase position (null for level 1)</summary>
     public Position? UpStaircasePosition { get; set; }
-    
+
     /// <summary>Downward staircase position</summary>
     public Position DownStaircasePosition { get; set; }
-    
+
     /// <summary>Player spawn position (where player appears when entering this level)</summary>
     public Position PlayerSpawnPosition { get; set; }
-    
+
     /// <summary>Whether this level has been visited before</summary>
     public bool IsVisited { get; set; }
-    
+
     /// <summary>Timestamp of last visit</summary>
     public DateTime LastVisited { get; set; }
-    
+
     /// <summary>Difficulty scaling multiplier for this level</summary>
     public double DifficultyMultiplier { get; set; }
-    
+
     /// <summary>Loot drop rate for this level</summary>
     public double LootDropRate { get; set; }
 }
@@ -100,13 +100,13 @@ public struct EntitySnapshot
 {
     /// <summary>Entity archetype (Enemy, Item, Staircase, etc.)</summary>
     public EntityArchetype Archetype { get; set; }
-    
+
     /// <summary>Serialized component data</summary>
     public Dictionary<string, object> Components { get; set; }
-    
+
     /// <summary>Entity position</summary>
     public Position Position { get; set; }
-    
+
     /// <summary>Whether entity is still alive/active</summary>
     public bool IsActive { get; set; }
 }
@@ -137,25 +137,25 @@ public class LevelManager
     private readonly World _world;
     private readonly MapGenerator _mapGenerator;
     private readonly DifficultyScalingSystem _difficultyScaling;
-    
+
     /// <summary>Cache of all generated levels</summary>
     private readonly Dictionary<int, DungeonLevel> _levelCache;
-    
+
     /// <summary>Current active level number</summary>
     public int CurrentLevel { get; private set; }
-    
+
     /// <summary>Player's personal best depth</summary>
     public int PersonalBestDepth { get; private set; }
-    
+
     /// <summary>Maximum level before difficulty cap</summary>
     public const int MaxScalingLevel = 30;
-    
+
     /// <summary>Victory level (final boss)</summary>
     public const int VictoryLevel = 20;
-    
+
     /// <summary>Whether endless mode is enabled</summary>
     public bool EndlessModeEnabled { get; set; }
-    
+
     public LevelManager(World world, MapGenerator mapGenerator, DifficultyScalingSystem difficultyScaling)
     {
         _world = world;
@@ -182,19 +182,19 @@ public class DifficultyScalingSystem
 {
     /// <summary>Scaling factor per level (12% increase)</summary>
     private const double ScalingFactor = 1.12;
-    
+
     /// <summary>Base loot drop rate at level 1</summary>
     private const double BaseLootDropRate = 0.10;
-    
+
     /// <summary>Loot drop rate increase per level</summary>
     private const double LootDropRatePerLevel = 0.05;
-    
+
     /// <summary>Maximum loot drop rate (cap)</summary>
     private const double MaxLootDropRate = 0.60;
-    
+
     /// <summary>Maximum level for scaling (prevents overflow)</summary>
     private const int MaxScalingLevel = 30;
-    
+
     /// <summary>
     /// Calculates scaled stat value for a given level.
     /// </summary>
@@ -207,7 +207,7 @@ public class DifficultyScalingSystem
         double scaledValue = baseStat * Math.Pow(ScalingFactor, effectiveLevel - 1);
         return (int)Math.Round(scaledValue);
     }
-    
+
     /// <summary>
     /// Calculates loot drop rate for a given level.
     /// </summary>
@@ -218,14 +218,14 @@ public class DifficultyScalingSystem
         double dropRate = BaseLootDropRate + (level * LootDropRatePerLevel);
         return Math.Min(dropRate, MaxLootDropRate);
     }
-    
+
     /// <summary>
     /// Applies difficulty scaling to an enemy entity.
     /// </summary>
     /// <param name="enemyEntity">Enemy entity to scale</param>
     /// <param name="level">Current dungeon level</param>
     public void ApplyEnemyScaling(Entity enemyEntity, int level);
-    
+
     /// <summary>
     /// Determines if loot should drop based on level scaling.
     /// </summary>
@@ -355,11 +355,11 @@ public DungeonMap GenerateLevel(int levelNumber, out Position upStairs, out Posi
 {
     var map = GenerateRooms();
     var rooms = GetRooms();
-    
+
     // Place downward staircase in farthest room
     var farthestRoom = FindFarthestRoom(rooms);
     downStairs = GetRandomPositionInRoom(farthestRoom);
-    
+
     // Place upward staircase near start (except level 1)
     if (levelNumber > 1)
     {
@@ -370,7 +370,7 @@ public DungeonMap GenerateLevel(int levelNumber, out Position upStairs, out Posi
     {
         upStairs = Position.Invalid; // No up stairs on level 1
     }
-    
+
     return map;
 }
 ```
@@ -386,7 +386,7 @@ public void SpawnEnemiesForLevel(DungeonMap map, List<Room> rooms, int level)
         if (ShouldSpawnEnemy(room))
         {
             var enemy = SpawnEnemy(room);
-            
+
             // Apply difficulty scaling
             _difficultyScaling.ApplyEnemyScaling(enemy, level);
         }
@@ -439,7 +439,7 @@ public class VictoryChamber
 {
     /// <summary>Special level number for victory chamber</summary>
     public const int VictoryChamberLevel = 21;
-    
+
     /// <summary>Generate victory chamber (single large room with boss)</summary>
     public DungeonLevel GenerateVictoryChamber()
     {
@@ -450,14 +450,14 @@ public class VictoryChamber
             Entities = new List<EntitySnapshot>(),
             IsVisited = false
         };
-        
+
         // Spawn final boss in center
         var bossPosition = new Position { X = 25, Y = 15 };
         var boss = CreateFinalBoss(bossPosition);
-        
+
         // Add treasure hoard
         SpawnVictoryTreasure(level);
-        
+
         return level;
     }
 }
@@ -489,12 +489,14 @@ var bossCombat = new Combat
 ## Performance Characteristics
 
 ### Memory Usage
+
 - **Per DungeonLevel**: ~100 KB (map + 30 entities × 3 KB each)
 - **30 Levels Cached**: ~3 MB total
 - **Entity Snapshots**: ~3 KB per entity (5-10 components)
 - **Level Cache Eviction**: Keep only ±5 levels from current (11 levels max = ~1.1 MB)
 
 ### Transition Performance
+
 - **Save Level**: <50ms (snapshot 30 entities)
 - **Load Cached Level**: <50ms (restore 30 entities)
 - **Generate New Level**: <500ms (map generation + enemy/item spawning)
@@ -505,18 +507,21 @@ var bossCombat = new Combat
 ## Validation Rules
 
 ### Level Transition Constraints
+
 - ✅ Cannot ascend from level 1 (no up staircase exists)
 - ✅ Cannot descend beyond level 30 in endless mode (difficulty cap)
 - ✅ Level 20 descend leads to victory chamber (unless endless mode)
 - ✅ Player must be on staircase tile to interact
 
 ### State Persistence Constraints
+
 - ✅ All non-player entities are snapshotted
 - ✅ Player entity never snapshotted (transitions between levels)
 - ✅ Dead enemies remain dead when returning to level
 - ✅ Picked-up items remain gone when returning to level
 
 ### Difficulty Scaling Constraints
+
 - ✅ Stats scale up to level 30, then plateau
 - ✅ Loot drop rate caps at 60%
 - ✅ Scaling applies to all enemy types equally

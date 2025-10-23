@@ -1,6 +1,6 @@
 # Recent Changes - File Organization & Testing
 
-**Date**: 2025-10-20  
+**Date**: 2025-10-20
 **Summary**: Reorganized project files and added Playwright testing with versioned artifact integration
 
 ## 🎯 Overview
@@ -12,6 +12,7 @@ This update reorganizes the project structure for better maintainability and add
 ### Scripts → `build/scripts/`
 
 **Moved:**
+
 - `build-and-run.ps1` → `build/scripts/build-and-run.ps1`
 
 **Purpose**: Centralize all build and automation scripts
@@ -19,10 +20,12 @@ This update reorganizes the project structure for better maintainability and add
 ### Documentation → `docs/`
 
 **Updated:**
+
 - `docs/QUICKSTART.md` - Updated with new structure
 - `docs/RELEASE.md` - Complete rewrite with testing
 
 **New:**
+
 - `docs/ORGANIZATION.md` - Project structure documentation
 - `docs/TESTING.md` - Comprehensive testing guide
 
@@ -31,9 +34,11 @@ This update reorganizes the project structure for better maintainability and add
 ### Website Configuration → `website/`
 
 **Moved:**
+
 - `ecosystem.config.js` → `website/ecosystem.production.config.js`
 
 **New:**
+
 - `website/playwright.config.ts` - Playwright configuration
 - `website/tests/web-terminal.spec.ts` - E2E tests
 
@@ -78,14 +83,17 @@ build/_artifacts/<version>/
 ### New Test Infrastructure
 
 **Configuration:**
+
 - `website/playwright.config.ts` - Versioned output configuration
 - Multiple reporters: HTML, JSON, JUnit
 - Multi-browser support: Chromium, Firefox, WebKit
 
 **Tests:**
+
 - `website/tests/web-terminal.spec.ts` - Comprehensive web terminal tests
 
 **Coverage:**
+
 - Terminal visibility and interaction
 - WebSocket connections
 - Command execution
@@ -110,11 +118,13 @@ task test-full         # Complete workflow
 ### `build/nuke/Build.cs`
 
 **Added:**
+
 - `LogsDirectory` - Path to versioned logs
 - `TestResultsDirectory` - Path to test results
 - `TestReportsDirectory` - Path to test reports
 
 **Updated:**
+
 - `Release` target creates directory structure
 - Enhanced `version.json` with directory info
 - Better logging of artifact locations
@@ -122,6 +132,7 @@ task test-full         # Complete workflow
 ### `website/package.json`
 
 **Added:**
+
 - `@playwright/test` dependency
 - Test scripts: `test`, `test:ui`, `test:headed`, `test:debug`, `test:report`
 
@@ -130,6 +141,7 @@ task test-full         # Complete workflow
 ### New Tasks
 
 **Testing:**
+
 - `test-install` - Install Playwright browsers
 - `test-web` - Run Playwright tests
 - `test-web-ui` - Run tests in UI mode
@@ -141,6 +153,7 @@ task test-full         # Complete workflow
 ### Updated Tasks
 
 **Stack Management:**
+
 - `stack-run` - Now uses `website/ecosystem.production.config.js`
 - `stack-stop` - Updated config reference
 - `stack-restart` - Updated config reference
@@ -153,6 +166,7 @@ All stack tasks now run from `website/` directory.
 ### `README.md`
 
 **Updated:**
+
 - Script path: `.\build\scripts\build-and-run.ps1`
 - RELEASE.md link: `docs/RELEASE.md`
 - Added test commands to task list
@@ -160,6 +174,7 @@ All stack tasks now run from `website/` directory.
 ### `docs/RELEASE.md`
 
 **Complete Rewrite:**
+
 - Updated directory structure
 - Added testing section
 - Updated all file paths
@@ -169,6 +184,7 @@ All stack tasks now run from `website/` directory.
 ### `docs/QUICKSTART.md`
 
 **Updated:**
+
 - New prerequisites
 - Updated quick start steps
 - Current project structure
@@ -176,6 +192,7 @@ All stack tasks now run from `website/` directory.
 ### New Documentation
 
 **`docs/ORGANIZATION.md`:**
+
 - Complete project structure
 - File location reference
 - Versioned artifacts structure
@@ -183,6 +200,7 @@ All stack tasks now run from `website/` directory.
 - Best practices
 
 **`docs/TESTING.md`:**
+
 - Complete testing guide
 - Test commands and workflows
 - Writing tests
@@ -195,12 +213,14 @@ All stack tasks now run from `website/` directory.
 ### For Developers
 
 **Old Way:**
+
 ```bash
 .\build-and-run.ps1
 pm2 start ecosystem.config.js
 ```
 
 **New Way:**
+
 ```bash
 .\build\scripts\build-and-run.ps1
 task stack-run  # Uses website/ecosystem.production.config.js
@@ -209,12 +229,14 @@ task stack-run  # Uses website/ecosystem.production.config.js
 ### For CI/CD
 
 **Old Artifacts:**
+
 ```
 build/_artifacts/<version>/publish/
 logs/  # Root level
 ```
 
 **New Artifacts:**
+
 ```
 build/_artifacts/<version>/
 ├── publish/
@@ -226,6 +248,7 @@ build/_artifacts/<version>/
 ### File References
 
 Update any scripts or documentation that reference:
+
 - `build-and-run.ps1` → `build/scripts/build-and-run.ps1`
 - `ecosystem.config.js` → `website/ecosystem.production.config.js`
 - `RELEASE.md` → `docs/RELEASE.md`
@@ -235,12 +258,13 @@ Update any scripts or documentation that reference:
 
 ### PM2 Configuration
 
-**Old:** `ecosystem.config.js` (root)  
+**Old:** `ecosystem.config.js` (root)
 **New:** `website/ecosystem.production.config.js`
 
 **Impact:** Update any PM2 commands or scripts
 
 **Fix:**
+
 ```bash
 # Old
 pm2 start ecosystem.config.js
@@ -254,7 +278,7 @@ task stack-run
 
 ### Log Locations
 
-**Old:** `logs/` (root)  
+**Old:** `logs/` (root)
 **New:** `build/_artifacts/<version>/logs/`
 
 **Impact:** Log monitoring scripts need updating
@@ -263,7 +287,7 @@ task stack-run
 
 ### Script Locations
 
-**Old:** `.\build-and-run.ps1`  
+**Old:** `.\build-and-run.ps1`
 **New:** `.\build\scripts\build-and-run.ps1`
 
 **Impact:** Direct script invocations need updating
@@ -275,26 +299,31 @@ task stack-run
 After pulling these changes:
 
 1. **Install Playwright browsers:**
+
    ```bash
    task test-install
    ```
 
 2. **Build release:**
+
    ```bash
    task build-release
    ```
 
 3. **Start stack:**
+
    ```bash
    task stack-run
    ```
 
 4. **Run tests:**
+
    ```bash
    task test-web
    ```
 
 5. **View reports:**
+
    ```bash
    task test-report
    ```
@@ -302,24 +331,28 @@ After pulling these changes:
 ## 📊 Benefits
 
 ### Organization
+
 - ✅ Logical file structure
 - ✅ Clear separation of concerns
 - ✅ Easy to navigate
 - ✅ Scalable for growth
 
 ### Testing
+
 - ✅ Comprehensive E2E tests
 - ✅ Multiple test reporters
 - ✅ Easy debugging
 - ✅ CI/CD ready
 
 ### Versioning
+
 - ✅ All outputs versioned
 - ✅ Historical data preserved
 - ✅ Easy comparison
 - ✅ Audit trail
 
 ### Developer Experience
+
 - ✅ Clear documentation
 - ✅ Simple commands
 - ✅ Quick workflows
@@ -364,6 +397,7 @@ See [docs/ORGANIZATION.md](docs/ORGANIZATION.md) for details.
 ## 📝 Changelog
 
 ### Added
+
 - Playwright testing infrastructure
 - Versioned test results and reports
 - Versioned log directories
@@ -375,6 +409,7 @@ See [docs/ORGANIZATION.md](docs/ORGANIZATION.md) for details.
 - Multiple test commands in Taskfile
 
 ### Changed
+
 - Moved `build-and-run.ps1` to `build/scripts/`
 - Moved `RELEASE.md` to `docs/`
 - Updated `docs/QUICKSTART.md`
@@ -384,6 +419,7 @@ See [docs/ORGANIZATION.md](docs/ORGANIZATION.md) for details.
 - Updated `version.json` structure
 
 ### Removed
+
 - Root-level `logs/` directory (now versioned)
 - Root-level `ecosystem.config.js` (moved to website/)
 - Root-level `QUICKSTART.md` (now in docs/)

@@ -56,11 +56,13 @@ public interface IPlugin
 Unique plugin identifier. Must match `id` field in `plugin.json`.
 
 **Constraints**:
+
 - Lowercase recommended (enforced by loader)
 - Kebab-case preferred (`inventory-system`, not `InventorySystem`)
 - Globally unique within application
 
 **Example**:
+
 ```csharp
 public string Id => "inventory";
 ```
@@ -70,6 +72,7 @@ public string Id => "inventory";
 Human-readable plugin name.
 
 **Example**:
+
 ```csharp
 public string Name => "Inventory System";
 ```
@@ -81,6 +84,7 @@ Plugin version (semantic versioning recommended).
 **Format**: `MAJOR.MINOR.PATCH`
 
 **Example**:
+
 ```csharp
 public string Version => "1.0.0";
 ```
@@ -92,6 +96,7 @@ public string Version => "1.0.0";
 **Location**: `IPlugin.cs:18`
 
 Called once during plugin load. Use this to:
+
 - Store context references (logger, host, configuration)
 - Register services via `context.Registry`
 - Initialize state (do NOT start background work here)
@@ -99,12 +104,14 @@ Called once during plugin load. Use this to:
 **Lifecycle stage**: Phase 4 (after dependency resolution, before StartAsync)
 
 **Parameters**:
+
 - `context` - Plugin initialization context (never null)
 - `ct` - Cancellation token for graceful shutdown
 
 **Returns**: Task (use `Task.CompletedTask` for synchronous initialization)
 
 **Example**:
+
 ```csharp
 public Task InitializeAsync(IPluginContext context, CancellationToken ct)
 {
@@ -125,6 +132,7 @@ public Task InitializeAsync(IPluginContext context, CancellationToken ct)
 **Location**: `IPlugin.cs:22`
 
 Called after all plugins initialized. Use this to:
+
 - Start background work (timers, hosted services)
 - Subscribe to events
 - Begin async operations
@@ -132,11 +140,13 @@ Called after all plugins initialized. Use this to:
 **Lifecycle stage**: Phase 5 (all plugins initialized, dependency graph resolved)
 
 **Parameters**:
+
 - `ct` - Cancellation token for graceful shutdown
 
 **Returns**: Task (supports async operations)
 
 **Example**:
+
 ```csharp
 public Task StartAsync(CancellationToken ct)
 {
@@ -153,6 +163,7 @@ public Task StartAsync(CancellationToken ct)
 **Location**: `IPlugin.cs:27`
 
 Called during application shutdown. Use this to:
+
 - Stop background work
 - Unsubscribe from events
 - Dispose resources
@@ -161,11 +172,13 @@ Called during application shutdown. Use this to:
 **Lifecycle stage**: Shutdown (reverse load order)
 
 **Parameters**:
+
 - `ct` - Cancellation token with timeout (graceful shutdown period)
 
 **Returns**: Task (supports async cleanup)
 
 **Example**:
+
 ```csharp
 public Task StopAsync(CancellationToken ct)
 {
@@ -207,6 +220,7 @@ Service registry for cross-ALC service registration.
 **Purpose**: Register plugin services visible to host and other plugins.
 
 **Usage**:
+
 ```csharp
 context.Registry.Register<IInventoryService>(myService, priority: 100);
 ```
@@ -222,12 +236,14 @@ Host configuration (Microsoft.Extensions.Configuration).
 **Purpose**: Read-only access to `appsettings.json` and environment configuration.
 
 **Usage**:
+
 ```csharp
 var section = context.Configuration.GetSection("Inventory");
 var maxItems = section.GetValue<int>("MaxItems", 100);
 ```
 
 **Configuration structure**:
+
 ```json
 {
   "Plugins": {
@@ -249,12 +265,14 @@ Logger instance for this plugin (category = plugin ID).
 **Purpose**: Structured logging via Microsoft.Extensions.Logging.
 
 **Usage**:
+
 ```csharp
 _logger.LogInformation("Inventory loaded with {ItemCount} items", items.Count);
 _logger.LogError(ex, "Failed to load inventory data");
 ```
 
 **Log levels** (configured in `appsettings.json`):
+
 ```json
 {
   "Serilog": {
@@ -303,11 +321,13 @@ public interface IPluginHost
 Create a logger with custom category name.
 
 **Parameters**:
+
 - `categoryName` - Log category (e.g., "Inventory.Service")
 
 **Returns**: ILogger instance
 
 **Usage**:
+
 ```csharp
 var logger = context.Host.CreateLogger("Inventory.DataLoader");
 logger.LogDebug("Loading data from {Path}", path);
@@ -324,6 +344,7 @@ Service provider for host-provided services (Microsoft.Extensions.DependencyInje
 **Purpose**: Resolve services registered by host (not plugin services).
 
 **Usage**:
+
 ```csharp
 var config = context.Host.Services.GetService<IConfiguration>();
 var logger = context.Host.Services.GetService<ILogger<MyClass>>();
@@ -338,12 +359,15 @@ var logger = context.Host.Services.GetService<ILogger<MyClass>>();
 Publish an event to the host event bus.
 
 **Type parameter**:
+
 - `T` - Event type (any class)
 
 **Parameters**:
+
 - `evt` - Event data
 
 **Usage**:
+
 ```csharp
 context.Host.PublishEvent(new InventoryChangedEvent
 {
@@ -388,13 +412,16 @@ public interface IRegistry
 Register a service implementation with full metadata.
 
 **Type parameter**:
+
 - `TService` - Service interface type
 
 **Parameters**:
+
 - `implementation` - Service instance
 - `metadata` - Registration metadata (priority, name, version)
 
 **Usage**:
+
 ```csharp
 context.Registry.Register<IInventoryService>(myService, new ServiceMetadata
 {
@@ -411,18 +438,22 @@ context.Registry.Register<IInventoryService>(myService, new ServiceMetadata
 Register a service with priority (shorthand).
 
 **Type parameter**:
+
 - `TService` - Service interface type
 
 **Parameters**:
+
 - `implementation` - Service instance
 - `priority` - Priority (default: 100)
 
 **Usage**:
+
 ```csharp
 context.Registry.Register<IInventoryService>(myService, priority: 150);
 ```
 
 **Priority guidelines**:
+
 - Framework: 1000+
 - Game plugins: 100-500
 - UI plugins: 50-99
@@ -435,23 +466,28 @@ context.Registry.Register<IInventoryService>(myService, priority: 150);
 Get a single service implementation using selection mode.
 
 **Type parameter**:
+
 - `TService` - Service interface type
 
 **Parameters**:
+
 - `mode` - Selection mode (default: HighestPriority)
 
 **Returns**: Service implementation
 
 **Throws**:
+
 - `InvalidOperationException` - If mode is `One` and multiple or zero implementations exist
 
 **Usage**:
+
 ```csharp
 var service = context.Registry.Get<IInventoryService>();
 var uniqueService = context.Registry.Get<IGameEngine>(SelectionMode.One);
 ```
 
 **Selection modes**:
+
 - `HighestPriority` - Return highest priority implementation (default)
 - `One` - Require exactly one implementation (throws if 0 or 2+)
 - `All` - Throws; use `GetAll()` instead
@@ -463,11 +499,13 @@ var uniqueService = context.Registry.Get<IGameEngine>(SelectionMode.One);
 Get all registered implementations of a service.
 
 **Type parameter**:
+
 - `TService` - Service interface type
 
 **Returns**: Enumerable of all implementations (ordered by priority descending)
 
 **Usage**:
+
 ```csharp
 var allRenderers = context.Registry.GetAll<IRenderer>();
 foreach (var renderer in allRenderers)
@@ -483,11 +521,13 @@ foreach (var renderer in allRenderers)
 Check if any implementation is registered.
 
 **Type parameter**:
+
 - `TService` - Service interface type
 
 **Returns**: `true` if at least one implementation registered
 
 **Usage**:
+
 ```csharp
 if (context.Registry.IsRegistered<IInventoryService>())
 {
@@ -502,14 +542,17 @@ if (context.Registry.IsRegistered<IInventoryService>())
 Unregister a specific service implementation.
 
 **Type parameter**:
+
 - `TService` - Service interface type
 
 **Parameters**:
+
 - `implementation` - Service instance to remove
 
 **Returns**: `true` if unregistered, `false` if not found
 
 **Usage**:
+
 ```csharp
 context.Registry.Unregister<IInventoryService>(myService);
 ```
@@ -597,6 +640,7 @@ public class ServiceMetadata
 Priority for conflict resolution. Higher = preferred.
 
 **Guidelines**:
+
 - Framework services: 1000+
 - Game plugins: 100-500
 - UI plugins: 50-99
@@ -706,10 +750,12 @@ The contracts assembly is **shared across ALC boundaries**, meaning:
 3. **Service registration succeeds**: `Register<T>` uses runtime type matching
 
 **Key files**:
+
 - `PluginLoadContext.cs:26-29` - Shared assembly loading logic
 - `PluginLoader.cs:157-261` - Plugin lifecycle implementation
 
 **Shared assemblies**:
+
 - `LablabBean.Plugins.Contracts`
 - `Microsoft.Extensions.Logging.Abstractions`
 - `Microsoft.Extensions.Configuration.Abstractions`

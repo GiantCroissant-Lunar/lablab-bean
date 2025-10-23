@@ -10,24 +10,28 @@ Successfully implemented **dungeon crawler features** including dungeon generati
 ## 📋 Summary of Changes
 
 ### 1. Dungeon Generation System
+
 - ✅ Implemented `RoomDungeonGenerator` - creates rooms (6-12 tiles) connected by L-shaped corridors
 - ✅ Added `FogOfWar` system - tracks explored vs unexplored tiles
 - ✅ Integrated FOV (Field of View) using recursive shadowcasting algorithm (8-tile radius)
 - ✅ Map displays three visibility states: visible (bright), explored (dark), unexplored (black)
 
 ### 2. Entity System
+
 - ✅ Player character spawns in first room with health, combat stats, and movement
 - ✅ Monsters spawn in rooms (1-3 per room): Goblin (g), Orc (o), Troll (T), Skeleton (s)
 - ✅ Each monster type has distinct color and stats
 - ✅ Entities only visible within player's FOV
 
 ### 3. Rendering System
+
 - ✅ Created custom `MapView` for Terminal.Gui rendering
 - ✅ Fixed layout timing issue - render triggers after layout completion
 - ✅ Camera centers on player position with smooth scrolling
 - ✅ Buffer-based rendering for efficient updates
 
 ### 4. Known Issues
+
 - ✅ **FIXED**: FOV radius increased from 8 to 20 tiles - now shows multiple rooms
 - ✅ **FIXED**: Fog of war rendering improved - explored areas use different glyphs (·▓) vs visible areas (.#)
 - ✅ **FIXED**: Player movement now works - keyboard input properly captured and processed
@@ -53,11 +57,13 @@ Development Stack (task dev-stack):
 ## 📁 Key Files Created/Modified
 
 ### Created Files
+
 - `dotnet/framework/LablabBean.Game.Core/Maps/RoomDungeonGenerator.cs` - Dungeon generation with rooms and corridors
 - `dotnet/framework/LablabBean.Game.Core/Maps/FogOfWar.cs` - Fog of war tracking system
 - `dotnet/framework/LablabBean.Game.TerminalUI/Views/MapView.cs` - Custom Terminal.Gui view for dungeon rendering
 
 ### Modified Files
+
 - `dotnet/framework/LablabBean.Game.Core/Maps/DungeonMap.cs` - Integrated fog of war with FOV
 - `dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs` - Uses room generator and spawns monsters per room
 - `dotnet/framework/LablabBean.Game.TerminalUI/Services/WorldViewService.cs` - Fixed rendering timing and buffer management
@@ -66,6 +72,7 @@ Development Stack (task dev-stack):
 ## 🚀 How to Use
 
 ### Start Development
+
 ```bash
 # One command to start everything
 task dev-stack
@@ -76,17 +83,20 @@ task dev-stack       # Start dev stack
 ```
 
 ### Check Status
+
 ```bash
 task dev-status      # View PM2 process status
 task dev-logs        # View live logs
 ```
 
 ### Access the Application
-- **Web UI**: http://localhost:3000
+
+- **Web UI**: <http://localhost:3000>
 - **Terminal**: Opens automatically in browser
 - **Console App**: Auto-runs in the web terminal
 
 ### Stop Development
+
 ```bash
 task dev-stop        # Stop all dev processes
 ```
@@ -94,9 +104,11 @@ task dev-stop        # Stop all dev processes
 ## 🔧 Configuration
 
 ### Auto-Run Console App (Default: Enabled)
+
 The terminal automatically runs the .NET console app when you connect.
 
 **To disable** (get plain PowerShell):
+
 ```javascript
 // In ecosystem.development.config.js
 env: {
@@ -105,6 +117,7 @@ env: {
 ```
 
 ### Terminal Server Ports
+
 ```javascript
 // In ecosystem.development.config.js
 env: {
@@ -116,8 +129,10 @@ env: {
 ## 🐛 Known Issues & Solutions
 
 ### Issue 1: Only One Room Visible ✅ FIXED
+
 **Symptom**: Player sees only one room instead of the full dungeon with multiple rooms
-**Root Cause**: 
+**Root Cause**:
+
 - FOV radius was too small (8 tiles) - couldn't see beyond first room
 - Fog of war rendering used same glyphs for visible and explored areas
 **Solution**:
@@ -130,9 +145,11 @@ env: {
 - Explored areas remain visible but dimmed after leaving FOV
 
 ### Issue 2: Terminal.Gui Rendering Timing ✅ FIXED
+
 **Symptom**: MapView shows "NO BUFFER" - rendering called before layout complete
 **Root Cause**: View dimensions are 0x0 when first render is called, before layout finishes
 **Solution**:
+
 - Read dimensions from `_renderView.Bounds` on each render
 - Trigger render after `LayoutComplete` event instead of immediately
 - Skip rendering if dimensions are invalid
@@ -140,8 +157,10 @@ env: {
 - Terminal.Gui renders correctly for actual viewport size
 
 ### Issue 3: Terminal Package Changes Not Applied
+
 **Symptom**: Changes to terminal server code not taking effect
 **Solution**:
+
 1. Rebuild terminal package: `cd website/packages/terminal && npm run build`
 2. Restart dev stack: `task dev-stop && task dev-stack`
 3. TypeScript changes require compilation before PM2 picks them up
@@ -149,6 +168,7 @@ env: {
 ## 📊 Current Status (v0.0.2)
 
 ### Working ✅
+
 - Dungeon generation with rooms and L-shaped corridors
 - Player character spawns in starting room and **can move with arrow keys/WASD**
 - Monsters spawn in rooms with distinct colors
@@ -162,6 +182,7 @@ env: {
 - **Player movement fully functional** with debug panel for troubleshooting
 
 ### Known Limitations
+
 - Combat system not yet tested
 - No color rendering yet (Terminal.Gui attribute system needs work)
 - Monster AI needs testing
@@ -170,11 +191,13 @@ env: {
 ## 🔍 Debugging Tips
 
 ### Check Console App Logs
+
 ```bash
 # Logs are in dotnet/console-app/LablabBean.Console/logs/
 Get-Content -Tail 50 dotnet/console-app/LablabBean.Console/logs/*.log
 # Look for "Render called", "Buffer created", "Generated dungeon with X rooms"
 ```
+
 ```bash
 curl http://localhost:3001/debug
 # Should return:
@@ -186,6 +209,7 @@ curl http://localhost:3001/debug
 ```
 
 ### View Live Logs
+
 ```bash
 task dev-logs                    # All processes
 pnpm pm2 logs lablab-web-dev    # Web only
@@ -193,6 +217,7 @@ pnpm pm2 logs lablab-pty-dev    # Terminal only
 ```
 
 ### Manual Testing
+
 ```bash
 # Test terminal server directly
 cd website/packages/terminal
@@ -215,7 +240,7 @@ curl http://localhost:3001/health
 ## 🎯 Next Steps
 
 1. **Test the terminal in browser**
-   - Open http://localhost:3000
+   - Open <http://localhost:3000>
    - Verify terminal loads without errors
    - Check if console app output appears
 
@@ -255,6 +280,7 @@ task build-website      # Build website for production
 ## 📝 Technical Details
 
 ### Terminal Sizing Flow
+
 1. Xterm terminal initializes without fixed dimensions
 2. FitAddon calculates optimal size based on container (using `requestAnimationFrame`)
 3. WebSocket connects to terminal server on port 3001
@@ -264,12 +290,14 @@ task build-website      # Build website for production
 7. **On window resize/orientation change**: Resize message sent again
 
 ### Key Configuration
+
 - **Terminal scrollback**: 10,000 lines
 - **Default PTY size**: 80x24 (overridden by initial resize)
 - **Debounce delay**: 100ms for resize events
 - **Container styling**: `flex-1 min-h-0 overflow-hidden` prevents infinite growth
 
 ### Debugging Tips
+
 - Check browser console for "Sending initial terminal size: XXxYY"
 - Check server logs: `pnpm pm2 logs lablab-pty-dev --lines 20`
 - Look for "Resizing terminal [id] to XXxYY" in server logs
@@ -299,13 +327,14 @@ If something doesn't work:
 ## 📞 Contact
 
 For questions about this implementation, refer to:
+
 - Git commit history
 - Documentation in docs/ folder
 - This handover document
 
 ---
 
-**Session End**: 2025-10-20 20:10  
+**Session End**: 2025-10-20 20:10
 **Status**: Development stack functional, ready for testing
 
 ---
@@ -345,7 +374,7 @@ Fixed keyboard input handling with focus management and proper key extraction:
    - Result: Arrow keys and WASD now work for player movement
 
 2. **Fixed Focus Stealing Issue**
-   - Files: 
+   - Files:
      - `dotnet/framework/LablabBean.Game.TerminalUI/Services/HudService.cs`
      - `dotnet/console-app/LablabBean.Console/Services/DungeonCrawlerService.cs`
    - Problem: ListView in HUD was stealing keyboard focus
@@ -369,14 +398,17 @@ Fixed keyboard input handling with focus management and proper key extraction:
 ### Testing
 
 To test the fixes:
-1. Development stack is running at http://localhost:3000
+
+1. Development stack is running at <http://localhost:3000>
 2. Try pressing arrow keys or WASD to move the player
 3. Check console logs to see if keys are being detected:
+
    ```bash
    cd dotnet/console-app/LablabBean.Console/logs && Get-Content -Tail 50 *.log
    ```
 
 ### Files Modified
+
 - `dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs` - FOV radius increase
 - `dotnet/framework/LablabBean.Game.TerminalUI/Services/WorldViewService.cs` - Fog of war rendering, layout spacing
 - `dotnet/framework/LablabBean.Game.TerminalUI/Services/HudService.cs` - Focus management (CanFocus=false)

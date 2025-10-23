@@ -9,9 +9,11 @@
 ---
 
 ## Format: `[ID] [P] Description`
+
 - **[P]**: Can run in parallel (no ordering/dependency conflicts)
 
 ## Path Conventions (post-refactor)
+
 - Contracts projects: `dotnet/framework/LablabBean.Reporting.Contracts/`
 - Source generators: `dotnet/framework/LablabBean.SourceGenerators.Reporting/`
 - Reporting core: `dotnet/framework/LablabBean.Reporting.*`
@@ -21,6 +23,7 @@
 ---
 
 ## Phase 1: Simple Renames (Low Risk) ✓ COMPLETE
+
 **Purpose**: Apply unified naming rules without changing behavior.
 
 - [x] T001 Validate current repo state and solution projects
@@ -41,6 +44,7 @@
 ---
 
 ## Phase 2: Add Proxy Services to Contract Projects ✓ COMPLETE
+
 **Purpose**: Enable tier-2 DI via generated proxies in contract assemblies.
 
 - [x] T020 Audit contract projects for SourceGenerators.Proxy analyzer reference
@@ -56,6 +60,7 @@
 ---
 
 ## Phase 3: Convert Reporting Renderers to Plugins ✓ COMPLETE
+
 **Purpose**: Move Csv/Html renderers to plugins and use dynamic discovery.
 
 - [x] T030 Move `dotnet/framework/LablabBean.Reporting.Renderers.Csv/` → `dotnet/plugins/LablabBean.Plugins.Reporting.Csv/`
@@ -74,6 +79,7 @@
 ---
 
 ## Phase 4: Platform-Agnostic Architecture (Future) ✓ COMPLETE
+
 **Purpose**: Prepare loader abstraction to support ALC and future HybridCLR.
 
 - [x] T040 Define `IPluginLoader` abstraction in `framework/LablabBean.Plugins.Core`
@@ -96,6 +102,7 @@
 ---
 
 ## Summary
+
 - Phases 1–3 deliver naming, proxies, and renderer plugins without platform changes.
 - Phase 4 prepares platform abstraction for future work.
 - Success: solution builds, tests pass, and reporting renderers are pluggable/discoverable.

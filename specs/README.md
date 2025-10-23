@@ -5,51 +5,57 @@ This directory contains feature specifications for the lablab-bean project, orga
 ## Active Specifications
 
 ### Spec 007: Tiered Contract Architecture ✅ COMPLETE
-**Status**: Complete  
-**Priority**: P0 (Foundation)  
+
+**Status**: Complete
+**Priority**: P0 (Foundation)
 **Location**: [007-tiered-contract-architecture/](007-tiered-contract-architecture/)
 
 **Summary**: Event-driven plugin architecture with domain-specific contract assemblies.
 
 **Deliverables**:
+
 - ✅ `IEventBus` - Pub-sub messaging (1.1M+ events/sec, 0.003ms latency)
 - ✅ `LablabBean.Contracts.Game` - Game service contracts and events
 - ✅ `LablabBean.Contracts.UI` - UI service contracts and events
 - ✅ Example plugins: Analytics, MockGame, ReactiveUI
 - ✅ Comprehensive documentation and performance validation
 
-**Success Criteria**: 8/8 validated and exceeded  
+**Success Criteria**: 8/8 validated and exceeded
 **Tests**: 29/29 passing
 
 ---
 
 ### Spec 008: Extended Contract Assemblies 📝 DRAFT
-**Status**: Draft  
-**Priority**: P1 (Critical for dungeon crawler)  
-**Prerequisites**: Spec 007 (Complete)  
+
+**Status**: Draft
+**Priority**: P1 (Critical for dungeon crawler)
+**Prerequisites**: Spec 007 (Complete)
 **Location**: [008-extended-contract-assemblies/](008-extended-contract-assemblies/)
 
 **Summary**: Four additional contract assemblies for scene management, input routing, configuration, and resource loading.
 
 **Deliverables**:
+
 - 🔲 `LablabBean.Contracts.Scene` - Scene/level management, camera, viewport
 - 🔲 `LablabBean.Contracts.Input` - Input routing, action mapping, scope management
 - 🔲 `LablabBean.Contracts.Config` - Configuration management with change notifications
 - 🔲 `LablabBean.Contracts.Resource` - Async resource loading with caching
 
-**Success Criteria**: 8 criteria defined  
+**Success Criteria**: 8 criteria defined
 **Estimated Duration**: 7-11 days
 
 ---
 
 ### Spec 010: FastReport Reporting Infrastructure ✅ COMPLETE
-**Status**: Complete (87%)  
-**Priority**: P1 (DevOps/CI-CD)  
+
+**Status**: Complete (87%)
+**Priority**: P1 (DevOps/CI-CD)
 **Location**: [010-fastreport-reporting/](010-fastreport-reporting/)
 
 **Summary**: Production-ready reporting system for build metrics, session analytics, and plugin health monitoring.
 
 **Deliverables**:
+
 - ✅ Reporting abstractions library (contracts, models, attributes)
 - ✅ Build metrics provider (test results, coverage, timing)
 - ✅ Session statistics provider (playtime, K/D ratio, progression)
@@ -60,8 +66,8 @@ This directory contains feature specifications for the lablab-bean project, orga
 - ✅ GitHub Actions workflow (automated testing + reporting)
 - ✅ Comprehensive documentation (quickstart, CI/CD, troubleshooting)
 
-**Success Criteria**: 8/8 met  
-**Tests**: 45/45 passing (100% coverage)  
+**Success Criteria**: 8/8 met
+**Tests**: 45/45 passing (100% coverage)
 **Progress**: 119/138 tasks complete (87%)
 
 ---
@@ -69,33 +75,39 @@ This directory contains feature specifications for the lablab-bean project, orga
 ## Completed Specifications
 
 ### Spec 001: Inventory System ✅
-**Status**: Complete  
-**Location**: [001-inventory-system/](001-inventory-system/)  
+
+**Status**: Complete
+**Location**: [001-inventory-system/](001-inventory-system/)
 **Summary**: Player inventory with item pickup, drop, stacking, and weight limits.
 
 ### Spec 002: Status Effects ✅
-**Status**: Complete  
-**Location**: [002-status-effects/](002-status-effects/)  
+
+**Status**: Complete
+**Location**: [002-status-effects/](002-status-effects/)
 **Summary**: Temporary status effects (poison, regeneration, speed) with duration and stacking.
 
 ### Spec 003: Dungeon Progression ✅
-**Status**: Complete  
-**Location**: [003-dungeon-progression/](003-dungeon-progression/)  
+
+**Status**: Complete
+**Location**: [003-dungeon-progression/](003-dungeon-progression/)
 **Summary**: Multi-level dungeons with stairs, level progression, and difficulty scaling.
 
 ### Spec 004: Tiered Plugin Architecture ✅
-**Status**: Complete  
-**Location**: [004-tiered-plugin-architecture/](004-tiered-plugin-architecture/)  
+
+**Status**: Complete
+**Location**: [004-tiered-plugin-architecture/](004-tiered-plugin-architecture/)
 **Summary**: Plugin system with `IRegistry`, `IPlugin`, and service registration.
 
 ### Spec 005: Inventory Plugin Migration ✅
-**Status**: Complete  
-**Location**: [005-inventory-plugin-migration/](005-inventory-plugin-migration/)  
+
+**Status**: Complete
+**Location**: [005-inventory-plugin-migration/](005-inventory-plugin-migration/)
 **Summary**: Migrated inventory system to plugin architecture.
 
 ### Spec 006: Status Effects Plugin Migration ✅
-**Status**: Complete  
-**Location**: [006-status-effects-plugin-migration/](006-status-effects-plugin-migration/)  
+
+**Status**: Complete
+**Location**: [006-status-effects-plugin-migration/](006-status-effects-plugin-migration/)
 **Summary**: Migrated status effects system to plugin architecture.
 
 ---
@@ -162,5 +174,5 @@ Future: Spec 010 (Source Generators)
 
 ---
 
-**Last Updated**: 2025-10-22  
+**Last Updated**: 2025-10-22
 **Total Specs**: 9 (7 complete, 1 draft, 1 in progress)

@@ -31,6 +31,7 @@ Created a comprehensive multi-agent instruction system:
 ```
 
 **Key Features**:
+
 - **Versioned rules**: Semantic versioning with sync protocol
 - **Immutable rule IDs**: R-XXX-NNN format, never reused
 - **Adapter composability**: Reference rule IDs instead of duplicating content
@@ -41,6 +42,7 @@ Created a comprehensive multi-agent instruction system:
 Upgraded `scripts/validate_docs.py` with:
 
 **New Capabilities**:
+
 - ✅ **Registry Generation**: Creates `docs/index/registry.json` with:
   - Document metadata (doc_id, title, type, status, tags)
   - SHA256 hashes for content integrity
@@ -65,6 +67,7 @@ Upgraded `scripts/validate_docs.py` with:
 - ✅ **Pre-commit Mode**: `--pre-commit` flag to avoid infinite loops
 
 **Dependencies** (optional but recommended):
+
 ```bash
 pip install pyyaml          # Required
 pip install simhash         # For duplicate detection
@@ -74,12 +77,14 @@ pip install rapidfuzz       # For fuzzy matching
 ### 3. Documentation Improvements
 
 **Updated Files**:
+
 - `README.md`: Added documentation and AI agent sections
 - `CLAUDE.md`: New pointer file to `.agent/adapters/claude.md`
 - `docs/README.md`: Already had good structure
 - `docs/DOCUMENTATION-SCHEMA.md`: Already existed, now referenced by agents
 
 **New Registry**:
+
 - `docs/index/registry.json`: Machine-readable doc registry (auto-generated)
 
 ### 4. Rule Categories
@@ -98,6 +103,7 @@ Established clear rule categories:
 ### 5. Core Principles
 
 Defined 10 core principles (P-1 through P-10):
+
 1. Documentation-First Development
 2. Clear Code Over Clever Code
 3. Testing Matters
@@ -142,11 +148,13 @@ While based on sango-card's system, we adapted it for lablab-bean:
 ### For Contributors
 
 1. **Install Dependencies** (optional for enhanced features):
+
    ```bash
    pip install pyyaml simhash rapidfuzz
    ```
 
 2. **Validate Before Commit**:
+
    ```bash
    python scripts/validate_docs.py
    ```
@@ -186,7 +194,8 @@ Current state after migration:
 
 ## Files Changed/Created
 
-### Created (20 files):
+### Created (20 files)
+
 ```
 .agent/README.md
 .agent/base/00-index.md
@@ -202,13 +211,15 @@ CLAUDE.md
 DOCUMENTATION_IMPROVEMENTS_SUMMARY.md (this file)
 ```
 
-### Modified (2 files):
+### Modified (2 files)
+
 ```
 README.md (added Documentation and AI Agent sections)
 scripts/validate_docs.py (enhanced with registry generation)
 ```
 
-### Generated (1 file):
+### Generated (1 file)
+
 ```
 docs/index/registry.json (auto-generated)
 ```
@@ -244,6 +255,7 @@ docs/index/registry.json (auto-generated)
 ## Conclusion
 
 The lablab-bean project now has a professional-grade documentation management system with:
+
 - Structured agent instructions
 - Automated validation with duplicate detection
 - Machine-readable registry

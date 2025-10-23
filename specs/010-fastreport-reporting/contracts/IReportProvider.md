@@ -22,7 +22,7 @@ public interface IReportProvider
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Report data object (typically BuildMetricsData, SessionStatisticsData, or PluginHealthData)</returns>
     Task<object> GetReportDataAsync(ReportRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Gets metadata about this provider (name, supported data sources, etc.)
     /// </summary>
@@ -31,6 +31,7 @@ public interface IReportProvider
 ```
 
 **Implementation Example**:
+
 ```csharp
 using LablabBean.Reporting.Abstractions.Attributes;
 using LablabBean.Reporting.Abstractions.Contracts;
@@ -47,7 +48,7 @@ public class BuildMetricsProvider : IReportProvider
         // Parse test results, coverage, build timing
         return data;
     }
-    
+
     public ReportMetadata GetMetadata() => new()
     {
         Name = "BuildMetrics",

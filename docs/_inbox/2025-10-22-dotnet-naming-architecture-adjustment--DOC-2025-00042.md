@@ -79,6 +79,7 @@ This specification defines a comprehensive refactoring plan to:
 ```
 
 **Why Proxy Services?**
+
 - **Decoupling**: Consumer doesn't know about registry
 - **Type safety**: Compile-time interface checking
 - **Selection strategy**: `[SelectionStrategy(SelectionMode.HighestPriority)]`
@@ -126,12 +127,14 @@ This specification defines a comprehensive refactoring plan to:
 #### Rule 1: Keep `LablabBean` Prefix
 
 **Rationale:**
+
 - Namespace collision prevention
 - NuGet package scoping
 - Professional .NET conventions
 - Clear ownership identity
 
 **Examples:**
+
 ```
 ✅ LablabBean.Contracts.Config
 ✅ LablabBean.Plugins.Analytics
@@ -142,11 +145,13 @@ This specification defines a comprehensive refactoring plan to:
 #### Rule 2: Use "Contracts" for All Interface Projects
 
 **Rationale:**
+
 - Consistent terminology
 - Clear intent (interfaces + proxies)
 - Aligns with .NET ecosystem
 
 **Mapping:**
+
 ```
 Old Name                              → New Name
 ─────────────────────────────────────────────────────────────
@@ -154,17 +159,20 @@ LablabBean.Reporting.Abstractions     → LablabBean.Reporting.Contracts
 ```
 
 **Keep as "Contracts":**
+
 - `LablabBean.Contracts.{Domain}` (Config, Game, Input, etc.)
 - `LablabBean.Plugins.Contracts`
 
 #### Rule 3: Unify Source Generators Under One Namespace
 
 **Rationale:**
+
 - Source generators are development-time tools
 - Group by purpose, not by feature
 - Matches Microsoft conventions
 
 **Mapping:**
+
 ```
 Old Name                              → New Name
 ─────────────────────────────────────────────────────────────
@@ -175,6 +183,7 @@ LablabBean.SourceGenerators.Proxy     → (Keep unchanged)
 #### Rule 4: Plugin Classification
 
 **Gameplay Plugins** (implement domain contracts):
+
 ```
 LablabBean.Plugins.{Feature}
   - LablabBean.Plugins.ConfigManager
@@ -183,6 +192,7 @@ LablabBean.Plugins.{Feature}
 ```
 
 **Infrastructure Plugins** (platform-specific or cross-cutting):
+
 ```
 LablabBean.Plugins.{Category}.{Implementation}
   - LablabBean.Plugins.Loader.ALC
@@ -197,19 +207,23 @@ LablabBean.Plugins.{Category}.{Implementation}
 ### Task 1.1: Rename Reporting.Abstractions → Reporting.Contracts
 
 **Actions:**
+
 1. Rename directory:
+
    ```
    dotnet/framework/LablabBean.Reporting.Abstractions/
    → dotnet/framework/LablabBean.Reporting.Contracts/
    ```
 
 2. Rename .csproj file:
+
    ```
    LablabBean.Reporting.Abstractions.csproj
    → LablabBean.Reporting.Contracts.csproj
    ```
 
 3. Update namespace in all .cs files:
+
    ```csharp
    // Old
    namespace LablabBean.Reporting.Abstractions.Contracts;
@@ -219,6 +233,7 @@ LablabBean.Plugins.{Category}.{Implementation}
    ```
 
 4. Update all project references:
+
    ```xml
    <!-- Old -->
    <ProjectReference Include="..\LablabBean.Reporting.Abstractions\..." />
@@ -228,6 +243,7 @@ LablabBean.Plugins.{Category}.{Implementation}
    ```
 
 5. Update all using statements across codebase:
+
    ```csharp
    // Old
    using LablabBean.Reporting.Abstractions.Models;
@@ -241,6 +257,7 @@ LablabBean.Plugins.{Category}.{Implementation}
 6. Update solution file (LablabBean.sln)
 
 **Affected Projects:**
+
 - `LablabBean.Reporting.Renderers.Csv`
 - `LablabBean.Reporting.Renderers.Html`
 - `LablabBean.Reporting.Analytics`
@@ -248,6 +265,7 @@ LablabBean.Plugins.{Category}.{Implementation}
 - All reporting test projects
 
 **Verification:**
+
 ```bash
 dotnet build dotnet/LablabBean.sln
 dotnet test dotnet/LablabBean.sln
@@ -258,7 +276,9 @@ dotnet test dotnet/LablabBean.sln
 ### Task 1.2: Rename Reporting.SourceGen → SourceGenerators.Reporting
 
 **Actions:**
+
 1. Rename directory:
+
    ```
    dotnet/framework/LablabBean.Reporting.SourceGen/
    → dotnet/framework/LablabBean.SourceGenerators.Reporting/
@@ -267,6 +287,7 @@ dotnet test dotnet/LablabBean.sln
 2. Rename .csproj file
 
 3. Update namespace:
+
    ```csharp
    // Old
    namespace LablabBean.Reporting.SourceGen;
@@ -276,6 +297,7 @@ dotnet test dotnet/LablabBean.sln
    ```
 
 4. Update all project references that use this as analyzer:
+
    ```xml
    <!-- Old -->
    <ProjectReference Include="..\LablabBean.Reporting.SourceGen\..."
@@ -289,10 +311,12 @@ dotnet test dotnet/LablabBean.sln
    ```
 
 **Affected Projects:**
+
 - `LablabBean.Reporting.Analytics`
 - `LablabBean.Reporting.Providers.Build`
 
 **Verification:**
+
 ```bash
 dotnet build dotnet/LablabBean.sln
 # Verify source generation still works
@@ -306,11 +330,13 @@ dotnet build dotnet/framework/LablabBean.Reporting.Analytics/ -v detailed
 ### Task 2.1: Audit Existing Contract Projects
 
 **Check each Contract project for:**
+
 1. ✅ Has ProjectReference to `LablabBean.SourceGenerators.Proxy` with `OutputItemType="Analyzer"`
 2. ✅ Contains proxy partial classes with `[RealizeService]` attribute
 3. ✅ Proxy classes have `private readonly IRegistry _registry` field
 
 **Projects to audit:**
+
 - `LablabBean.Contracts.Config`
 - `LablabBean.Contracts.Game`
 - `LablabBean.Contracts.Input`
@@ -323,6 +349,7 @@ dotnet build dotnet/framework/LablabBean.Reporting.Analytics/ -v detailed
 **For each interface in Contract projects:**
 
 1. **Create proxy service class:**
+
    ```csharp
    // In LablabBean.Contracts.Config/Services/ConfigServiceProxy.cs
    using LablabBean.Plugins.Contracts;
@@ -347,6 +374,7 @@ dotnet build dotnet/framework/LablabBean.Reporting.Analytics/ -v detailed
    ```
 
 2. **Add source generator reference to .csproj:**
+
    ```xml
    <ItemGroup>
      <ProjectReference Include="..\LablabBean.Plugins.Contracts\..." />
@@ -357,6 +385,7 @@ dotnet build dotnet/framework/LablabBean.Reporting.Analytics/ -v detailed
    ```
 
 3. **Verify generation:**
+
    ```bash
    dotnet build -v detailed
    # Check obj/Debug/net8.0/generated/ for generated code
@@ -376,10 +405,12 @@ var value = configProxy.Get("game:difficulty");
 ```
 
 ### Direct Registry Access (advanced)
+
 ```csharp
 var service = registry.Get<IService>(SelectionMode.HighestPriority);
 var value = service.Get("game:difficulty");
 ```
+
 ```
 
 ---
@@ -395,10 +426,12 @@ var value = service.Get("game:difficulty");
 
 1. **Create new plugin structure:**
    ```
+
    dotnet/plugins/LablabBean.Plugins.Reporting.Csv/
    ├── CsvReportingPlugin.cs          (NEW - IPlugin implementation)
    ├── CsvReportRenderer.cs           (MOVED - existing renderer)
    └── LablabBean.Plugins.Reporting.Csv.csproj (UPDATED)
+
    ```
 
 2. **Create plugin class:**
@@ -450,6 +483,7 @@ var value = service.Get("game:difficulty");
    ```
 
 3. **Update .csproj:**
+
    ```xml
    <Project Sdk="Microsoft.NET.Sdk">
      <PropertyGroup>
@@ -471,6 +505,7 @@ var value = service.Get("game:difficulty");
    ```
 
 4. **Update namespace in CsvReportRenderer.cs:**
+
    ```csharp
    // Old
    namespace LablabBean.Reporting.Renderers.Csv;
@@ -480,6 +515,7 @@ var value = service.Get("game:difficulty");
    ```
 
 5. **Create plugin manifest:**
+
    ```json
    // plugin.json
    {
@@ -504,6 +540,7 @@ var value = service.Get("game:difficulty");
 ### Task 3.2: Move Html Renderer to Plugin
 
 **Repeat Task 3.1 steps for Html renderer:**
+
 - Source: `dotnet/framework/LablabBean.Reporting.Renderers.Html/`
 - Destination: `dotnet/plugins/LablabBean.Plugins.Reporting.Html/`
 - Plugin ID: `lablab-bean.reporting.html`
@@ -511,6 +548,7 @@ var value = service.Get("game:difficulty");
 ### Task 3.3: Update IReportingService to Discover Renderers
 
 **Current (hardcoded):**
+
 ```csharp
 // Somewhere in ReportingService initialization
 var csvRenderer = new CsvReportRenderer(logger);
@@ -518,6 +556,7 @@ var htmlRenderer = new HtmlReportRenderer(logger);
 ```
 
 **New (dynamic discovery via registry):**
+
 ```csharp
 public class ReportingService : IReportingService
 {
@@ -553,6 +592,7 @@ public class ReportingService : IReportingService
 **Goal:** Separate `AssemblyLoadContext`-based loader from core plugin infrastructure.
 
 **Current structure:**
+
 ```
 LablabBean.Plugins.Core/
 ├── PluginLoader.cs              (Uses ALC - .NET specific)
@@ -562,6 +602,7 @@ LablabBean.Plugins.Core/
 ```
 
 **Proposed structure:**
+
 ```
 LablabBean.Plugins.Core/
 ├── Registry.cs                  (Platform-agnostic)
@@ -579,6 +620,7 @@ LablabBean.Plugins.Loader.HybridCLR/ (FUTURE - Unity implementation)
 ```
 
 **Benefits:**
+
 - Unity support via HybridCLR
 - Testability (mock loader)
 - Clear platform boundaries
@@ -586,6 +628,7 @@ LablabBean.Plugins.Loader.HybridCLR/ (FUTURE - Unity implementation)
 ### Task 4.2: Define Resilience Abstraction Layer
 
 **Structure:**
+
 ```
 LablabBean.Resilience.Contracts/
 ├── ICircuitBreaker.cs
@@ -600,6 +643,7 @@ LablabBean.Plugins.Resilience.Polly/
 ```
 
 **Usage:**
+
 ```csharp
 // Consumer code (platform-agnostic)
 var resilienceProxy = new ResilienceProxy(registry);
@@ -617,6 +661,7 @@ context.Registry.Register<IRetryPolicy>(
 ## Implementation Checklist
 
 ### Phase 1: Simple Renames
+
 - [ ] Rename `Reporting.Abstractions` → `Reporting.Contracts`
 - [ ] Update all references and usings
 - [ ] Rename `Reporting.SourceGen` → `SourceGenerators.Reporting`
@@ -625,6 +670,7 @@ context.Registry.Register<IRetryPolicy>(
 - [ ] Update documentation
 
 ### Phase 2: Proxy Services
+
 - [ ] Audit all Contract projects
 - [ ] Add `SourceGenerators.Proxy` reference to each
 - [ ] Create proxy classes for each interface
@@ -633,6 +679,7 @@ context.Registry.Register<IRetryPolicy>(
 - [ ] Update examples and test harnesses
 
 ### Phase 3: Renderer Plugins
+
 - [ ] Move `Reporting.Renderers.Csv` → `Plugins.Reporting.Csv`
 - [ ] Create `CsvReportingPlugin` with `IPlugin`
 - [ ] Add plugin manifest
@@ -645,6 +692,7 @@ context.Registry.Register<IRetryPolicy>(
 - [ ] Document renderer plugin development
 
 ### Phase 4: Platform Abstraction (Future)
+
 - [ ] Define `IPluginLoader` interface
 - [ ] Extract `AlcPluginLoader` to separate project
 - [ ] Define resilience contracts
@@ -656,16 +704,19 @@ context.Registry.Register<IRetryPolicy>(
 ## Testing Strategy
 
 ### Unit Tests
+
 - All renamed projects must pass existing tests
 - Add tests for new proxy services
 - Add plugin lifecycle tests for renderers
 
 ### Integration Tests
+
 - Verify renderer plugins load correctly
 - Test dynamic renderer discovery
 - End-to-end report generation with plugin renderers
 
 ### Regression Tests
+
 - Ensure all existing functionality works after renames
 - Verify backward compatibility where needed
 
@@ -715,6 +766,7 @@ If issues arise during Phase 3 (renderer plugins):
 ## Approval and Timeline
 
 **Recommended Implementation Order:**
+
 1. Phase 1 (Renames): 1-2 days
 2. Phase 2 (Proxy Services): 2-3 days
 3. Phase 3 (Renderer Plugins): 3-5 days

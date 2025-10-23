@@ -8,9 +8,11 @@
 ---
 
 ## Format: `[ID] [P] Description`
+
 - **[P]**: Can run in parallel (no ordering/dependency conflicts)
 
 ## Path Conventions
+
 - Contract projects: `dotnet/framework/LablabBean.Contracts.{Service}/`
 - Proxy services: `dotnet/framework/LablabBean.Contracts.{Service}/Services/Proxy/Service.cs`
 - Test projects: `dotnet/tests/LablabBean.Contracts.{Service}.Tests/`

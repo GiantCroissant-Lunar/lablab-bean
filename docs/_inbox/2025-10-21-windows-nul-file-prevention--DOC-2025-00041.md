@@ -25,11 +25,13 @@ On Windows, a file named `nul` keeps appearing in the project root directory and
 Windows command-line tools (cmd.exe) interpret `2>nul` differently than Unix shells:
 
 **Unix/Linux/macOS**:
+
 ```bash
 find . -name "*.json" 2>/dev/null  # Redirects to null device
 ```
 
 **Windows CMD** (INCORRECT):
+
 ```cmd
 dir /s /b *.json 2>nul  # Creates a file named 'nul' ❌
 ```
@@ -43,6 +45,7 @@ Three-layer defense implemented:
 ### 1. `.gitignore` Entry ✅
 
 Added to `.gitignore`:
+
 ```gitignore
 # Windows command redirection file (created by 2>nul)
 nul
@@ -53,12 +56,14 @@ This prevents `nul` from being tracked by git.
 ### 2. Pre-commit Hook ✅
 
 Created `git-hooks/prevent-nul-file` that:
+
 - Detects if `nul` file is being committed
 - Automatically removes it
 - Unstages it from the commit
 - Warns the developer with proper command alternatives
 
 **Hook registered in `.pre-commit-config.yaml`**:
+
 ```yaml
 - id: prevent-nul-file
   name: Prevent Windows nul file
@@ -73,6 +78,7 @@ Created `git-hooks/prevent-nul-file` that:
 Use proper alternatives for null redirection:
 
 #### Option A: Use PowerShell (Recommended)
+
 ```powershell
 # Instead of: dir /s /b *.json 2>nul
 Get-ChildItem -Recurse -Filter *.json -ErrorAction SilentlyContinue
@@ -82,6 +88,7 @@ Get-ChildItem -Recurse -Filter *.json 2>$null
 ```
 
 #### Option B: Use Git Bash / WSL
+
 ```bash
 # Unix-style commands work correctly
 find . -name "*.json" 2>/dev/null
@@ -89,6 +96,7 @@ ls -la *.md 2>/dev/null
 ```
 
 #### Option C: Don't Redirect (Simple)
+
 ```cmd
 # Just accept the error output
 dir /s /b *.json
@@ -99,6 +107,7 @@ dir /s /b *.json
 ### For New Developers
 
 The pre-commit hook is automatically installed when running:
+
 ```bash
 pre-commit install
 ```
@@ -106,6 +115,7 @@ pre-commit install
 ### Manual Cleanup
 
 If `nul` file already exists:
+
 ```bash
 # Remove the file
 rm nul
@@ -122,6 +132,7 @@ Remove-Item nul -Force
 When you commit, the hook:
 
 1. **Checks staged files** for `nul`
+
    ```bash
    git diff --cached --name-only | grep -q '^nul$'
    ```
@@ -140,6 +151,7 @@ When you commit, the hook:
 ### Example Output
 
 **When `nul` is staged**:
+
 ```
 ❌ ERROR: Attempting to commit Windows 'nul' file
 
@@ -156,6 +168,7 @@ The file 'nul' is created by Windows command redirections like:
 ```
 
 **When `nul` exists but not staged**:
+
 ```
 ⚠️  WARNING: Found 'nul' file in working directory
 🧹 Auto-cleanup: Removing it...
@@ -164,7 +177,8 @@ The file 'nul' is created by Windows command redirections like:
 
 ## Best Practices for Cross-Platform Scripts
 
-### ✅ DO:
+### ✅ DO
+
 ```bash
 # Use bash (Git Bash on Windows)
 find . -name "*.json" 2>/dev/null
@@ -176,7 +190,8 @@ Get-ChildItem -Recurse -Filter *.json -ErrorAction SilentlyContinue
 python -c "import glob; print(glob.glob('**/*.json', recursive=True))"
 ```
 
-### ❌ DON'T:
+### ❌ DON'T
+
 ```cmd
 # These create 'nul' file on Windows
 dir /s /b *.json 2>nul
@@ -186,6 +201,7 @@ find . -name "*.json" 2>nul  (in cmd.exe)
 ## Why This Happens
 
 Windows has special device names that are **case-insensitive**:
+
 - `NUL` - Null device (like `/dev/null`)
 - `CON` - Console
 - `PRN` - Printer
@@ -194,6 +210,7 @@ Windows has special device names that are **case-insensitive**:
 - `LPT1-LPT9` - Parallel ports
 
 However, **lowercase** `nul` in some contexts is interpreted as a filename, especially when:
+
 - Running bash commands in cmd.exe
 - Using Git Bash with Windows-style redirections
 - Mixing Unix and Windows command syntax
@@ -203,11 +220,13 @@ However, **lowercase** `nul` in some contexts is interpreted as a filename, espe
 ### Similar Windows Reserved Names
 
 If you see files like these, they're also Windows device name conflicts:
+
 - `con` (Console)
 - `prn` (Printer)
 - `aux` (Auxiliary)
 
 Add them to `.gitignore` if they appear:
+
 ```gitignore
 nul
 con
@@ -218,10 +237,12 @@ aux
 ### Claude Code / AI Agents
 
 When using AI coding assistants, they may generate bash commands that:
+
 1. Work correctly in Unix/Linux/macOS
 2. Create `nul` files on Windows
 
 **Solution**: Add this to agent instructions:
+
 ```markdown
 When writing bash commands for cross-platform use:
 - Use `2>/dev/null` only in pure bash scripts
@@ -232,6 +253,7 @@ When writing bash commands for cross-platform use:
 ## Testing the Hook
 
 ### Test 1: Prevent Commit
+
 ```bash
 # Create nul file
 echo "test" > nul
@@ -243,6 +265,7 @@ git commit -m "test"
 ```
 
 ### Test 2: Auto-cleanup
+
 ```bash
 # Create nul file (don't stage)
 echo "test" > nul
@@ -254,6 +277,7 @@ git commit -m "test"
 ```
 
 ### Test 3: Verify .gitignore
+
 ```bash
 # Create nul file
 echo "test" > nul
@@ -279,6 +303,7 @@ pre-commit run prevent-nul-file --all-files
 ### Manual Cleanup After Commit
 
 If `nul` was already committed:
+
 ```bash
 # Remove from git history (use with caution!)
 git rm --cached nul

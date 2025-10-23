@@ -60,10 +60,12 @@ lablab-bean/
 ## File Locations
 
 ### Scripts
+
 - **Build Script**: `build/scripts/build-and-run.ps1`
 - **NUKE Build**: `build/nuke/Build.cs`
 
 ### Documentation
+
 - **Quick Start**: `docs/QUICKSTART.md`
 - **Release Guide**: `docs/RELEASE.md`
 - **Organization**: `docs/ORGANIZATION.md`
@@ -71,6 +73,7 @@ lablab-bean/
 - **Contributing**: `docs/CONTRIBUTING.md`
 
 ### Configuration
+
 - **Task Automation**: `Taskfile.yml` (root)
 - **PM2 Development**: `website/ecosystem.config.js`
 - **PM2 Production**: `website/ecosystem.production.config.js`
@@ -78,6 +81,7 @@ lablab-bean/
 - **GitVersion**: `GitVersion.yml` (root)
 
 ### Tests
+
 - **Playwright Tests**: `website/tests/`
 - **Test Configuration**: `website/playwright.config.ts`
 
@@ -119,22 +123,26 @@ build/_artifacts/<version>/
 ## Key Files
 
 ### Root Level
+
 - **`Taskfile.yml`** - Task automation (primary interface)
 - **`README.md`** - Main project documentation
 - **`GitVersion.yml`** - Semantic versioning configuration
 - **`.gitignore`** - Git ignore patterns
 
 ### Build System
+
 - **`build/nuke/Build.cs`** - NUKE build configuration
 - **`build/scripts/build-and-run.ps1`** - Quick build & run script
 
 ### Website
+
 - **`website/package.json`** - Workspace package configuration
 - **`website/playwright.config.ts`** - Test configuration
 - **`website/ecosystem.production.config.js`** - Production PM2 config
 - **`website/tests/web-terminal.spec.ts`** - Web terminal tests
 
 ### Documentation
+
 - **`docs/QUICKSTART.md`** - Get started quickly
 - **`docs/RELEASE.md`** - Complete release guide
 - **`docs/ORGANIZATION.md`** - This file
@@ -144,11 +152,13 @@ build/_artifacts/<version>/
 ### PM2 Configuration
 
 **Development** (`website/ecosystem.config.js`):
+
 - Runs from source
 - Hot reload enabled
 - Development dependencies
 
 **Production** (`website/ecosystem.production.config.js`):
+
 - Runs from versioned artifacts
 - Production dependencies only
 - Logs to versioned directory
@@ -156,6 +166,7 @@ build/_artifacts/<version>/
 ### Playwright Configuration
 
 Located at `website/playwright.config.ts`:
+
 - Test results go to versioned artifacts
 - Multiple reporters (HTML, JSON, JUnit)
 - Supports multiple browsers
@@ -164,11 +175,13 @@ Located at `website/playwright.config.ts`:
 ## Workflow
 
 ### Development Workflow
+
 1. Edit code in `dotnet/` or `website/`
 2. Run `task dotnet-run-console` or `pnpm dev` in website
 3. Test changes locally
 
 ### Release Workflow
+
 1. Run `task build-release`
 2. Artifacts created in `build/_artifacts/<version>/`
 3. Run `task stack-run` to start from artifacts
@@ -176,6 +189,7 @@ Located at `website/playwright.config.ts`:
 5. Check `build/_artifacts/<version>/test-reports/` for results
 
 ### Testing Workflow
+
 1. Ensure stack is running: `task stack-status`
 2. Run tests: `task test-web`
 3. View reports: `task test-report`
@@ -201,6 +215,7 @@ Located at `website/playwright.config.ts`:
 ### Updated References
 
 All references have been updated in:
+
 - `README.md`
 - `Taskfile.yml`
 - `docs/QUICKSTART.md`
@@ -210,42 +225,51 @@ All references have been updated in:
 ## Best Practices
 
 ### Adding New Scripts
+
 Place in `build/scripts/` and reference from `Taskfile.yml`
 
 ### Adding New Documentation
+
 Place in `docs/` with descriptive name
 
 ### Adding New Tests
+
 Place in `website/tests/` with `.spec.ts` extension
 
 ### Versioned Artifacts
+
 All build outputs, logs, and test results should go to versioned artifacts directory
 
 ## Quick Reference
 
 ### Run from Source (Development)
+
 ```bash
 cd website
 pnpm dev
 ```
 
 ### Run from Artifacts (Production)
+
 ```bash
 task build-release
 task stack-run
 ```
 
 ### Run Tests
+
 ```bash
 task test-web
 ```
 
 ### View Logs
+
 ```bash
 task stack-logs
 ```
 
 ### View Test Reports
+
 ```bash
 task test-report
 ```

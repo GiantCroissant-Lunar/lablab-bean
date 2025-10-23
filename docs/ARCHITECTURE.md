@@ -16,6 +16,7 @@ summary: >
 ## Overview
 
 Lablab Bean is a multi-platform development toolkit consisting of:
+
 1. **Task Automation** - Taskfile + pre-commit hooks
 2. **Web Terminal** - Astro.js + xterm.js + node-pty
 3. **.NET Console App** - Terminal.Gui v2
@@ -207,7 +208,7 @@ public class MyViewModel : ViewModelBase
 {
     [Reactive]
     public string Title { get; set; }
-    
+
     public ReactiveCommand<Unit, Unit> MyCommand { get; }
 }
 ```
@@ -257,10 +258,12 @@ Log.Error(ex, "An error occurred");
 ### WebSocket Protocol (Website)
 
 **Client → Server:**
+
 - Terminal input: Raw string data
 - Resize: `{ type: 'resize', cols: number, rows: number }`
 
 **Server → Client:**
+
 - Terminal output: Raw string data (ANSI escape sequences)
 
 ### PTY Communication
@@ -294,12 +297,14 @@ Browser ←→ WebSocket ←→ Terminal Manager ←→ node-pty ←→ Shell
 ## Security Considerations
 
 ### Website
+
 - WebSocket connections should be authenticated
 - PTY sessions should be isolated per user
 - Input should be sanitized
 - Rate limiting on PTY creation
 
 ### .NET Apps
+
 - Configuration secrets should use Secret Manager
 - Logging should not expose sensitive data
 - File operations should validate paths
@@ -307,11 +312,13 @@ Browser ←→ WebSocket ←→ Terminal Manager ←→ node-pty ←→ Shell
 ## Performance
 
 ### Website
+
 - PTY sessions are created per WebSocket connection
 - Sessions are cleaned up on disconnect
 - Terminal output is streamed in real-time
 
 ### .NET Apps
+
 - Reactive subscriptions are disposed properly
 - ObservableCollections provide high performance
 - MessagePipe offers zero-allocation messaging
@@ -348,15 +355,18 @@ Browser ←→ WebSocket ←→ Terminal Manager ←→ node-pty ←→ Shell
 ## Deployment
 
 ### Website
+
 - Build: `pnpm build`
 - Deploy as Node.js application
 - Requires WebSocket support
 
 ### .NET Console App
+
 - Publish: `dotnet publish -c Release`
 - Cross-platform (Windows, Linux, macOS)
 
 ### .NET Windows App
+
 - Publish: `dotnet publish -c Release -r win-x64`
 - Windows only (MonoGame requirement)
 

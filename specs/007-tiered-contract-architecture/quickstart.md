@@ -1,7 +1,7 @@
 # Quickstart: Event-Driven Plugin Development
 
-**Feature**: 007-tiered-contract-architecture  
-**Audience**: Plugin developers  
+**Feature**: 007-tiered-contract-architecture
+**Audience**: Plugin developers
 **Goal**: Create your first event-driven plugin in under 30 minutes
 
 ## Overview
@@ -136,6 +136,7 @@ dotnet run --project dotnet/console/LablabBean.Console
 ```
 
 **Expected Output**:
+
 ```
 [Analytics Plugin] Entity spawned: player at (5, 5). Total spawns: 1
 [Analytics Plugin] Entity spawned: goblin at (10, 8). Total spawns: 2
@@ -443,6 +444,7 @@ public class ReactiveUIService : IService
 ### 1. Event Handler Performance
 
 ✅ **DO**: Keep event handlers fast and non-blocking
+
 ```csharp
 eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
 {
@@ -453,6 +455,7 @@ eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
 ```
 
 ❌ **DON'T**: Perform heavy work in event handlers
+
 ```csharp
 eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
 {
@@ -463,6 +466,7 @@ eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
 ```
 
 **Solution**: Offload heavy work to background tasks
+
 ```csharp
 eventBus.Subscribe<EntitySpawnedEvent>(evt =>
 {
@@ -475,6 +479,7 @@ eventBus.Subscribe<EntitySpawnedEvent>(evt =>
 ### 2. Error Handling
 
 ✅ **DO**: Handle errors gracefully in event handlers
+
 ```csharp
 eventBus.Subscribe<CombatEvent>(async evt =>
 {
@@ -518,6 +523,7 @@ context.Registry.Register<IAnalyticsService>(
 ### 4. Avoid Circular Event Dependencies
 
 ❌ **DON'T**: Create circular event chains
+
 ```csharp
 // Plugin A
 eventBus.Subscribe<EventA>(evt => eventBus.PublishAsync(new EventB()));
@@ -528,6 +534,7 @@ eventBus.Subscribe<EventB>(evt => eventBus.PublishAsync(new EventA()));
 ```
 
 ✅ **DO**: Design events with clear direction
+
 ```csharp
 // Game plugin publishes events
 await eventBus.PublishAsync(new EntityMovedEvent(...));
@@ -570,11 +577,13 @@ public async Task AnalyticsPlugin_TracksEntitySpawns()
 **Symptoms**: Published event doesn't trigger subscriber handler
 
 **Causes**:
+
 1. Subscriber registered after event was published
 2. Type mismatch between published and subscribed event
 3. Event bus not registered in DI container
 
 **Solutions**:
+
 ```csharp
 // 1. Subscribe during InitializeAsync (before game loop starts)
 public Task InitializeAsync(IPluginContext context)
@@ -597,11 +606,13 @@ services.AddSingleton<IEventBus>(sp => sp.GetRequiredService<EventBus>());
 **Symptoms**: `Get<IService>()` throws `InvalidOperationException`
 
 **Causes**:
+
 1. Service not registered
 2. Wrong interface type
 3. Plugin not loaded
 
 **Solutions**:
+
 ```csharp
 // 1. Register service in InitializeAsync
 context.Registry.Register<IGameService>(gameService, metadata);
@@ -636,6 +647,6 @@ var gameService = context.Registry.Get<LablabBean.Contracts.Game.Services.IServi
 
 ---
 
-**Time to first plugin**: ~30 minutes  
-**Difficulty**: Intermediate  
+**Time to first plugin**: ~30 minutes
+**Difficulty**: Intermediate
 **Support**: See project README for community links

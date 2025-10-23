@@ -13,6 +13,7 @@ This document defines the complete data model for the status effects system usin
 ### Core Status Effect Components
 
 #### StatusEffect Struct
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -24,25 +25,25 @@ public struct StatusEffect
 {
     /// <summary>Type of effect (Poison, Strength, Haste, etc.)</summary>
     public EffectType Type { get; set; }
-    
+
     /// <summary>Effect magnitude (damage per turn, stat bonus, etc.)</summary>
     public int Magnitude { get; set; }
-    
+
     /// <summary>Remaining duration in turns (1-99)</summary>
     public int Duration { get; set; }
-    
+
     /// <summary>Category for grouping and processing</summary>
     public EffectCategory Category { get; set; }
-    
+
     /// <summary>Source of effect (for tracking/debugging)</summary>
     public EffectSource Source { get; set; }
-    
+
     /// <summary>Display color for HUD</summary>
     public EffectColor Color { get; set; }
-    
+
     /// <summary>Display name for HUD</summary>
     public string DisplayName => Type.ToString();
-    
+
     /// <summary>Whether this effect has expired</summary>
     public bool IsExpired => Duration <= 0;
 }
@@ -53,16 +54,16 @@ public enum EffectType
     Poison,
     Bleed,
     Burning,
-    
+
     // Healing Over Time
     Regeneration,
     Blessed,
-    
+
     // Stat Buffs
     Strength,      // +Attack
     Haste,         // +Speed
     IronSkin,      // +Defense
-    
+
     // Stat Debuffs
     Weakness,      // -Attack
     Slow,          // -Speed
@@ -100,6 +101,7 @@ public enum EffectColor
 ```
 
 #### StatusEffects Component
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -110,16 +112,16 @@ public struct StatusEffects
 {
     /// <summary>List of currently active effects</summary>
     public List<StatusEffect> ActiveEffects { get; set; }
-    
+
     /// <summary>Maximum number of concurrent effects (10 for MVP)</summary>
     public int MaxEffects { get; set; }
-    
+
     /// <summary>Current number of active effects</summary>
     public int Count => ActiveEffects?.Count ?? 0;
-    
+
     /// <summary>Whether max effects reached</summary>
     public bool IsFull => Count >= MaxEffects;
-    
+
     /// <summary>Initialize with empty effects list</summary>
     public static StatusEffects CreateEmpty()
     {
@@ -135,6 +137,7 @@ public struct StatusEffects
 ### Effect Definition Data
 
 #### EffectDefinition Struct
+
 ```csharp
 namespace LablabBean.Game.Core.Components;
 
@@ -158,6 +161,7 @@ public struct EffectDefinition
 ### Damage Over Time Effects
 
 #### Poison
+
 ```csharp
 public static readonly EffectDefinition Poison = new()
 {
@@ -171,6 +175,7 @@ public static readonly EffectDefinition Poison = new()
 ```
 
 #### Bleed
+
 ```csharp
 public static readonly EffectDefinition Bleed = new()
 {
@@ -184,6 +189,7 @@ public static readonly EffectDefinition Bleed = new()
 ```
 
 #### Burning
+
 ```csharp
 public static readonly EffectDefinition Burning = new()
 {
@@ -199,6 +205,7 @@ public static readonly EffectDefinition Burning = new()
 ### Healing Over Time Effects
 
 #### Regeneration
+
 ```csharp
 public static readonly EffectDefinition Regeneration = new()
 {
@@ -212,6 +219,7 @@ public static readonly EffectDefinition Regeneration = new()
 ```
 
 #### Blessed
+
 ```csharp
 public static readonly EffectDefinition Blessed = new()
 {
@@ -227,6 +235,7 @@ public static readonly EffectDefinition Blessed = new()
 ### Stat Buff Effects
 
 #### Strength
+
 ```csharp
 public static readonly EffectDefinition Strength = new()
 {
@@ -240,6 +249,7 @@ public static readonly EffectDefinition Strength = new()
 ```
 
 #### Haste
+
 ```csharp
 public static readonly EffectDefinition Haste = new()
 {
@@ -253,6 +263,7 @@ public static readonly EffectDefinition Haste = new()
 ```
 
 #### Iron Skin
+
 ```csharp
 public static readonly EffectDefinition IronSkin = new()
 {
@@ -268,6 +279,7 @@ public static readonly EffectDefinition IronSkin = new()
 ### Stat Debuff Effects
 
 #### Weakness
+
 ```csharp
 public static readonly EffectDefinition Weakness = new()
 {
@@ -281,6 +293,7 @@ public static readonly EffectDefinition Weakness = new()
 ```
 
 #### Slow
+
 ```csharp
 public static readonly EffectDefinition Slow = new()
 {
@@ -294,6 +307,7 @@ public static readonly EffectDefinition Slow = new()
 ```
 
 #### Fragile
+
 ```csharp
 public static readonly EffectDefinition Fragile = new()
 {
@@ -354,18 +368,21 @@ Entity Turn Starts
 ## Validation Rules
 
 ### Effect Application Constraints
+
 - ✅ Duration must be 1-99 turns (enforced at application)
 - ✅ Magnitude must be non-zero (enforced at application)
 - ✅ Max 10 concurrent effects per entity (enforced at application)
 - ✅ Same effect type refreshes duration, doesn't stack magnitude
 
 ### Stat Modification Constraints
+
 - ✅ Attack cannot go below 1 (minimum enforced)
 - ✅ Defense cannot go below 1 (minimum enforced)
 - ✅ Speed cannot go below 1 (minimum enforced)
 - ✅ Multiple effects on same stat stack additively
 
 ### Effect Removal Constraints
+
 - ✅ All effects cleared on entity death
 - ✅ Antidotes remove specific effect types only
 - ✅ Effect removal is immediate (no delay)
@@ -389,7 +406,7 @@ var activeEffects = playerEffects.ActiveEffects;
 var poisonedEntities = world.Query(
     in new QueryDescription()
         .WithAll<StatusEffects>()
-).Where(e => 
+).Where(e =>
 {
     var effects = world.Get<StatusEffects>(e);
     return effects.ActiveEffects.Any(eff => eff.Type == EffectType.Poison);
@@ -418,7 +435,7 @@ public static (int attack, int defense, int speed) CalculateStatsWithEffects(
     int baseAttack = combat.Attack;
     int baseDefense = combat.Defense;
     int baseSpeed = 100; // Default speed
-    
+
     // Get equipment bonuses (from inventory system)
     if (world.Has<EquipmentSlots>(entity))
     {
@@ -434,12 +451,12 @@ public static (int attack, int defense, int speed) CalculateStatsWithEffects(
             }
         }
     }
-    
+
     // Apply status effect modifiers
     if (world.Has<StatusEffects>(entity))
     {
         var statusEffects = world.Get<StatusEffects>(entity);
-        
+
         foreach (var effect in statusEffects.ActiveEffects)
         {
             switch (effect.Type)
@@ -465,12 +482,12 @@ public static (int attack, int defense, int speed) CalculateStatsWithEffects(
             }
         }
     }
-    
+
     // Enforce minimums
     int finalAttack = Math.Max(1, baseAttack);
     int finalDefense = Math.Max(1, baseDefense);
     int finalSpeed = Math.Max(1, baseSpeed);
-    
+
     return (finalAttack, finalDefense, finalSpeed);
 }
 ```
@@ -492,12 +509,12 @@ public struct Consumable
     public ConsumableEffect Effect { get; set; }
     public int EffectValue { get; set; }
     public bool UsableOutOfCombat { get; set; }
-    
+
     // NEW: Status effect application
     public EffectType? AppliesEffect { get; set; }
     public int? EffectMagnitude { get; set; }
     public int? EffectDuration { get; set; }
-    
+
     // NEW: Status effect removal (antidotes)
     public EffectType? RemovesEffect { get; set; }
     public bool RemovesAllNegativeEffects { get; set; }
@@ -590,7 +607,7 @@ public struct Enemy
     // Existing properties
     public string EnemyType { get; set; }
     public AIBehavior Behavior { get; set; }
-    
+
     // NEW: Status effect application
     public EffectType? InflictsEffect { get; set; }
     public int EffectProbability { get; set; } // 0-100%
@@ -604,8 +621,8 @@ public struct Enemy
 ```csharp
 // Toxic Spider (inflicts poison)
 var toxicSpider = world.Create(
-    new Enemy 
-    { 
+    new Enemy
+    {
         EnemyType = "Toxic Spider",
         Behavior = AIBehavior.Chase,
         InflictsEffect = EffectType.Poison,
@@ -620,8 +637,8 @@ var toxicSpider = world.Create(
 
 // Shaman (casts buff on allies)
 var shaman = world.Create(
-    new Enemy 
-    { 
+    new Enemy
+    {
         EnemyType = "Shaman",
         Behavior = AIBehavior.Support,
         InflictsEffect = EffectType.Strength, // Buffs allies
@@ -636,12 +653,14 @@ var shaman = world.Create(
 ## Performance Characteristics
 
 ### Memory Usage
+
 - **Per StatusEffect**: ~32 bytes (struct with enums and ints)
 - **Per StatusEffects Component**: ~100 bytes + (32 × effect count)
 - **30 Entities × 5 Effects**: ~5 KB total
 - **Negligible**: Effect processing overhead
 
 ### Query Performance
+
 - **Entities with effects**: O(n) where n = total entities (typically <100)
 - **Effect processing per entity**: O(m) where m = effects per entity (max 10)
 - **Total per turn**: O(n × m) = O(100 × 10) = 1000 operations
@@ -654,25 +673,30 @@ var shaman = world.Create(
 ### With Existing Systems
 
 #### ActorSystem
+
 - **Integration**: Call StatusEffectSystem.ProcessEffects() at turn start
 - **Modification**: Add effect processing before energy accumulation
 
 #### CombatSystem
+
 - **Integration**: Call StatusEffectSystem.CalculateStatModifiers() before damage calculation
 - **Modification**: Use modified stats instead of base stats
 
 #### InventorySystem
+
 - **Integration**: Call StatusEffectSystem.ApplyEffect() when using buff potions
 - **Integration**: Call StatusEffectSystem.RemoveEffect() when using antidotes
 - **Modification**: Check Consumable.AppliesEffect and Consumable.RemovesEffect
 
 #### HudService
+
 - **Integration**: Display StatusEffects.ActiveEffects in new panel
 - **Modification**: Add status effects panel below health bar
 
 ### With New Systems
 
 #### StatusEffectSystem
+
 - **Creates**: New system to handle all status effect operations
 - **Methods**: ApplyEffect, RemoveEffect, ProcessEffects, CalculateStatModifiers
 

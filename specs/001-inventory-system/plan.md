@@ -8,6 +8,7 @@
 ## Summary
 
 Implement a complete inventory system for the dungeon crawler game that enables players to:
+
 - Pick up items from the dungeon floor (healing potions, weapons, armor)
 - View and manage inventory through the HUD
 - Consume healing potions to restore health
@@ -23,14 +24,14 @@ The system will extend the existing ECS architecture (Arch) with new components 
   the iteration process.
 -->
 
-**Language/Version**: C# / .NET 8  
-**Primary Dependencies**: Arch ECS (1.3.3), GoRogue (3.0.0-beta09), Terminal.Gui (2.0.0-pre.2), SadConsole (10.0.3)  
-**Storage**: In-memory ECS components (future: JSON serialization for save/load)  
-**Testing**: xUnit, FluentAssertions (existing test infrastructure)  
+**Language/Version**: C# / .NET 8
+**Primary Dependencies**: Arch ECS (1.3.3), GoRogue (3.0.0-beta09), Terminal.Gui (2.0.0-pre.2), SadConsole (10.0.3)
+**Storage**: In-memory ECS components (future: JSON serialization for save/load)
+**Testing**: xUnit, FluentAssertions (existing test infrastructure)
 **Target Platform**: Cross-platform console (Windows/Linux/macOS) via Terminal.Gui and Windows GUI via SadConsole
-**Project Type**: Desktop game application with dual rendering modes  
-**Performance Goals**: 60 FPS rendering, <16ms frame time, instant UI updates (<100ms)  
-**Constraints**: Turn-based gameplay (no real-time pressure), 20-item inventory limit, single-player only  
+**Project Type**: Desktop game application with dual rendering modes
+**Performance Goals**: 60 FPS rendering, <16ms frame time, instant UI updates (<100ms)
+**Constraints**: Turn-based gameplay (no real-time pressure), 20-item inventory limit, single-player only
 **Scale/Scope**: Single dungeon level, 20-50 rooms, 10-30 enemies, 20-100 items per playthrough
 
 ## Constitution Check
@@ -108,4 +109,3 @@ dotnet/console-app/
 |-----------|------------|-------------------------------------|
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
-

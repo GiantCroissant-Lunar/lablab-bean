@@ -10,6 +10,7 @@ The plugin system phase documentation has been **consolidated** into structured 
 ## New Documentation (Ready for Review)
 
 ### Core Plugin Documentation
+
 1. **DOC-2025-00037** - `2025-10-21-plugin-development-quickstart--DOC-2025-00037.md`
    - 5-minute plugin creation guide
    - Step-by-step tutorial with code examples
@@ -32,6 +33,7 @@ The plugin system phase documentation has been **consolidated** into structured 
    - Troubleshooting guide
 
 ### JSON Schema
+
 - **plugin.schema.json** - `dotnet/framework/LablabBean.Plugins.Contracts/plugin.schema.json`
   - JSON Schema (draft-07) for manifest validation
   - IDE autocomplete and validation support
@@ -42,12 +44,14 @@ The plugin system phase documentation has been **consolidated** into structured 
 These files are now **superseded** by the consolidated documentation above:
 
 ### Phase Summaries (Root Directory)
+
 - `PHASE4_COMPLETE.txt` → Consolidated into DOC-2025-00040
 - `PHASE5_COMPLETE.txt` → Consolidated into DOC-2025-00040
 - `PLUGIN_PHASE4_README.md` → Consolidated into DOC-2025-00040
 - `PLUGIN_PHASE5_README.md` → Consolidated into DOC-2025-00040
 
 ### Phase Summaries (docs/_inbox/)
+
 - `PHASE3_SUMMARY.txt` → Consolidated into DOC-2025-00040
 - `PHASE4_SUMMARY.md` → Consolidated into DOC-2025-00040
 - `PHASE5_SUMMARY.md` → Consolidated into DOC-2025-00040
@@ -58,13 +62,16 @@ These files are now **superseded** by the consolidated documentation above:
 - `PLUGIN_SYSTEM_PHASE5_SECURITY.md` → Consolidated into DOC-2025-00040
 
 ### Development Guides (docs/_inbox/)
+
 - `PLUGIN_DEVELOPMENT_QUICKSTART.md` → Replaced by DOC-2025-00037
 - `PLUGIN_SYSTEM_QUICK_REFERENCE.md` → Replaced by DOC-2025-00037
 
 ## Recommended Actions
 
 ### Option 1: Archive (Recommended)
+
 Move legacy documentation to archive directory:
+
 ```bash
 mkdir -p docs/archive/plugin-system-phases
 mv docs/_inbox/PHASE*.txt docs/archive/plugin-system-phases/
@@ -81,7 +88,9 @@ mv PLUGIN_PHASE5_README.md docs/archive/plugin-system-phases/
 ```
 
 ### Option 2: Delete (If Archive Not Needed)
+
 If phase-specific historical documentation is not needed:
+
 ```bash
 rm docs/_inbox/PHASE*.txt
 rm docs/_inbox/PHASE*.md
@@ -97,7 +106,9 @@ rm PLUGIN_PHASE5_README.md
 ## Context Usage Impact
 
 ### Before Consolidation
+
 Agent workflow for "Create a new plugin":
+
 1. Read 3-5 existing plugins (~1500 LOC)
 2. Grep for patterns across codebase
 3. Read PluginLoader.cs implementation (362 LOC)
@@ -105,7 +116,9 @@ Agent workflow for "Create a new plugin":
 5. **Total context**: ~7000+ lines
 
 ### After Consolidation
+
 Agent workflow for "Create a new plugin":
+
 1. Read DOC-2025-00037 (Quick-Start Guide) (~200 lines)
 2. Read DemoPlugin.cs example (~50 lines)
 3. Optional: Read DOC-2025-00038 (API Reference) if needed (~400 lines)
@@ -124,6 +137,7 @@ Agent workflow for "Create a new plugin":
 ## Agent Instructions Update
 
 Future agents working on plugin development should:
+
 1. **Start with**: `DOC-2025-00037` (Quick-Start Guide)
 2. **Reference**: `DOC-2025-00038` (Contracts API) for interface details
 3. **Validate**: `DOC-2025-00039` (Manifest Schema) for plugin.json

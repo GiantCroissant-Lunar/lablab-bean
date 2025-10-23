@@ -55,6 +55,7 @@ Complete migration of the inventory system into a self-contained plugin using th
 **Interface**: `IInventoryService`
 
 **Operations**:
+
 - `GetPickupableItems()` - Query items within pickup range
 - `PickupItem()` - Add item to player inventory
 - `GetInventoryItems()` - View inventory contents
@@ -66,6 +67,7 @@ Complete migration of the inventory system into a self-contained plugin using th
 - `CalculateTotalStats()` - Compute stat totals from equipment
 
 **Read Models**:
+
 - `ItemInfo` - Basic item data
 - `InventoryItemInfo` - Inventory item with count/equipped status
 - `ConsumableItemInfo` - Consumable with effect details
@@ -100,6 +102,7 @@ Complete migration of the inventory system into a self-contained plugin using th
 ### Event System
 
 **Event Constants** (defined, ready for implementation):
+
 - `Inventory.ItemPickedUp`
 - `Inventory.ItemUsed`
 - `Inventory.ItemEquipped`
@@ -107,6 +110,7 @@ Complete migration of the inventory system into a self-contained plugin using th
 - `Inventory.Changed`
 
 **Event Data Classes**:
+
 - `InventoryChangedEvent`
 - `ItemPickedUpEvent`
 - `ItemUsedEvent`
@@ -342,10 +346,10 @@ Status effect integration uses reflection for loose coupling:
 
 ```csharp
 private string ApplyConsumableWithStatusEffects(
-    World world, 
-    Entity playerEntity, 
-    Entity itemEntity, 
-    Consumable consumable, 
+    World world,
+    Entity playerEntity,
+    Entity itemEntity,
+    Consumable consumable,
     object statusEffectSystem)
 {
     var systemType = statusEffectSystem.GetType();
@@ -363,15 +367,16 @@ This allows the inventory plugin to integrate with status effects without requir
 **Status**: ✅ COMPLETE - Production Ready
 
 The inventory system has been successfully migrated to a self-contained plugin with:
+
 - Clean public API
 - Zero breaking changes
 - Comprehensive testing
 - Complete documentation
 - Ready for integration
 
-**Duration**: ~2 hours  
-**LOC**: 1000+ lines (plugin + demo + docs)  
-**Tests**: 7/7 passed  
+**Duration**: ~2 hours
+**LOC**: 1000+ lines (plugin + demo + docs)
+**Tests**: 7/7 passed
 
 🎉 **Spec 005 Complete - Ready for Integration!**
 

@@ -12,28 +12,34 @@ Successfully cleaned up the project root directory by organizing scattered confi
 ### 1. Files Removed from Root
 
 ✅ **Duplicates Removed**:
+
 - `build-and-run.ps1` → Duplicate of `build/scripts/build-and-run.ps1` (removed)
 
 ✅ **Temporary Files Removed**:
+
 - `2025-10-20-caveat-the-messages-below-were-generated-by-the-u-001.txt` → Temporary Claude Code output file (deleted)
 
 ### 2. Files Moved from Root
 
 ✅ **To `build/config/`** (PM2 configurations):
+
 - `ecosystem.config.js` → `build/config/ecosystem.config.js` (production config)
 - `ecosystem.development.config.js` → `build/config/ecosystem.development.config.js` (development config)
 
 ✅ **To `docs/archive/`** (historical documentation):
+
 - `SPEC-KIT-STRUCTURE.txt` → `docs/archive/spec-kit-structure.txt`
 
 ### 3. Files Cleaned in website/
 
 ✅ **Renamed old configs**:
+
 - `website/ecosystem.config.js` → `website/ecosystem.config.js.old` (superseded by production config)
 
 ### 4. References Updated
 
 ✅ **Taskfile.yml**:
+
 ```yaml
 # Before:
 require('./ecosystem.config.js')
@@ -43,6 +49,7 @@ require('./build/config/ecosystem.config.js')
 ```
 
 ✅ **website/package.json**:
+
 ```json
 // Before:
 "pm2:dev": "pm2 start ../ecosystem.development.config.js"
@@ -58,6 +65,7 @@ require('./build/config/ecosystem.config.js')
 ### ✅ Root Directory (Clean & Professional)
 
 **User-Facing Documentation** (6 files):
+
 ```
 lablab-bean/
 ├── README.md              # Main project readme
@@ -69,6 +77,7 @@ lablab-bean/
 ```
 
 **Why these stay in root:**
+
 - Primary entry points for users and contributors
 - Industry-standard locations (README, CHANGELOG, QUICKSTART)
 - Need to be immediately visible when opening the project
@@ -76,6 +85,7 @@ lablab-bean/
 ### ✅ New build/config/ Directory
 
 **PM2 Process Manager Configurations**:
+
 ```
 build/
 ├── config/
@@ -86,6 +96,7 @@ build/
 ```
 
 **Why PM2 configs moved here:**
+
 - Keeps root clean
 - Groups with other build-related files
 - Maintains logical separation (build configs vs. documentation)
@@ -94,7 +105,9 @@ build/
 ## Before vs. After
 
 ### Before Cleanup
+
 **Root Directory**: 15+ mixed files
+
 ```
 lablab-bean/
 ├── README.md
@@ -112,7 +125,9 @@ lablab-bean/
 ```
 
 ### After Cleanup
+
 **Root Directory**: 6 essential files
+
 ```
 lablab-bean/
 ├── README.md              ✅ Essential
@@ -124,6 +139,7 @@ lablab-bean/
 ```
 
 **build/config/**: 2 configuration files
+
 ```
 build/
 ├── config/
@@ -136,11 +152,13 @@ build/
 ## Statistics
 
 ### Root Directory Cleanup
+
 - **Before**: 15+ files (cluttered)
 - **After**: 6 files (clean)
 - **Reduction**: 9+ files moved/removed (60% reduction)
 
 ### Files Processed
+
 - ✅ **2 files** moved to `build/config/`
 - ✅ **1 file** archived to `docs/archive/`
 - ✅ **1 file** removed (duplicate)
@@ -151,21 +169,25 @@ build/
 ## Benefits Achieved
 
 ### ✅ Professional Appearance
+
 - Root directory now contains only essential user-facing files
 - First impression is clean and organized
 - Follows industry best practices
 
 ### ✅ Improved Discoverability
+
 - Clear separation between docs and configs
 - Related files grouped together (PM2 configs in build/config/)
 - Easier to find what you need
 
 ### ✅ Better Maintainability
+
 - Configuration files in logical location
 - No duplicate files to maintain
 - Clear structure for adding new configs
 
 ### ✅ Reduced Confusion
+
 - No temporary or historical files in root
 - No duplicate files with different purposes
 - Clear naming and organization
@@ -173,15 +195,18 @@ build/
 ## Configuration Files Explained
 
 ### build/config/ecosystem.config.js (Production)
+
 **Purpose**: PM2 configuration for running the production stack
 
 **Features**:
+
 - Uses versioned artifacts from `build/_artifacts/`
 - Validates artifacts before starting
 - Configures logging with version-specific log files
 - Runs both web app and console app
 
 **Usage**:
+
 ```bash
 # From website/
 pnpm pm2:prod
@@ -191,15 +216,18 @@ pm2 start ../build/config/ecosystem.config.js
 ```
 
 ### build/config/ecosystem.development.config.js (Development)
+
 **Purpose**: PM2 configuration for running the development stack with hot reload
 
 **Features**:
+
 - Runs Astro dev server (hot reload)
 - Runs PTY terminal backend
 - Development logging
 - No console app (run manually when needed)
 
 **Usage**:
+
 ```bash
 # From website/
 pnpm pm2:dev
@@ -211,18 +239,23 @@ task dev-stack
 ## Migration Notes
 
 ### For Developers
+
 **No action required** if you use npm scripts or Taskfile commands:
+
 - `task dev-stack` - Works as before
 - `task stack-run` - Works as before
 - `pnpm pm2:dev` - Updated, works as before
 - `pnpm pm2:prod` - Works as before
 
 **If you manually reference ecosystem configs**:
+
 - Update path from `./ecosystem.config.js` to `./build/config/ecosystem.config.js`
 - Update path from `./ecosystem.development.config.js` to `./build/config/ecosystem.development.config.js`
 
 ### For CI/CD
+
 **Check your CI/CD scripts** if they reference ecosystem configs directly:
+
 ```bash
 # Old
 pm2 start ecosystem.config.js
@@ -234,6 +267,7 @@ pm2 start build/config/ecosystem.config.js
 ## Validation
 
 ### ✅ All Commands Tested
+
 ```bash
 # Development stack
 task dev-stack                  ✅ Works
@@ -248,6 +282,7 @@ task show-version               ✅ Works
 ```
 
 ### ✅ File Structure Verified
+
 ```bash
 # Root is clean
 ls *.md                         ✅ Only 6 essential files
@@ -309,10 +344,13 @@ lablab-bean/
 ## Next Steps (Optional)
 
 ### Low Priority
+
 1. **Remove old config backup**:
+
    ```bash
    rm website/ecosystem.config.js.old
    ```
+
    (Keep it for now in case of rollback needs)
 
 2. **Add .editorconfig or .prettierrc** to root if not present
@@ -330,6 +368,7 @@ lablab-bean/
 ## Conclusion
 
 The lablab-bean project root is now clean and professional with:
+
 - ✅ Only 6 essential user-facing files in root
 - ✅ Configuration files properly organized in `build/config/`
 - ✅ All references updated (Taskfile, package.json)

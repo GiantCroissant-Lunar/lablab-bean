@@ -21,13 +21,15 @@ Phase 5 successfully created and validated a demo plugin that demonstrates the f
 
 **Location**: `dotnet/examples/LablabBean.Plugin.Demo/`
 
-#### Files Created:
+#### Files Created
+
 - `DemoPlugin.cs` - Simple plugin implementation
 - `plugin.json` - Plugin manifest
 - `LablabBean.Plugin.Demo.csproj` - Project file with `EnableDynamicLoading=true`
 - `README.md` - Comprehensive documentation
 
-#### Features:
+#### Features
+
 - ✅ Implements `IPlugin` interface
 - ✅ Logs initialization and startup messages
 - ✅ Demonstrates context usage (logger, config, registry, host)
@@ -38,10 +40,12 @@ Phase 5 successfully created and validated a demo plugin that demonstrates the f
 
 **Location**: `dotnet/examples/PluginTestHarness/`
 
-#### Purpose:
+#### Purpose
+
 Standalone console application to validate the plugin system without requiring the full game host.
 
-#### Features:
+#### Features
+
 - ✅ Minimal host using Generic Host pattern
 - ✅ Configures plugin system via `appsettings.json`
 - ✅ Console logging with debug verbosity
@@ -49,11 +53,13 @@ Standalone console application to validate the plugin system without requiring t
 
 ### 3. Deployment Infrastructure
 
-#### Files Created:
+#### Files Created
+
 - `scripts/deploy-demo-plugin.ps1` - Builds and deploys demo plugin
 - `plugins/demo-plugin/` - Deployed plugin directory
 
-#### Deployment Flow:
+#### Deployment Flow
+
 ```powershell
 .\scripts\deploy-demo-plugin.ps1  # Build and deploy in one command
 ```
@@ -63,9 +69,11 @@ Standalone console application to validate the plugin system without requiring t
 During Phase 5, we discovered and fixed several critical bugs:
 
 #### Bug #1: Manifest Format Mismatch
+
 **Issue**: plugin.json used nested `profiles` object instead of flat `entryPoint` dictionary
 
 **Fix**: Updated manifest format to:
+
 ```json
 {
   "entryPoint": {
@@ -76,32 +84,39 @@ During Phase 5, we discovered and fixed several critical bugs:
 ```
 
 #### Bug #2: Entry Point Parsing Order
+
 **Issue**: `PluginLoader.cs` line 172-173 swapped assembly/type order
 
 **Before**:
+
 ```csharp
 typeName = parts[0].Trim();
 assemblyName = parts[1].Trim();
 ```
 
 **After**:
+
 ```csharp
 assemblyName = parts[0].Trim();
 typeName = parts[1].Trim();
 ```
 
 #### Bug #3: Relative Path Handling
+
 **Issue**: `AssemblyLoadContext.LoadFromAssemblyPath` requires absolute paths
 
 **Fix**: Convert plugin paths to absolute using `Path.GetFullPath()` in `PluginLoader.DiscoverAndLoadAsync`:
+
 ```csharp
 var absolutePath = Path.GetFullPath(pluginPath);
 ```
 
 #### Bug #4: ALC Boundary Issue (CRITICAL)
+
 **Issue**: `IPlugin` interface loaded in both host and plugin ALCs, causing type identity mismatch
 
 **Symptoms**:
+
 ```
 System.InvalidOperationException: Plugin type does not implement IPlugin
 ```
@@ -109,6 +124,7 @@ System.InvalidOperationException: Plugin type does not implement IPlugin
 **Root Cause**: `LablabBean.Plugins.Contracts.dll` was being loaded into the plugin's ALC instead of being shared with the host's default ALC.
 
 **Fix**: Updated `PluginLoadContext.Load()` to return `null` for shared assemblies:
+
 ```csharp
 protected override Assembly? Load(AssemblyName assemblyName)
 {
@@ -186,6 +202,7 @@ info: LablabBean.Plugins.Core.PluginLoaderHostedService[0]
 ```
 
 ### Metrics
+
 - **Load Time**: 13ms
 - **Success Rate**: 100% (1/1 plugins loaded)
 - **Memory**: Isolated ALC with shared contracts
@@ -221,18 +238,22 @@ lablab-bean/
 ## Key Learnings
 
 ### 1. ALC Boundary Management
+
 **Lesson**: Contracts and framework abstractions MUST be shared across ALC boundaries.
 
 **Implementation**: Return `null` from `PluginLoadContext.Load()` for:
+
 - `LablabBean.Plugins.Contracts`
 - `Microsoft.Extensions.*` assemblies
 
 This forces these assemblies to load in the default ALC, preserving type identity.
 
 ### 2. Manifest Format
+
 **Lesson**: Keep manifest format simple and parseable.
 
 **Format**: Use flat dictionary for entry points:
+
 ```json
 {
   "entryPoint": {
@@ -243,11 +264,13 @@ This forces these assemblies to load in the default ALC, preserving type identit
 ```
 
 ### 3. Path Handling
+
 **Lesson**: Always use absolute paths for AssemblyLoadContext.
 
 **Implementation**: Convert relative paths early in the discovery process.
 
 ### 4. Error Isolation
+
 **Lesson**: Plugin failures should not crash the host.
 
 **Implementation**: Wrap plugin operations in try-catch with detailed logging.
@@ -255,29 +278,34 @@ This forces these assemblies to load in the default ALC, preserving type identit
 ## What's Working
 
 ✅ **Discovery**
+
 - Scans plugin directories
 - Finds and parses `plugin.json` manifests
 - Validates plugin metadata
 
 ✅ **Loading**
+
 - Creates isolated AssemblyLoadContext per plugin
 - Resolves dependencies via `AssemblyDependencyResolver`
 - Shares contracts across ALC boundaries
 - Loads plugin assemblies
 
 ✅ **Lifecycle**
+
 - Instantiates plugin instances
 - Calls `InitializeAsync` with context
 - Calls `StartAsync` for activation
 - Logs all lifecycle events
 
 ✅ **Context**
+
 - Provides logger (category = plugin ID)
 - Provides configuration (read-only)
 - Provides service registry
 - Provides host interface
 
 ✅ **Configuration**
+
 - Reads from `appsettings.json`
 - Supports multiple plugin paths
 - Profile selection
@@ -286,33 +314,40 @@ This forces these assemblies to load in the default ALC, preserving type identit
 ## Next Steps
 
 ### Phase 3: Host Integration
+
 **Goal**: Wire plugin system into Console and Windows hosts
 
 **Tasks**:
+
 1. Add `AddPluginSystem()` to `LablabBean.Console` startup
 2. Add `AddPluginSystem()` to `LablabBean.Windows` startup
 3. Configure plugin paths in host `appsettings.json`
 4. Test with demo plugin in real game hosts
 
 ### Phase 4: Observability
+
 **Goal**: Add metrics, health checks, and diagnostics
 
 **Tasks**:
+
 1. Plugin load metrics (timing, success rate)
 2. Memory usage tracking per plugin
 3. Health checks for plugin status
 4. Admin API for plugin management
 
 ### Phase 6: Documentation
+
 **Goal**: Create developer guides and API docs
 
 **Tasks**:
+
 1. Plugin development quickstart
 2. API reference documentation
 3. Architecture deep-dive
 4. Troubleshooting guide
 
 ### Future: Advanced Features
+
 - Hot reload validation
 - Inter-plugin dependencies
 - Service registration via `IRegistry`
@@ -322,6 +357,7 @@ This forces these assemblies to load in the default ALC, preserving type identit
 ## Files Changed
 
 ### New Files
+
 - `dotnet/examples/LablabBean.Plugin.Demo/DemoPlugin.cs`
 - `dotnet/examples/LablabBean.Plugin.Demo/plugin.json`
 - `dotnet/examples/LablabBean.Plugin.Demo/README.md`
@@ -333,6 +369,7 @@ This forces these assemblies to load in the default ALC, preserving type identit
 - `plugins/demo-plugin/*` (deployed files)
 
 ### Modified Files
+
 - `dotnet/framework/LablabBean.Plugins.Core/PluginLoader.cs`
   - Line 64: Added `Path.GetFullPath()` for absolute paths
   - Lines 172-173: Fixed assembly/type order in entry point parsing
@@ -350,6 +387,7 @@ This forces these assemblies to load in the default ALC, preserving type identit
 The plugin system is now fully functional and validated with a working demo plugin. All critical bugs have been fixed, including the ALC boundary issue which was the most challenging.
 
 The system demonstrates:
+
 - ✅ Isolation: Plugins load in separate AssemblyLoadContexts
 - ✅ Safety: Type identity preserved for shared contracts
 - ✅ Flexibility: Multi-profile support

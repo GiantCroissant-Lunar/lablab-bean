@@ -8,9 +8,11 @@
 **Organization**: Tasks are grouped by phase to enable incremental implementation and testing.
 
 ## Format: `[ID] [P?] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 
 ## Path Conventions
+
 - Source generator: `dotnet/framework/LablabBean.SourceGenerators.Proxy/`
 - Tests: `dotnet/tests/LablabBean.SourceGenerators.Proxy.Tests/`
 - Attributes: `dotnet/framework/LablabBean.Plugins.Contracts/`
@@ -258,6 +260,7 @@
 **Estimated Time**: 20-30 hours (2.5-4 days)
 
 **Phase Breakdown**:
+
 - Phase 0: Setup (6 tasks, 1-2 hours)
 - Phase 1: Basic Methods (12 tasks, 4-6 hours)
 - Phase 2: Properties/Events (10 tasks, 3-4 hours)
@@ -268,11 +271,13 @@
 - Phase 7: Integration (12 tasks, 3-4 hours)
 
 **Dependencies**:
+
 - Spec 007 (IRegistry, SelectionMode) ✅ Complete
 - Spec 008 (Service interfaces) ✅ Complete
 - Roslyn SDK (NuGet package)
 
 **Success Criteria**:
+
 - All 101 tasks complete
 - All tests passing
 - Generated code compiles without warnings

@@ -37,6 +37,7 @@ This guide helps you migrate from the old structure to the new organized structu
 | `./build-and-run.ps1` | `./build/scripts/build-and-run.ps1` |
 
 **Action Required:**
+
 ```bash
 # Update any scripts that call:
 .\build-and-run.ps1
@@ -58,6 +59,7 @@ task release-and-run
 | N/A | `./docs/TESTING.md` (new) |
 
 **Action Required:**
+
 ```bash
 # Update documentation links from:
 [RELEASE.md](RELEASE.md)
@@ -74,6 +76,7 @@ task release-and-run
 | N/A | `./website/playwright.config.ts` (new) |
 
 **Action Required:**
+
 ```bash
 # Update PM2 commands from:
 pm2 start ecosystem.config.js
@@ -93,6 +96,7 @@ task stack-run
 | `./logs/` | `./build/_artifacts/<version>/logs/` |
 
 **Action Required:**
+
 - Update log monitoring scripts
 - Use `task stack-logs` for live logs
 - Check versioned directories for historical logs
@@ -102,6 +106,7 @@ task stack-run
 ### Stack Management
 
 **Old Commands:**
+
 ```bash
 pm2 start ecosystem.config.js
 pm2 stop ecosystem.config.js
@@ -110,6 +115,7 @@ pm2 delete ecosystem.config.js
 ```
 
 **New Commands:**
+
 ```bash
 task stack-run
 task stack-stop
@@ -185,6 +191,7 @@ lablab-bean/
 ### PowerShell Scripts
 
 **Old:**
+
 ```powershell
 # Call build script
 .\build-and-run.ps1
@@ -194,6 +201,7 @@ pm2 start ecosystem.config.js
 ```
 
 **New:**
+
 ```powershell
 # Call build script
 .\build\scripts\build-and-run.ps1
@@ -208,6 +216,7 @@ task stack-run
 ### Bash Scripts
 
 **Old:**
+
 ```bash
 #!/bin/bash
 ./build-and-run.ps1
@@ -215,6 +224,7 @@ pm2 start ecosystem.config.js
 ```
 
 **New:**
+
 ```bash
 #!/bin/bash
 ./build/scripts/build-and-run.ps1
@@ -228,6 +238,7 @@ task stack-run
 ### GitHub Actions
 
 **Old:**
+
 ```yaml
 - name: Build and run
   run: .\build-and-run.ps1
@@ -237,6 +248,7 @@ task stack-run
 ```
 
 **New:**
+
 ```yaml
 - name: Build release
   run: task build-release
@@ -261,6 +273,7 @@ task stack-run
 ### GitLab CI
 
 **Old:**
+
 ```yaml
 script:
   - .\build-and-run.ps1
@@ -268,6 +281,7 @@ script:
 ```
 
 **New:**
+
 ```yaml
 script:
   - task build-release
@@ -287,12 +301,14 @@ artifacts:
 ### Internal Links
 
 **Old:**
+
 ```markdown
 See [RELEASE.md](RELEASE.md) for details.
 Run `.\build-and-run.ps1` to start.
 ```
 
 **New:**
+
 ```markdown
 See [docs/RELEASE.md](docs/RELEASE.md) for details.
 Run `.\build\scripts\build-and-run.ps1` or `task release-and-run` to start.
@@ -301,6 +317,7 @@ Run `.\build\scripts\build-and-run.ps1` or `task release-and-run` to start.
 ### File References
 
 Update any references to:
+
 - `ecosystem.config.js` → `website/ecosystem.production.config.js`
 - `logs/` → `build/_artifacts/<version>/logs/`
 - Documentation files → `docs/`
@@ -310,11 +327,13 @@ Update any references to:
 ### Log Monitoring
 
 **Old:**
+
 ```powershell
 Get-Content logs\web-out.log -Wait
 ```
 
 **New:**
+
 ```powershell
 # Use task command
 task stack-logs-web
@@ -327,12 +346,14 @@ Get-Content "build\_artifacts\$version\logs\web-out.log" -Wait
 ### Log Rotation Scripts
 
 **Old:**
+
 ```bash
 # Rotate logs in logs/
 find logs/ -name "*.log" -mtime +7 -delete
 ```
 
 **New:**
+
 ```bash
 # Logs are now versioned, no rotation needed
 # Old versions can be archived or deleted as needed
@@ -385,11 +406,13 @@ ls build/_artifacts/*/test-reports/
 ### Issue: PM2 can't find config
 
 **Error:**
+
 ```
 Error: ecosystem.config.js not found
 ```
 
 **Solution:**
+
 ```bash
 # Use task command
 task stack-run
@@ -402,11 +425,13 @@ pm2 start ecosystem.production.config.js
 ### Issue: Logs not found
 
 **Error:**
+
 ```
 logs/ directory not found
 ```
 
 **Solution:**
+
 ```bash
 # Logs are now versioned
 # Use task command
@@ -419,11 +444,13 @@ ls build/_artifacts/*/logs/
 ### Issue: Script not found
 
 **Error:**
+
 ```
 build-and-run.ps1 not found
 ```
 
 **Solution:**
+
 ```bash
 # Use new path
 .\build\scripts\build-and-run.ps1
@@ -435,11 +462,13 @@ task release-and-run
 ### Issue: Playwright not installed
 
 **Error:**
+
 ```
 Executable doesn't exist at ...
 ```
 
 **Solution:**
+
 ```bash
 task test-install
 ```
@@ -449,17 +478,20 @@ task test-install
 If you need to rollback temporarily:
 
 1. **Keep old ecosystem.config.js:**
+
    ```bash
    # Copy from website/
    cp website/ecosystem.production.config.js ecosystem.config.js
    ```
 
 2. **Use old commands:**
+
    ```bash
    pm2 start ecosystem.config.js
    ```
 
 3. **Update later:**
+
    ```bash
    # When ready, switch back
    task stack-run
@@ -504,28 +536,31 @@ If you encounter issues:
 ## Timeline
 
 **Immediate Actions:**
+
 - [ ] Update script paths
 - [ ] Update PM2 config references
 - [ ] Install Playwright browsers
 
 **Within 1 Week:**
+
 - [ ] Update CI/CD pipelines
 - [ ] Update monitoring scripts
 - [ ] Update team documentation
 
 **Within 1 Month:**
+
 - [ ] Remove old log monitoring
 - [ ] Archive old logs
 - [ ] Train team on new structure
 
 ## Benefits After Migration
 
-✅ **Better Organization** - Logical file structure  
-✅ **Versioned Outputs** - All artifacts tied to version  
-✅ **Comprehensive Testing** - E2E tests with Playwright  
-✅ **Better Debugging** - Multiple test modes  
-✅ **CI/CD Ready** - Structured artifacts  
-✅ **Historical Data** - Preserved in versioned directories  
+✅ **Better Organization** - Logical file structure
+✅ **Versioned Outputs** - All artifacts tied to version
+✅ **Comprehensive Testing** - E2E tests with Playwright
+✅ **Better Debugging** - Multiple test modes
+✅ **CI/CD Ready** - Structured artifacts
+✅ **Historical Data** - Preserved in versioned directories
 
 ## Next Steps
 

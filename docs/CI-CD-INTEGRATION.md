@@ -24,17 +24,18 @@ Complete guide for integrating the LablabBean reporting system into your CI/CD p
 ## Overview
 
 The LablabBean reporting system automatically generates HTML and CSV reports for:
+
 - **Build Metrics**: Test results, code coverage, build timing
 - **Session Analytics**: Gameplay statistics, K/D ratios, progression
 - **Plugin Health**: Plugin status, memory usage, performance
 
 ### Key Features
 
-✅ **Timestamped Reports**: Each report includes build number and timestamp  
-✅ **Multiple Formats**: HTML (visual) and CSV (data analysis)  
-✅ **Latest Snapshots**: Symbolic links to most recent reports  
-✅ **CI/CD Ready**: GitHub Actions integration included  
-✅ **Error Handling**: Graceful fallback when data is missing  
+✅ **Timestamped Reports**: Each report includes build number and timestamp
+✅ **Multiple Formats**: HTML (visual) and CSV (data analysis)
+✅ **Latest Snapshots**: Symbolic links to most recent reports
+✅ **CI/CD Ready**: GitHub Actions integration included
+✅ **Error Handling**: Graceful fallback when data is missing
 ✅ **Artifact Upload**: Automatic upload to CI artifacts
 
 ## Local Development
@@ -181,6 +182,7 @@ session-analytics-{BUILD_NUMBER}-{TIMESTAMP}.html
 ```
 
 Where:
+
 - `{BUILD_NUMBER}`: CI build number or GitVersion (e.g., `0.1.0-dev`)
 - `{TIMESTAMP}`: UTC timestamp (e.g., `20251022-153045`)
 
@@ -233,6 +235,7 @@ Typical report sizes:
 **Symptom**: Reports not generated in CI
 
 **Solutions**:
+
 1. Check that `nuke Compile` ran successfully
 2. Verify reporting tool exists at expected path
 3. Review build logs for error messages
@@ -245,6 +248,7 @@ Typical report sizes:
 **Expected**: This is by design! The reporting system uses fallback sample data when real data files are missing.
 
 **To get real data**:
+
 - For build metrics: Ensure `.trx` test results exist
 - For session analytics: Provide `analytics.jsonl` file
 - For plugin health: Provide `plugin-health.json` file
@@ -270,6 +274,7 @@ This ensures report generation failures don't block the CI pipeline.
 **Future**: Ubuntu support planned (see `validate-linux` job in workflow)
 
 **Path Issues**: Use cross-platform path separators in Nuke build:
+
 ```csharp
 // Good
 AbsolutePath path = RootDirectory / "build" / "artifacts";
@@ -283,6 +288,7 @@ string path = "build\\artifacts";  // Windows-only
 **Note**: Currently generating HTML/CSV only. PDF support requires FastReport plugin.
 
 **If adding PDF support**:
+
 - Ensure CI images include system fonts
 - Add font packages to Docker images
 - Test font rendering in headless environments
@@ -349,6 +355,7 @@ DotNet($"{reportingToolPath} report build --output report.csv --format csv");
 ### Report Metadata
 
 Each report includes:
+
 - Build number
 - Timestamp (UTC)
 - Git commit SHA (if available)
@@ -383,6 +390,7 @@ Each report includes:
 ### Optimization Tips
 
 1. **Cache dependencies**:
+
    ```yaml
    - uses: actions/cache@v3
      with:
@@ -397,12 +405,13 @@ Each report includes:
 ## Support
 
 For issues or questions:
+
 - 📖 [Full Documentation](../specs/010-fastreport-reporting/)
 - 🐛 [Report Issues](https://github.com/your-org/lablab-bean/issues)
 - 💬 [Discussions](https://github.com/your-org/lablab-bean/discussions)
 
 ---
 
-**Last Updated**: 2025-10-22  
-**Version**: 1.0.0  
+**Last Updated**: 2025-10-22
+**Version**: 1.0.0
 **Status**: Production-ready ✅

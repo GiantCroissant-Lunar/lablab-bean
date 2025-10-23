@@ -78,18 +78,21 @@ task dev-stack
 ### Hot Reload Behavior
 
 #### Astro (Web App)
+
 - **Auto-reload**: Yes ✅
 - **Trigger**: File changes in `website/apps/web/src/`
 - **Speed**: Instant (HMR)
 - **No rebuild needed**: Changes reflect immediately
 
 #### PTY Terminal Backend
+
 - **Auto-rebuild**: Yes ✅
 - **Trigger**: File changes in `website/packages/terminal/src/`
 - **Speed**: Fast (TypeScript incremental compilation)
 - **Restart needed**: Astro dev server picks up changes automatically
 
 #### Console App (.NET)
+
 - **Auto-rebuild**: No ❌
 - **Manual rebuild**: `task build-dotnet`
 - **Restart needed**: `task dev-restart` after rebuild
@@ -97,6 +100,7 @@ task dev-stack
 ### Configuration Files
 
 #### Development Ecosystem Config
+
 **File**: `ecosystem.development.config.js`
 
 ```javascript
@@ -259,6 +263,7 @@ task build-release
 ### Configuration Files
 
 #### Production Ecosystem Config
+
 **File**: `website/ecosystem.production.config.js`
 
 ```javascript
@@ -411,6 +416,7 @@ task dev-stack
 ### VS Code
 
 Recommended extensions:
+
 - Astro
 - ESLint
 - Prettier
@@ -419,6 +425,7 @@ Recommended extensions:
 ### JetBrains Rider
 
 Use built-in .NET support and configure:
+
 - File watcher for TypeScript
 - Astro language support plugin
 

@@ -7,11 +7,13 @@
 **Location:** `build/nuke/`
 
 **Features:**
+
 - Reusable build components following NUKE best practices
 - Components: `IClean`, `IRestore`, `ICompile`, `ITest`, `IPublish`
 - Main build script with all targets
 
 **Usage:**
+
 ```bash
 # Via Task
 task nuke-build          # Build solution
@@ -28,6 +30,7 @@ dotnet run -- Publish
 ```
 
 **Components:**
+
 - `IClean.cs` - Clean build artifacts
 - `IRestore.cs` - Restore NuGet packages
 - `ICompile.cs` - Compile solution
@@ -39,12 +42,14 @@ dotnet run -- Publish
 **Location:** `website/ecosystem.config.js`
 
 **Features:**
+
 - Manages entire stack (web + console TUI)
 - Automatic restart on failure
 - Log aggregation
 - Process monitoring
 
 **Configuration:**
+
 ```javascript
 {
   apps: [
@@ -55,6 +60,7 @@ dotnet run -- Publish
 ```
 
 **Usage:**
+
 ```bash
 # Via Task
 task stack-start    # Start all services
@@ -75,6 +81,7 @@ pnpm pm2:monit
 **New Task Categories:**
 
 **NUKE Build:**
+
 - `nuke-build` - Build with NUKE
 - `nuke-clean` - Clean with NUKE
 - `nuke-test` - Test with NUKE
@@ -83,6 +90,7 @@ pnpm pm2:monit
 - `nuke-publish-windows` - Publish windows app
 
 **.NET Tasks:**
+
 - `dotnet-build` - Build solution
 - `dotnet-clean` - Clean solution
 - `dotnet-restore` - Restore packages
@@ -91,6 +99,7 @@ pnpm pm2:monit
 - `dotnet-run-windows` - Run windows app
 
 **Website/PM2:**
+
 - `website-install` - Install dependencies
 - `website-dev` - Start dev server
 - `website-build` - Build website
@@ -100,6 +109,7 @@ pnpm pm2:monit
 - `stack-logs` - View logs
 
 **JetBrains CLI:**
+
 - `jb-inspect` - Code inspection (slow)
 - `jb-cleanup` - Code cleanup
 
@@ -108,12 +118,14 @@ pnpm pm2:monit
 **Location:** `git-hooks/`
 
 **New Hooks:**
+
 - `gitleaks-check` - Detect secrets/credentials
 - `yaml-lint` - Lint YAML files
 - `markdown-lint` - Lint Markdown files
 - `dotnet-format-check` - Check .NET formatting
 
 **Prerequisites:**
+
 ```bash
 # Windows
 winget install gitleaks
@@ -129,6 +141,7 @@ dotnet tool install -g dotnet-format
 ```
 
 **Integration with pre-commit:**
+
 ```yaml
 repos:
   - repo: local
@@ -148,6 +161,7 @@ repos:
 **Location:** `dotnet/console-app/LablabBean.Console/`
 
 **New Features:**
+
 - **Three-panel layout:**
   - Left: Action list with emojis
   - Center: Output/content view
@@ -161,12 +175,14 @@ repos:
 - **Test runner** - Mock test execution
 
 **New Files:**
+
 - `Models/MenuAction.cs` - Menu action model
 - `Services/IMenuService.cs` - Menu service interface
 - `Services/MenuService.cs` - Menu service implementation
 - `Views/InteractiveWindow.cs` - Main interactive window
 
 **Features:**
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ File  Edit  View  Build  Help                          │
@@ -188,6 +204,7 @@ repos:
 ```
 
 **Keyboard Shortcuts:**
+
 - `Ctrl+Q` - Quit
 - `Ctrl+N` - New File
 - `Ctrl+O` - Open File
@@ -227,12 +244,13 @@ pnpm stack:start
 ```
 
 This starts:
-- Web server (http://localhost:3000)
+
+- Web server (<http://localhost:3000>)
 - Console TUI app (in PTY)
 
 ### 3. Access in Browser
 
-Open http://localhost:3000 to see the TUI app running in xterm.js!
+Open <http://localhost:3000> to see the TUI app running in xterm.js!
 
 ### 4. Build with NUKE
 

@@ -8,11 +8,13 @@
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
 ## Format: `[ID] [P?] [Story] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3, US4)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 - Plugin framework architecture (multi-assembly)
 - Paths: `dotnet/framework/`, `dotnet/tests/`, `plugins/`
 
@@ -58,6 +60,7 @@
 **Independent Test**: Create a simple event publisher in one plugin, a subscriber in another plugin, and verify the event is received without any direct dependency between the plugins
 
 **Success Criteria** (from spec.md):
+
 - Event bus publishes events to all subscribers asynchronously
 - Analytics plugin receives game events without referencing game plugin assembly
 - Multiple subscribers receive events without errors from one subscriber affecting others
@@ -95,6 +98,7 @@
 **Independent Test**: Create the `LablabBean.Contracts.Game` assembly with service interfaces, implement a simple mock service and register it via `IRegistry`, and verify it can be retrieved by other plugins
 
 **Success Criteria** (from spec.md):
+
 - Game service interface defined in contract assembly
 - Multiple implementations can be registered with different priorities
 - Plugins can retrieve service using `SelectionMode.HighestPriority`
@@ -141,6 +145,7 @@
 **Independent Test**: Publish game state change events from a mock game service, have the UI plugin subscribe to those events, and verify the UI updates are triggered without the UI polling the game state
 
 **Success Criteria** (from spec.md):
+
 - UI plugin subscribes to game events and updates display reactively
 - UI handles multiple events asynchronously without blocking game loop
 - System handles missing subscriber gracefully when UI plugin is unloaded
@@ -204,6 +209,7 @@
 **Purpose**: Validate performance requirements from spec.md success criteria
 
 **Success Criteria**:
+
 - SC-003: Event publishing completes in under 10ms for events with up to 10 subscribers
 - SC-004: Event bus handles at least 1000 events per second without blocking the game loop
 
@@ -220,6 +226,7 @@
 **Purpose**: Complete developer documentation and ensure SC-008 (plugin creation in <30 minutes)
 
 **Success Criteria**:
+
 - SC-007: Documentation includes at least 3 complete examples of event-driven plugin patterns
 - SC-008: A developer unfamiliar with the codebase can create a working event-subscribing plugin in under 30 minutes using the documentation
 
@@ -282,34 +289,43 @@
 ### Parallel Opportunities
 
 **Phase 1 (Setup)**:
+
 - T003 and T004 (test project creation) can run in parallel
 - T005 and T006 (configuration) can run in parallel
 
 **Phase 2 (Foundational)**:
+
 - T010-T014 (all EventBus unit tests) can run in parallel after T008 is complete
 
 **Phase 3 (User Story 1)**:
+
 - T016-T019 (all event definitions) can run in parallel
 - T026-T028 (all integration tests) can run in parallel after implementation
 
 **Phase 4 (User Story 2)**:
+
 - T029-T034 (all model/event definitions) can run in parallel
 - T046-T048 (all contract tests) can run in parallel
 
 **Phase 5 (User Story 3)**:
+
 - T051-T056 (all model/event definitions) can run in parallel
 - T069-T070 (contract tests) can run in parallel
 
 **Phase 7 (Performance)**:
+
 - T077 and T078 (performance tests) can run in parallel
 
 **Phase 8 (Documentation)**:
+
 - T082-T085 (all example plugins) can run in parallel
 
 **Phase 9 (Polish)**:
+
 - T089, T090, T092, T093 (documentation tasks) can run in parallel
 
 **Cross-Story Parallelism**:
+
 - After Foundational phase completes, User Stories 1, 2, and 3 can all be worked on in parallel by different team members
 
 ---
@@ -342,7 +358,7 @@ Task T028: "Verify multiple subscribers receive events without interference"
 5. Demo analytics plugin tracking game events
 6. **Decision Point**: Ship MVP or continue to User Story 2
 
-**MVP Scope**: 28 tasks (Setup + Foundational + US1)  
+**MVP Scope**: 28 tasks (Setup + Foundational + US1)
 **Estimated Time**: 1-2 days for experienced developer
 
 ### Incremental Delivery
@@ -372,6 +388,7 @@ With multiple developers:
 ## Task Summary
 
 ### Total Tasks: 98 tasks
+
 - **Phase 1 (Setup)**: 6 tasks
 - **Phase 2 (Foundational)**: 9 tasks ⚠️ BLOCKS all user stories
 - **Phase 3 (User Story 1 - Analytics)**: 13 tasks 🎯 MVP
@@ -383,12 +400,14 @@ With multiple developers:
 - **Phase 9 (Polish)**: 10 tasks
 
 ### Tasks by User Story
+
 - **US1 (Analytics Plugin)**: 13 tasks
 - **US2 (Game Service Contract)**: 22 tasks
 - **US3 (UI Plugin with Events)**: 25 tasks
 - **US4 (Scene Management)**: 3 tasks (DEFERRED)
 
 ### Parallel Opportunities Identified
+
 - **Setup phase**: 4 tasks can run in parallel
 - **Foundational phase**: 5 tests can run in parallel
 - **User Story 1**: 4 event definitions + 3 tests can run in parallel
@@ -397,12 +416,15 @@ With multiple developers:
 - **Cross-story**: All 3 user stories can be worked on in parallel after Foundational phase
 
 ### Independent Test Criteria
+
 - **US1**: Create event publisher and subscriber in separate plugins, verify event delivery without direct dependency
 - **US2**: Register service via IRegistry, retrieve via Get<IService>(), verify priority-based selection works
 - **US3**: Publish game events, verify UI plugin receives them and updates display without polling
 
 ### Suggested MVP Scope
+
 **Phases 1-3 only** (Setup + Foundational + User Story 1)
+
 - **28 tasks total**
 - **Delivers**: Event bus + Analytics plugin tracking game events
 - **Validates**: Core event-driven architecture works
@@ -424,6 +446,6 @@ With multiple developers:
 
 ---
 
-**Generated**: 2025-10-21  
-**Command**: `/speckit.tasks`  
+**Generated**: 2025-10-21
+**Command**: `/speckit.tasks`
 **Based on**: spec.md (4 user stories), plan.md, research.md, data-model.md, contracts/

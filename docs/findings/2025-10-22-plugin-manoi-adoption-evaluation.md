@@ -119,6 +119,7 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 ### ❌ 1. PluginManoi.Loader - **DO NOT ADOPT**
 
 **Reasons:**
+
 - Lablab-bean's `PluginLoader` is more advanced
 - Multi-profile support already implemented
 - Richer manifest schema with validation
@@ -132,6 +133,7 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 ### ❌ 2. PluginManoi.Loader.AssemblyContext - **DO NOT ADOPT**
 
 **Reasons:**
+
 - Lablab-bean's `PluginLoadContext` is more robust
 - Better dependency resolution with `AssemblyDependencyResolver`
 - Shared contract assemblies reduce memory overhead
@@ -145,6 +147,7 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 ### ❌ 3. PluginManoi.Registry - **DO NOT ADOPT**
 
 **Reasons:**
+
 - Lablab-bean's `ServiceRegistry` is feature-complete
 - Better concurrency with `ConcurrentDictionary`
 - Named service variants for multi-implementation scenarios
@@ -160,12 +163,14 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 **Recommendation**: Extract Polly patterns as a **separate resilience service**, NOT as a plugin.
 
 **What to Adopt:**
+
 - Polly v8 retry policies with exponential backoff
 - Circuit breaker for external service calls
 - Timeout policies for long-running operations
 - Statistics tracking for resilience events
 
 **How to Integrate:**
+
 1. Create `LablabBean.Services.Resilience` project (NOT a plugin)
 2. Implement `IResilienceService` interface
 3. Use Polly v8 for retry/circuit breaker/timeout
@@ -173,6 +178,7 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 5. Make available to plugins via `IPluginContext.Services`
 
 **What NOT to Adopt:**
+
 - Plugin activation pattern (lablab-bean has better lifecycle)
 - Registry integration (lablab-bean has better registry)
 - `ResiliencePluginActivator` (not needed)
@@ -190,6 +196,7 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 **Solution**: Implement standalone `IResilienceService` using Polly v8.
 
 **Example Use Cases:**
+
 - Database queries with retry + timeout
 - External API calls with circuit breaker
 - File I/O with exponential backoff
@@ -250,6 +257,7 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 **Timeline**: 1-2 weeks
 
 **Tasks**:
+
 1. Create `LablabBean.Services.Resilience` project
 2. Implement `IResilienceService` with Polly v8
 3. Add retry, circuit breaker, timeout policies
@@ -266,6 +274,7 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 **Timeline**: 1 week
 
 **Tasks**:
+
 1. Implement SemVer parser for version ranges
 2. Add validation in `DependencyResolver`
 3. Add manifest validation rules
@@ -349,14 +358,17 @@ The lablab-bean project already has a **production-grade plugin architecture** t
 ## References
 
 **Lablab-bean Plugin System:**
+
 - `/dotnet/framework/LablabBean.Plugins.Contracts/`
 - `/dotnet/framework/LablabBean.Plugins.Core/`
 - Plugin examples in `/dotnet/plugins/`
 
 **Plugin Manoi Framework:**
+
 - `/ref-projects/plugin-manoi/dotnet/framework/src/`
 
 **Related Documents:**
+
 - `docs/findings/2025-10-22-application-verification.md`
 
 ---

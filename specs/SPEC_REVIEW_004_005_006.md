@@ -3,6 +3,7 @@
 **Review Date**: 2025-10-21
 **Reviewer**: Claude (cross-referenced with CrossMilo, PluginManoi, WingedBean)
 **Specs Under Review**:
+
 - `specs/004-tiered-plugin-architecture`
 - `specs/005-inventory-plugin-migration`
 - `specs/006-status-effects-plugin-migration`
@@ -46,6 +47,7 @@ The specs demonstrate **strong architectural alignment** with the reference proj
 #### Issue 1: **IPlugin Interface Mismatch**
 
 **Current Contract** (`specs/004-tiered-plugin-architecture/contracts/IPlugin.cs`):
+
 ```csharp
 public interface IPlugin
 {
@@ -58,6 +60,7 @@ public interface IPlugin
 **Problem**: This exposes `IServiceCollection` directly to plugins, which **violates ALC isolation boundaries**.
 
 **Reference Pattern** (WingedBean/PluginManoi):
+
 ```csharp
 public interface IPlugin
 {
@@ -67,12 +70,14 @@ public interface IPlugin
 ```
 
 **Why This Matters**:
+
 - `IServiceCollection` is a **build-time** DI container
 - Plugins should use `IRegistry` for **runtime** service registration
 - Registry supports priority-based selection across ALCs
 - `IServiceCollection` doesn't support cross-ALC type identity
 
 **Recommended Fix**:
+
 ```csharp
 public interface IPlugin
 {
@@ -103,6 +108,7 @@ public interface IPluginContext
 **Gap**: Spec mentions `IPluginRegistry` (FR-005) but doesn't specify **service registry** pattern.
 
 **Reference Pattern** (PluginManoi/CrossMilo):
+
 ```csharp
 public interface IRegistry
 {
@@ -121,6 +127,7 @@ public enum SelectionMode
 ```
 
 **Why This Matters**:
+
 - **Type identity across ALCs**: Registry uses runtime type matching, not compile-time references
 - **Priority-based selection**: Multiple implementations can coexist (e.g., console vs SadConsole UI)
 - **Decoupling**: Plugins don't reference each other directly
@@ -134,6 +141,7 @@ public enum SelectionMode
 #### Issue 3: **Manifest Schema Incomplete**
 
 **Current Manifest** (`PluginManifest.cs`):
+
 ```csharp
 public sealed class PluginManifest
 {
@@ -147,6 +155,7 @@ public sealed class PluginManifest
 ```
 
 **Missing Fields** (from PluginManoi RFC schema):
+
 ```csharp
 public string? Description { get; init; }
 public string? Author { get; init; }
@@ -161,6 +170,7 @@ public List<string> TargetPlatforms { get; init; } // ["Windows", "Linux"]
 ```
 
 **Why This Matters**:
+
 - **Multi-profile support**: Console, Unity, SadConsole have different entry points
 - **Filtering**: Pre-load filtering by process/platform (WingedBean RFC-0006)
 - **Load strategy**: Lazy loading for optional plugins
@@ -178,12 +188,14 @@ public List<string> TargetPlatforms { get; init; } // ["Windows", "Linux"]
 > "At least one plugin can be hot reloaded 3× in a row without memory growth >10%."
 
 **Gap**: No specification of:
+
 1. **File watching strategy** (manual vs automatic)
 2. **Unload verification** (`AssemblyLoadContext.IsCollectible` checks)
 3. **GC forcing strategy** (PluginManoi uses 10 cycles with sleep)
 4. **Reload trigger** (file change, user command, API call)
 
 **Reference Pattern** (PluginManoi):
+
 ```csharp
 public async Task UnloadAsync(ILoadedPlugin plugin)
 {
@@ -212,11 +224,13 @@ public async Task UnloadAsync(ILoadedPlugin plugin)
 > "Provide dependency resolution with cycle detection and topological start order."
 
 **Gap**: Spec doesn't specify:
+
 1. **Algorithm choice** (Kahn's vs DFS)
 2. **Cycle error handling** (fail all vs exclude cycle participants)
 3. **Version selection strategy** (highest semver vs explicit)
 
 **Reference Pattern** (PluginManoi):
+
 - Uses **Kahn's topological sort**
 - **Cycle detection**: If `sorted.Count != total`, throw `InvalidOperationException`
 - **Version selection**: Highest semantic version per plugin ID
@@ -234,11 +248,13 @@ public async Task UnloadAsync(ILoadedPlugin plugin)
 > "Metrics: load time per plugin, failures, reload counts."
 
 **Gap**: No specification of:
+
 1. **Metric storage** (in-memory vs persistent)
 2. **Metric exposure** (API, logs, telemetry)
 3. **Metric format** (plain values vs structured events)
 
 **Reference Pattern** (WingedBean):
+
 - Uses **OpenTelemetry** for structured metrics
 - **ActivitySource** for distributed tracing
 - **Metrics endpoint** for Prometheus scraping
@@ -252,6 +268,7 @@ public async Task UnloadAsync(ILoadedPlugin plugin)
 ### 🔧 Recommended Changes to Spec 004
 
 #### Change 1: Update IPlugin Interface
+
 **File**: `specs/004-tiered-plugin-architecture/contracts/IPlugin.cs`
 
 ```csharp
@@ -276,6 +293,7 @@ public interface IPluginContext
 ```
 
 #### Change 2: Add IRegistry Contract
+
 **File**: `specs/004-tiered-plugin-architecture/contracts/IRegistry.cs` (new)
 
 ```csharp
@@ -307,9 +325,11 @@ public class ServiceMetadata
 ```
 
 #### Change 3: Expand PluginManifest
+
 **File**: `specs/004-tiered-plugin-architecture/contracts/PluginManifest.cs`
 
 Add fields:
+
 ```csharp
 public Dictionary<string, string> EntryPoint { get; init; } = new();
 public List<string> Capabilities { get; init; } = new();
@@ -318,9 +338,11 @@ public string? LoadStrategy { get; init; }
 ```
 
 #### Change 4: Clarify Dependency Resolution
+
 **File**: `specs/004-tiered-plugin-architecture/spec.md`
 
 Update FR-003:
+
 ```markdown
 FR-003: Provide dependency resolution using Kahn's topological sort algorithm.
   - Hard dependencies: Missing → plugin excluded from load order, ERROR logged
@@ -353,6 +375,7 @@ FR-003: Provide dependency resolution using Kahn's topological sort algorithm.
 **Gap**: Spec doesn't include example `.plugin.json` for inventory plugin.
 
 **Recommended Addition**:
+
 ```json
 {
   "id": "lablabbean.plugins.inventory",
@@ -395,11 +418,13 @@ FR-003: Provide dependency resolution using Kahn's topological sort algorithm.
 > "Maintain ECS components in plugin assembly"
 
 **Question**: Which ECS implementation?
+
 - Option A: Arch ECS (current project dependency)
 - Option B: Plugin-specific ECS abstraction
 - Option C: Shared ECS plugin (like WingedBean)
 
 **Reference Pattern** (WingedBean):
+
 - Separate **ArchECS plugin** provides ECS runtime
 - Game plugins depend on ECS plugin
 - ECS registered with priority 100 (framework level)
@@ -418,11 +443,13 @@ FR-003: Provide dependency resolution using Kahn's topological sort algorithm.
 **Gap**: Spec doesn't define event schema or delivery mechanism.
 
 **Reference Pattern** (WingedBean):
+
 - Uses `IObservable<T>` (Rx.NET) for reactive state
 - Publishes via `BehaviorSubject<T>`
 - UI subscribes and updates reactively
 
 **Recommended Addition**:
+
 ```csharp
 public interface IInventoryService
 {
@@ -440,14 +467,17 @@ public interface IInventoryService
 ### 🔧 Recommended Changes to Spec 005
 
 #### Change 1: Add Manifest Example
+
 **File**: `specs/005-inventory-plugin-migration/manifest.plugin.json` (new)
 
 (See Issue 1 above for content)
 
 #### Change 2: Clarify ECS Dependency
+
 **File**: `specs/005-inventory-plugin-migration/spec.md`
 
 Add to Requirements:
+
 ```markdown
 FR-005: Declare hard dependency on shared ECS plugin (lablabbean.plugins.ecs)
   - Plugin discovers ECS via IRegistry.Get<IECSService>()
@@ -456,6 +486,7 @@ FR-005: Declare hard dependency on shared ECS plugin (lablabbean.plugins.ecs)
 ```
 
 #### Change 3: Define Event Schema
+
 **File**: `specs/005-inventory-plugin-migration/events.cs` (new)
 
 ```csharp
@@ -484,6 +515,7 @@ public interface IInventoryService
 ### ⚠️ Issues
 
 **Same issues as Spec 005**:
+
 1. Missing manifest definition
 2. ECS dependency unclear
 3. Event hooks undefined
@@ -494,6 +526,7 @@ public interface IInventoryService
 > "Plugin tracks active effects per entity and updates durations on turn ticks."
 
 **Question**: How does plugin receive turn tick events?
+
 - Option A: Subscribes to `ITurnManager.TurnCompleted` event
 - Option B: Polling via system update
 - Option C: Host calls `IStatusEffectService.Tick()` explicitly
@@ -509,9 +542,11 @@ public interface IInventoryService
 Same pattern as Spec 005, plus:
 
 #### Change 1: Define Turn Integration
+
 **File**: `specs/006-status-effects-plugin-migration/spec.md`
 
 Add to Requirements:
+
 ```markdown
 FR-004: Subscribe to turn events from turn manager plugin
   - Discovers ITurnManager via IRegistry.Get<ITurnManager>()
@@ -530,11 +565,13 @@ FR-004: Subscribe to turn events from turn manager plugin
 **Future Need**: WingedBean demonstrates Console, Unity, SadConsole, and Web hosts.
 
 **Recommendation**:
+
 - Use `EntryPoint` dictionary in manifest (not single `EntryAssembly`)
 - Design contracts to be UI-agnostic
 - Test with at least Console + SadConsole from start
 
 **Example**:
+
 ```json
 {
   "entryPoint": {
@@ -552,6 +589,7 @@ FR-004: Subscribe to turn events from turn manager plugin
 **Current State**: Contracts in spec folders, not referenced by project.
 
 **WingedBean Pattern**:
+
 ```
 LablabBean.Plugins.Contracts.csproj
 ├─ TargetFramework: netstandard2.1
@@ -571,6 +609,7 @@ LablabBean.Game.Contracts.csproj
 ### 3. **Add Caching Strategy**
 
 **PluginManoi Pattern** (RFC-0004):
+
 - SHA256 hash of manifest files
 - Binary cache per plugin directory
 - 10x faster discovery on valid cache
@@ -584,6 +623,7 @@ LablabBean.Game.Contracts.csproj
 **Gap**: Specs don't mention plugin signing or verification.
 
 **PluginManoi Pattern**:
+
 - Optional `security.signatureRequired` in manifest
 - SHA256 hash verification
 - Publisher trust model
@@ -616,8 +656,10 @@ LablabBean.Game.Contracts.csproj
 ## Implementation Readiness
 
 ### Spec 004 (Tiered Plugin Architecture)
+
 **Status**: ⚠️ **NOT READY**
 **Blockers**:
+
 1. IPlugin interface needs redesign (IPluginContext pattern)
 2. IRegistry contract missing
 3. Contracts assembly not created
@@ -627,8 +669,10 @@ LablabBean.Game.Contracts.csproj
 ---
 
 ### Spec 005 (Inventory Migration)
+
 **Status**: ⚠️ **NOT READY**
 **Dependencies**:
+
 1. Spec 004 must be complete first
 2. ECS plugin strategy needed
 3. Event schema required
@@ -638,8 +682,10 @@ LablabBean.Game.Contracts.csproj
 ---
 
 ### Spec 006 (Status Effects Migration)
+
 **Status**: ⚠️ **NOT READY**
 **Dependencies**:
+
 1. Spec 004 must be complete first
 2. Same issues as Spec 005
 3. Turn manager integration needed

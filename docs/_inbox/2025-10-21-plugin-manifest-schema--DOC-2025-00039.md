@@ -94,12 +94,14 @@ Every plugin **must** include a `plugin.json` manifest file in its output direct
 Unique plugin identifier.
 
 **Constraints**:
+
 - Must be unique across all plugins
 - Lowercase recommended
 - Alphanumeric + hyphens only (`[a-z0-9-]+`)
 - Kebab-case preferred
 
 **Examples**:
+
 ```json
 "id": "inventory"
 "id": "status-effects"
@@ -107,11 +109,13 @@ Unique plugin identifier.
 ```
 
 **Validation**:
+
 - Must not be null or empty
 - Must not contain spaces or special characters
 - Should match `IPlugin.Id` property
 
 **Location**: Used for:
+
 - Dependency resolution
 - Service registry metadata
 - Logger category naming
@@ -124,16 +128,19 @@ Unique plugin identifier.
 Human-readable plugin display name.
 
 **Constraints**:
+
 - Any valid string
 - No length limit (reasonable limit: 50 chars)
 
 **Examples**:
+
 ```json
 "name": "Inventory System"
 "name": "Advanced Combat Mechanics"
 ```
 
 **Location**: Used for:
+
 - Log messages
 - UI display (if applicable)
 - Error reporting
@@ -147,16 +154,19 @@ Plugin version (semantic versioning recommended).
 **Format**: `MAJOR.MINOR.PATCH` (e.g., `1.0.0`)
 
 **Constraints**:
+
 - Must not be null or empty
 - Semantic versioning recommended but not enforced
 
 **Examples**:
+
 ```json
 "version": "1.0.0"
 "version": "2.1.3-beta"
 ```
 
 **Location**: Used for:
+
 - Dependency version resolution
 - Service metadata
 - Compatibility checking
@@ -170,9 +180,11 @@ Profile-specific entry points for multi-targeting.
 **Format**: `{ "profile": "assembly,type" }`
 
 **Required profiles**:
+
 - `dotnet.console` - Terminal.Gui console application
 
 **Optional profiles**:
+
 - `dotnet.sadconsole` - SadConsole UI
 - `unity` - Unity game engine (future)
 
@@ -181,6 +193,7 @@ Profile-specific entry points for multi-targeting.
 **Examples**:
 
 Single profile:
+
 ```json
 "entryPoint": {
   "dotnet.console": "LablabBean.Plugins.Inventory.dll,LablabBean.Plugins.Inventory.InventoryPlugin"
@@ -188,6 +201,7 @@ Single profile:
 ```
 
 Multi-profile:
+
 ```json
 "entryPoint": {
   "dotnet.console": "MyPlugin.dll,MyPlugin.ConsolePlugin",
@@ -196,12 +210,14 @@ Multi-profile:
 ```
 
 **Validation**:
+
 - At least one profile required
 - Assembly file must exist in plugin directory
 - Type must implement `IPlugin` interface
 - Format: `{assembly},{namespace}.{className}`
 
 **Active profile**: Set in `appsettings.json`:
+
 ```json
 {
   "Plugins": {
@@ -219,6 +235,7 @@ Multi-profile:
 Brief description of plugin functionality.
 
 **Example**:
+
 ```json
 "description": "Provides inventory management for items, equipment, and resources"
 ```
@@ -232,6 +249,7 @@ Brief description of plugin functionality.
 Plugin author name or organization.
 
 **Example**:
+
 ```json
 "author": "Lablab Bean Team"
 "author": "John Doe <john@example.com>"
@@ -244,6 +262,7 @@ Plugin author name or organization.
 SPDX license identifier or custom license.
 
 **Examples**:
+
 ```json
 "license": "MIT"
 "license": "Apache-2.0"
@@ -257,6 +276,7 @@ SPDX license identifier or custom license.
 Plugin homepage or documentation URL.
 
 **Example**:
+
 ```json
 "homepage": "https://github.com/user/plugin"
 ```
@@ -268,6 +288,7 @@ Plugin homepage or documentation URL.
 Source repository URL.
 
 **Example**:
+
 ```json
 "repository": "https://github.com/user/plugin.git"
 ```
@@ -279,6 +300,7 @@ Source repository URL.
 Searchable tags for plugin categorization.
 
 **Examples**:
+
 ```json
 "tags": ["inventory", "items", "equipment"]
 "tags": ["combat", "gameplay", "mechanics"]
@@ -293,6 +315,7 @@ Plugin dependencies (loaded before this plugin).
 **Default**: `[]` (no dependencies)
 
 **Format**:
+
 ```json
 "dependencies": [
   {
@@ -304,11 +327,13 @@ Plugin dependencies (loaded before this plugin).
 ```
 
 **Fields**:
+
 - `id` (string, required) - Dependency plugin ID
 - `versionRange` (string, optional) - Semantic version range (default: `*`)
 - `optional` (boolean, optional) - Allow missing dependency (default: `false`)
 
 **Version range syntax**:
+
 - `*` - Any version
 - `1.0.0` - Exact version
 - `>=1.0.0` - Minimum version
@@ -319,6 +344,7 @@ Plugin dependencies (loaded before this plugin).
 **Examples**:
 
 Required dependency:
+
 ```json
 "dependencies": [
   {
@@ -330,6 +356,7 @@ Required dependency:
 ```
 
 Optional dependency:
+
 ```json
 "dependencies": [
   {
@@ -340,6 +367,7 @@ Optional dependency:
 ```
 
 **Validation**:
+
 - Circular dependencies detected and rejected
 - Missing required dependencies prevent plugin load
 - Load order: dependencies loaded first (topological sort)
@@ -355,6 +383,7 @@ Plugin capabilities for discovery and filtering.
 **Purpose**: Searchable metadata for plugin marketplace/catalog
 
 **Examples**:
+
 ```json
 "capabilities": ["gameplay", "inventory"]
 "capabilities": ["ui", "rendering", "terminal"]
@@ -362,6 +391,7 @@ Plugin capabilities for discovery and filtering.
 ```
 
 **Common capability tags**:
+
 - `gameplay` - Game mechanics
 - `ui` - User interface
 - `rendering` - Graphics/rendering
@@ -385,12 +415,14 @@ Plugin load priority. Higher = loaded later.
 **Purpose**: Determines load order for plugins with same dependency level
 
 **Guidelines**:
+
 - Core framework plugins: 1000+
 - Game logic plugins: 100-500
 - UI plugins: 50-99
 - Test/demo plugins: 0-49
 
 **Examples**:
+
 ```json
 "priority": 100  // Default
 "priority": 200  // Load after default plugins
@@ -406,6 +438,7 @@ Plugin load priority. Higher = loaded later.
 Security configuration (future enhancement).
 
 **Format**:
+
 ```json
 "security": {
   "permissions": ["FileSystem.Read", "Network.Connect"],
@@ -414,6 +447,7 @@ Security configuration (future enhancement).
 ```
 
 **Fields**:
+
 - `permissions` (array of strings) - Required permissions
 - `sandboxed` (boolean) - Run in restricted sandbox
 
@@ -428,6 +462,7 @@ Custom metadata for plugin-specific configuration.
 **Format**: Key-value pairs (string keys, any JSON value)
 
 **Examples**:
+
 ```json
 "metadata": {
   "minGameVersion": "1.0.0",
@@ -462,12 +497,14 @@ The plugin loader validates manifests during discovery phase. Validation failure
 ```
 
 **Checks**:
+
 1. `Assembly.dll` exists in plugin directory
 2. Format is `{assembly},{fullTypeName}`
 3. Type exists in assembly (checked during load)
 4. Type implements `IPlugin` interface
 
 **Error examples**:
+
 - ❌ `Assembly.dll` - Missing type name
 - ❌ `Namespace.Type` - Missing assembly name
 - ❌ `Assembly.dll,Type` - Type name not fully qualified
@@ -486,12 +523,14 @@ The plugin loader validates manifests during discovery phase. Validation failure
 ```
 
 **Checks**:
+
 1. No circular dependencies (A → B → A)
 2. Required dependencies exist and loaded
 3. Version ranges satisfied
 4. Load order respects dependency graph
 
 **Error examples**:
+
 - ❌ Plugin A depends on B, B depends on A (circular)
 - ❌ Plugin A requires B, but B not installed (missing required dependency)
 - ❌ Plugin A requires B v2.0, but B v1.0 installed (version mismatch)
@@ -615,6 +654,7 @@ dotnet/plugins/MyPlugin/
 After build, `plugin.json` must be copied to output directory:
 
 **.csproj configuration**:
+
 ```xml
 <ItemGroup>
   <None Update="plugin.json">
@@ -624,6 +664,7 @@ After build, `plugin.json` must be copied to output directory:
 ```
 
 **Output structure**:
+
 ```
 plugins/my-plugin/
 ├── MyPlugin.dll
@@ -638,6 +679,7 @@ plugins/my-plugin/
 The plugin loader discovers plugins using this algorithm:
 
 1. **Scan paths**: Read `Plugins:Paths` from `appsettings.json`
+
    ```json
    {
      "Plugins": {
@@ -682,6 +724,7 @@ Plugin manifests integrate with host configuration:
 **Plugin-specific config**: Use plugin ID as section name (`Inventory`).
 
 **Access in plugin**:
+
 ```csharp
 var config = context.Configuration.GetSection("Inventory");
 var maxItems = config.GetValue<int>("MaxItems", 100);
@@ -706,6 +749,7 @@ var maxItems = config.GetValue<int>("MaxItems", 100);
 ### Debugging Tips
 
 **Enable verbose logging**:
+
 ```json
 {
   "Serilog": {
@@ -719,6 +763,7 @@ var maxItems = config.GetValue<int>("MaxItems", 100);
 ```
 
 **Check discovery output**:
+
 ```
 [Debug] Discovered plugin manifest: plugins/inventory/plugin.json
 [Debug] Validating plugin: inventory v1.0.0

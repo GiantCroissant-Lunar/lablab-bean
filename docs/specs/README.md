@@ -18,6 +18,7 @@ This directory contains formal specifications for all major systems and features
 ## Purpose
 
 Specifications serve as:
+
 - 📋 **Single source of truth** for feature behavior
 - 📚 **Documentation** for developers and maintainers
 - ✅ **Acceptance criteria** for feature completion
@@ -36,9 +37,11 @@ specs/
 ## Specification Template
 
 All specifications should follow the standard format defined in:
+
 - `templates/docs/spec-template.tmpl`
 
 Key sections include:
+
 - Overview
 - Requirements (Functional & Non-Functional)
 - Architecture & Components
@@ -92,6 +95,7 @@ code docs/specs/feature-name.md
 ## Version Numbering
 
 Specifications follow the project version numbering:
+
 - **Major.Minor.Patch** (e.g., 0.0.2)
 - Version should match when feature was implemented
 - Update version when significant changes occur
@@ -112,21 +116,25 @@ task check
 ## Integration with Development
 
 ### During Planning
+
 1. Create specification before implementation
 2. Review with team
 3. Get approval before coding
 
 ### During Implementation
+
 1. Reference specification for requirements
 2. Update specification if design changes
 3. Check off acceptance criteria as completed
 
 ### During Code Review
+
 1. Verify implementation matches specification
 2. Check all requirements are met
 3. Update specification if deviations are approved
 
 ### During Testing
+
 1. Use test cases from specification
 2. Verify acceptance criteria
 3. Document any issues found
@@ -134,6 +142,7 @@ task check
 ## Linking Specifications
 
 ### In Code Comments
+
 ```csharp
 // See specification: docs/specs/dungeon-generation-system.md
 // Implements: REQ-003 (L-shaped corridors)
@@ -144,12 +153,14 @@ public void CreateCorridor(Point start, Point end)
 ```
 
 ### In Documentation
+
 ```markdown
-Refer to [Dungeon Generation Specification](./specs/dungeon-generation-system.md) 
+Refer to [Dungeon Generation Specification](./specs/dungeon-generation-system.md)
 for detailed algorithm description.
 ```
 
 ### In Commit Messages
+
 ```
 feat: implement FOV calculation
 
@@ -160,6 +171,7 @@ Radius set to 20 tiles as specified
 ## Templates Available
 
 Located in `templates/docs/`:
+
 - `spec-template.tmpl` - Standard specification template
 
 ## Best Practices

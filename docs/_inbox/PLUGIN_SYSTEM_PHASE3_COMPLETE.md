@@ -21,12 +21,14 @@ Phase 3 successfully integrated the plugin system into both Console and Windows 
 
 **Status**: ✅ **COMPLETE**
 
-#### Changes Made:
+#### Changes Made
 
 **LablabBean.Console.csproj**:
+
 - Added reference to `LablabBean.Plugins.Core`
 
 **Program.cs**:
+
 ```csharp
 using LablabBean.Plugins.Core;
 
@@ -35,6 +37,7 @@ services.AddPluginSystem(context.Configuration);
 ```
 
 **appsettings.json**:
+
 ```json
 {
   "Serilog": {
@@ -63,12 +66,14 @@ services.AddPluginSystem(context.Configuration);
 
 **Status**: ⚠️ **PARTIALLY COMPLETE** (Infrastructure ready, but Windows app has pre-existing compilation errors)
 
-#### Changes Made:
+#### Changes Made
 
 **LablabBean.Windows.csproj**:
+
 - Added reference to `LablabBean.Plugins.Core`
 
 **Program.cs**:
+
 ```csharp
 using LablabBean.Plugins.Core;
 
@@ -80,6 +85,7 @@ services.AddPluginSystem(configuration);
 ```
 
 **appsettings.json**:
+
 ```json
 {
   "Serilog": {
@@ -102,8 +108,9 @@ services.AddPluginSystem(configuration);
 
 **Integration Challenges**:
 The Windows app has 21 pre-existing compilation errors unrelated to plugin integration:
+
 - SadConsole API compatibility issues (`Cursor.Print` signature changes)
-- MonoGame framework reference issues  
+- MonoGame framework reference issues
 - `Game.Services` property access issues
 
 **Resolution**: Plugin system infrastructure is in place. When Windows app compilation errors are fixed, plugins will work automatically.
@@ -113,10 +120,12 @@ The Windows app has 21 pre-existing compilation errors unrelated to plugin integ
 ### Plugin Paths
 
 Both hosts are configured with dual plugin paths:
+
 1. `plugins` - Relative to executable directory
 2. `../../../plugins` - Project root plugins directory
 
 This allows plugins to work in both:
+
 - Development builds (from project root)
 - Release builds (from bin/Release/net8.0/)
 
@@ -126,6 +135,7 @@ This allows plugins to work in both:
 - **Windows**: `"Profile": "dotnet.sadconsole"`
 
 Plugins specify entry points per profile in their `plugin.json`:
+
 ```json
 {
   "entryPoint": {
@@ -165,6 +175,7 @@ dotnet run --project .\dotnet\console-app\LablabBean.Console
 ### Validation Test
 
 Using the standalone test harness (already validated in Phase 5):
+
 ```bash
 dotnet run --project .\dotnet\examples\PluginTestHarness
 ```
@@ -217,13 +228,15 @@ pluginService.StopAsync() → Manual stop
 ## What's Working
 
 ### ✅ Console App
+
 - Plugin system reference added
 - AddPluginSystem() called in startup
 - Configuration complete with logging and plugin paths
 - Builds successfully
 - Ready to load plugins at runtime
 
-### ⚠️ Windows App  
+### ⚠️ Windows App
+
 - Plugin system reference added
 - AddPluginSystem() called in startup (commented for now)
 - Configuration complete
@@ -237,6 +250,7 @@ pluginService.StopAsync() → Manual stop
 **Status**: Pre-existing, unrelated to plugin integration
 
 **Errors** (21 total):
+
 - `CS1061`: 'Game' missing 'Services', 'WindowTitle', 'Exit' definitions
 - `CS7036`: Missing 'templateEffect' parameter in Cursor.Print calls
 - `CS0012`: Missing MonoGame.Framework reference
@@ -250,6 +264,7 @@ pluginService.StopAsync() → Manual stop
 ## Files Changed
 
 ### Modified Files (6)
+
 1. `dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj`
    - Added Plugins.Core reference
 2. `dotnet/console-app/LablabBean.Console/Program.cs`
@@ -268,7 +283,9 @@ pluginService.StopAsync() → Manual stop
    - Added logging override for LablabBean.Plugins
 
 ### No Breaking Changes
+
 All changes are **additive only**:
+
 - No existing code removed
 - No existing functionality broken
 - Plugin system runs as background service
@@ -312,26 +329,32 @@ services.AddPluginSystem(configuration);
 ## Integration Patterns
 
 ### Pattern 1: Generic Host (Recommended)
+
 **Used by**: Console app, Test harness
 
 **Pros**:
+
 - Automatic lifecycle management
 - Clean startup/shutdown
 - Standard .NET pattern
 - No manual orchestration
 
 **Cons**:
+
 - Requires Generic Host setup
 
 ### Pattern 2: Manual DI
+
 **Used by**: Windows app (when fixed)
 
 **Pros**:
+
 - Works with any DI container
 - No Generic Host required
 - Explicit control
 
 **Cons**:
+
 - Manual Start/StopAsync calls
 - Must handle cancellation tokens
 - More boilerplate
@@ -339,24 +362,29 @@ services.AddPluginSystem(configuration);
 ## Next Steps
 
 ### Immediate
+
 - [x] Console app integration - **DONE**
 - [x] Windows app infrastructure - **DONE**
 - [ ] Test Console app with demo plugin - **READY** (requires running console app)
 - [ ] Fix Windows app compilation errors - **BLOCKED** (separate task)
 
 ### Phase 4: Observability
+
 **Goal**: Add monitoring and diagnostics
 
 **Tasks**:
+
 1. Plugin load metrics (count, timing, success rate)
 2. Memory tracking per plugin
 3. Health checks
 4. Admin API for plugin management
 
 ### Phase 6: Documentation
+
 **Goal**: Complete developer documentation
 
 **Tasks**:
+
 1. Host integration guide (expand this doc)
 2. Plugin API reference
 3. Troubleshooting guide
@@ -365,17 +393,20 @@ services.AddPluginSystem(configuration);
 ## Metrics
 
 ### Development Time
+
 - **Estimated**: 2-3 hours
 - **Actual**: 1 hour
 - **Efficiency**: 150% (faster than estimated)
 
 ### Code Changes
+
 - **Files Modified**: 6
 - **Lines Added**: ~100
 - **Lines Removed**: 0
 - **Breaking Changes**: 0
 
 ### Build Status
+
 - **Console App**: ✅ Builds successfully
 - **Windows App**: ❌ Pre-existing errors (unrelated)
 - **Test Harness**: ✅ Validates plugin loading

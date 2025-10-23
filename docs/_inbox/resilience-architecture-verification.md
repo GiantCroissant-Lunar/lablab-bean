@@ -1,11 +1,13 @@
 # RESILIENCE ARCHITECTURE VERIFICATION - FINAL REPORT
 
 ## SUMMARY
+
 Architecture is **85% correct** - Core tiers are properly implemented, but missing convenience APIs and generator output verification needed.
 
 ## ✅ FULLY VERIFIED & CORRECT
 
 ### Tier 1: Contracts ✅
+
 - **Interface**: LablabBean.Contracts.Resilience.Services.IService
 - **Location**: framework/LablabBean.Contracts.Resilience/Services/IService.cs
 - **Type Safety**: Single definition, no duplicates
@@ -13,6 +15,7 @@ Architecture is **85% correct** - Core tiers are properly implemented, but missi
 - **Supporting Types**: All in LablabBean.Contracts.Resilience.*
 
 ### Tier 2: Proxy ✅ (Structure)
+
 - **Class**: LablabBean.Contracts.Resilience.Services.Proxy.Service
 - **Pattern**: Partial class with [RealizeService(typeof(IService))]
 - **Constructor**: Has IRegistry _registry field
@@ -20,6 +23,7 @@ Architecture is **85% correct** - Core tiers are properly implemented, but missi
 - **No Manual Implementation**: Correct (all generated)
 
 ### Tier 3: Plugin ✅
+
 - **Implementation**: ResilienceService implements IService
 - **Registration**: context.Registry.Register<IService>(..., Priority=100)
 - **No DI Binding**: Correct - only registry registration
@@ -27,6 +31,7 @@ Architecture is **85% correct** - Core tiers are properly implemented, but missi
 - **Namespace**: LablabBean.Plugins.Resilience.Polly.Services
 
 ### Core Infrastructure ✅
+
 - **IRegistry**: Exists in Plugins.Contracts
 - **ServiceRegistry**: Singleton in default ALC
 - **Selection Mode**: HighestPriority default
@@ -34,6 +39,7 @@ Architecture is **85% correct** - Core tiers are properly implemented, but missi
 - **ALC Isolation**: Correct assembly references
 
 ### Source Generator Setup ✅
+
 - **Project**: LablabBean.SourceGenerators.Proxy
 - **Target**: netstandard2.0
 - **Reference**: OutputItemType="Analyzer" in csproj
@@ -42,6 +48,7 @@ Architecture is **85% correct** - Core tiers are properly implemented, but missi
 ## ⚠️ ISSUES & GAPS
 
 ### 1. ❌ CRITICAL: Missing DI Registration Extensions
+
 **Impact**: High - No easy way to register proxy
 
 **Missing Files**:
@@ -51,12 +58,14 @@ framework/LablabBean.Contracts.Resilience/Extensions/
 \\\
 
 **Required Methods**:
+
 - \AddResilienceProxy()\ - Register proxy for tiered mode
 - \AddResilienceService()\ - Direct registration for host-only mode
 
 **Risk**: Manual registration = potential double-registration
 
 ### 2. ⚠️ Generator Output Not Verified
+
 **Status**: Unknown if proxy implementation is being generated
 
 **Expected Location**:
@@ -68,18 +77,22 @@ obj/Debug/net8.0/generated/LablabBean.SourceGenerators.Proxy/
 **Actual**: No generated files found (only GlobalUsings)
 
 **Possible Causes**:
+
 - Generator not running
 - EmitCompilerGeneratedFiles = false
 - Generator error (silent)
 
 ### 3. ⚠️ Provider Registry (Tier 4) Not Found
+
 **Status**: Providers exist but no registry pattern
 
 **Found**:
+
 - PollyCircuitBreaker.cs ✅
 - PollyRetryPolicy.cs ✅
 
 **Missing**:
+
 - IResiliencePolicyProviderRegistry
 - Provider registration in plugin
 - Pipeline merge logic
@@ -127,6 +140,7 @@ obj/Debug/net8.0/generated/LablabBean.SourceGenerators.Proxy/
 ## 🎯 REQUIRED ACTIONS (Priority Order)
 
 ### 1. HIGH: Create DI Extension Methods (30 min)
+
 \\\csharp
 // File: framework/LablabBean.Contracts.Resilience/Extensions/ServiceCollectionExtensions.cs
 namespace LablabBean.Contracts.Resilience.Extensions;
@@ -150,6 +164,7 @@ public static class ServiceCollectionExtensions
 \\\
 
 ### 2. MEDIUM: Verify Proxy Generation (15 min)
+
 \\\ash
 cd dotnet/framework/LablabBean.Contracts.Resilience
 dotnet build /p:EmitCompilerGeneratedFiles=true
@@ -157,12 +172,14 @@ ls obj/Debug/net8.0/generated/
 \\\
 
 ### 3. LOW: Test End-to-End (30 min)
+
 - Add AddResilienceProxy() to Program.cs
 - Add AddPluginSystem() to load plugin
 - Verify plugin registration works
 - Check priority selection
 
 ### 4. OPTIONAL: Provider Registry (2-4 hrs)
+
 - Define IResiliencePolicyProviderRegistry
 - Implement provider pattern
 - Add to plugin initialization
@@ -172,17 +189,20 @@ ls obj/Debug/net8.0/generated/
 **Status: STRUCTURALLY SOUND** ✅
 
 **Core Design**: 9/10
+
 - Tier 1-3 correctly implemented
 - Type safety preserved
 - ALC isolation working
 - Registry pattern correct
 
 **Implementation**: 6/10
+
 - Missing convenience APIs
 - Generator output unverified
 - No integration tests visible
 
 **Risk Level**: LOW
+
 - No architectural problems
 - Missing features, not broken design
 - Can be completed incrementally
@@ -193,6 +213,7 @@ Your original spec said:
 > "Architecture matches the Tier 1–4 pattern and supports the plugin route."
 
 **Actual Result**:
+
 - Tier 1 (Contracts): ✅ Complete
 - Tier 2 (Proxy): ✅ Structure correct, ⚠️ DI registration missing
 - Tier 3 (Plugin): ✅ Complete

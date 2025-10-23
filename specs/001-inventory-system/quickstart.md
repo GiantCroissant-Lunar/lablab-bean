@@ -30,24 +30,24 @@ using LablabBean.Game.Core.Components;
 
 // Create healing potion entity
 var potionEntity = world.Create(
-    new Item 
-    { 
-        Name = "Healing Potion", 
-        Glyph = '!', 
+    new Item
+    {
+        Name = "Healing Potion",
+        Glyph = '!',
         Description = "Restores 30 HP",
         Type = ItemType.Consumable,
         Weight = 1
     },
-    new Consumable 
-    { 
-        Effect = ConsumableEffect.RestoreHealth, 
+    new Consumable
+    {
+        Effect = ConsumableEffect.RestoreHealth,
         EffectValue = 30,
         UsableOutOfCombat = true
     },
-    new Stackable 
-    { 
-        Count = 1, 
-        MaxStack = 99 
+    new Stackable
+    {
+        Count = 1,
+        MaxStack = 99
     }
 );
 ```
@@ -57,18 +57,18 @@ var potionEntity = world.Create(
 ```csharp
 // Create iron sword entity
 var swordEntity = world.Create(
-    new Item 
-    { 
-        Name = "Iron Sword", 
-        Glyph = '/', 
+    new Item
+    {
+        Name = "Iron Sword",
+        Glyph = '/',
         Description = "+5 Attack",
         Type = ItemType.Weapon,
         Weight = 5
     },
-    new Equippable 
-    { 
-        Slot = EquipmentSlot.MainHand, 
-        AttackBonus = 5, 
+    new Equippable
+    {
+        Slot = EquipmentSlot.MainHand,
+        AttackBonus = 5,
         DefenseBonus = 0,
         SpeedModifier = 0,
         TwoHanded = false
@@ -81,18 +81,18 @@ var swordEntity = world.Create(
 ```csharp
 // Create leather armor entity
 var armorEntity = world.Create(
-    new Item 
-    { 
-        Name = "Leather Armor", 
-        Glyph = '[', 
+    new Item
+    {
+        Name = "Leather Armor",
+        Glyph = '[',
         Description = "+3 Defense",
         Type = ItemType.Armor,
         Weight = 10
     },
-    new Equippable 
-    { 
-        Slot = EquipmentSlot.Chest, 
-        AttackBonus = 0, 
+    new Equippable
+    {
+        Slot = EquipmentSlot.Chest,
+        AttackBonus = 0,
         DefenseBonus = 3,
         SpeedModifier = 0,
         TwoHanded = false
@@ -157,7 +157,7 @@ if (pickupableItems.Count > 0)
 {
     var itemToPickup = pickupableItems[0];
     var result = inventorySystem.PickupItem(playerEntity, itemToPickup);
-    
+
     if (result.Success)
     {
         Console.WriteLine(result.Message); // "Picked up Healing Potion"
@@ -183,11 +183,11 @@ if (pickupableItems.Count > 1)
         var item = world.Get<Item>(pickupableItems[i]);
         Console.WriteLine($"{i + 1}. {item.Name}");
     }
-    
+
     // Player selects item by number
     int selection = GetPlayerSelection();
     var selectedItem = pickupableItems[selection - 1];
-    
+
     var result = inventorySystem.PickupItem(playerEntity, selectedItem);
     Console.WriteLine(result.Message);
 }
@@ -220,15 +220,15 @@ if (consumables.Count > 0)
 {
     var potion = consumables[0]; // First consumable
     var result = inventorySystem.UseConsumable(playerEntity, potion);
-    
+
     if (result.Success)
     {
-        Console.WriteLine(result.Message); 
+        Console.WriteLine(result.Message);
         // "You drink the Healing Potion and recover 30 HP."
     }
     else
     {
-        Console.WriteLine(result.Message); 
+        Console.WriteLine(result.Message);
         // "Already at full health"
     }
 }
@@ -263,18 +263,18 @@ var result = inventorySystem.UseConsumable(playerEntity, potionEntity);
 var equippables = inventorySystem.GetEquippables(playerEntity);
 
 // Find iron sword in inventory
-var sword = equippables.FirstOrDefault(e => 
+var sword = equippables.FirstOrDefault(e =>
     world.Get<Item>(e).Name == "Iron Sword");
 
 if (sword != default)
 {
     var result = inventorySystem.EquipItem(playerEntity, sword);
-    
+
     if (result.Success)
     {
         Console.WriteLine(result.Message);
         // "Equipped Iron Sword. ATK +5"
-        
+
         if (result.StatChanges.HasValue)
         {
             Console.WriteLine(result.StatChanges.Value.ToString());
@@ -300,7 +300,7 @@ if (result.Success)
 
 ```csharp
 var equippedWeapon = inventorySystem.GetEquippedItem(
-    playerEntity, 
+    playerEntity,
     EquipmentSlot.MainHand
 );
 
@@ -328,7 +328,7 @@ Console.WriteLine($"Inventory ({inventoryItems.Count}/20):");
 foreach (var itemEntity in inventoryItems)
 {
     var item = world.Get<Item>(itemEntity);
-    
+
     // Check if stackable
     if (world.Has<Stackable>(itemEntity))
     {
@@ -339,7 +339,7 @@ foreach (var itemEntity in inventoryItems)
     {
         Console.WriteLine($"- {item.Name}");
     }
-    
+
     // Check if equipped
     if (inventorySystem.IsEquipped(playerEntity, itemEntity))
     {
@@ -382,7 +382,7 @@ public class HudService
 {
     private FrameView _inventoryFrame;
     private ListView _inventoryList;
-    
+
     public void CreateInventoryPanel(View parent)
     {
         _inventoryFrame = new FrameView("Inventory")
@@ -392,7 +392,7 @@ public class HudService
             Width = 30,
             Height = 15
         };
-        
+
         _inventoryList = new ListView
         {
             X = 0,
@@ -400,39 +400,39 @@ public class HudService
             Width = Dim.Fill(),
             Height = Dim.Fill()
         };
-        
+
         _inventoryFrame.Add(_inventoryList);
         parent.Add(_inventoryFrame);
     }
-    
+
     public void UpdateInventory(Entity playerEntity, InventorySystem inventorySystem)
     {
         var items = inventorySystem.GetInventoryItems(playerEntity);
         var displayItems = new List<string>();
-        
+
         foreach (var itemEntity in items)
         {
             var item = _world.Get<Item>(itemEntity);
             var display = item.Name;
-            
+
             // Add stack count
             if (_world.Has<Stackable>(itemEntity))
             {
                 var stackable = _world.Get<Stackable>(itemEntity);
                 display += $" ({stackable.Count})";
             }
-            
+
             // Add equipped indicator
             if (inventorySystem.IsEquipped(playerEntity, itemEntity))
             {
                 display += " [E]";
             }
-            
+
             displayItems.Add(display);
         }
-        
+
         _inventoryList.SetSource(displayItems);
-        
+
         // Update title with count
         var inventory = _world.Get<Inventory>(playerEntity);
         _inventoryFrame.Title = $"Inventory ({inventory.CurrentCount}/{inventory.MaxCapacity})";
@@ -447,7 +447,7 @@ public class HudService
 private void OnPickupItem()
 {
     var result = _inventorySystem.PickupItem(_playerEntity, selectedItem);
-    
+
     if (result.Success)
     {
         _hudService.UpdateInventory(_playerEntity, _inventorySystem);
@@ -469,26 +469,26 @@ public void PickupItem_AddsToInventory()
     // Arrange
     var world = World.Create();
     var inventorySystem = new InventorySystem(world);
-    
+
     var player = world.Create(
         new Position { X = 5, Y = 5 },
         new Inventory { Items = new List<EntityReference>(), MaxCapacity = 20 },
         new EquipmentSlots { Slots = EquipmentSlots.CreateEmpty().Slots }
     );
-    
+
     var item = world.Create(
         new Item { Name = "Test Potion", Glyph = '!', Type = ItemType.Consumable },
         new Position { X = 5, Y = 6 }, // Adjacent to player
         new Consumable { Effect = ConsumableEffect.RestoreHealth, EffectValue = 30 }
     );
-    
+
     // Act
     var result = inventorySystem.PickupItem(player, item);
-    
+
     // Assert
     Assert.True(result.Success);
     Assert.Contains("Picked up", result.Message);
-    
+
     var inventory = world.Get<Inventory>(player);
     Assert.Single(inventory.Items);
     Assert.False(world.Has<Position>(item)); // Position removed
@@ -504,24 +504,24 @@ public void UseHealingPotion_RestoresHealth()
     // Arrange
     var world = World.Create();
     var inventorySystem = new InventorySystem(world);
-    
+
     var player = world.Create(
         new Health { Current = 50, Maximum = 100 },
         new Inventory { Items = new List<EntityReference>(), MaxCapacity = 20 }
     );
-    
+
     var potion = world.Create(
         new Item { Name = "Healing Potion", Glyph = '!', Type = ItemType.Consumable },
         new Consumable { Effect = ConsumableEffect.RestoreHealth, EffectValue = 30 },
         new Stackable { Count = 1, MaxStack = 99 }
     );
-    
+
     var inventory = world.Get<Inventory>(player);
     inventory.Items.Add(potion.Reference());
-    
+
     // Act
     var result = inventorySystem.UseConsumable(player, potion);
-    
+
     // Assert
     Assert.True(result.Success);
     var health = world.Get<Health>(player);
@@ -572,14 +572,14 @@ public Entity? ShowItemSelectionMenu(List<Entity> items, string prompt)
 {
     if (items.Count == 0) return null;
     if (items.Count == 1) return items[0];
-    
+
     Console.WriteLine(prompt);
     for (int i = 0; i < items.Count; i++)
     {
         var item = world.Get<Item>(items[i]);
         Console.WriteLine($"{i + 1}. {item.Name}");
     }
-    
+
     int selection = GetPlayerInput(1, items.Count);
     return items[selection - 1];
 }
@@ -600,7 +600,7 @@ if (!result.Success && result.Message.Contains("full"))
             inventorySystem.GetInventoryItems(playerEntity),
             "Select item to drop:"
         );
-        
+
         if (itemToDrop.HasValue)
         {
             inventorySystem.DropItem(playerEntity, itemToDrop.Value);
@@ -618,19 +618,19 @@ public void ShowEquipmentComparison(Entity playerEntity, Entity newItem)
 {
     var equippable = world.Get<Equippable>(newItem);
     var currentItem = inventorySystem.GetEquippedItem(playerEntity, equippable.Slot);
-    
+
     Console.WriteLine($"New: {world.Get<Item>(newItem).Name}");
     Console.WriteLine($"  ATK: {equippable.AttackBonus}, DEF: {equippable.DefenseBonus}");
-    
+
     if (currentItem.HasValue)
     {
         var currentEquippable = world.Get<Equippable>(currentItem.Value);
         Console.WriteLine($"Current: {world.Get<Item>(currentItem.Value).Name}");
         Console.WriteLine($"  ATK: {currentEquippable.AttackBonus}, DEF: {currentEquippable.DefenseBonus}");
-        
+
         int atkDiff = equippable.AttackBonus - currentEquippable.AttackBonus;
         int defDiff = equippable.DefenseBonus - currentEquippable.DefenseBonus;
-        
+
         Console.WriteLine($"Change: ATK {(atkDiff >= 0 ? "+" : "")}{atkDiff}, DEF {(defDiff >= 0 ? "+" : "")}{defDiff}");
     }
 }

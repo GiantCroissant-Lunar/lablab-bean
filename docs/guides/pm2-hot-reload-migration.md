@@ -19,6 +19,7 @@ This document explains the changes made to support local PM2 and hot reload deve
 ### 1. PM2 is Now Local (Not Global)
 
 **Before:**
+
 ```bash
 # Required global PM2 installation
 npm install -g pm2
@@ -26,6 +27,7 @@ pm2 start ecosystem.config.js
 ```
 
 **After:**
+
 ```bash
 # PM2 is a local dependency in website/package.json
 cd website
@@ -37,12 +39,14 @@ task dev-stack
 ### 2. Two Build Modes
 
 **Development Mode** (New):
+
 - Astro dev server with hot reload
 - TypeScript watch mode for PTY
 - .NET console app in development mode
 - Fast iteration, no bundling
 
 **Production Mode** (Existing):
+
 - Bundled Astro app
 - Compiled artifacts
 - Versioned releases
@@ -51,11 +55,13 @@ task dev-stack
 ### 3. New Configuration Files
 
 **Created:**
+
 - `ecosystem.development.config.js` - Development stack configuration
 - `docs/DEVELOPMENT.md` - Comprehensive development guide
 - `QUICKSTART-DEV.md` - Quick start for development mode
 
 **Modified:**
+
 - `website/package.json` - Added local PM2 scripts
 - `Taskfile.yml` - Added development tasks
 - `README.md` - Updated with development workflow
@@ -65,22 +71,25 @@ task dev-stack
 ### If You Were Using Global PM2
 
 1. **Stop existing PM2 processes:**
+
    ```bash
    pm2 stop all
    pm2 delete all
    ```
 
 2. **PM2 is already installed locally** (in `website/node_modules`):
+
    ```bash
    cd website
    pnpm install  # If needed
    ```
 
 3. **Use new commands:**
+
    ```bash
    # Development
    task dev-stack
-   
+
    # Production
    task stack-run
    ```
@@ -88,6 +97,7 @@ task dev-stack
 ### If You Were Running Components Manually
 
 **Before:**
+
 ```bash
 # Terminal 1
 cd website
@@ -99,6 +109,7 @@ dotnet run
 ```
 
 **After:**
+
 ```bash
 # Single command
 task dev-stack
@@ -135,6 +146,7 @@ task dev-logs  # View logs
 If you have global PM2 installed, it won't be used. All commands now use the local PM2 installation.
 
 **To uninstall global PM2** (optional):
+
 ```bash
 npm uninstall -g pm2
 ```
@@ -158,21 +170,25 @@ Some task commands now behave differently:
 ## Benefits of New Approach
 
 ### 1. No Global Dependencies
+
 - PM2 is project-local
 - Easier onboarding for new developers
 - No version conflicts
 
 ### 2. Hot Reload Development
+
 - Instant Astro updates
 - Auto-recompile TypeScript
 - Faster development cycle
 
 ### 3. Better Process Management
+
 - All processes in one place
 - Easy log viewing
 - Unified status checking
 
 ### 4. Separate Dev/Prod Workflows
+
 - Development: Fast iteration
 - Production: Versioned artifacts
 - Clear separation of concerns
@@ -182,6 +198,7 @@ Some task commands now behave differently:
 ### "pm2: command not found"
 
 **Solution:** Use task commands or pnpm:
+
 ```bash
 # Instead of: pm2 status
 task dev-status
@@ -191,6 +208,7 @@ task dev-status
 ### "Port 3000 already in use"
 
 **Solution:** Stop all PM2 processes:
+
 ```bash
 task dev-stop
 task stack-stop
@@ -199,6 +217,7 @@ task stack-stop
 ### "Processes not starting"
 
 **Solution:** Clean PM2 state:
+
 ```bash
 cd website
 pnpm pm2 delete all
@@ -209,6 +228,7 @@ task dev-stack
 ### "Hot reload not working"
 
 **Solution:** Restart development stack:
+
 ```bash
 task dev-restart
 ```
@@ -218,16 +238,18 @@ task dev-restart
 If you need to revert to the old workflow:
 
 1. **Use old ecosystem config:**
+
    ```bash
    cd website
    pnpm pm2 start ecosystem.config.js
    ```
 
 2. **Or run components manually:**
+
    ```bash
    # Terminal 1
    cd website && pnpm dev
-   
+
    # Terminal 2
    cd dotnet/console-app/LablabBean.Console && dotnet run
    ```
@@ -240,10 +262,10 @@ If you need to revert to the old workflow:
 
 ## Summary
 
-✅ **PM2 is now local** - No global installation needed  
-✅ **Hot reload development** - Instant updates for Astro  
-✅ **Two build modes** - Development (fast) and Production (bundled)  
-✅ **Better task commands** - `task dev-stack` for development  
-✅ **Comprehensive docs** - Guides for both workflows  
+✅ **PM2 is now local** - No global installation needed
+✅ **Hot reload development** - Instant updates for Astro
+✅ **Two build modes** - Development (fast) and Production (bundled)
+✅ **Better task commands** - `task dev-stack` for development
+✅ **Comprehensive docs** - Guides for both workflows
 
 The new workflow is designed to speed up development while maintaining robust production builds.

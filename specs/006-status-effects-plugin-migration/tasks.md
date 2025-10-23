@@ -1,4 +1,5 @@
 # Tasks: Status Effects Plugin Migration
+
 - [ ] Create plugin project and manifest
 - [ ] Define DI surface and DTOs
 - [ ] Implement effect lifecycle systems

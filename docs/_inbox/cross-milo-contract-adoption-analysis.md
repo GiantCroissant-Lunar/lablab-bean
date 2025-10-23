@@ -43,12 +43,14 @@ TIER 3+: winged-bean plugins (Implementations)
 **Location**: `CrossMilo.Contracts/`
 
 **Core Interfaces**:
+
 - `IRegistry` - Service registration and resolution
 - `IEventBus` - Publish-subscribe event communication
 - `ServiceMetadata` - Service metadata (priority, name, version)
 - Attributes - `[RealizeService]`, `[SelectionStrategy]`
 
 **Key Features**:
+
 ```csharp
 // IRegistry.cs
 public interface IRegistry
@@ -74,6 +76,7 @@ public interface IEventBus
 ### 2. Domain Contract Pattern (Tier 1 Services)
 
 **Organizational Structure**:
+
 ```
 CrossMilo.Contracts.{DomainName}/
 ├── {SupportingTypes}.cs          # Root namespace
@@ -119,6 +122,7 @@ public partial class ProxyService : IService
 ```
 
 **Benefits of Generic IService Naming**:
+
 - ✅ Consistent structure across all 17 contract projects
 - ✅ Simplified naming within namespace context
 - ✅ Better scalability (easy to add multiple services per domain)
@@ -129,6 +133,7 @@ public partial class ProxyService : IService
 **Event Naming Convention**: `{Subject}{Action}Event`
 
 **Event Pattern**:
+
 ```csharp
 public record EntitySpawnedEvent(
     Guid EntityId,
@@ -146,6 +151,7 @@ public record EntitySpawnedEvent(
 ```
 
 **Usage Pattern**:
+
 ```csharp
 // Publisher (in game service)
 await _eventBus.PublishAsync(new EntitySpawnedEvent(entityId, EntityType.Enemy, position));
@@ -162,9 +168,11 @@ eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
 **Purpose**: Automatically generate proxy service implementations that delegate to `IRegistry`
 
 **How It Works**:
+
 1. Developer marks partial class with `[RealizeService(typeof(IService))]`
 2. Developer specifies `[SelectionStrategy(SelectionMode.HighestPriority)]`
 3. Source generator creates implementation:
+
    ```csharp
    public partial class ProxyService : IService
    {
@@ -178,6 +186,7 @@ eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
    ```
 
 **Benefits**:
+
 - ✅ Automated delegation to registry
 - ✅ No manual delegation code needed
 - ✅ Consistent behavior across all services
@@ -201,6 +210,7 @@ public enum SelectionMode
 **Location**: `dotnet/framework/LablabBean.Plugins.Contracts/`
 
 **Current Interfaces**:
+
 ```csharp
 // IRegistry.cs (GOOD: Already aligned!)
 public interface IRegistry
@@ -226,6 +236,7 @@ public interface IPlugin
 ```
 
 **Status**:
+
 - ✅ `IRegistry` interface is already nearly identical to cross-milo!
 - ✅ `ServiceMetadata` pattern already implemented
 - ✅ `SelectionMode` pattern already implemented
@@ -241,12 +252,14 @@ public interface IPlugin
 **Goal**: Add event bus contract to `LablabBean.Plugins.Contracts`
 
 **Tasks**:
+
 1. Create `IEventBus.cs` in `LablabBean.Plugins.Contracts/`
 2. Implement `EventBus` in `LablabBean.Plugins.Core/`
 3. Register EventBus in plugin host bootstrap
 4. Add comprehensive XML documentation
 
 **Implementation**:
+
 ```csharp
 // LablabBean.Plugins.Contracts/IEventBus.cs
 namespace LablabBean.Plugins.Contracts;
@@ -273,6 +286,7 @@ public interface IEventBus
 **Goal**: Create domain-specific contract assemblies following cross-milo pattern
 
 **Recommended Domains for Lablab-Bean**:
+
 1. `LablabBean.Contracts.Game` - Game loop, entity management, turn processing
 2. `LablabBean.Contracts.UI` - UI rendering, input handling, viewport management
 3. `LablabBean.Contracts.Scene` - Scene/level management, camera, viewport
@@ -281,6 +295,7 @@ public interface IEventBus
 6. `LablabBean.Contracts.Diagnostics` - (Optional) Error tracking, logging
 
 **Project Structure**:
+
 ```
 LablabBean.Contracts.Game/
 ├── LablabBean.Contracts.Game.csproj
@@ -293,6 +308,7 @@ LablabBean.Contracts.Game/
 ```
 
 **Example: Game Service Contract**:
+
 ```csharp
 // LablabBean.Contracts.Game/Services/Interfaces/IService.cs
 namespace LablabBean.Contracts.Game.Services;
@@ -364,17 +380,20 @@ public record CombatEvent(
 **Goal**: Automate proxy service generation (following cross-milo pattern)
 
 **Benefits**:
+
 - Eliminates manual delegation code
 - Ensures consistency across all services
 - Easier to maintain and extend
 
 **Tasks**:
+
 1. Create `LablabBean.SourceGenerators.Proxy` project
 2. Implement Roslyn source generator
 3. Add `[RealizeService]` and `[SelectionStrategy]` attributes
 4. Generate proxy implementations at compile time
 
 **Alternative (Simpler)**:
+
 - Manual proxy services (no source generator)
 - Less automation but simpler to implement initially
 
@@ -383,11 +402,13 @@ public record CombatEvent(
 **Goal**: Refactor existing services to use domain contracts
 
 **Current Services to Migrate**:
+
 1. Game loop logic → `LablabBean.Contracts.Game.Services.IService`
 2. UI rendering → `LablabBean.Contracts.UI.Services.IService`
 3. Input handling → `LablabBean.Contracts.UI.Input.IService`
 
 **Migration Pattern**:
+
 ```csharp
 // Before: Direct implementation in plugin
 public class GamePlugin : IPlugin
@@ -439,11 +460,13 @@ public class GamePlugin : IPlugin
 **Goal**: Enable loose coupling between plugins via events
 
 **Use Cases**:
+
 1. **Analytics Plugin** - Subscribe to game events, track metrics
 2. **Diagnostics Plugin** - Subscribe to error events, log issues
 3. **UI Plugin** - Subscribe to game state changes, update display
 
 **Example**:
+
 ```csharp
 // In GamePlugin (publisher)
 public class DungeonGameService : IService
@@ -511,12 +534,14 @@ TIER 3+: LablabBean.Game.*, LablabBean.UI.* (Implementations)
 ### 2. Event-Driven Communication
 
 **When to Use Events**:
+
 - ✅ Analytics tracking
 - ✅ Diagnostics logging
 - ✅ State synchronization across plugins
 - ✅ Notification of state changes
 
 **When NOT to Use Events**:
+
 - ❌ Direct service calls (use `IRegistry.Get<T>()`)
 - ❌ Request/response patterns (use direct method calls)
 - ❌ Tightly-coupled operations within same plugin
@@ -524,6 +549,7 @@ TIER 3+: LablabBean.Game.*, LablabBean.UI.* (Implementations)
 ### 3. Runtime vs Edit-Time Mode Support
 
 All contracts should support both:
+
 - **Runtime Mode**: Application running for end-users
 - **Edit-Time Mode**: Application being authored/configured
 
@@ -532,6 +558,7 @@ Different implementations can exist for each mode using same contracts.
 ### 4. Host ≠ UI Framework
 
 Separate concerns:
+
 - **Host**: Application runtime (Console, Unity, Godot)
 - **UI Framework**: Rendering library (Terminal.Gui, ImGui, SadConsole)
 - **Game Logic**: Platform-agnostic contracts
@@ -539,6 +566,7 @@ Separate concerns:
 ## Implementation Priority
 
 ### High Priority (Phase 1-2)
+
 1. ✅ **Add IEventBus to LablabBean.Plugins.Contracts**
    - Essential for event-driven architecture
    - Enables loose coupling
@@ -555,6 +583,7 @@ Separate concerns:
    - Viewport management
 
 ### Medium Priority (Phase 3-4)
+
 4. **Create LablabBean.Contracts.Scene**
    - Level/dungeon management
    - Camera and viewport
@@ -566,6 +595,7 @@ Separate concerns:
    - Refactor input handling
 
 ### Low Priority (Phase 5)
+
 6. **Consider source generator** (optional)
    - Automates proxy services
    - Reduces boilerplate
@@ -582,6 +612,7 @@ Separate concerns:
 ## Migration Strategy
 
 ### Step 1: Add IEventBus (No Breaking Changes)
+
 ```csharp
 // 1. Add to LablabBean.Plugins.Contracts/IEventBus.cs
 // 2. Implement in LablabBean.Plugins.Core/EventBus.cs
@@ -589,6 +620,7 @@ Separate concerns:
 ```
 
 ### Step 2: Create First Contract Assembly
+
 ```bash
 # Create new project
 dotnet new classlib -n LablabBean.Contracts.Game -f net8.0
@@ -602,12 +634,14 @@ dotnet add reference ../LablabBean.Plugins.Contracts
 ```
 
 ### Step 3: Gradually Migrate Services
+
 - Start with one service at a time
 - Keep existing implementations working
 - Use side-by-side migration (old + new)
 - Remove old implementations when safe
 
 ### Step 4: Update Documentation
+
 - Document contract patterns
 - Update plugin development guide
 - Add event-driven examples
@@ -616,18 +650,21 @@ dotnet add reference ../LablabBean.Plugins.Contracts
 ## Benefits of Adoption
 
 ### For Developers
+
 - ✅ **Clear contracts** - Well-defined interfaces
 - ✅ **Loose coupling** - Plugins don't depend on each other
 - ✅ **Event-driven** - React to state changes without polling
 - ✅ **Testable** - Easy to mock services and events
 
 ### For Architecture
+
 - ✅ **Separation of concerns** - Contracts vs infrastructure vs implementation
 - ✅ **Platform independence** - Same contracts work on Console, Unity, Godot
 - ✅ **Extensibility** - Easy to add new services and events
 - ✅ **Maintainability** - Changes to implementations don't affect contracts
 
 ### For Cross-Platform Support
+
 - ✅ **Console app** - Uses Terminal.Gui implementation
 - ✅ **Windows app** - Uses SadConsole implementation
 - ✅ **Unity (future)** - Uses Unity-specific implementations
@@ -646,6 +683,7 @@ dotnet add reference ../LablabBean.Plugins.Contracts
 ## File References
 
 ### Cross-Milo Reference Files
+
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts/IRegistry.cs`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts/IEventBus.cs`
 - `ref-projects/cross-milo/dotnet/framework/src/CrossMilo.Contracts.Audio/Services/Interfaces/IService.cs`
@@ -654,6 +692,7 @@ dotnet add reference ../LablabBean.Plugins.Contracts
 - `ref-projects/cross-milo/docs/ARCHITECTURE_HOST_VS_UI.md`
 
 ### Lablab-Bean Current Files
+
 - `dotnet/framework/LablabBean.Plugins.Contracts/IRegistry.cs`
 - `dotnet/framework/LablabBean.Plugins.Contracts/IPlugin.cs`
 - `dotnet/framework/LablabBean.Plugins.Core/ServiceRegistry.cs`
@@ -671,6 +710,7 @@ dotnet add reference ../LablabBean.Plugins.Contracts
 ## Conclusion
 
 The cross-milo tier 1 and tier 2 contract design provides a proven architecture for:
+
 - Clean separation of concerns
 - Event-driven communication
 - Platform independence

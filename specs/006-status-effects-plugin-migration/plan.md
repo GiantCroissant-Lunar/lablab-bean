@@ -6,6 +6,7 @@
 - Events to host/HUD: EffectApplied, EffectExpired, EffectsChanged
 
 Phases:
+
 1) Boot plugin & service
 2) Port components/systems
 3) Integrate with combat system for net modifiers

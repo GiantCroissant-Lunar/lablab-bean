@@ -8,6 +8,7 @@
 ## Summary
 
 Implement a multi-level dungeon progression system that enables players to descend and ascend through procedurally generated levels with persistent state. The system will:
+
 - Generate staircases (up/down) in dungeons for level transitions
 - Persist dungeon state (map layout, enemies, items) when leaving a level
 - Restore exact dungeon state when returning to a level
@@ -26,14 +27,14 @@ The system extends the existing dungeon generation and game state management, in
   the iteration process.
 -->
 
-**Language/Version**: C# / .NET 8  
-**Primary Dependencies**: Arch ECS (1.3.3), GoRogue (3.0.0-beta09), Terminal.Gui (2.0.0-pre.2), SadConsole (10.0.3)  
-**Storage**: In-memory level state cache (Dictionary<int, DungeonLevel>), future: JSON serialization for save/load  
-**Testing**: xUnit, FluentAssertions (existing test infrastructure)  
+**Language/Version**: C# / .NET 8
+**Primary Dependencies**: Arch ECS (1.3.3), GoRogue (3.0.0-beta09), Terminal.Gui (2.0.0-pre.2), SadConsole (10.0.3)
+**Storage**: In-memory level state cache (Dictionary<int, DungeonLevel>), future: JSON serialization for save/load
+**Testing**: xUnit, FluentAssertions (existing test infrastructure)
 **Target Platform**: Cross-platform console (Windows/Linux/macOS) via Terminal.Gui and Windows GUI via SadConsole
-**Project Type**: Desktop game application with dual rendering modes  
-**Performance Goals**: <500ms level generation, <100ms level transition, 60 FPS rendering  
-**Constraints**: Turn-based gameplay, max 30 cached levels in memory, level 30 difficulty cap  
+**Project Type**: Desktop game application with dual rendering modes
+**Performance Goals**: <500ms level generation, <100ms level transition, 60 FPS rendering
+**Constraints**: Turn-based gameplay, max 30 cached levels in memory, level 30 difficulty cap
 **Scale/Scope**: 20-30 dungeon levels (victory at 20, endless beyond), 50-100 rooms per level
 
 ## Constitution Check
@@ -116,4 +117,3 @@ dotnet/console-app/
 |-----------|------------|-------------------------------------|
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
-

@@ -6,6 +6,7 @@
 ## Summary
 
 Implement a comprehensive tiered contract architecture based on cross-milo patterns, including:
+
 - **Tier 1 (Contracts)**: 6 domain-specific contract assemblies (Game, UI, Scene, Input, Config, Resource) with service interfaces, events, and supporting types
 - **Tier 2 (Infrastructure)**: IEventBus + EventBus implementation, Roslyn source generator for automatic proxy service generation, and two attributes ([RealizeService], [SelectionStrategy])
 - **93 functional requirements** covering event-driven communication, domain contracts, and developer tooling
@@ -16,6 +17,7 @@ Implement a comprehensive tiered contract architecture based on cross-milo patte
 
 **Language/Version**: C# / .NET 8
 **Primary Dependencies**:
+
 - Existing: LablabBean.Plugins.Contracts (IRegistry, ServiceMetadata, SelectionMode)
 - New: Microsoft.CodeAnalysis.CSharp (Roslyn source generator)
 - Existing: LablabBean.Plugins.Core (ServiceRegistry implementation)
@@ -26,18 +28,21 @@ Implement a comprehensive tiered contract architecture based on cross-milo patte
 **Project Type**: Multi-assembly library architecture (6 contract assemblies + 1 source generator + 1 core infrastructure)
 
 **Performance Goals**:
+
 - Event publishing: <10ms for events with up to 10 subscribers
 - Event bus throughput: ≥1000 events/second
 - Source generator: compile-time generation (zero runtime cost)
 - Resource cache hit rate: >90%
 
 **Constraints**:
+
 - No breaking changes to existing IRegistry, IPlugin, IPluginContext interfaces
 - Technology-agnostic contracts (no platform-specific types)
 - Source generator must support generic constraints, nullable annotations, ref/out parameters
 - All contracts must work across Terminal.Gui, SadConsole, and future Unity implementations
 
 **Scale/Scope**:
+
 - 6 contract assemblies
 - 1 source generator assembly
 - 93 functional requirements
@@ -51,6 +56,7 @@ Implement a comprehensive tiered contract architecture based on cross-milo patte
 **Status**: ✅ **PASSED** (No constitution file exists - using project conventions from CLAUDE.md)
 
 **Project Conventions Check**:
+
 - ✅ **R-DOC**: Documentation will be created in `docs/_inbox/` with YAML front-matter
 - ✅ **R-CODE**: No hardcoded secrets, meaningful names, commented non-obvious code
 - ✅ **R-TST**: Critical functionality will be tested (event bus, source generator, service registration)
@@ -159,6 +165,7 @@ dotnet/framework/
 ```
 
 **Structure Decision**: Multi-assembly architecture with clear tier separation:
+
 - **Tier 1 Base** (`LablabBean.Plugins.Contracts`): Foundation contracts (IRegistry, IEventBus, attributes)
 - **Tier 1 Domains** (6 assemblies): Domain-specific contracts (Game, UI, Scene, Input, Config, Resource)
 - **Tier 2 Infrastructure** (`LablabBean.Plugins.Core` + `LablabBean.SourceGenerators.Proxy`): EventBus implementation + source generator
@@ -173,6 +180,7 @@ dotnet/framework/
 See [research.md](./research.md) for detailed research findings.
 
 **Key Decisions**:
+
 1. **Event Bus Pattern**: Publish-subscribe with sequential execution (not parallel) to maintain predictable ordering
 2. **Source Generator Approach**: Roslyn incremental source generation (same as cross-milo)
 3. **Namespace Convention**: Generic `IService` within domain namespace (e.g., `LablabBean.Contracts.Scene.Services.IService`)
@@ -185,6 +193,7 @@ See [research.md](./research.md) for detailed research findings.
 See [data-model.md](./data-model.md) for entity definitions and [contracts/](./contracts/) for service interface schemas.
 
 **Deliverables**:
+
 - IEventBus contract (Tier 1 base)
 - 6 domain service contracts (Game, UI, Scene, Input, Config, Resource)
 - Event definitions for all domains
@@ -194,9 +203,11 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ## Implementation Phases
 
 ### Phase 1: EventBus Foundation (Priority: P0)
+
 **Goal**: Enable event-driven communication between plugins
 
 **Tasks**:
+
 1. Add `IEventBus` interface to `LablabBean.Plugins.Contracts` (FR-001)
 2. Implement `EventBus` class in `LablabBean.Plugins.Core` (FR-002 to FR-008)
 3. Register EventBus as singleton in `PluginHost` (FR-006)
@@ -210,9 +221,11 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ---
 
 ### Phase 2: Source Generator + Attributes (Priority: P0)
+
 **Goal**: Eliminate proxy service boilerplate
 
 **Tasks**:
+
 1. Create `LablabBean.SourceGenerators.Proxy` project (FR-067)
 2. Add `[RealizeService]` attribute to `LablabBean.Plugins.Contracts` (FR-078)
 3. Add `[SelectionStrategy]` attribute to `LablabBean.Plugins.Contracts` (FR-079)
@@ -228,9 +241,11 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ---
 
 ### Phase 3: Game & UI Contract Events (Priority: P1)
+
 **Goal**: Add event-driven patterns to existing contracts
 
 **Tasks**:
+
 1. Add event definitions to `LablabBean.Contracts.Game` (FR-023)
 2. Add event definitions to `LablabBean.Contracts.UI` (FR-024)
 3. Update Game `IService` interface (FR-030 to FR-032)
@@ -246,9 +261,11 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ---
 
 ### Phase 4: Scene & Input Contracts (Priority: P1)
+
 **Goal**: Enable dungeon/level management and input handling
 
 **Tasks**:
+
 1. Create `LablabBean.Contracts.Scene` service interface (FR-036 to FR-042)
 2. Create Scene events (FR-025)
 3. Create Scene models (Camera, Viewport, CameraViewport)
@@ -266,9 +283,11 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ---
 
 ### Phase 5: Config & Resource Contracts (Priority: P1)
+
 **Goal**: Enable configuration management and resource loading
 
 **Tasks**:
+
 1. Create `LablabBean.Contracts.Config` service interface (FR-051 to FR-058)
 2. Create Config events (FR-027)
 3. Create Config models (IConfigSection, ConfigChangedEventArgs)
@@ -285,9 +304,11 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ---
 
 ### Phase 6: Documentation & Examples (Priority: P2)
+
 **Goal**: Comprehensive developer documentation
 
 **Tasks**:
+
 1. Write developer guide with event subscription examples (FR-090)
 2. Write developer guide with service contract examples (FR-091)
 3. Write developer guide with Scene/Input/Config/Resource examples (FR-092)
@@ -305,11 +326,13 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ## Testing Strategy
 
 ### Unit Tests
+
 - EventBus: Subscribe, publish, error handling, no subscribers
 - Source Generator: Method generation, property generation, event generation, generic constraints, nullable annotations
 - Each contract: Event definitions, model validation
 
 ### Integration Tests
+
 - Event bus with multiple subscribers across plugins
 - Source generator compiling real projects
 - Service registration and retrieval via IRegistry
@@ -317,23 +340,27 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 - Resource cache hit/miss scenarios
 
 ### Contract Tests
+
 - Each service interface has a contract test verifying proxy generation works
 - Event schemas validated (timestamp, immutability)
 
 ## Migration Strategy
 
 ### Backward Compatibility
+
 - ✅ Existing `IRegistry`, `IPlugin`, `IPluginContext` interfaces unchanged (FR-087)
 - ✅ Existing plugins continue to work without modification (FR-088)
 - ✅ New contract assemblies added alongside existing code (FR-088)
 
 ### Phased Rollout
+
 1. **Phase 1-2**: Infrastructure only (EventBus + source generator) - no existing code changes
 2. **Phase 3**: Update existing Game/UI contracts with events - existing plugins unaffected
 3. **Phase 4-5**: Add new Scene/Input/Config/Resource contracts - opt-in for plugins
 4. **Phase 6**: Documentation - enables plugin developers to adopt patterns
 
 ### Risk Mitigation
+
 - Each phase is independently testable and deployable
 - Source generator failures fall back to compile errors (no runtime impact)
 - Event bus errors are isolated per subscriber (FR-004)
@@ -342,17 +369,20 @@ See [data-model.md](./data-model.md) for entity definitions and [contracts/](./c
 ## Performance Considerations
 
 ### EventBus
+
 - Sequential execution prevents race conditions
 - Subscribers execute async (non-blocking)
 - Error isolation (one failing subscriber doesn't break others)
 - Target: <10ms publish time, ≥1000 events/second
 
 ### Source Generator
+
 - Incremental compilation (only regenerates changed files)
 - Compile-time generation (zero runtime cost)
 - Target: <30 seconds for full rebuild with 50+ service methods
 
 ### Resource Caching
+
 - LRU eviction strategy (to be implemented)
 - Concurrent load deduplication (to be implemented)
 - Target: >90% cache hit rate

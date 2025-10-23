@@ -36,7 +36,7 @@ public class InventorySystem
     /// - Item must be adjacent to player (within 1 tile)
     /// - Player inventory must not be full
     /// - Item must be stackable OR inventory has space
-    /// 
+    ///
     /// Effects:
     /// - Removes Position, Renderable, Visible from item
     /// - Adds item reference to player's Inventory.Items
@@ -74,7 +74,7 @@ public class InventorySystem
     /// Preconditions:
     /// - Item must be in player's inventory
     /// - Item must not be equipped
-    /// 
+    ///
     /// Effects:
     /// - Removes item reference from Inventory.Items
     /// - Adds Position (player's location), Renderable, Visible to item
@@ -105,7 +105,7 @@ public class InventorySystem
     /// - Item must be in player's inventory
     /// - Item must have Consumable component
     /// - Usage context must be valid (e.g., not at full health for healing potion)
-    /// 
+    ///
     /// Effects:
     /// - Applies consumable effect (heal, buff, etc.)
     /// - Decrements Stackable.Count if stackable
@@ -138,7 +138,7 @@ public class InventorySystem
     /// - Item must be in player's inventory
     /// - Item must have Equippable component
     /// - Target slot must be compatible with item
-    /// 
+    ///
     /// Effects:
     /// - If slot occupied, unequips old item (stays in inventory)
     /// - Sets EquipmentSlots[slot] = itemEntity
@@ -156,7 +156,7 @@ public class InventorySystem
     /// <remarks>
     /// Preconditions:
     /// - Slot must have an equipped item
-    /// 
+    ///
     /// Effects:
     /// - Sets EquipmentSlots[slot] = null
     /// - Item remains in inventory

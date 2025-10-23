@@ -26,12 +26,14 @@ source:
 ## Problem Statement
 
 The project root contained 11 markdown files (beyond the standard README, CHANGELOG, AGENTS, CLAUDE):
+
 - Implementation summaries from feature development
 - Bug fix reports
 - Build verification documents
 - Status tracking documents
 
 These files:
+
 1. **Cluttered the root directory** making it hard to find essential docs
 2. **Lacked proper metadata** (no YAML front-matter, no doc_id)
 3. **Not indexed** in the documentation registry
@@ -70,12 +72,14 @@ Created new documents with proper YAML front-matter:
 Preserved original implementation summaries in organized subdirectories:
 
 #### `docs/archive/implementation-summaries/dungeon-progression/`
+
 - `DUNGEON_PROGRESSION_IMPLEMENTATION.md` (247 lines)
   - Spec-003 implementation summary
   - Phase 1 complete
   - Multi-level dungeons, staircases, difficulty scaling
 
 #### `docs/archive/implementation-summaries/status-effects/`
+
 - `STATUS_EFFECTS_COMPLETE_SUMMARY.md` (552 lines)
 - `STATUS_EFFECTS_PHASE5_COMPLETE.md` (157 lines)
 - `STATUS_EFFECTS_PHASE6_COMPLETE.md` (461 lines)
@@ -84,12 +88,14 @@ Preserved original implementation summaries in organized subdirectories:
   - 12 effect types, combat modifiers, HUD display
 
 #### `docs/archive/implementation-summaries/plugin-architecture/`
+
 - `SPEC_004_IMPLEMENTATION.md` (128 lines)
   - Spec-004 implementation tracking
   - Phases 1-2 complete
   - Plugin contracts, registry, loader
 
 #### `docs/archive/`
+
 - `BUGFIX-player-movement-after-inventory.md` (original, for reference)
 - `BUILD_VERIFICATION_REPORT.md` (original, for reference)
 
@@ -118,21 +124,25 @@ lablab-bean/
 ## Benefits
 
 ### 1. Improved Discoverability
+
 - All docs now have unique `doc_id` for permanent reference
 - Indexed by tags for easy searching
 - Proper categorization (finding, reference, guide)
 
 ### 2. Cleaner Root Directory
+
 - Only essential files at root level
 - Follows standard open-source conventions
 - Easier for new contributors to navigate
 
 ### 3. Better Organization
+
 - Implementation summaries archived but accessible
 - Inbox pattern for new docs (prevents direct writes to canonical locations)
 - Clear separation between active docs and historical records
 
 ### 4. Metadata Compliance
+
 - All new docs have proper YAML front-matter
 - Source attribution (author: agent, agent: claude)
 - Status tracking (draft → active → archived)
@@ -142,6 +152,7 @@ lablab-bean/
 ## Documentation Registry Impact
 
 ### New Documents Added (Inbox)
+
 - **DOC-2025-00037**: Player movement bugfix
 - **DOC-2025-00038**: Status effects build verification
 - **DOC-2025-00039**: Implementation summaries index
@@ -150,6 +161,7 @@ lablab-bean/
 **Total**: 4 new documents
 
 ### Archived Documents
+
 - 7 implementation summary files moved to archive
 - Original content preserved
 - Not added to active registry (historical reference only)
@@ -159,18 +171,21 @@ lablab-bean/
 ## Next Steps
 
 ### Immediate (Complete)
+
 - [x] Move files to inbox and archive
 - [x] Add YAML front-matter to new docs
 - [x] Create index document
 - [x] Verify root directory cleanup
 
 ### Follow-up (Recommended)
+
 - [ ] Run `python scripts/validate_docs.py` to verify front-matter compliance
 - [ ] Update registry: `python scripts/update_registry.py`
 - [ ] Review inbox docs for promotion to canonical locations
 - [ ] Consider creating canonical implementation guides from archived summaries
 
 ### Future Maintenance
+
 - [ ] Set up pre-commit hook to prevent doc files in root
 - [ ] Add documentation linter to CI/CD
 - [ ] Periodic doc organization review (quarterly)
@@ -180,16 +195,19 @@ lablab-bean/
 ## Lessons Learned
 
 ### What Worked Well
+
 1. **Inbox pattern** - Prevents proliferation of unorganized docs
 2. **Archive structure** - Preserves history without cluttering active docs
 3. **Metadata schema** - Makes docs searchable and traceable
 
 ### Process Improvements
+
 1. **Enforce inbox-first** - All agents should write to `docs/_inbox/`
 2. **Regular cleanup** - Schedule quarterly doc organization reviews
 3. **Validation automation** - Add doc schema validation to CI/CD
 
 ### Best Practices Identified
+
 1. Always add YAML front-matter when creating docs
 2. Use doc_id for permanent cross-references
 3. Archive implementation summaries after feature completion
@@ -200,6 +218,7 @@ lablab-bean/
 ## File Manifest
 
 ### Root Directory (Before)
+
 ```
 AGENTS.md (keep)
 BUGFIX-player-movement-after-inventory.md (→ archive)
@@ -215,6 +234,7 @@ STATUS_EFFECTS_PHASE6_COMPLETE.md (→ archive)
 ```
 
 ### Root Directory (After)
+
 ```
 AGENTS.md
 CHANGELOG.md
@@ -223,6 +243,7 @@ README.md
 ```
 
 ### New Locations Created
+
 ```
 docs/_inbox/
 ├── 2025-10-21-bugfix-player-movement-after-inventory--DOC-2025-00037.md
@@ -249,6 +270,7 @@ docs/archive/
 ## Conclusion
 
 Successfully organized 11 documentation files from project root:
+
 - **4 documents** moved to `docs/_inbox/` with proper metadata
 - **7 documents** archived in `docs/archive/` for historical reference
 - **Root directory** now contains only standard project files

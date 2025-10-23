@@ -42,10 +42,10 @@ public interface IRegistry
 {
     void Register<TService>(TService implementation, ServiceMetadata metadata) where TService : class;
     void Register<TService>(TService implementation, int priority = 100) where TService : class;
-    
+
     TService Get<TService>(SelectionMode mode = SelectionMode.HighestPriority) where TService : class;
     IEnumerable<TService> GetAll<TService>() where TService : class;
-    
+
     bool IsRegistered<TService>() where TService : class;
     bool Unregister<TService>(TService implementation) where TService : class;
 }
@@ -96,6 +96,7 @@ public sealed class PluginDependency
 ```
 
 ## Manifest JSON Schema (MVP)
+
 ```json
 {
   "id": "lablab.dungeongame",
@@ -110,15 +111,18 @@ public sealed class PluginDependency
 ```
 
 ## Lifecycle & State Machine
+
 ```
 Create → Initialize → Start → (Stop → Unload) → (Reload path re-enters at Create)
           │            └── Failure → Failed (isolated; others continue)
 ```
 
 ## Dependency Resolution
+
 - Build graph from manifests; validate no cycles.
 - Respect hard/soft deps; topo-sort load/start order.
 
 ## Observability
+
 - Logs: lifecycle, dependency outcomes, load time.
 - Metrics: plugin_load_seconds (histogram), plugin_failures_total, plugin_reload_total.

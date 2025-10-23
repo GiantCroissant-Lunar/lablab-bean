@@ -16,7 +16,7 @@ Added `Services/Proxy/Service.cs` files for contracts that were missing them:
 
 1. ✅ **Config** - Configuration service proxy
 2. ✅ **Diagnostic** - Diagnostic service proxy (has source generator issue)
-3. ✅ **Game** - Game service proxy  
+3. ✅ **Game** - Game service proxy
 4. ✅ **ObjectPool** - Object pooling service proxy
 5. ✅ **Resource** - Resource loader service proxy
 6. ✅ **Scene** - Scene management service proxy
@@ -79,6 +79,7 @@ dotnet build dotnet/LablabBean.sln
 ### Known Issue: Diagnostic Contract
 
 The source generator produces invalid code for the Diagnostic contract:
+
 - **Error**: CS0065, CS0501, CS0102 - Event syntax errors
 - **Cause**: Source generator bug handling complex method overloads
 - **Impact**: Diagnostic proxy service does not build
@@ -99,6 +100,7 @@ Tier 4: Providers (Backends)       ⏳ Next phase
 ## Files Modified
 
 ### New Files (8)
+
 - `LablabBean.Contracts.Config/Services/Proxy/Service.cs`
 - `LablabBean.Contracts.Diagnostic/Services/Proxy/Service.cs`
 - `LablabBean.Contracts.Game/Services/Proxy/Service.cs`
@@ -109,12 +111,14 @@ Tier 4: Providers (Backends)       ⏳ Next phase
 - `LablabBean.Contracts.Input/Services/Proxy/Service.cs` (removed - not applicable)
 
 ### Modified Files (4)
+
 - `LablabBean.Contracts.Config/LablabBean.Contracts.Config.csproj`
 - `LablabBean.Contracts.Game/LablabBean.Contracts.Game.csproj`
 - `LablabBean.Contracts.Scene/LablabBean.Contracts.Scene.csproj`
 - `LablabBean.Contracts.UI/LablabBean.Contracts.UI.csproj`
 
 ### Deleted Files (2)
+
 - `LablabBean.Contracts.Resource/Services/Service.cs` (duplicate)
 - `LablabBean.Contracts.Input/Services/` folder (incorrect)
 
@@ -122,13 +126,13 @@ Tier 4: Providers (Backends)       ⏳ Next phase
 
 ```powershell
 # Verify all proxy services exist
-$contracts = @('Analytics', 'Audio', 'Config', 'Diagnostic', 'Firebase', 'Game', 
-               'Localization', 'ObjectPool', 'Performance', 'PersistentStorage', 
-               'Resilience', 'Resource', 'Scene', 'Scheduler', 'Serialization', 
+$contracts = @('Analytics', 'Audio', 'Config', 'Diagnostic', 'Firebase', 'Game',
+               'Localization', 'ObjectPool', 'Performance', 'PersistentStorage',
+               'Resilience', 'Resource', 'Scene', 'Scheduler', 'Serialization',
                'ServiceHealth', 'UI')
-$contracts | ForEach-Object { 
+$contracts | ForEach-Object {
     $path = "dotnet\framework\LablabBean.Contracts.$_\Services\Proxy\Service.cs"
-    Test-Path $path 
+    Test-Path $path
 }
 # Should output: True for all 17
 
@@ -159,6 +163,7 @@ Estimated time: 6-8 hours
 ### Diagnostic Contract Resolution
 
 The Diagnostic contract proxy issue needs to be resolved separately:
+
 - Option 1: Fix source generator to handle complex overloads
 - Option 2: Simplify Diagnostic IService interface
 - Option 3: Manually implement proxy (temporary workaround)

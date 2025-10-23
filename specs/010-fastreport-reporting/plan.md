@@ -8,6 +8,7 @@
 Implement a comprehensive reporting infrastructure for lablab-bean using FastReport.OpenSource for report generation and NFun-Report's attribute-driven source generation pattern for compile-time provider discovery. The system will generate HTML, PDF, and PNG reports for build metrics (test results, code coverage, build duration), game session statistics (playtime, combat metrics), and plugin system health (memory usage, load times). Reports are triggered via CLI commands and integrated with the Nuke build system for automated CI/CD reporting.
 
 **Primary Technical Approach**: Create a layered reporting system with:
+
 1. **Abstractions Layer** (netstandard2.1): Attribute-driven provider metadata for compile-time discovery
 2. **Source Generator** (netstandard2.0): Roslyn incremental generator for zero-reflection provider registry
 3. **FastReport Plugin** (net8.0): Optional plugin wrapping FastReport.OpenSource for HTML/PDF/PNG export
@@ -18,6 +19,7 @@ Implement a comprehensive reporting infrastructure for lablab-bean using FastRep
 
 **Language/Version**: C# 12.0 / .NET 8.0 (aligns with existing `dotnet/Directory.Build.props`)
 **Primary Dependencies**:
+
 - FastReport.OpenSource 2026.1.0 (MIT license)
 - FastReport.OpenSource.Export.PdfSimple 2026.1.2
 - Microsoft.CodeAnalysis.CSharp 4.9.2 (for source generator)
@@ -32,17 +34,20 @@ Implement a comprehensive reporting infrastructure for lablab-bean using FastRep
 **Project Type**: Plugin + Framework libraries (follows existing plugin architecture)
 
 **Performance Goals**:
+
 - Report generation under 5 seconds for 500 test results
 - Session report generation under 2 seconds
 - Source generator incremental compilation under 100ms
 
 **Constraints**:
+
 - Report file sizes under 5 MB for typical datasets
 - Zero-reflection provider discovery (compile-time only)
 - FastReport plugin must be optional (can be disabled)
 - Must integrate with existing AnalyticsPlugin event bus
 
 **Scale/Scope**:
+
 - 3 new framework projects (Abstractions, SourceGen, FastReport plugin)
 - 4 report templates (.frx files for build, game, plugin, CI/CD)
 - 3 data provider implementations (build metrics, game stats, plugin health)
@@ -54,81 +59,98 @@ Implement a comprehensive reporting infrastructure for lablab-bean using FastRep
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 ### P-1: Documentation-First Development ✅
+
 - **Check**: Feature has comprehensive spec.md with requirements, user scenarios, success criteria
 - **Status**: PASS - SPEC-010 fully documented with 4 user stories, 44 functional requirements, 8 success criteria
 
 ### P-2: Clear Code Over Clever Code ✅
+
 - **Check**: Design favors simplicity and maintainability
 - **Status**: PASS - Attribute-driven pattern is explicit and proven (see SPEC-009 proxy generator)
 - **Justification**: Source generator complexity is encapsulated; provider registration is declarative
 
 ### P-3: Testing Matters ✅
+
 - **Check**: Critical functionality must be tested
 - **Status**: PASS - Plan includes unit tests for source generator, integration tests for report generation
 - **Test Coverage**: Source generator verification tests, report template tests, provider tests
 
 ### P-4: Security Consciousness ✅
+
 - **Check**: No hardcoded secrets, input validation
 - **Status**: PASS - Reports use data from existing validated sources (xUnit XML, coverlet JSON, plugin metrics)
 - **Input Validation**: File paths validated, template existence checked, malformed data handled gracefully
 
 ### P-5: User Experience Focus ✅
+
 - **Check**: Terminal UX should be intuitive
 - **Status**: PASS - CLI commands follow existing pattern (`lablabbean report build --format pdf --output ./report.pdf`)
 - **UX**: Clear success/error messages, format flag defaults to HTML, graceful degradation
 
 ### P-6: Separation of Concerns ✅
+
 - **Check**: Clear layer boundaries
 - **Status**: PASS - Reporting is isolated as plugin; data providers are separate from report generation
 - **Layers**: Abstractions (contracts) → Providers (data) → FastReport plugin (rendering) → CLI (interface)
 
 ### P-7: Performance Awareness ✅
+
 - **Check**: Monitor memory and performance
 - **Status**: PASS - FastReport plugin runs in isolated ALC; source generator is incremental compilation
 - **Performance Tracking**: Success criteria include specific timing goals (5s for builds, 2s for sessions)
 
 ### P-8: Build Automation ✅
+
 - **Check**: Reproducible builds
 - **Status**: PASS - Integrates with existing Nuke build system; report generation is CLI-driven
 - **Automation**: CI/CD can run `lablabbean report build --format pdf --output <artifacts-path>`
 
 ### P-9: Version Control Hygiene ✅
+
 - **Check**: Conventional commits
 - **Status**: PASS - Plan includes commit message examples (e.g., `feat(reporting): add FastReport plugin`)
 
 ### P-10: When in doubt, ask ✅
+
 - **Check**: Clarify requirements before implementing
 - **Status**: PASS - Spec has zero [NEEDS CLARIFICATION] markers; all requirements fully specified
 
 ### R-DOC: Documentation Rules ✅
+
 - **Check**: New docs go to `docs/_inbox/` first, YAML front-matter required
 - **Status**: PASS - Plan includes documentation in `specs/010-fastreport-reporting/`
 - **Compliance**: Evaluation docs already in `docs/findings/` with proper front-matter
 
 ### R-CODE: Code Quality Rules ✅
+
 - **Check**: No secrets, meaningful names, comments for non-obvious code
 - **Status**: PASS - No secrets involved; provider naming follows `<Domain><Type>Provider` pattern
 
 ### R-TST: Testing Rules ✅
+
 - **Check**: Test critical paths, builds must pass
 - **Status**: PASS - Source generator, report generation, and data providers all have test coverage
 - **Critical Paths**: Template loading, data binding, format export, provider discovery
 
 ### R-GIT: Git Rules ✅
+
 - **Check**: Descriptive commits (conventional format), no secrets
 - **Status**: PASS - Plan uses conventional commits; no secrets in report data
 
 ### R-PRC: Process Rules ✅
+
 - **Check**: ADRs for architecture decisions
 - **Status**: PASS - Decision to use FastReport.OpenSource documented in evaluation (docs/findings/)
 - **ADR**: FastReport re-evaluation docs explain rationale for adoption over custom implementation
 
 ### R-SEC: Security Rules ✅
+
 - **Check**: Input validation, least privilege
 - **Status**: PASS - File paths validated, FastReport plugin runs in isolated ALC, reports use read-only data
 - **Validation**: Template files checked for existence, output paths validated, malformed data handled
 
 ### R-TOOL: Tool Rules ✅
+
 - **Check**: Spec-Kit for features
 - **Status**: PASS - Following `/speckit.specify → /speckit.plan → /speckit.tasks → /speckit.implement` workflow
 
@@ -264,6 +286,7 @@ build/
    - Source generator verification tests
 
 This structure aligns with:
+
 - **P-6 (Separation of Concerns)**: Clear layers (abstractions → providers → rendering → CLI)
 - **Existing Plugin Architecture**: FastReport is an optional plugin, can be disabled/replaced
 - **AssemblyLoadContext Isolation**: FastReport plugin runs in isolated ALC
@@ -278,8 +301,10 @@ This structure aligns with:
 ### Research Tasks
 
 #### R-001: FastReport.OpenSource Template Best Practices
+
 **Question**: What are the best practices for creating maintainable `.frx` templates in FastReport.OpenSource?
 **Research Needed**:
+
 - Optimal template structure for build reports (tables, charts, summaries)
 - Data binding patterns for strongly-typed models
 - Template versioning and migration strategies
@@ -290,8 +315,10 @@ This structure aligns with:
 ---
 
 #### R-002: Source Generator Incremental Compilation
+
 **Question**: How to implement incremental compilation in Roslyn source generators to optimize build performance?
 **Research Needed**:
+
 - `IIncrementalGenerator` best practices (vs legacy `ISourceGenerator`)
 - Caching strategies for attribute scanning
 - Diagnostic emission for duplicate provider IDs
@@ -302,8 +329,10 @@ This structure aligns with:
 ---
 
 #### R-003: xUnit XML Output Format
+
 **Question**: What is the exact structure of xUnit XML test results for reliable parsing?
 **Research Needed**:
+
 - XML schema for xUnit v2 output (`--logger "xunit;LogFileName=results.xml"`)
 - Handling edge cases (skipped tests, test failures, stack traces)
 - Parsing libraries vs manual XDocument parsing
@@ -313,8 +342,10 @@ This structure aligns with:
 ---
 
 #### R-004: Coverlet JSON Coverage Format
+
 **Question**: What is the structure of coverlet's JSON coverage output?
 **Research Needed**:
+
 - JSON schema for coverlet coverage files
 - Calculating line coverage % and branch coverage %
 - Identifying files with low coverage
@@ -325,8 +356,10 @@ This structure aligns with:
 ---
 
 #### R-005: CLI Command Integration Pattern
+
 **Question**: How to integrate new `report` commands into existing console/windows apps using System.CommandLine?
 **Research Needed**:
+
 - System.CommandLine 2.0.0-beta4 command registration
 - Subcommand patterns (`report build`, `report session`, `report plugin-status`)
 - Option/argument binding (`--format`, `--output`)
@@ -337,8 +370,10 @@ This structure aligns with:
 ---
 
 #### R-006: AnalyticsPlugin Event Bus Integration
+
 **Question**: How does the existing AnalyticsPlugin collect events via the event bus?
 **Research Needed**:
+
 - Review `LablabBean.Plugins.Analytics` implementation
 - MessagePipe pub/sub patterns used
 - Event types tracked (spawns, moves, combat)
@@ -349,8 +384,10 @@ This structure aligns with:
 ---
 
 #### R-007: Plugin Metrics Data Availability
+
 **Question**: What plugin metrics are currently tracked by PluginSystemMetrics and PluginHealthChecker?
 **Research Needed**:
+
 - Review `LablabBean.Plugins.Core/PluginMetrics.cs`
 - Available data: memory usage, load duration, health state
 - Export format from `PluginAdminService.ExportMetrics()`
@@ -361,8 +398,10 @@ This structure aligns with:
 ---
 
 #### R-008: FastReport PDF Export Limitations
+
 **Question**: What are the limitations of `FastReport.OpenSource.Export.PdfSimple` vs commercial FastReport.Core?
 **Research Needed**:
+
 - Features available in PdfSimple (basic PDF export)
 - Missing features (encryption, digital signatures, font embedding)
 - When to recommend upgrading to FastReport.Core
@@ -375,6 +414,7 @@ This structure aligns with:
 ### Research Dispatch Plan
 
 **Parallel Research** (can run concurrently):
+
 - R-001 (FastReport templates)
 - R-002 (Source generator)
 - R-003 (xUnit XML)
@@ -383,6 +423,7 @@ This structure aligns with:
 - R-008 (PDF export)
 
 **Sequential Research** (depends on codebase exploration):
+
 - R-006 (AnalyticsPlugin) → Explore existing plugin
 - R-007 (Plugin metrics) → Explore existing infrastructure
 
@@ -399,9 +440,11 @@ This structure aligns with:
 **Output**: `data-model.md`
 
 #### Entity 1: ReportProvider
+
 **Purpose**: Metadata for a report data provider discovered at compile time.
 
 **Fields**:
+
 - `Id` (string): Unique identifier (e.g., "lablab.build-metrics")
 - `Name` (string, optional): Human-readable name (e.g., "Build Metrics Provider")
 - `Version` (string, optional): Provider version (e.g., "1.0.0")
@@ -410,6 +453,7 @@ This structure aligns with:
 **Relationships**: None (metadata only)
 
 **Validation Rules**:
+
 - `Id` must be non-empty
 - `Id` must be unique across all providers (enforced by source generator diagnostic)
 
@@ -418,9 +462,11 @@ This structure aligns with:
 ---
 
 #### Entity 2: ReportTemplate
+
 **Purpose**: Represents a FastReport template file for report rendering.
 
 **Fields**:
+
 - `TemplatePath` (string): Path to `.frx` template file
 - `Name` (string): Template name (e.g., "Build Metrics Report")
 - `SupportedFormats` (ReportExportFormat[]): Formats this template can export to
@@ -428,6 +474,7 @@ This structure aligns with:
 **Relationships**: None
 
 **Validation Rules**:
+
 - `TemplatePath` must point to existing `.frx` file
 - `SupportedFormats` must not be empty
 
@@ -436,9 +483,11 @@ This structure aligns with:
 ---
 
 #### Entity 3: BuildMetricsAggregate
+
 **Purpose**: Aggregated build data for report generation.
 
 **Fields**:
+
 - `BuildStartTime` (DateTimeOffset): When build started
 - `BuildEndTime` (DateTimeOffset): When build ended
 - `BuildDuration` (TimeSpan): Total build time
@@ -452,9 +501,11 @@ This structure aligns with:
 - `FailureDetails` (TestFailure[]): Details of failed tests
 
 **Relationships**:
+
 - Has many `TestFailure` (composition)
 
 **Validation Rules**:
+
 - `TotalTests` = `PassedTests` + `FailedTests` + `SkippedTests`
 - Coverage percentages between 0 and 100
 
@@ -463,9 +514,11 @@ This structure aligns with:
 ---
 
 #### Entity 4: TestFailure
+
 **Purpose**: Details of a single test failure.
 
 **Fields**:
+
 - `TestName` (string): Full test name
 - `ErrorMessage` (string): Failure message
 - `StackTrace` (string): Stack trace of failure
@@ -473,14 +526,17 @@ This structure aligns with:
 **Relationships**: Part of `BuildMetricsAggregate`
 
 **Validation Rules**:
+
 - `TestName` must be non-empty
 
 ---
 
 #### Entity 5: GameSessionAggregate
+
 **Purpose**: Gameplay statistics for a single session.
 
 **Fields**:
+
 - `SessionId` (string): Unique session identifier
 - `SessionStartTime` (DateTimeOffset): Session start
 - `SessionEndTime` (DateTimeOffset): Session end
@@ -495,6 +551,7 @@ This structure aligns with:
 **Relationships**: None
 
 **Validation Rules**:
+
 - `TotalPlaytime` = `SessionEndTime` - `SessionStartTime`
 - Counts must be non-negative
 
@@ -503,9 +560,11 @@ This structure aligns with:
 ---
 
 #### Entity 6: PluginHealthSnapshot
+
 **Purpose**: Health information for a single plugin.
 
 **Fields**:
+
 - `PluginId` (string): Plugin identifier
 - `PluginName` (string): Plugin name
 - `State` (PluginState enum): Running, Failed, Degraded, Stopped
@@ -518,6 +577,7 @@ This structure aligns with:
 **Relationships**: None
 
 **Validation Rules**:
+
 - `PluginId` must be non-empty
 - `MemoryUsageMB` and `LoadDurationMs` must be non-negative
 - If `HealthStatus` is Degraded/Unhealthy, `HealthStatusReason` should be present
@@ -527,9 +587,11 @@ This structure aligns with:
 ---
 
 #### Entity 7: ReportDefinition
+
 **Purpose**: Specification for generating a report.
 
 **Fields**:
+
 - `ProviderId` (string): ID of data provider to use
 - `TemplatePath` (string): Path to `.frx` template
 - `OutputFormat` (ReportExportFormat enum): HTML, PDF, PNG, CSV
@@ -537,10 +599,12 @@ This structure aligns with:
 - `Data` (object): Strongly-typed data object (e.g., BuildMetricsAggregate)
 
 **Relationships**:
+
 - References `ReportProvider` by ID
 - References `ReportTemplate` by path
 
 **Validation Rules**:
+
 - `ProviderId` must exist in registry
 - `TemplatePath` must exist
 - `OutputPath` must be writable

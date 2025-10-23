@@ -21,12 +21,14 @@ This document catalogs the implementation summary files that were moved from the
 ## Summary Documents
 
 ### 1. Dungeon Progression Implementation (Spec-003)
+
 **Original File**: `DUNGEON_PROGRESSION_IMPLEMENTATION.md`
 **New Location**: `docs/archive/implementation-summaries/dungeon-progression/`
 **Spec Reference**: `specs/003-dungeon-progression/`
 **Status**: Phase 1 Complete
 
 **Key Features Implemented**:
+
 - Multi-level dungeon traversal (up and down staircases)
 - Level state persistence and restoration
 - Exponential difficulty scaling (1.12^level multiplier)
@@ -34,12 +36,14 @@ This document catalogs the implementation summary files that were moved from the
 - Player state persistence across levels
 
 **Components Added**:
+
 - `Staircase.cs` - Staircase component with direction
 - `DungeonLevel.cs` - Level state management
 - `LevelManager.cs` - Level generation and transitions
 - `DifficultyScalingSystem.cs` - Stat scaling formulas
 
 **Modifications**:
+
 - `GameStateManager.cs` - Integrated level management
 - `HudService.cs` - Added level/depth display
 - `DungeonCrawlerService.cs` - Staircase interaction keys
@@ -47,7 +51,9 @@ This document catalogs the implementation summary files that were moved from the
 ---
 
 ### 2. Status Effects System Implementation (Spec-002)
+
 **Original Files**:
+
 - `STATUS_EFFECTS_COMPLETE_SUMMARY.md`
 - `STATUS_EFFECTS_PHASE5_COMPLETE.md`
 - `STATUS_EFFECTS_PHASE6_COMPLETE.md`
@@ -57,6 +63,7 @@ This document catalogs the implementation summary files that were moved from the
 **Status**: Phases 1-6 Complete
 
 **Key Features Implemented**:
+
 - 12 status effect types (Poison, Strength, Speed, Defense, etc.)
 - Turn-based duration tracking
 - Combat stat modifiers (attack, defense, speed)
@@ -65,11 +72,13 @@ This document catalogs the implementation summary files that were moved from the
 - HUD display with icons and durations
 
 **Components Added**:
+
 - `StatusEffect.cs` - Effect component with type, duration, magnitude
 - `StatusEffectSystem.cs` - Turn processing and expiration
 - `EffectDefinitions.cs` - 12 predefined effect types
 
 **Modifications**:
+
 - `CombatSystem.cs` - Stat modifiers integration
 - `ItemSystem.cs` - Consumable effect application
 - `Enemy.cs` - Effect infliction on hit
@@ -78,12 +87,14 @@ This document catalogs the implementation summary files that were moved from the
 ---
 
 ### 3. Tiered Plugin Architecture Implementation (Spec-004)
+
 **Original File**: `SPEC_004_IMPLEMENTATION.md`
 **New Location**: `docs/archive/implementation-summaries/plugin-architecture/`
 **Spec Reference**: `specs/004-tiered-plugin-architecture/`
 **Status**: Phases 1-2 Complete, In Progress
 
 **Key Features Implemented**:
+
 - Plugin contracts (netstandard2.1)
 - Cross-ALC service registry with priority
 - Plugin manifest parsing (JSON)
@@ -92,6 +103,7 @@ This document catalogs the implementation summary files that were moved from the
 - Plugin lifecycle management
 
 **Assemblies Created**:
+
 - `LablabBean.Plugins.Contracts` (netstandard2.1)
   - IPlugin, IPluginContext, IRegistry interfaces
   - PluginManifest, PluginDependency models
@@ -100,6 +112,7 @@ This document catalogs the implementation summary files that were moved from the
   - ManifestParser, DependencyResolver
 
 **Phase Progress**:
+
 - ✅ Phase 1: Contracts & Core
 - ✅ Phase 2: Host Loader
 - ⏳ Phase 3: Demo Plugin (in progress)
@@ -134,6 +147,7 @@ These implementation summaries were moved from the project root to improve disco
 ## Future Work
 
 These summaries may be promoted to canonical implementation guides in `docs/guides/implementation/` after:
+
 1. Adding proper YAML front-matter
 2. Updating to reflect current state (not just completion snapshots)
 3. Adding cross-references to specs and code
@@ -142,6 +156,7 @@ These summaries may be promoted to canonical implementation guides in `docs/guid
 ---
 
 **Next Steps**:
+
 - Run `python scripts/validate_docs.py` to verify front-matter
 - Update registry with `python scripts/update_registry.py`
 - Consider creating canonical implementation guides from these summaries

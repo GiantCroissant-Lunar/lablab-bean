@@ -70,6 +70,7 @@ git checkout -b feature/your-feature-name
 ```
 
 Branch naming conventions:
+
 - `feature/` - New features
 - `fix/` - Bug fixes
 - `docs/` - Documentation updates
@@ -98,6 +99,7 @@ make check
 ```
 
 This will run:
+
 - Code formatting (`gofmt`, `goimports`)
 - Linting (`golangci-lint`)
 - Vetting (`go vet`)
@@ -125,6 +127,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 ```
 
 Types:
+
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation changes
@@ -134,6 +137,7 @@ Types:
 - `chore`: Maintenance tasks
 
 Examples:
+
 ```
 feat(cli): add new speck generate command
 fix(config): resolve viper configuration loading issue

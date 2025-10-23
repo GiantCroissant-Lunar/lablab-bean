@@ -8,11 +8,13 @@
 **Organization**: Tasks are grouped by phase and contract domain to enable sequential implementation.
 
 ## Format: `[ID] [P?] [Phase] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Phase]**: Which phase this task belongs to (e.g., P1, P2, P3, P4)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 - Contract assemblies: `dotnet/framework/LablabBean.Contracts.{Domain}/`
 - Test projects: `dotnet/tests/LablabBean.Contracts.{Domain}.Tests/`
 - Example plugins: `plugins/LablabBean.Plugins.{Name}/`
@@ -38,6 +40,7 @@
 **Goal**: Enable scene/level loading with camera and viewport management
 
 **Success Criteria**:
+
 - Scene loading <100ms (up to 100 entities)
 - Camera positioning works correctly
 - Scene transition events published in correct order
@@ -107,6 +110,7 @@
 **Goal**: Enable scope-based input routing and action mapping
 
 **Success Criteria**:
+
 - Input scope stack no memory leaks (1,000 cycles)
 - Modal UI correctly captures input
 - Action mapping works correctly
@@ -182,6 +186,7 @@
 **Goal**: Enable configuration management with change notifications
 
 **Success Criteria**:
+
 - Config change events <10ms latency
 - Typed value retrieval works correctly
 - Hierarchical sections work correctly
@@ -251,6 +256,7 @@
 **Goal**: Enable async resource loading with caching
 
 **Success Criteria**:
+
 - Resource service handles 50+ concurrent loads
 - Resource cache >90% hit rate
 - Circular dependency detection works
@@ -361,21 +367,26 @@
 ## Parallel Execution Strategy
 
 ### Phase 1 (Scene) - Sequential
+
 - Must complete before other phases (establishes patterns)
 
 ### Phase 2 (Input) - After Phase 1
+
 - Depends on understanding scene context
 - Can start once Scene contract patterns are established
 
 ### Phase 3 (Config) - After Phase 1
+
 - Independent of Input
 - Can run in parallel with Phase 2 if multiple developers
 
 ### Phase 4 (Resource) - After Phase 1
+
 - Independent of Input and Config
 - Can run in parallel with Phases 2-3 if multiple developers
 
 ### Phase 5 (Integration) - After Phases 1-4
+
 - Requires all 4 contracts complete
 - Sequential (integration tests depend on all contracts)
 
@@ -386,6 +397,7 @@
 ### Total Tasks: 124 tasks
 
 **By Phase**:
+
 - **Phase 0 (Setup)**: 7 tasks
 - **Phase 1 (Scene)**: 21 tasks
 - **Phase 2 (Input)**: 25 tasks
@@ -394,12 +406,14 @@
 - **Phase 5 (Integration)**: 20 tasks
 
 **By Type**:
+
 - **Project Setup**: 16 tasks
 - **Implementation**: 40 tasks
 - **Testing**: 48 tasks
 - **Documentation**: 20 tasks
 
 **Parallel Opportunities**:
+
 - Phase 0: 3 tasks can run in parallel (test/plugin projects)
 - Phase 1: 6 tasks can run in parallel (models, events, tests)
 - Phase 2: 8 tasks can run in parallel (models, events, tests)
@@ -410,6 +424,7 @@
 ### Estimated Duration
 
 **Single Developer**:
+
 - Phase 0: 0.5 days
 - Phase 1: 2-3 days
 - Phase 2: 2-3 days
@@ -419,6 +434,7 @@
 - **Total**: 9-14 days
 
 **Two Developers** (with parallelization):
+
 - Phase 0: 0.5 days
 - Phase 1: 2-3 days (sequential)
 - Phases 2-4: 3-4 days (parallel)
@@ -447,6 +463,6 @@ Setup (0.5d) → Scene (2-3d) → Input (2-3d) → Integration (1-2d)
 
 ---
 
-**Generated**: 2025-10-22  
-**Command**: Manual generation based on spec.md and plan.md  
+**Generated**: 2025-10-22
+**Command**: Manual generation based on spec.md and plan.md
 **Based on**: spec.md (4 user stories, 69 requirements), plan.md (4 phases)

@@ -23,7 +23,8 @@ summary: >
 
 The project previously had a **Handlebars-based template code generator** incorrectly named "spec-kit". This was completely removed:
 
-#### Files Deleted:
+#### Files Deleted
+
 - `scripts/generate-template.js` (397 lines)
 - `scripts/package.json`
 - `scripts/node_modules/`
@@ -36,20 +37,24 @@ The project previously had a **Handlebars-based template code generator** incorr
 - `SPEC-KIT.md` (537 lines)
 - `SPEC-KIT-QUICK-REFERENCE.md`
 
-#### Documentation Archived:
+#### Documentation Archived
+
 - `docs/guides/spec-kit-quickstart.md` → `docs/archive/`
 - `docs/guides/spec-kit-utilization.md` → `docs/archive/`
 - `docs/_inbox/spec-kit-implementation-complete.md` → `docs/archive/fake-spec-kit-implementation.md`
 
-#### Taskfile.yml Cleaned:
+#### Taskfile.yml Cleaned
+
 Removed tasks:
+
 - `speck-init`
 - `speck-generate`
 - `speck-list`
 - `gen-monster`
 - `gen-monster-from-env`
 
-#### Configuration Updated:
+#### Configuration Updated
+
 - `.lablab-bean.yaml` - Removed fake spec-kit configuration
 - Updated project description
 
@@ -57,13 +62,15 @@ Removed tasks:
 
 **Spec-Kit** is GitHub's Specification-Driven Development (SDD) toolkit.
 
-#### Installation:
+#### Installation
+
 ```bash
 uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
 # Installed version: 0.0.20
 ```
 
-#### Initialization:
+#### Initialization
+
 ```bash
 specify init --here --ai claude
 # Selected: Claude Code agent
@@ -71,7 +78,7 @@ specify init --here --ai claude
 # Template: v0.0.72
 ```
 
-#### What Was Created:
+#### What Was Created
 
 ```
 .specify/
@@ -108,15 +115,18 @@ specify init --here --ai claude
 ### Old "Spec-Kit" (REMOVED)
 
 **What it was:**
+
 - Handlebars template code generator
 - YAML variable files + templates → Generated C# code
 - Node.js/JavaScript based
 
 **Purpose:**
+
 - Generate boilerplate C# monster classes
 - Wrong approach for data-driven game design
 
 **Example:**
+
 ```bash
 task gen-monster NAME=Dragon
 # Output: generated/Dragon.cs (boilerplate class)
@@ -125,16 +135,19 @@ task gen-monster NAME=Dragon
 ### New Spec-Kit (INSTALLED)
 
 **What it is:**
+
 - Specification-Driven Development (SDD) methodology
 - AI agents read specs and generate complete features
 - Python-based CLI tool
 
 **Purpose:**
+
 - Write specifications that drive AI code generation
 - Living documentation
 - AI-native development workflow
 
 **Example:**
+
 ```bash
 /speckit.specify
 # Prompt: Create a dungeon crawler with fog of war and monsters
@@ -170,12 +183,14 @@ Now available in Claude Code:
 
 ## Spec-Kit Workflow
 
-### Traditional Development:
+### Traditional Development
+
 ```
 Idea → Write Code → Debug → Document (maybe)
 ```
 
-### Spec-Driven Development:
+### Spec-Driven Development
+
 ```
 1. /speckit.constitution → Project principles
 2. /speckit.specify → Feature specification (WHAT & WHY)
@@ -199,6 +214,7 @@ Players customize loadouts via JSON configuration.
 ```
 
 AI generates:
+
 - YAML schemas
 - Data loaders
 - Component-based entities
@@ -208,6 +224,7 @@ AI generates:
 ### 2. Living Documentation
 
 Specifications:
+
 - ARE the documentation
 - Generate the code
 - Stay in sync automatically
@@ -216,6 +233,7 @@ Specifications:
 ### 3. AI-Native Development
 
 Built for Claude Code and other AI agents:
+
 - Write intent, not implementation
 - Focus on WHAT and WHY
 - AI handles the HOW
@@ -257,6 +275,7 @@ specs/
 ```
 
 Each feature:
+
 - Has its own branch
 - Documented requirements
 - Technical plan
@@ -314,11 +333,13 @@ For future features:
 ## File Cleanup Summary
 
 ### Removed (Total: ~5,000 lines)
+
 - 21 files deleted
 - 3 directories removed
 - 6 documentation files archived
 
 ### Added (Spec-Kit)
+
 - 18 new files (templates, scripts, commands)
 - 2 directories (`.specify/`, `.claude/`)
 - Proper SDD infrastructure
@@ -348,11 +369,13 @@ For future features:
 ## References
 
 ### Spec-Kit Documentation
-- **GitHub Repo:** https://github.com/github/spec-kit
+
+- **GitHub Repo:** <https://github.com/github/spec-kit>
 - **Reference Project:** `ref-projects/spec-kit/`
 - **Methodology:** `ref-projects/spec-kit/spec-driven.md`
 
 ### Internal Documentation
+
 - **Data-Driven Proposal:** `docs/_inbox/data-driven-monster-approach.md`
 - **Adoption Guide:** `docs/_inbox/adopt-real-spec-kit.md`
 - **This Document:** `docs/_inbox/spec-kit-migration-complete.md`

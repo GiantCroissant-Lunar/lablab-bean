@@ -68,6 +68,7 @@ lablabbean.exe report build --data build/_artifacts/*/test-results --output repo
 ```
 
 **Sample output**:
+
 - ✅ 45 tests passed
 - 📊 87% code coverage
 - ⏱️ 2m 34s build time
@@ -85,6 +86,7 @@ lablabbean.exe report session --data logs/analytics.jsonl --output report.html
 ```
 
 **Sample output**:
+
 - 🎮 2h 15m playtime
 - 🎯 K/D ratio: 2.3
 - 📈 Level progression: 5 → 12
@@ -103,6 +105,7 @@ lablabbean.exe report plugin --data logs/plugin-health.json --output report.html
 ```
 
 **Sample output**:
+
 - ✅ 8 plugins running
 - ⚠️ 1 degraded (high memory)
 - ❌ 1 failed (timeout)
@@ -275,6 +278,7 @@ lablabbean.exe report build \
 ### Metadata
 
 Every report includes:
+
 - Generation timestamp
 - Build number (if available)
 - Data source paths
@@ -327,17 +331,20 @@ fi
 The reporting system includes built-in sample data for demonstration:
 
 **Build Metrics**:
+
 - 45 tests (42 passed, 2 failed, 1 skipped)
 - 87% code coverage
 - 2m 34s duration
 
 **Session Analytics**:
+
 - 2h 15m playtime
 - K/D ratio: 2.3
 - Level 5 → 12
 - 60 FPS average
 
 **Plugin Health**:
+
 - 10 plugins (8 running, 1 degraded, 1 failed)
 - Various memory usage patterns
 - Load time metrics
@@ -395,8 +402,8 @@ Need help? Check these resources:
 
 ---
 
-**Last Updated**: 2025-10-22  
-**Version**: 1.0.0  
+**Last Updated**: 2025-10-22
+**Version**: 1.0.0
 **Status**: Production-ready ✅
 
 Happy reporting! 🎉📊

@@ -32,13 +32,16 @@ This document provides an actionable, dependency-ordered task list for implement
 ## Implementation Strategy
 
 ### MVP Delivery (Minimum Viable Product)
+
 **Scope**: Phase 1 + Phase 2 + Phase 3 (User Story 1)
+
 - Players can pick up items from the dungeon floor
 - Items appear in inventory display
 - **Delivers**: Core item collection mechanic
 - **Test Criteria**: Walk to item, press 'G', verify item in inventory
 
 ### Incremental Delivery
+
 - **Phase 3**: Item pickup (P1) - First playable feature
 - **Phase 4**: Inventory display (P1) - Enhances visibility
 - **Phase 5**: Consumables (P2) - Adds strategic resource management
@@ -88,6 +91,7 @@ Each phase is independently testable and delivers user value.
 **User Story**: "A player explores the dungeon and finds a healing potion on the floor. They walk adjacent to the item and press the 'G' key to pick it up. The item disappears from the map and appears in their inventory display in the HUD."
 
 **Independent Test Criteria**:
+
 - Spawn item at known position
 - Move player adjacent to item
 - Press 'G' key
@@ -117,6 +121,7 @@ Each phase is independently testable and delivers user value.
 **User Story**: "As a player explores the dungeon, they can see their current inventory at all times in the HUD panel. The display shows item names, quantities (for stackable items), and which items are currently equipped."
 
 **Independent Test Criteria**:
+
 - Add items to player inventory programmatically
 - Verify HUD shows item names
 - Verify stackable items show count (e.g., "Healing Potion (3)")
@@ -142,6 +147,7 @@ Each phase is independently testable and delivers user value.
 **User Story**: "During combat, a player's health drops to 30/100. They open their inventory, select a healing potion, and press 'U' to use it. Their health increases by 30 points (to 60/100), the potion is consumed and removed from inventory, and a message appears: 'You drink the healing potion and recover 30 HP.'"
 
 **Independent Test Criteria**:
+
 - Set player health to 50/100
 - Add healing potion to inventory programmatically
 - Press 'U' key and select potion
@@ -169,6 +175,7 @@ Each phase is independently testable and delivers user value.
 **User Story**: "A player finds a better sword in the dungeon. They pick it up and press 'U' to use/equip it. The new sword replaces their current weapon, and their attack stat increases. The old weapon is unequipped but remains in inventory (or drops to the ground if inventory is full)."
 
 **Independent Test Criteria**:
+
 - Add Iron Sword (+5 ATK) to inventory
 - Equip sword
 - Verify player attack stat increased by 5
@@ -211,10 +218,12 @@ Each phase is independently testable and delivers user value.
 ## Dependencies & Execution Order
 
 ### Critical Path (Must Complete in Order)
+
 1. Phase 1 (Setup) → Phase 2 (Foundational) → Phase 3+ (User Stories)
 2. Within each user story phase: Components → Systems → UI → Integration
 
 ### User Story Dependencies
+
 - **US1 (Pickup)**: No dependencies - can implement first ✅
 - **US2 (Display)**: Requires US1 (needs items in inventory to display)
 - **US3 (Consumables)**: Requires US1 (needs pickup) and US2 (needs display)
@@ -223,33 +232,40 @@ Each phase is independently testable and delivers user value.
 ### Parallel Execution Opportunities
 
 **Phase 1** (4 tasks can run in parallel):
+
 - T002, T003, T004 can be done simultaneously (different files)
 - T005 must wait for T002-T004
 
 **Phase 2** (6 tasks can run in parallel):
+
 - T006, T007, T008, T009 can be done simultaneously (same file, different structs)
 - T010, T011 can be done simultaneously (same file, different structs)
 - T012, T013 must wait for T006-T011
 
 **Phase 3** (5 tasks can run in parallel):
+
 - T014, T015 can be done together (same file, related methods)
 - T016, T017 can be done in parallel (different files)
 - T018, T019, T020, T021 must be done sequentially (same file, dependent logic)
 
 **Phase 4** (4 tasks can run in parallel):
+
 - T022, T023, T024 can be done in parallel (different files)
 - T025, T026, T027 must be done sequentially (same file, dependent logic)
 
 **Phase 5** (4 tasks can run in parallel):
+
 - T028, T029 can be done together (same file, related methods)
 - T030, T032, T033 can be done in parallel (different concerns)
 - T031, T034 must be done sequentially (UI integration)
 
 **Phase 6** (5 tasks can run in parallel):
+
 - T035, T036, T037, T038, T039 can be done in parallel (same file, independent methods)
 - T040, T041, T042 must be done sequentially (integration tasks)
 
 **Phase 7** (2 tasks can run in parallel):
+
 - T043, T044 can be done in parallel (same file, independent methods)
 - T045 must wait for T043, T044
 
@@ -260,6 +276,7 @@ Each phase is independently testable and delivers user value.
 ### Manual Testing Workflow
 
 **Test 1: Item Pickup (US1)**
+
 ```
 1. Start new game
 2. Spawn healing potion at (10, 10)
@@ -269,6 +286,7 @@ Each phase is independently testable and delivers user value.
 ```
 
 **Test 2: Inventory Display (US2)**
+
 ```
 1. Add 3 healing potions to inventory programmatically
 2. Add iron sword to inventory programmatically
@@ -278,6 +296,7 @@ Each phase is independently testable and delivers user value.
 ```
 
 **Test 3: Use Consumable (US3)**
+
 ```
 1. Set player health to 50/100
 2. Add healing potion to inventory
@@ -288,6 +307,7 @@ Each phase is independently testable and delivers user value.
 ```
 
 **Test 4: Equip Weapon (US4)**
+
 ```
 1. Add iron sword (+5 ATK) to inventory
 2. Press 'U', select sword
@@ -298,6 +318,7 @@ Each phase is independently testable and delivers user value.
 ```
 
 **Test 5: Full Inventory (Edge Case)**
+
 ```
 1. Fill inventory with 20 items
 2. Spawn item on ground
@@ -306,6 +327,7 @@ Each phase is independently testable and delivers user value.
 ```
 
 **Test 6: Multiple Items on Same Tile (Edge Case)**
+
 ```
 1. Spawn 3 items at (10, 10)
 2. Move player to (10, 11)
@@ -318,6 +340,7 @@ Each phase is independently testable and delivers user value.
 ### Integration Testing
 
 **Full Gameplay Loop**:
+
 1. Start new game with item spawning enabled
 2. Explore dungeon, find items in rooms
 3. Pick up healing potion and weapon
@@ -332,11 +355,13 @@ Each phase is independently testable and delivers user value.
 ## File Modification Summary
 
 ### New Files
+
 - `dotnet/framework/LablabBean.Game.Core/Components/Item.cs` (T002, T006-T009)
 - `dotnet/framework/LablabBean.Game.Core/Systems/InventorySystem.cs` (T003, T014-T042)
 - `dotnet/framework/LablabBean.Game.Core/Systems/ItemSpawnSystem.cs` (T004, T013, T017, T043-T044)
 
 ### Modified Files
+
 - `dotnet/framework/LablabBean.Game.Core/Components/Actor.cs` (T010-T011)
 - `dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs` (T012, T045)
 - `dotnet/framework/LablabBean.Game.Core/Systems/CombatSystem.cs` (T040, T045)

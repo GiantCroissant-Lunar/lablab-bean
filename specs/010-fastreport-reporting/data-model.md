@@ -1,7 +1,7 @@
 # Data Model: FastReport Reporting Infrastructure
 
-**Spec**: [../spec.md](../spec.md) | **Plan**: [../plan.md](../plan.md) | **Research**: [../research.md](../research.md)  
-**Date**: 2025-10-22  
+**Spec**: [../spec.md](../spec.md) | **Plan**: [../plan.md](../plan.md) | **Research**: [../research.md](../research.md)
+**Date**: 2025-10-22
 **Status**: Draft
 
 ---
@@ -34,7 +34,7 @@ public interface IReportProvider
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Report data object (typically BuildMetricsData, SessionStatisticsData, or PluginHealthData)</returns>
     Task<object> GetReportDataAsync(ReportRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Gets metadata about this provider (name, supported data sources, etc.)
     /// </summary>
@@ -43,6 +43,7 @@ public interface IReportProvider
 ```
 
 **Usage Example**:
+
 ```csharp
 [ReportProvider("BuildMetrics", "Build", priority: 0)]
 public class BuildMetricsProvider : IReportProvider
@@ -53,7 +54,7 @@ public class BuildMetricsProvider : IReportProvider
         // Parse test results, coverage, build timing
         return data;
     }
-    
+
     public ReportMetadata GetMetadata() => new()
     {
         Name = "BuildMetrics",
@@ -86,7 +87,7 @@ public interface IReportRenderer
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result containing output file path and any errors</returns>
     Task<ReportResult> RenderAsync(ReportRequest request, object data, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Gets supported output formats.
     /// </summary>
@@ -95,6 +96,7 @@ public interface IReportRenderer
 ```
 
 **Usage Example**:
+
 ```csharp
 public class FastReportRenderer : IReportRenderer
 {
@@ -104,14 +106,14 @@ public class FastReportRenderer : IReportRenderer
         ReportFormat.PDF,
         ReportFormat.PNG
     };
-    
+
     public async Task<ReportResult> RenderAsync(ReportRequest request, object data, CancellationToken cancellationToken)
     {
         var report = new Report();
         report.Load(request.TemplatePath);
         report.RegisterData(data, "Data");
         report.Prepare();
-        
+
         switch (request.Format)
         {
             case ReportFormat.PDF:
@@ -121,7 +123,7 @@ public class FastReportRenderer : IReportRenderer
                 report.Export(new HTMLExport(), request.OutputPath);
                 break;
         }
-        
+
         return ReportResult.Success(request.OutputPath);
     }
 }
@@ -150,7 +152,7 @@ public interface IReportingService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result containing output file path and any errors</returns>
     Task<ReportResult> GenerateReportAsync(string providerName, ReportRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Lists all available report providers.
     /// </summary>
@@ -159,6 +161,7 @@ public interface IReportingService
 ```
 
 **Usage Example**:
+
 ```csharp
 // From CLI command handler
 var service = serviceProvider.GetRequiredService<IReportingService>();
@@ -198,18 +201,18 @@ public class ReportProviderAttribute : Attribute
     /// Unique name of the provider (e.g., "BuildMetrics").
     /// </summary>
     public string Name { get; }
-    
+
     /// <summary>
     /// Category for grouping providers (e.g., "Build", "Analytics", "Diagnostics").
     /// </summary>
     public string Category { get; }
-    
+
     /// <summary>
     /// Priority for provider selection when multiple providers exist in same category.
     /// Lower values = higher priority. Default is 0.
     /// </summary>
     public int Priority { get; }
-    
+
     public ReportProviderAttribute(string name, string category, int priority = 0)
     {
         Name = name;
@@ -220,6 +223,7 @@ public class ReportProviderAttribute : Attribute
 ```
 
 **Categories**:
+
 - `"Build"` - Build-time metrics (tests, coverage, timing)
 - `"Analytics"` - Runtime analytics (session stats, player behavior)
 - `"Diagnostics"` - System health (plugin status, performance)
@@ -244,25 +248,25 @@ public class ReportRequest
     /// Desired output format.
     /// </summary>
     public ReportFormat Format { get; set; } = ReportFormat.HTML;
-    
+
     /// <summary>
     /// Output file path (including extension).
     /// If null, generates default path in artifacts/reports/.
     /// </summary>
     public string? OutputPath { get; set; }
-    
+
     /// <summary>
     /// Path to data source (e.g., "TestResults/*.xml", "logs/analytics/session-123.jsonl").
     /// Provider determines how to interpret this.
     /// </summary>
     public string? DataPath { get; set; }
-    
+
     /// <summary>
     /// Path to custom template file (.frx for FastReport).
     /// If null, uses embedded default template.
     /// </summary>
     public string? TemplatePath { get; set; }
-    
+
     /// <summary>
     /// Additional provider-specific filters or options.
     /// </summary>
@@ -288,32 +292,32 @@ public class ReportResult
     /// True if report was generated successfully.
     /// </summary>
     public bool IsSuccess { get; set; }
-    
+
     /// <summary>
     /// Path to generated report file.
     /// </summary>
     public string? OutputPath { get; set; }
-    
+
     /// <summary>
     /// File size in bytes.
     /// </summary>
     public long FileSizeBytes { get; set; }
-    
+
     /// <summary>
     /// Time taken to generate report.
     /// </summary>
     public TimeSpan Duration { get; set; }
-    
+
     /// <summary>
     /// Errors encountered during generation.
     /// </summary>
     public List<string> Errors { get; set; } = new();
-    
+
     /// <summary>
     /// Warnings (non-fatal issues).
     /// </summary>
     public List<string> Warnings { get; set; } = new();
-    
+
     public static ReportResult Success(string outputPath, long fileSizeBytes = 0, TimeSpan duration = default)
         => new()
         {
@@ -322,7 +326,7 @@ public class ReportResult
             FileSizeBytes = fileSizeBytes,
             Duration = duration
         };
-    
+
     public static ReportResult Failure(params string[] errors)
         => new()
         {
@@ -350,22 +354,22 @@ public class ReportMetadata
     /// Provider name (matches ReportProviderAttribute.Name).
     /// </summary>
     public string Name { get; set; } = string.Empty;
-    
+
     /// <summary>
     /// Human-readable description.
     /// </summary>
     public string Description { get; set; } = string.Empty;
-    
+
     /// <summary>
     /// Category (Build, Analytics, Diagnostics).
     /// </summary>
     public string Category { get; set; } = string.Empty;
-    
+
     /// <summary>
     /// Supported output formats.
     /// </summary>
     public ReportFormat[] SupportedFormats { get; set; } = Array.Empty<ReportFormat>();
-    
+
     /// <summary>
     /// Expected data source pattern (e.g., "*.xml", "*.jsonl").
     /// </summary>
@@ -389,13 +393,13 @@ public enum ReportFormat
 {
     /// <summary>HTML format (default)</summary>
     HTML,
-    
+
     /// <summary>PDF format</summary>
     PDF,
-    
+
     /// <summary>PNG image format</summary>
     PNG,
-    
+
     /// <summary>CSV format (future)</summary>
     CSV
 }
@@ -425,17 +429,17 @@ public class BuildMetricsData
     public int SkippedTests { get; set; }
     public decimal PassPercentage { get; set; }
     public List<TestResult> FailedTestDetails { get; set; } = new();
-    
+
     // Code Coverage (FR-022)
     public decimal LineCoveragePercentage { get; set; }
     public decimal BranchCoveragePercentage { get; set; }
     public List<FileCoverage> LowCoverageFiles { get; set; } = new(); // < 80%
-    
+
     // Build Timing (FR-023)
     public TimeSpan BuildDuration { get; set; }
     public DateTime BuildStartTime { get; set; }
     public DateTime BuildEndTime { get; set; }
-    
+
     // Metadata (FR-024, FR-025)
     public string BuildNumber { get; set; } = string.Empty;
     public string Repository { get; set; } = string.Empty;
@@ -471,6 +475,7 @@ public class FileCoverage
 ```
 
 **Mapping to Spec Requirements**:
+
 - FR-020: Test counts (Total, Passed, Failed, Skipped)
 - FR-021: Pass percentage calculation
 - FR-022: Line/branch coverage, low-coverage file identification
@@ -498,7 +503,7 @@ public class SessionStatisticsData
     public DateTime SessionStartTime { get; set; }
     public DateTime SessionEndTime { get; set; }
     public TimeSpan TotalPlaytime { get; set; }
-    
+
     // Combat Statistics (FR-027, FR-028)
     public int TotalKills { get; set; }
     public int TotalDeaths { get; set; }
@@ -506,19 +511,19 @@ public class SessionStatisticsData
     public int TotalDamageDealt { get; set; }
     public int TotalDamageTaken { get; set; }
     public decimal AverageDamagePerKill { get; set; }
-    
+
     // Progression (FR-029)
     public int ItemsCollected { get; set; }
     public int LevelsCompleted { get; set; }
     public int AchievementsUnlocked { get; set; }
-    
+
     // Performance Metrics (FR-030)
     public int AverageFrameRate { get; set; }
     public TimeSpan TotalLoadTime { get; set; }
-    
+
     // Event Timeline (FR-031)
     public List<SessionEvent> KeyEvents { get; set; } = new();
-    
+
     // Metadata
     public DateTime ReportGeneratedAt { get; set; } = DateTime.UtcNow;
 }
@@ -536,6 +541,7 @@ public class SessionEvent
 ```
 
 **Mapping to Spec Requirements**:
+
 - FR-026: Playtime calculation
 - FR-027: Kill/death tracking and K/D ratio
 - FR-028: Damage dealt/taken, average damage
@@ -565,10 +571,10 @@ public class PluginHealthData
     public int FailedPlugins { get; set; }
     public int DegradedPlugins { get; set; }
     public decimal SuccessRate { get; set; }
-    
+
     // Individual Plugin Details (FR-034, FR-035, FR-036, FR-037)
     public List<PluginStatus> Plugins { get; set; } = new();
-    
+
     // System Metrics
     public long TotalMemoryUsageMB { get; set; }
     public TimeSpan TotalLoadTime { get; set; }
@@ -584,17 +590,17 @@ public class PluginStatus
     public string Name { get; set; } = string.Empty;
     public string Version { get; set; } = string.Empty;
     public string State { get; set; } = string.Empty; // "Running", "Failed", "Degraded", "Stopped"
-    
+
     // Memory Usage (FR-035)
     public long MemoryUsageMB { get; set; }
-    
+
     // Load Time (FR-036)
     public TimeSpan LoadDuration { get; set; }
-    
+
     // Health Status (FR-034)
     public string? HealthStatusReason { get; set; }
     public DateTime? DegradedSince { get; set; }
-    
+
     // Error Details (FR-033)
     public string? ErrorMessage { get; set; }
     public string? StackTrace { get; set; }
@@ -602,6 +608,7 @@ public class PluginStatus
 ```
 
 **Mapping to Spec Requirements**:
+
 - FR-033: Plugin state counts, failure reasons
 - FR-034: Health status (Degraded state and reason)
 - FR-035: Memory usage highlighting (>50 MB)
@@ -641,7 +648,7 @@ namespace LablabBean.Reporting.Generated
             new ProviderRegistration(typeof(LablabBean.Reporting.Analytics.SessionStatisticsProvider), "Session", "Analytics", 0),
             new ProviderRegistration(typeof(LablabBean.Reporting.Analytics.PluginHealthProvider), "PluginHealth", "Diagnostics", 0)
         };
-        
+
         /// <summary>
         /// Registers all discovered providers with the service collection.
         /// </summary>
@@ -654,7 +661,7 @@ namespace LablabBean.Reporting.Generated
             return services;
         }
     }
-    
+
     /// <summary>
     /// Registration information for a report provider.
     /// </summary>

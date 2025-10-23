@@ -4,7 +4,8 @@
 **Created**: 2025-10-22
 **Completed**: 2025-10-22
 **Status**: ✅ Complete
-**Prerequisites**: 
+**Prerequisites**:
+
 - Spec 007 (Tiered Contract Architecture) ✅ Complete
 - Spec 008 (Extended Contract Assemblies) ✅ Complete
 **Input**: User Story 8 from Spec 007 - "Plugin developer wants to create a proxy service for their contract without writing manual delegation boilerplate. They need a source generator that automatically implements all interface methods by delegating to the registry based on attributes."
@@ -71,6 +72,7 @@ A plugin developer wants to control how services are retrieved from the registry
 ### Edge Cases
 
 **Source Generator**:
+
 - What happens when a partial class is missing the `IRegistry _registry` field? (Should generate compile error with helpful message)
 - How does the generator handle interface methods with default parameter values? (Should preserve default values in generated signature)
 - What happens when an interface inherits from multiple base interfaces? (Should generate implementations for all inherited members)
@@ -166,18 +168,21 @@ A plugin developer wants to control how services are retrieved from the registry
 ### Measurable Outcomes
 
 **Source Generator Core**:
+
 - **SC-001**: Source generator successfully generates proxy implementations for interfaces with 50+ methods without errors
 - **SC-002**: Generated proxy code compiles without warnings and passes all nullable reference type checks
 - **SC-003**: Developers can create a proxy service in under 30 seconds (write 10 lines of code, generator fills in the rest)
 - **SC-004**: Using source generator reduces boilerplate code by at least 90% compared to manual proxy implementation
 
 **Feature Coverage**:
+
 - **SC-005**: Source generator correctly handles all interface member types (methods, properties, events)
 - **SC-006**: Source generator preserves generic type parameters and constraints in 100% of test cases
 - **SC-007**: Source generator correctly handles ref/out parameters in 100% of test cases
 - **SC-008**: Source generator correctly handles async methods in 100% of test cases
 
 **Developer Experience**:
+
 - **SC-009**: Diagnostic errors provide clear, actionable messages for all common mistakes
 - **SC-010**: Generated code is readable and matches hand-written code quality
 - **SC-011**: Build time impact is less than 1 second for projects with 10 proxy services
@@ -196,6 +201,7 @@ A plugin developer wants to control how services are retrieved from the registry
 ## Out of Scope
 
 **Not Planned**:
+
 - Runtime proxy generation (compile-time only)
 - Proxy generation for abstract classes (interfaces only)
 - Automatic `_registry` field generation (developer must provide)
