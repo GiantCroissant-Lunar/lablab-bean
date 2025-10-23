@@ -51,6 +51,7 @@ pnpm build:all
 Astro.js web application with terminal interface.
 
 **Tech Stack:**
+
 - Astro.js (SSR)
 - React
 - Tailwind CSS
@@ -61,6 +62,7 @@ Astro.js web application with terminal interface.
 Terminal backend package using node-pty.
 
 **Features:**
+
 - PTY process management
 - WebSocket server
 - Session management
@@ -83,6 +85,7 @@ The application uses a monorepo structure with pnpm workspaces:
 2. **Terminal Package** (`packages/terminal`): Shared terminal logic and WebSocket server
 
 The terminal package is consumed by the web app and provides:
+
 - WebSocket server for terminal communication
 - PTY process management using node-pty
 - Session handling and lifecycle management

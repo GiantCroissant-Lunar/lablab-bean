@@ -1,7 +1,7 @@
-import * as pty from 'node-pty';
-import type { WebSocket } from 'ws';
-import type { TerminalOptions, TerminalSession } from './types.js';
-import { randomUUID } from 'crypto';
+import * as pty from "node-pty";
+import type { WebSocket } from "ws";
+import type { TerminalOptions, TerminalSession } from "./types.js";
+import { randomUUID } from "crypto";
 
 export class TerminalManager {
   private sessions: Map<string, TerminalSession> = new Map();
@@ -12,30 +12,31 @@ export class TerminalManager {
     // Determine shell and args based on platform
     let shell: string;
     let shellArgs: string[] = [];
-    
-    if (process.platform === 'win32') {
+
+    if (process.platform === "win32") {
       // On Windows, use PowerShell to run the console app
-      shell = 'powershell.exe';
-      
+      shell = "powershell.exe";
+
       // Auto-run console app if enabled (default: true)
       if (options.autoRunConsoleApp !== false) {
         // Find the console app path relative to the terminal package
-        const consoleAppPath = options.consoleAppPath || 
-          '..\\..\\..\\dotnet\\console-app\\LablabBean.Console';
-        
+        const consoleAppPath =
+          options.consoleAppPath ||
+          "..\\..\\..\\dotnet\\console-app\\LablabBean.Console";
+
         shellArgs = [
-          '-NoExit',  // Keep PowerShell open after command
-          '-Command',
-          `cd "${consoleAppPath}"; dotnet run`
+          "-NoExit", // Keep PowerShell open after command
+          "-Command",
+          `cd "${consoleAppPath}"; dotnet run`,
         ];
       }
     } else {
-      shell = options.shell || 'bash';
+      shell = options.shell || "bash";
     }
-    
+
     // Create PTY process
     const ptyProcess = pty.spawn(shell, shellArgs, {
-      name: 'xterm-color',
+      name: "xterm-color",
       cols: options.cols || 80,
       rows: options.rows || 24,
       cwd: options.cwd || process.cwd(),
@@ -44,7 +45,8 @@ export class TerminalManager {
 
     // Handle PTY data
     ptyProcess.onData((data) => {
-      if (ws.readyState === 1) { // WebSocket.OPEN
+      if (ws.readyState === 1) {
+        // WebSocket.OPEN
         ws.send(data);
       }
     });
@@ -66,7 +68,7 @@ export class TerminalManager {
     this.sessions.set(sessionId, session);
 
     // Handle WebSocket close
-    ws.on('close', () => {
+    ws.on("close", () => {
       this.destroySession(sessionId);
     });
 
@@ -101,7 +103,7 @@ export class TerminalManager {
       try {
         session.pty.kill();
       } catch (error) {
-        console.error('Error killing PTY:', error);
+        console.error("Error killing PTY:", error);
       }
       this.sessions.delete(sessionId);
     }

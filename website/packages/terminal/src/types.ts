@@ -1,5 +1,5 @@
-import type { IPty } from 'node-pty';
-import type { WebSocket } from 'ws';
+import type { IPty } from "node-pty";
+import type { WebSocket } from "ws";
 
 export interface TerminalOptions {
   shell?: string;
@@ -7,8 +7,8 @@ export interface TerminalOptions {
   env?: Record<string, string>;
   cols?: number;
   rows?: number;
-  autoRunConsoleApp?: boolean;  // Auto-run console app on session start (default: true)
-  consoleAppPath?: string;      // Path to console app (relative to terminal package)
+  autoRunConsoleApp?: boolean; // Auto-run console app on session start (default: true)
+  consoleAppPath?: string; // Path to console app (relative to terminal package)
 }
 
 export interface TerminalSession {
@@ -19,7 +19,7 @@ export interface TerminalSession {
 }
 
 export interface ResizeMessage {
-  type: 'resize';
+  type: "resize";
   cols: number;
   rows: number;
 }

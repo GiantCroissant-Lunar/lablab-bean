@@ -1,12 +1,12 @@
 {
-  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
+    "baseUrl": ".",
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@lablab-bean/terminal": ["../../packages/terminal/src"]
     }
-  }
+  },
+  "extends": "astro/tsconfigs/strict"
 }

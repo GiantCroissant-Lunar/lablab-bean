@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import type { Terminal as ITerminal } from 'xterm';
-import 'xterm/css/xterm.css';
+import { useEffect, useRef, useState } from "react";
+import type { Terminal as ITerminal } from "xterm";
+import "xterm/css/xterm.css";
 
 export default function Terminal() {
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -16,9 +16,9 @@ export default function Terminal() {
     let cleanup: (() => void) | undefined;
 
     (async () => {
-      const { Terminal } = await import('xterm');
-      const { FitAddon } = await import('xterm-addon-fit');
-      const { WebLinksAddon } = await import('xterm-addon-web-links');
+      const { Terminal } = await import("xterm");
+      const { FitAddon } = await import("xterm-addon-fit");
+      const { WebLinksAddon } = await import("xterm-addon-web-links");
 
       if (!terminalRef.current) return;
 
@@ -29,26 +29,26 @@ export default function Terminal() {
         fontFamily: 'Menlo, Monaco, "Courier New", monospace',
         scrollback: 10000, // Keep 10000 lines in scrollback buffer
         theme: {
-          background: '#1e1e1e',
-          foreground: '#cccccc',
-          cursor: '#ffffff',
-          selectionBackground: '#264f78',
-          black: '#000000',
-          red: '#cd3131',
-          green: '#0dbc79',
-          yellow: '#e5e510',
-          blue: '#2472c8',
-          magenta: '#bc3fbc',
-          cyan: '#11a8cd',
-          white: '#e5e5e5',
-          brightBlack: '#666666',
-          brightRed: '#f14c4c',
-          brightGreen: '#23d18b',
-          brightYellow: '#f5f543',
-          brightBlue: '#3b8eea',
-          brightMagenta: '#d670d6',
-          brightCyan: '#29b8db',
-          brightWhite: '#ffffff',
+          background: "#1e1e1e",
+          foreground: "#cccccc",
+          cursor: "#ffffff",
+          selectionBackground: "#264f78",
+          black: "#000000",
+          red: "#cd3131",
+          green: "#0dbc79",
+          yellow: "#e5e510",
+          blue: "#2472c8",
+          magenta: "#bc3fbc",
+          cyan: "#11a8cd",
+          white: "#e5e5e5",
+          brightBlack: "#666666",
+          brightRed: "#f14c4c",
+          brightGreen: "#23d18b",
+          brightYellow: "#f5f543",
+          brightBlue: "#3b8eea",
+          brightMagenta: "#d670d6",
+          brightCyan: "#29b8db",
+          brightWhite: "#ffffff",
         },
         // Don't set fixed rows/cols - let FitAddon calculate based on container size
       });
@@ -74,25 +74,29 @@ export default function Terminal() {
       });
 
       // Connect to WebSocket (terminal server on port 3001)
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const terminalPort = import.meta.env.PUBLIC_TERMINAL_PORT || '3001';
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const terminalPort = import.meta.env.PUBLIC_TERMINAL_PORT || "3001";
       const terminalHost = window.location.hostname;
-      const ws = new WebSocket(`${protocol}//${terminalHost}:${terminalPort}/terminal`);
+      const ws = new WebSocket(
+        `${protocol}//${terminalHost}:${terminalPort}/terminal`,
+      );
       wsRef.current = ws;
 
       ws.onopen = () => {
         setConnected(true);
-        term.writeln('Connected to terminal server');
-        term.writeln('');
+        term.writeln("Connected to terminal server");
+        term.writeln("");
 
         // Send initial terminal size to PTY
         // This is crucial for Terminal.Gui apps to render correctly
         console.log(`Sending initial terminal size: ${term.cols}x${term.rows}`);
-        ws.send(JSON.stringify({
-          type: 'resize',
-          cols: term.cols,
-          rows: term.rows,
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "resize",
+            cols: term.cols,
+            rows: term.rows,
+          }),
+        );
       };
 
       ws.onmessage = (event) => {
@@ -100,13 +104,13 @@ export default function Terminal() {
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        term.writeln('\r\n\x1b[31mWebSocket connection error\x1b[0m');
+        console.error("WebSocket error:", error);
+        term.writeln("\r\n\x1b[31mWebSocket connection error\x1b[0m");
       };
 
       ws.onclose = () => {
         setConnected(false);
-        term.writeln('\r\n\x1b[31mDisconnected from terminal server\x1b[0m');
+        term.writeln("\r\n\x1b[31mDisconnected from terminal server\x1b[0m");
       };
 
       // Send data from terminal to WebSocket
@@ -126,31 +130,33 @@ export default function Terminal() {
           try {
             fitAddon.fit();
             if (ws.readyState === WebSocket.OPEN) {
-              ws.send(JSON.stringify({
-                type: 'resize',
-                cols: term.cols,
-                rows: term.rows,
-              }));
+              ws.send(
+                JSON.stringify({
+                  type: "resize",
+                  cols: term.cols,
+                  rows: term.rows,
+                }),
+              );
             }
           } catch (error) {
-            console.error('Error during terminal resize:', error);
+            console.error("Error during terminal resize:", error);
           }
         }, 100); // Debounce by 100ms
       };
 
       // Listen to window resize (for browser resize and orientation changes)
-      window.addEventListener('resize', handleResize);
+      window.addEventListener("resize", handleResize);
 
       // Listen to orientation changes on mobile devices
-      window.addEventListener('orientationchange', handleResize);
+      window.addEventListener("orientationchange", handleResize);
 
       // Cleanup function
       cleanup = () => {
         if (resizeTimeout) {
           clearTimeout(resizeTimeout);
         }
-        window.removeEventListener('resize', handleResize);
-        window.removeEventListener('orientationchange', handleResize);
+        window.removeEventListener("resize", handleResize);
+        window.removeEventListener("orientationchange", handleResize);
         ws.close();
         term.dispose();
       };
@@ -163,24 +169,32 @@ export default function Terminal() {
   }, []);
 
   return (
-      <div className="h-full w-full flex flex-col bg-terminal-bg rounded-lg overflow-hidden shadow-2xl">
-        <div className="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700 flex-shrink-0">
-          <div className="flex items-center space-x-2">
-            <div className="flex space-x-2">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            </div>
-            <span className="text-gray-400 text-sm ml-4">Terminal</span>
+    <div className="h-full w-full flex flex-col bg-terminal-bg rounded-lg overflow-hidden shadow-2xl">
+      <div className="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700 flex-shrink-0">
+        <div className="flex items-center space-x-2">
+          <div className="flex space-x-2">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-            <span className="text-gray-400 text-xs">
-              {connected ? 'Connected' : 'Disconnected'}
-            </span>
-          </div>
+          <span className="text-gray-400 text-sm ml-4">Terminal</span>
         </div>
-        <div ref={terminalRef} className="flex-1 min-h-0 w-full overflow-hidden" style={{ padding: '8px' }} />
+        <div className="flex items-center space-x-2">
+          <div
+            className={`w-2 h-2 rounded-full ${
+              connected ? "bg-green-500" : "bg-red-500"
+            }`}
+          ></div>
+          <span className="text-gray-400 text-xs">
+            {connected ? "Connected" : "Disconnected"}
+          </span>
+        </div>
       </div>
+      <div
+        ref={terminalRef}
+        className="flex-1 min-h-0 w-full overflow-hidden"
+        style={{ padding: "8px" }}
+      />
+    </div>
   );
 }

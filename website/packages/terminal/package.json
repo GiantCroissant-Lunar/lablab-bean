@@ -1,23 +1,4 @@
 {
-  "name": "@lablab-bean/terminal",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "server": "node dist/standalone-server.js",
-    "dev:server": "tsc && node dist/standalone-server.js",
-    "clean": "rm -rf dist node_modules"
-  },
   "dependencies": {
     "node-pty": "^1.1.0-beta17",
     "ws": "^8.16.0",
@@ -29,5 +10,24 @@
     "@types/node": "^20.10.5",
     "@types/ws": "^8.5.10",
     "typescript": "^5.3.3"
-  }
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "name": "@lablab-bean/terminal",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist node_modules",
+    "dev": "tsc --watch",
+    "dev:server": "tsc && node dist/standalone-server.js",
+    "server": "node dist/standalone-server.js"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "version": "0.1.0"
 }

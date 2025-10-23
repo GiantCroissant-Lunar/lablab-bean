@@ -19,7 +19,7 @@ try {
     if ($LASTEXITCODE -eq 0) {
         $version = $gitVersionJson.Trim()
         Write-Host "✓ Version: $version" -ForegroundColor Green
-        
+
         # Set version in environment for build
         $env:LABLAB_VERSION = $version
     } else {

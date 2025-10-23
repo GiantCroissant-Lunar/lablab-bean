@@ -30,17 +30,17 @@ const MIME_TYPES = {
 const server = createServer(async (req, res) => {
   try {
     let filePath = req.url === '/' ? '/index.html' : req.url;
-    
+
     // Remove query string
     const queryIndex = filePath.indexOf('?');
     if (queryIndex !== -1) {
       filePath = filePath.substring(0, queryIndex);
     }
-    
+
     const fullPath = join(__dirname, filePath);
     const ext = extname(filePath);
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    
+
     const content = await readFile(fullPath);
     res.writeHead(200, { 'Content-Type': contentType });
     res.end(content);
