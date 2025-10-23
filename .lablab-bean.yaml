@@ -11,7 +11,7 @@ pre_commit:
   enabled: true
   auto_install: true
   hooks:
-    - trailing-whitespace
-    - end-of-file-fixer
-    - check-yaml
-    - markdownlint
+  - trailing-whitespace
+  - end-of-file-fixer
+  - check-yaml
+  - markdownlint

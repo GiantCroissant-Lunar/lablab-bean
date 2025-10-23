@@ -1,25 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "$ref": "#/definitions/build",
-  "title": "Build Schema",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {
     "build": {
-      "type": "object",
       "properties": {
         "Configuration": {
-          "type": "string",
-          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)"
+          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
+          "type": "string"
         },
         "Continue": {
-          "type": "boolean",
-          "description": "Indicates to continue a previously failed build attempt"
+          "description": "Indicates to continue a previously failed build attempt",
+          "type": "boolean"
         },
         "Help": {
-          "type": "boolean",
-          "description": "Shows the help text for this build assembly"
+          "description": "Shows the help text for this build assembly",
+          "type": "boolean"
         },
         "Host": {
-          "type": "string",
           "description": "Host for execution. Default is 'automatic'",
           "enum": [
             "AppVeyor",
@@ -37,41 +34,41 @@
             "TravisCI",
             "VisualStudio",
             "VSCode"
-          ]
+          ],
+          "type": "string"
         },
         "NoLogo": {
-          "type": "boolean",
-          "description": "Disables displaying the NUKE logo"
+          "description": "Disables displaying the NUKE logo",
+          "type": "boolean"
         },
         "Partition": {
-          "type": "string",
-          "description": "Partition to use on CI"
+          "description": "Partition to use on CI",
+          "type": "string"
         },
         "Plan": {
-          "type": "boolean",
-          "description": "Shows the execution plan (HTML)"
+          "description": "Shows the execution plan (HTML)",
+          "type": "boolean"
         },
         "Profile": {
-          "type": "array",
           "description": "Defines the profiles to load",
           "items": {
             "type": "string"
-          }
+          },
+          "type": "array"
         },
         "Root": {
-          "type": "string",
-          "description": "Root directory during build execution"
+          "description": "Root directory during build execution",
+          "type": "string"
         },
         "Skip": {
-          "type": "array",
           "description": "List of targets to be skipped. Empty list skips all dependencies",
           "items": {
-            "type": "string",
             "enum": [
               "BuildWebsite",
               "Clean",
               "Compile",
               "GenerateReports",
+              "GenerateWindowsMetrics",
               "PrintVersion",
               "Publish",
               "PublishAll",
@@ -81,23 +78,24 @@
               "Restore",
               "Test",
               "TestWithCoverage"
-            ]
-          }
+            ],
+            "type": "string"
+          },
+          "type": "array"
         },
         "Solution": {
-          "type": "string",
-          "description": "Path to a solution file that is automatically loaded"
+          "description": "Path to a solution file that is automatically loaded",
+          "type": "string"
         },
         "Target": {
-          "type": "array",
           "description": "List of targets to be invoked. Default is '{default_target}'",
           "items": {
-            "type": "string",
             "enum": [
               "BuildWebsite",
               "Clean",
               "Compile",
               "GenerateReports",
+              "GenerateWindowsMetrics",
               "PrintVersion",
               "Publish",
               "PublishAll",
@@ -107,20 +105,24 @@
               "Restore",
               "Test",
               "TestWithCoverage"
-            ]
-          }
+            ],
+            "type": "string"
+          },
+          "type": "array"
         },
         "Verbosity": {
-          "type": "string",
           "description": "Logging verbosity during build execution. Default is 'Normal'",
           "enum": [
             "Minimal",
             "Normal",
             "Quiet",
             "Verbose"
-          ]
+          ],
+          "type": "string"
         }
-      }
+      },
+      "type": "object"
     }
-  }
+  },
+  "title": "Build Schema"
 }

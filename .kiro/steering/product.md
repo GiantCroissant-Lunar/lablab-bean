@@ -12,11 +12,13 @@ Lablab-Bean is a **dungeon crawler roguelike game** that combines classic roguel
 ## Target Users
 
 ### Primary Audience
+
 - **Roguelike enthusiasts**: Players who enjoy procedurally generated dungeons, permadeath, and strategic gameplay
 - **Terminal game fans**: Players nostalgic for classic ASCII/terminal-based games
 - **Casual web gamers**: Users looking for accessible browser-based gaming without installation
 
 ### Secondary Audience
+
 - **Game developers**: Interested in the technical implementation of web-based terminal games
 - **Terminal.Gui developers**: Exploring cross-platform terminal UI development
 
@@ -30,6 +32,7 @@ Lablab-Bean is a **dungeon crawler roguelike game** that combines classic roguel
 ## Key Features
 
 ### Gameplay
+
 - Procedurally generated dungeons
 - Turn-based tactical combat
 - Character progression and inventory management
@@ -37,6 +40,7 @@ Lablab-Bean is a **dungeon crawler roguelike game** that combines classic roguel
 - Multiple character classes and abilities
 
 ### Technical
+
 - Web-based terminal emulator (xterm.js)
 - .NET backend with Terminal.Gui
 - Real-time communication between frontend and backend

@@ -53,6 +53,7 @@ All adapters must enforce documentation conventions.
 This rule system complements the documentation schema in `docs/DOCUMENTATION-SCHEMA.md`. The schema defines the structure, while agent rules define how agents interact with and maintain documentation.
 
 When conflicts arise:
+
 1. Documentation schema takes precedence for structure
 2. Agent rules take precedence for automation behavior
 3. Escalate to human if genuine conflict exists

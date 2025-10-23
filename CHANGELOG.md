@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Proxy Service Source Generator (v1.0.0)
+
 - **Source Generator**: Roslyn-based incremental source generator for automatic proxy creation
 - **Attributes**: `[RealizeService]` and `[SelectionStrategy]` for declarative proxy configuration
 - **Full C# Support**: Methods, properties, events, generics, ref/out/in, params, async, nullable types
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Boilerplate Reduction**: 90%+ reduction in manual delegation code
 
 #### Event-Driven Plugin Architecture (v1.0.0)
+
 - **IEventBus**: Pub-sub messaging infrastructure with 1.1M+ events/sec throughput
 - **Domain Contracts**: `LablabBean.Contracts.Game` and `LablabBean.Contracts.UI` assemblies
 - **Event Definitions**: Immutable record types for game and UI events
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tests**: 29 passing tests covering event bus, contracts, and integration scenarios
 
 #### Project Infrastructure
+
 - Initial project setup with Go 1.21
 - Pre-commit hooks configuration with multiple linters and formatters
 - Task automation using Taskfile.yml
@@ -51,12 +54,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - .dockerignore for optimized Docker builds
 
 ### Pre-commit Hooks
+
 - General file checks (trailing whitespace, EOF fixer, YAML validation)
 - Go-specific hooks (go fmt, go vet, go imports, go mod tidy, golangci-lint)
 - Markdown linting with auto-fix
 - YAML formatting with auto-fix
 
 ### Task Automation
+
 - install: Install dependencies and tools
 - build: Build the application
 - build-all: Build for all platforms (Linux, Windows, macOS)
@@ -77,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docker-run: Run Docker container
 
 ### Documentation
+
 - README.md: Comprehensive project documentation
 - QUICKSTART.md: Quick start guide for new users
 - CONTRIBUTING.md: Contribution guidelines
@@ -85,6 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2025-10-20
 
 ### Added
+
 - Initial release
 - Basic CLI structure
 - Pre-commit hooks integration

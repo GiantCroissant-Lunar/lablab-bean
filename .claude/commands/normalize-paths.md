@@ -15,12 +15,14 @@ You must systematically find and fix absolute paths in the codebase.
 ### Step 1: Scan Configuration Files
 
 Search for absolute paths in these file types:
+
 - `appsettings.json` files (all environments)
 - `*.csproj` files
 - `package.json` files
 - Any other configuration files (`.env` files, config files, etc.)
 
 Look for patterns:
+
 - Windows absolute paths: `D:\`, `C:\`, etc.
 - Unix absolute paths: `/home/`, `/usr/`, `/var/`, etc.
 - UNC paths: `\\server\share`
@@ -28,6 +30,7 @@ Look for patterns:
 ### Step 2: Identify Problematic Paths
 
 For each absolute path found:
+
 1. Note the file location
 2. Note the current absolute path
 3. Determine the appropriate relative path
@@ -36,16 +39,19 @@ For each absolute path found:
 ### Step 3: Convert to Relative Paths
 
 **Configuration Files:**
+
 - Use `./` for same directory
 - Use `../` for parent directories
 - Use relative paths from project root when appropriate
 
 **C# Code:**
+
 - Use `Path.Combine()` with relative paths
 - Use `Directory.GetCurrentDirectory()` as base
 - Never hardcode drive letters or absolute paths
 
 **TypeScript/JavaScript:**
+
 - Use `path.join(__dirname, ...)` for relative paths
 - Use `./` and `../` in config files
 - Use `process.cwd()` when needed
@@ -53,6 +59,7 @@ For each absolute path found:
 ### Step 4: Report Changes
 
 Create a summary report showing:
+
 1. **Files Modified**: List of files changed
 2. **Paths Fixed**: Before/After for each change
 3. **Manual Review Needed**: Any paths that need human verification
@@ -61,6 +68,7 @@ Create a summary report showing:
 ### Step 5: Validation
 
 After making changes:
+
 1. Verify the application still builds
 2. Check if any paths point to non-existent locations
 3. Recommend testing on different platforms if possible

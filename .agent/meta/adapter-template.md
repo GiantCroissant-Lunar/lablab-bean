@@ -11,23 +11,29 @@ This adapter configures [Agent Name] behavior for the Lablab-Bean project.
 ## Core Rules to Follow
 
 ### Documentation Rules (R-DOC)
+
 - **R-DOC-001**: [Brief description or reference]
 - **R-DOC-002**: [Brief description or reference]
 [... list all relevant rules ...]
 
 ### Code Rules (R-CODE)
+
 [List applicable code rules]
 
 ### Testing Rules (R-TST)
+
 [List applicable testing rules]
 
 ### Git Rules (R-GIT)
+
 [List applicable git rules]
 
 ### Process Rules (R-PRC)
+
 [List applicable process rules]
 
 ### Security Rules (R-SEC)
+
 [List applicable security rules]
 
 ## Documentation Workflow

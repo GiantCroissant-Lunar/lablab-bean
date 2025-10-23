@@ -61,6 +61,7 @@ Please review changelog at .agent/meta/changelog.md and update adapter.
 ```
 
 Agent should:
+
 - **Ask human** if it's safe to proceed
 - **Not automatically update** to newer version without review
 - **Provide link** to changelog for review
@@ -68,16 +69,19 @@ Agent should:
 ## Version Compatibility
 
 ### Major Version Changes (X.0.0)
+
 - **Incompatible**: Adapter must be updated
 - **Breaking changes** to rule semantics
 - **Removed or renamed** rules
 
 ### Minor Version Changes (0.X.0)
+
 - **Compatible**: Adapter can work but should be updated soon
 - **New rules** added (adapter won't enforce them yet)
 - **Clarifications** to existing rules
 
 ### Patch Version Changes (0.0.X)
+
 - **Compatible**: No adapter update needed
 - **Typo fixes** and formatting
 - **Documentation** improvements
@@ -108,18 +112,21 @@ Agent should:
 ## Best Practices
 
 ### For Humans
+
 - Always update version in `00-index.md` when changing rules
 - Always document in `changelog.md`
 - Use semver strictly (major for breaking, minor for additive, patch for fixes)
 - Test adapters after base updates
 
 ### For Agents
+
 - Check version sync at start of session
 - Warn user if mismatch detected
 - Do not silently proceed with mismatched versions
 - Provide helpful links to changelog
 
 ### For Rule IDs
+
 - **Never** delete rule IDs
 - **Never** reuse rule IDs
 - Mark deprecated rules as "DEPRECATED" but keep them
@@ -127,7 +134,7 @@ Agent should:
 
 ## References
 
-- **Semver Specification**: https://semver.org
+- **Semver Specification**: <https://semver.org>
 - **Base Index**: `.agent/base/00-index.md`
 - **Changelog**: `.agent/meta/changelog.md`
 - **Current Base Version**: 1.0.0

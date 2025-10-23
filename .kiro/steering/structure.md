@@ -134,21 +134,25 @@ specs/
 ## Naming Conventions
 
 ### C# Files
+
 - **PascalCase**: `PlayerEntity.cs`, `DungeonGenerator.cs`
 - **Interfaces**: Prefix with `I` → `IGameService.cs`
 - **Tests**: Suffix with `Tests` → `DungeonGeneratorTests.cs`
 
 ### TypeScript Files
+
 - **camelCase**: `terminal.ts`, `connectionManager.ts`
 - **Index files**: `index.ts` for package entry points
 - **Types**: `types.ts` or `*.types.ts` for type definitions
 
 ### Documentation Files
+
 - **kebab-case**: `getting-started.md`, `api-reference.md`
 - **ADRs**: `YYYY-MM-DD-nnn-decision-title.md`
 - **Inbox docs**: `YYYY-MM-DD-title--DOC-YYYY-NNNNN.md`
 
 ### Test Files
+
 - **C#**: `ClassNameTests.cs` (xUnit)
 - **TypeScript**: `*.test.ts` or `*.spec.ts`
 
@@ -174,6 +178,7 @@ specs/
 ## Configuration Files
 
 ### Root-Level Config Files (Allowed)
+
 - `package.json` - Node.js workspace
 - `tsconfig.json` - TypeScript config
 - `.gitignore` - Git ignore rules
@@ -182,6 +187,7 @@ specs/
 - `CLAUDE.md`, `AGENTS.md` - Agent pointers
 
 ### Hidden Directory Configs
+
 - `.agent/` - AI agent instructions
 - `.kiro/` - Kiro steering
 - `.specify/` - Spec-Kit config

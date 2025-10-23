@@ -100,6 +100,7 @@ git commit --no-verify -m "message"
 ## Hooks Configured
 
 ### File Checks
+
 - `trailing-whitespace`: Remove trailing whitespace
 - `end-of-file-fixer`: Ensure files end with newline
 - `check-yaml`: Validate YAML syntax
@@ -110,15 +111,18 @@ git commit --no-verify -m "message"
 - `detect-private-key`: Prevent committing private keys
 
 ### Formatting
+
 - `ruff-format`: Auto-format Python code (replaces black)
 - `pretty-format-yaml`: Format YAML files
 - `markdownlint`: Lint and fix Markdown
 
 ### Linting
+
 - `ruff`: Python linter (replaces flake8, isort, pyupgrade, and 50+ tools)
 - `mypy`: Python type checking (optional)
 
 ### Project-Specific
+
 - `validate-pointer-files`: Ensure agent pointer files are up to date
 - `conventional-pre-commit`: Enforce conventional commit messages
 
@@ -197,7 +201,7 @@ The same hooks can run in CI/CD:
 
 ## Related Documentation
 
-- **Pre-commit Official Docs**: https://pre-commit.com/
+- **Pre-commit Official Docs**: <https://pre-commit.com/>
 - **Agent Pointer Scripts**: [.agent/scripts/README.md](README.md)
 - **Base Rules**: [.agent/base/20-rules.md](../base/20-rules.md)
 

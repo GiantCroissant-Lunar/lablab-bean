@@ -40,6 +40,7 @@ specs/                  # Generated specifications (project-managed)
 **Examples:** Claude Code, GitHub Copilot Chat
 
 Use slash commands directly:
+
 ```
 /speckit.specify
 /speckit.plan
@@ -52,6 +53,7 @@ Use slash commands directly:
 **Examples:** Windsurf, Cursor, Codex, other AI coding assistants
 
 Use task runner commands instead:
+
 ```bash
 task speckit:specify
 task speckit:plan
@@ -64,6 +66,7 @@ These tasks are defined in `Taskfile.yml` and provide guidance for agents.
 ### For Non-AI Developers
 
 Reference the Spec-Kit workflow manually:
+
 1. Read `.agent/base/20-rules.md` (R-TOOL-001)
 2. Review existing specs in `specs/`
 3. Follow the SDD methodology
@@ -79,6 +82,7 @@ Commands follow the SDD workflow:
 ```
 
 **Task Runner Alternative:**
+
 ```bash
 task speckit:constitution  # One-time setup
 task speckit:specify       # Create spec
@@ -94,6 +98,7 @@ task speckit:implement     # Execute
 **When to use:** First time setup, or when updating core principles
 
 **Example:**
+
 ```
 /speckit.constitution
 
@@ -115,11 +120,13 @@ Create constitution focusing on:
 **When to use:** Starting a new feature
 
 **Important:**
+
 - Focus on WHAT and WHY, NOT HOW
 - Describe user needs, not implementation
 - Be explicit about requirements
 
 **Example:**
+
 ```
 /speckit.specify
 
@@ -131,6 +138,7 @@ Create an inventory system where players can:
 ```
 
 **Output:**
+
 - New branch: `NNN-inventory-system`
 - `specs/NNN-inventory-system/spec.md`
 
@@ -143,11 +151,13 @@ Create an inventory system where players can:
 **When to use:** After specification is complete and clarified
 
 **Important:**
+
 - Now specify tech stack and architecture
 - Reference constitution principles
 - Consider existing codebase
 
 **Example:**
+
 ```
 /speckit.plan
 
@@ -159,6 +169,7 @@ Use data-driven approach:
 ```
 
 **Output:**
+
 - `specs/NNN-inventory-system/plan.md`
 - `specs/NNN-inventory-system/data-model.md`
 - `specs/NNN-inventory-system/contracts/`
@@ -182,6 +193,7 @@ Use data-driven approach:
 **When to use:** After tasks are reviewed
 
 **Important:**
+
 - AI will run local commands (dotnet, npm, etc.)
 - Review generated code
 - Test incrementally
@@ -197,6 +209,7 @@ Use data-driven approach:
 **When to use:** Before `/speckit.plan` if requirements are unclear
 
 **Example:**
+
 ```
 /speckit.clarify
 ```
@@ -230,6 +243,7 @@ Creates "unit tests for English" - validates requirements completeness.
 ### Constitution Alignment
 
 Spec-Kit constitution (`.specify/memory/constitution.md`) should align with:
+
 - `.agent/base/10-principles.md` - Core development principles
 - `.agent/base/20-rules.md` - Normative rules
 
@@ -314,11 +328,13 @@ summary: Player inventory management system
 Previously, the project had a fake "spec-kit" (template generator).
 
 **Old System (REMOVED):**
+
 - Handlebars templates
 - Generated C# boilerplate
 - YAML variable files
 
 **New System (CURRENT):**
+
 - AI-driven from specifications
 - Living documentation
 - Complete feature generation
@@ -353,6 +369,7 @@ specs/                  # Managed by you via /speckit commands
 **Issue:** `/speckit.specify` doesn't autocomplete
 
 **Fix:** Check `.claude/commands/` exists:
+
 ```bash
 ls .claude/commands/speckit.*.md
 ```
@@ -362,6 +379,7 @@ ls .claude/commands/speckit.*.md
 **Issue:** PowerShell scripts fail
 
 **Fix:**
+
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
@@ -376,7 +394,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 ### External Documentation
 
-- **Spec-Kit Repo:** https://github.com/github/spec-kit
+- **Spec-Kit Repo:** <https://github.com/github/spec-kit>
 - **SDD Methodology:** `ref-projects/spec-kit/spec-driven.md`
 
 ### Internal Documentation
@@ -412,6 +430,7 @@ This integration is designed to work with **any AI coding assistant**:
 ### First Time Setup (Any Agent)
 
 1. **Check if constitution exists:**
+
    ```bash
    ls .specify/memory/constitution.md
    ```
@@ -421,6 +440,7 @@ This integration is designed to work with **any AI coding assistant**:
    - **Other agents:** `task speckit:constitution` (then follow prompts)
 
 3. **Prompt for constitution:**
+
    ```
    Create constitution extending .agent/base/ rules:
    - Reference .agent/base/10-principles.md
@@ -461,6 +481,7 @@ cd specs/001-inventory-system/
 ```
 
 **Examples of updates:**
+
 - Bug fixes: "Pickup doesn't work on diagonal tiles" → v1.0.1
 - Small adjustments: "Change healing potion 30 HP → 40 HP" → v1.0.1
 - Minor enhancements: "Add drop item feature" → v1.1.0
@@ -475,6 +496,7 @@ cd specs/001-inventory-system/
 ```
 
 **Examples of new specs:**
+
 - New major features: Item crafting, trading, shops
 - Breaking changes: Complete UI redesign
 - Different user journeys: Multi-player inventory sharing

@@ -45,6 +45,7 @@ To add a new pointer file:
 
 1. Edit `generate_pointers.py`
 2. Add entry to `POINTER_CONFIGS` dictionary:
+
    ```python
    "path/to/NEW_FILE.md": {
        "adapter": "adapter-name.md",  # or None for generic
@@ -53,6 +54,7 @@ To add a new pointer file:
        "path": "path/to",  # or None for root level
    }
    ```
+
 3. Add generator function `generate_new_file_md(config, version)`
 4. Update `generate_pointer_file()` to handle new file
 5. Run script to test

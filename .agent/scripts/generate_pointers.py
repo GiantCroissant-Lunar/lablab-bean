@@ -11,10 +11,9 @@ Usage:
 """
 
 import argparse
+from datetime import date
 from pathlib import Path
 from typing import Dict, Optional
-from datetime import date
-
 
 # Pointer file configurations
 POINTER_CONFIGS = {
@@ -242,7 +241,9 @@ To add support for a new AI assistant:
 """
 
 
-def generate_copilot_instructions_md(config: Dict[str, Optional[str]], version: str) -> str:
+def generate_copilot_instructions_md(
+    config: Dict[str, Optional[str]], version: str
+) -> str:
     """Generate .github/copilot-instructions.md pointer file content."""
     return f"""# GitHub Copilot Instructions
 

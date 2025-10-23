@@ -7,6 +7,7 @@ This adapter configures GitHub Copilot behavior for the Lablab-Bean project.
 ## Quick Reference
 
 You are working on a dungeon crawler game with:
+
 - **.NET 8 backend**: Console application with Terminal.Gui
 - **Web frontend**: xterm.js terminal emulator
 - **Process management**: PM2 for running services
@@ -14,29 +15,35 @@ You are working on a dungeon crawler game with:
 ## Core Rules to Follow
 
 ### Documentation Rules (R-DOC)
+
 - **R-DOC-001**: All docs require YAML front-matter
 - **R-DOC-002**: Write new docs to `docs/_inbox/` only
 - **R-DOC-003**: Check `docs/index/registry.json` before creating new docs
 - **R-DOC-004**: Only one canonical doc per concept
 
 ### Code Rules (R-CODE)
+
 - **R-CODE-001**: No hardcoded secrets
 - **R-CODE-002**: Use meaningful names
 - **R-CODE-003**: Comment non-obvious code
 
 ### Testing Rules (R-TST)
+
 - **R-TST-001**: Test critical paths
 - **R-TST-002**: Builds must pass
 
 ### Git Rules (R-GIT)
+
 - **R-GIT-001**: Descriptive commit messages
 - **R-GIT-002**: Never commit secrets
 
 ### Security Rules (R-SEC)
+
 - **R-SEC-001**: Validate external input
 - **R-SEC-002**: Principle of least privilege
 
 ### Tool Integration Rules (R-TOOL)
+
 - **R-TOOL-001**: Use Spec-Kit for feature development
 - **R-TOOL-002**: Use task runner (`task` command) for operations
 - **R-TOOL-003**: Follow spec maintenance strategy (update vs create new)
@@ -56,6 +63,7 @@ When implementing new features, you MUST follow the Spec-Kit workflow:
 ### Available Commands
 
 **For Copilot Chat (CLI-based):**
+
 - `/speckit.constitution` - Establish project principles (one-time setup)
 - `/speckit.specify` - Define features (WHAT & WHY)
 - `/speckit.clarify` - Ask up to 5 clarification questions
@@ -128,18 +136,21 @@ When generating code suggestions:
 ## Common Tasks
 
 ### Running the App
+
 ```bash
 npm run dev          # Start web terminal
 npm run console      # Run .NET console app
 ```
 
 ### Building
+
 ```bash
 npm run build        # Build frontend
 dotnet build         # Build backend
 ```
 
 ### Testing
+
 ```bash
 npm test             # Run frontend tests
 dotnet test          # Run backend tests
@@ -148,15 +159,18 @@ dotnet test          # Run backend tests
 ## References
 
 ### Agent System
+
 - **Base Rules**: See `.agent/base/20-rules.md`
 - **Principles**: See `.agent/base/10-principles.md`
 - **Glossary**: See `.agent/base/30-glossary.md`
 - **Documentation Standards**: See `.agent/base/40-documentation.md`
 
 ### Integrations
+
 - **Spec-Kit**: See `.agent/integrations/spec-kit.md`
 
 ### Project Documentation
+
 - **Schema**: See `docs/DOCUMENTATION-SCHEMA.md`
 
 ---

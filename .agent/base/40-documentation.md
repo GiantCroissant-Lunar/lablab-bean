@@ -25,6 +25,7 @@ ALWAYS prefer updating an existing canonical document over creating a new one. O
 ### 1. Before Creating Documentation
 
 Check if topic already exists:
+
 1. Review `docs/index/registry.json`
 2. Search for related docs in `docs/`
 

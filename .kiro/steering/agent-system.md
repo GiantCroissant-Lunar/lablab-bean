@@ -37,6 +37,7 @@ Kiro reads steering files → References .agent/adapters/kiro.md → Follows .ag
 ```
 
 This ensures:
+
 - ✅ Kiro has persistent project context via steering files
 - ✅ All agents follow the same base rules
 - ✅ No duplication of canonical rules
@@ -47,34 +48,41 @@ This ensures:
 All rules are documented in `.agent/base/20-rules.md`. Here's a summary:
 
 ### Documentation Rules (R-DOC)
+
 - **R-DOC-001**: Write new docs to `docs/_inbox/` only
 - **R-DOC-002**: Include YAML front-matter in all docs
 - **R-DOC-003**: Check `docs/index/registry.json` before creating docs
 - **R-DOC-004**: Update existing canonical docs instead of duplicating
 
 ### Code Rules (R-CODE)
+
 - **R-CODE-001**: No hardcoded secrets or credentials
 - **R-CODE-002**: Use meaningful variable and function names
 - **R-CODE-003**: Comment non-obvious code
 - **R-CODE-004**: 🚨 **ALWAYS use relative paths** - Never absolute paths
 
 ### Testing Rules (R-TST)
+
 - **R-TST-001**: Test critical paths
 - **R-TST-002**: Builds must pass before commit
 
 ### Git Rules (R-GIT)
+
 - **R-GIT-001**: Use descriptive commit messages (conventional commits)
 - **R-GIT-002**: Never commit secrets
 
 ### Process Rules (R-PRC)
+
 - **R-PRC-001**: Document architecture decisions as ADRs
 - **R-PRC-002**: Document breaking changes
 
 ### Security Rules (R-SEC)
+
 - **R-SEC-001**: Validate all external input
 - **R-SEC-002**: Apply principle of least privilege
 
 ### Tool Integration Rules (R-TOOL)
+
 - **R-TOOL-001**: Use Spec-Kit for feature development (REQUIRED)
 - **R-TOOL-002**: Use task runner (`task` command) for operations
 - **R-TOOL-003**: Follow spec maintenance strategy
@@ -84,11 +92,13 @@ All rules are documented in `.agent/base/20-rules.md`. Here's a summary:
 This project **REQUIRES** GitHub Spec-Kit for feature development.
 
 ### Workflow
+
 ```
 task speckit:specify → task speckit:plan → task speckit:tasks → task speckit:implement
 ```
 
 Or with slash commands:
+
 ```
 /speckit.specify → /speckit.plan → /speckit.tasks → /speckit.implement
 ```
@@ -113,17 +123,20 @@ From `.agent/base/10-principles.md`:
 ## Navigation Guide
 
 ### For Kiro to Understand the Project
+
 1. Read `.kiro/steering/product.md` - Product purpose
 2. Read `.kiro/steering/tech.md` - Tech stack
 3. Read `.kiro/steering/structure.md` - File organization
 4. Read `.agent/adapters/kiro.md` - Kiro-specific instructions
 
 ### For Detailed Rules
+
 1. Read `.agent/base/20-rules.md` - All enforceable rules with IDs
 2. Read `.agent/base/10-principles.md` - Development principles
 3. Read `.agent/base/40-documentation.md` - Documentation standards
 
 ### For Specific Tasks
+
 - **Feature Development**: See `.agent/integrations/spec-kit.md`
 - **Documentation**: See `.agent/base/40-documentation.md` and `docs/DOCUMENTATION-SCHEMA.md`
 - **Testing**: See `.agent/base/20-rules.md` (R-TST section)
@@ -152,6 +165,7 @@ From `.agent/base/10-principles.md`:
 ## Compliance
 
 When working with this project, Kiro MUST:
+
 - ✅ Follow all rules defined in `.agent/base/20-rules.md`
 - ✅ Apply principles from `.agent/base/10-principles.md`
 - ✅ Use Spec-Kit workflow for features (R-TOOL-001)

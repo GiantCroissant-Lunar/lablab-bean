@@ -40,14 +40,17 @@ lablab-bean/
 ## Prerequisites
 
 ### For Task Automation
+
 - [Task](https://taskfile.dev) - `winget install Task.Task` or `brew install go-task/tap/go-task`
 - [Pre-commit](https://pre-commit.com) - `pip install pre-commit` or `brew install pre-commit`
 
 ### For Website
+
 - Node.js 18+
 - pnpm 8+
 
 ### For .NET Apps
+
 - .NET 8 SDK
 
 ## Quick Start
@@ -69,11 +72,13 @@ task dev-stop           # Stop the stack
 ```
 
 **What runs in development mode:**
-- 🌐 **Astro Dev Server** - http://localhost:3000 (hot reload enabled)
+
+- 🌐 **Astro Dev Server** - <http://localhost:3000> (hot reload enabled)
 - 🔌 **PTY Terminal Backend** - TypeScript watch mode
 - 💻 **Console App** - .NET development mode
 
 **Key Features:**
+
 - ✨ Astro hot reload - instant UI updates
 - 🔄 TypeScript watch mode for terminal backend
 - 🚀 Fast iteration without rebuilding
@@ -95,12 +100,14 @@ task stack-logs         # View logs
 ```
 
 **Quick Script (Windows):**
+
 ```powershell
 .\build\scripts\build-and-run.ps1
 ```
 
 The stack includes:
-- 🌐 **Web App** - http://localhost:3000 (bundled Astro)
+
+- 🌐 **Web App** - <http://localhost:3000> (bundled Astro)
 - 💻 **Console App** - Terminal.Gui TUI
 - 🎮 **Windows App** - SadConsole GUI
 
@@ -254,6 +261,7 @@ Spec-kit provides template-based code generation and standardized specifications
 ### Quick Start
 
 **New to spec-kit?** Start here:
+
 ```bash
 # Read the 5-minute quick start guide
 code docs/guides/spec-kit-quickstart.md
@@ -288,12 +296,14 @@ copy templates\entity\monster.tmpl MyMonster.cs
 ### Available Templates
 
 Located in `templates/`:
+
 - **entity/monster.tmpl**: Generate monster classes with stats, AI, and behavior
 - **docs/spec-template.tmpl**: Generate feature specifications with standard format
 
 ### Available Specifications
 
 Located in `docs/specs/`:
+
 - **dungeon-generation-system.md**: Dungeon generation algorithm (implemented v0.0.2)
 - **monster-template-example.md**: How to use monster templates
 - **README.md**: Specifications directory guide
@@ -325,12 +335,15 @@ speck:
 
 1. **Make changes** to your files
 2. **Format and check**:
+
    ```bash
    task format
    task check
    ```
+
 3. **Commit** your changes (pre-commit hooks will run automatically)
 4. **Generate from templates** as needed:
+
    ```bash
    task speck-generate TEMPLATE=model OUTPUT=my-model.md
    ```
@@ -340,6 +353,7 @@ speck:
 ### 1. Website (Node.js + pnpm)
 
 **Tech Stack:**
+
 - Astro.js (SSR framework)
 - React (UI components)
 - xterm.js (Terminal emulator)
@@ -347,6 +361,7 @@ speck:
 - Tailwind CSS
 
 **Features:**
+
 - Web-based terminal in browser
 - Real-time WebSocket communication
 - Cross-platform shell support (PowerShell/Bash)
@@ -356,12 +371,14 @@ speck:
 ### 2. .NET Console App (Terminal.Gui)
 
 **Tech Stack:**
+
 - Terminal.Gui v2
 - ReactiveUI
 - Microsoft.Extensions.*
 - Serilog
 
 **Features:**
+
 - Cross-platform TUI
 - Menu bar & status bar
 - File operations
@@ -372,12 +389,14 @@ speck:
 ### 3. .NET Windows App (SadConsole)
 
 **Tech Stack:**
+
 - SadConsole
 - MonoGame
 - ReactiveUI
 - Microsoft.Extensions.*
 
 **Features:**
+
 - Retro ASCII graphics
 - Roguelike-style UI
 - Reactive updates
@@ -387,16 +406,19 @@ speck:
 ### 4. Framework Libraries
 
 **LablabBean.Core:**
+
 - Domain models
 - Interfaces
 - Business logic
 
 **LablabBean.Infrastructure:**
+
 - Dependency injection
 - Logging (Serilog)
 - Configuration
 
 **LablabBean.Reactive:**
+
 - ReactiveUI ViewModels
 - System.Reactive
 - ObservableCollections
@@ -473,21 +495,25 @@ docs/
 ### 🎯 Quick Links
 
 **Getting Started:**
+
 - [Quick Start](docs/QUICKSTART.md) - User quick start
 - [Developer Quick Start](docs/QUICKSTART-DEV.md) - Setup development environment
 - [Project Setup Guide](docs/guides/project-setup.md) - Detailed setup instructions
 
 **Development:**
+
 - [Development Guide](docs/guides/development.md) - Development workflow
 - [Testing Guide](docs/guides/testing.md) - Testing strategy
 - [Debugging Guide](docs/guides/debugging.md) - Troubleshooting
 
 **Spec-Kit:**
+
 - [Spec-Kit Quick Start](docs/guides/spec-kit-quickstart.md) - 5-minute intro
 - [Spec-Kit Utilization](docs/guides/spec-kit-utilization.md) - Complete guide
 - [Feature Specifications](docs/specs/) - All specs
 
 **Architecture:**
+
 - [Architecture](docs/ARCHITECTURE.md) - System architecture
 - [Organization](docs/ORGANIZATION.md) - Project structure
 - [Contributing](docs/CONTRIBUTING.md) - How to contribute
@@ -500,6 +526,7 @@ docs/
 - **Categories**: Organized into guides/, specs/, findings/, archive/
 
 **Validate documentation:**
+
 ```bash
 python scripts/validate_docs.py
 ```
@@ -515,6 +542,7 @@ This project includes structured instructions for AI coding assistants:
 - **Windsurf**: `.windsurf/rules.md` (coming soon)
 
 The `.agent/` directory contains:
+
 - **Base Rules**: Core principles, normative rules, and glossary
 - **Adapters**: Agent-specific configurations
 - **Meta**: Versioning and governance

@@ -7,6 +7,7 @@ This adapter configures Kiro behavior for the Lablab-Bean project.
 ## Quick Reference
 
 You are working on a dungeon crawler game with:
+
 - **.NET 8 backend**: Console application with Terminal.Gui
 - **Web frontend**: xterm.js terminal emulator
 - **Process management**: PM2 for running services
@@ -16,6 +17,7 @@ You are working on a dungeon crawler game with:
 Kiro uses **steering files** in `.kiro/steering/` for persistent project knowledge. This adapter integrates with the broader `.agent/` instruction system.
 
 **Key Steering Files**:
+
 - `.kiro/steering/product.md` - Product purpose and objectives
 - `.kiro/steering/tech.md` - Technical stack and constraints
 - `.kiro/steering/structure.md` - File organization
@@ -24,12 +26,14 @@ Kiro uses **steering files** in `.kiro/steering/` for persistent project knowled
 ## Core Rules to Follow
 
 ### Documentation Rules (R-DOC)
+
 - **R-DOC-001**: Write new docs to `docs/_inbox/` only
 - **R-DOC-002**: Include YAML front-matter in all docs
 - **R-DOC-003**: Check `docs/index/registry.json` before creating new docs
 - **R-DOC-004**: Update existing canonical docs instead of duplicating
 
 ### Code Rules (R-CODE)
+
 - **R-CODE-001**: No hardcoded secrets
 - **R-CODE-002**: Use meaningful names
 - **R-CODE-003**: Comment non-obvious code
@@ -39,22 +43,27 @@ Kiro uses **steering files** in `.kiro/steering/` for persistent project knowled
   - Reason: Cross-platform compatibility (Windows/Mac/Linux)
 
 ### Testing Rules (R-TST)
+
 - **R-TST-001**: Test critical paths
 - **R-TST-002**: Builds must pass before commit
 
 ### Git Rules (R-GIT)
+
 - **R-GIT-001**: Use descriptive commit messages
 - **R-GIT-002**: Never commit secrets
 
 ### Process Rules (R-PRC)
+
 - **R-PRC-001**: Document architecture decisions as ADRs
 - **R-PRC-002**: Document breaking changes
 
 ### Security Rules (R-SEC)
+
 - **R-SEC-001**: Validate external input
 - **R-SEC-002**: Principle of least privilege
 
 ### Tool Integration Rules (R-TOOL)
+
 - **R-TOOL-001**: Use Spec-Kit for feature development
 - **R-TOOL-002**: Use task runner (`task` command) for operations
 - **R-TOOL-003**: Follow spec maintenance strategy (update vs create new)
@@ -93,6 +102,7 @@ When creating documentation:
 1. **Check registry first**: Review `docs/index/registry.json`
 2. **Write to inbox**: Save to `docs/_inbox/YYYY-MM-DD-title--DOC-YYYY-NNNNN.md`
 3. **Include front-matter**:
+
    ```yaml
    ---
    doc_id: DOC-2025-XXXXX
@@ -184,24 +194,28 @@ When working with Kiro:
 ## Common Tasks
 
 ### Running the App
+
 ```bash
 npm run dev          # Start web terminal
 npm run console      # Run .NET console app
 ```
 
 ### Building
+
 ```bash
 npm run build        # Build frontend
 dotnet build         # Build backend
 ```
 
 ### Testing
+
 ```bash
 npm test             # Run frontend tests
 dotnet test          # Run backend tests
 ```
 
 ### Documentation
+
 ```bash
 python scripts/validate_docs.py  # Validate docs
 ```
@@ -209,21 +223,25 @@ python scripts/validate_docs.py  # Validate docs
 ## References
 
 ### Agent System
+
 - **Base Rules**: See `.agent/base/20-rules.md`
 - **Principles**: See `.agent/base/10-principles.md`
 - **Glossary**: See `.agent/base/30-glossary.md`
 - **Documentation Standards**: See `.agent/base/40-documentation.md`
 
 ### Kiro Steering Files
+
 - **Product**: See `.kiro/steering/product.md`
 - **Tech Stack**: See `.kiro/steering/tech.md`
 - **Structure**: See `.kiro/steering/structure.md`
 - **Agent System**: See `.kiro/steering/agent-system.md`
 
 ### Integrations
+
 - **Spec-Kit**: See `.agent/integrations/spec-kit.md`
 
 ### Project Documentation
+
 - **Schema**: See `docs/DOCUMENTATION-SCHEMA.md`
 
 ---
