@@ -53,13 +53,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Resour
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{83F45A0E-898B-450E-B071-7804E854933A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Scene.Tests", "tests\LablabBean.Contracts.Scene.Tests\LablabBean.Contracts.Scene.Tests.csproj", "{A502DA31-A904-4C2B-8D38-E6015D141ED3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Scene.Tests", "framework\tests\LablabBean.Contracts.Scene.Tests\LablabBean.Contracts.Scene.Tests.csproj", "{A502DA31-A904-4C2B-8D38-E6015D141ED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Input.Tests", "tests\LablabBean.Contracts.Input.Tests\LablabBean.Contracts.Input.Tests.csproj", "{E8E18A04-50E3-4FA7-A2B4-280E122B28BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Input.Tests", "framework\tests\LablabBean.Contracts.Input.Tests\LablabBean.Contracts.Input.Tests.csproj", "{E8E18A04-50E3-4FA7-A2B4-280E122B28BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Config.Tests", "tests\LablabBean.Contracts.Config.Tests\LablabBean.Contracts.Config.Tests.csproj", "{75271F7B-9E6D-46C9-94FA-C72F5D8D7BFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Config.Tests", "framework\tests\LablabBean.Contracts.Config.Tests\LablabBean.Contracts.Config.Tests.csproj", "{75271F7B-9E6D-46C9-94FA-C72F5D8D7BFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Resource.Tests", "tests\LablabBean.Contracts.Resource.Tests\LablabBean.Contracts.Resource.Tests.csproj", "{8D631306-B565-46C8-BA89-27EE7C03998D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Resource.Tests", "framework\tests\LablabBean.Contracts.Resource.Tests\LablabBean.Contracts.Resource.Tests.csproj", "{8D631306-B565-46C8-BA89-27EE7C03998D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reporting.Integration.Tests", "tests\LablabBean.Reporting.Integration.Tests\LablabBean.Reporting.Integration.Tests.csproj", "{E545E98B-588B-41D5-BAD2-63A6FA4BC7EC}"
 EndProject
@@ -85,15 +85,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reporting.Analyt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reporting.Providers.Build", "framework\LablabBean.Reporting.Providers.Build\LablabBean.Reporting.Providers.Build.csproj", "{3398C8D6-74D3-4B1A-A64D-0D9CB14FBF66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reporting.Contracts.Tests", "tests\LablabBean.Reporting.Contracts.Tests\LablabBean.Reporting.Contracts.Tests.csproj", "{01B0110F-42C0-45D3-8700-D9F610B82673}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reporting.Contracts.Tests", "framework\tests\LablabBean.Reporting.Contracts.Tests\LablabBean.Reporting.Contracts.Tests.csproj", "{01B0110F-42C0-45D3-8700-D9F610B82673}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Game.Tests", "framework\tests\LablabBean.Contracts.Game.Tests\LablabBean.Contracts.Game.Tests.csproj", "{F1000000-0000-0000-0000-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.UI.Tests", "framework\tests\LablabBean.Contracts.UI.Tests\LablabBean.Contracts.UI.Tests.csproj", "{F1000000-0000-0000-0000-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reporting.Analytics.Tests", "framework\tests\LablabBean.Reporting.Analytics.Tests\LablabBean.Reporting.Analytics.Tests.csproj", "{F1000000-0000-0000-0000-000000000003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reporting.Providers.Build.Tests", "framework\tests\LablabBean.Reporting.Providers.Build.Tests\LablabBean.Reporting.Providers.Build.Tests.csproj", "{F1000000-0000-0000-0000-000000000004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.SourceGenerators.Proxy.Tests", "framework\tests\LablabBean.SourceGenerators.Proxy.Tests\LablabBean.SourceGenerators.Proxy.Tests.csproj", "{F1000000-0000-0000-0000-000000000005}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Reporting.Csv", "plugins\LablabBean.Plugins.Reporting.Csv\LablabBean.Plugins.Reporting.Csv.csproj", "{BCB51309-55F6-43F8-832A-17CBB6F3C690}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Reporting.Html", "plugins\LablabBean.Plugins.Reporting.Html\LablabBean.Plugins.Reporting.Html.csproj", "{BF1C661D-2EB3-4B34-AF47-499901057136}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Reporting.Csv.Tests", "tests\LablabBean.Plugins.Reporting.Csv.Tests\LablabBean.Plugins.Reporting.Csv.Tests.csproj", "{D5CE5BA9-E4F3-4978-A160-40D11E671FDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Reporting.Csv.Tests", "plugins\tests\LablabBean.Plugins.Reporting.Csv.Tests\LablabBean.Plugins.Reporting.Csv.Tests.csproj", "{D5CE5BA9-E4F3-4978-A160-40D11E671FDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Reporting.Html.Tests", "tests\LablabBean.Plugins.Reporting.Html.Tests\LablabBean.Plugins.Reporting.Html.Tests.csproj", "{4E1AD52C-277C-4A05-B57B-D31D7079AB73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Reporting.Html.Tests", "plugins\tests\LablabBean.Plugins.Reporting.Html.Tests\LablabBean.Plugins.Reporting.Html.Tests.csproj", "{4E1AD52C-277C-4A05-B57B-D31D7079AB73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Core.Tests", "plugins\tests\LablabBean.Plugins.Core.Tests\LablabBean.Plugins.Core.Tests.csproj", "{P1000000-0000-0000-0000-000000000001}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Diagnostic", "framework\LablabBean.Contracts.Diagnostic\LablabBean.Contracts.Diagnostic.csproj", "{A11B6C25-924B-4A49-A600-B62FCE0BF734}"
 EndProject
@@ -357,6 +369,30 @@ Global
 		{8882CADD-3659-4561-B18D-C4EDCA6D9832}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8882CADD-3659-4561-B18D-C4EDCA6D9832}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8882CADD-3659-4561-B18D-C4EDCA6D9832}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000005}.Release|Any CPU.Build.0 = Release|Any CPU
+		{P1000000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{P1000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{P1000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{P1000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{10000000-0000-0000-0000-000000000001} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
@@ -415,5 +451,11 @@ Global
 		{91F9F174-2FCA-4118-B390-ACCAEF92B357} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
 		{9FC289DF-9C10-41D0-A86F-CF32B55EAA6C} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
 		{8882CADD-3659-4561-B18D-C4EDCA6D9832} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
+		{F1000000-0000-0000-0000-000000000001} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{F1000000-0000-0000-0000-000000000002} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{F1000000-0000-0000-0000-000000000003} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{F1000000-0000-0000-0000-000000000004} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{F1000000-0000-0000-0000-000000000005} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{P1000000-0000-0000-0000-000000000001} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
 	EndGlobalSection
 EndGlobal

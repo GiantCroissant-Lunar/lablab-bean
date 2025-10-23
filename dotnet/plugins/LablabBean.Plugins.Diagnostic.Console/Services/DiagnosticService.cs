@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LablabBean.Contracts.Diagnostic;
-using LablabBean.Contracts.Diagnostic.Interfaces;
 using LablabBean.Contracts.Diagnostic.Services;
 using Microsoft.Extensions.Logging;
 
@@ -94,16 +93,18 @@ public class DiagnosticService : IService
 
         var activeProviders = providers ?? _providers.Keys.ToArray();
 
-        foreach (var provider in activeProviders)
+        foreach (var providerName in activeProviders)
         {
-            if (!_providers.ContainsKey(provider) || !_providers[provider])
+            if (!_providers.ContainsKey(providerName) || !_providers[providerName])
                 continue;
 
             var data = new DiagnosticData
             {
+                ProviderName = providerName,
+                ProviderType = ProviderType.Custom,
                 Timestamp = timestamp,
-                Provider = provider,
-                Data = CollectProviderData(provider)
+                Performance = GetCurrentPerformanceMetrics(),
+                Memory = GetCurrentMemoryInfo()
             };
 
             results.Add(data);
@@ -174,27 +175,27 @@ public class DiagnosticService : IService
         };
     }
 
-    public async Task LogEventAsync(DiagnosticEvent @event)
+    public async Task LogEventAsync(DiagnosticEvent diagnosticEvent)
     {
-        _events.Add(@event);
+        _events.Add(diagnosticEvent);
         Interlocked.Increment(ref _eventCount);
 
-        if (@event.Level == DiagnosticLevel.Error || @event.Level == DiagnosticLevel.Critical)
+        if (diagnosticEvent.Level == DiagnosticLevel.Error || diagnosticEvent.Level == DiagnosticLevel.Critical)
         {
             Interlocked.Increment(ref _errorCount);
         }
-        else if (@event.Level == DiagnosticLevel.Warning)
+        else if (diagnosticEvent.Level == DiagnosticLevel.Warning)
         {
             Interlocked.Increment(ref _warningCount);
         }
 
-        WriteToConsole(@event);
+        WriteToConsole(diagnosticEvent);
         await Task.CompletedTask;
     }
 
     public Task LogEventAsync(DiagnosticLevel level, string message, string category, string? source)
     {
-        var @event = new DiagnosticEvent
+        var diagnosticEvent = new DiagnosticEvent
         {
             Timestamp = DateTime.UtcNow,
             Level = level,
@@ -203,12 +204,12 @@ public class DiagnosticService : IService
             Source = source ?? "Unknown"
         };
 
-        return LogEventAsync(@event);
+        return LogEventAsync(diagnosticEvent);
     }
 
     public Task LogExceptionAsync(Exception exception, DiagnosticLevel level, string category, string? source)
     {
-        var @event = new DiagnosticEvent
+        var diagnosticEvent = new DiagnosticEvent
         {
             Timestamp = DateTime.UtcNow,
             Level = level,
@@ -218,12 +219,12 @@ public class DiagnosticService : IService
             Exception = exception
         };
 
-        return LogEventAsync(@event);
+        return LogEventAsync(diagnosticEvent);
     }
 
-    private void WriteToConsole(DiagnosticEvent @event)
+    private void WriteToConsole(DiagnosticEvent diagnosticEvent)
     {
-        var color = @event.Level switch
+        var color = diagnosticEvent.Level switch
         {
             DiagnosticLevel.Critical => ConsoleColor.Magenta,
             DiagnosticLevel.Error => ConsoleColor.Red,
@@ -236,15 +237,15 @@ public class DiagnosticService : IService
         var originalColor = System.Console.ForegroundColor;
         System.Console.ForegroundColor = color;
         
-        var timestamp = @event.Timestamp.ToString("HH:mm:ss.fff");
-        var level = @event.Level.ToString().ToUpper().PadRight(8);
-        var category = @event.Category.PadRight(15);
+        var timestamp = diagnosticEvent.Timestamp.ToString("HH:mm:ss.fff");
+        var level = diagnosticEvent.Level.ToString().ToUpper().PadRight(8);
+        var category = diagnosticEvent.Category.PadRight(15);
         
-        System.Console.WriteLine($"[{timestamp}] [{level}] [{category}] {@event.Message}");
+        System.Console.WriteLine($"[{timestamp}] [{level}] [{category}] {diagnosticEvent.Message}");
         
-        if (@event.Exception != null)
+        if (diagnosticEvent.Exception != null)
         {
-            System.Console.WriteLine($"  Exception: {@event.Exception.GetType().Name}: {@event.Exception.Message}");
+            System.Console.WriteLine($"  Exception: {diagnosticEvent.Exception.GetType().Name}: {diagnosticEvent.Exception.Message}");
         }
         
         System.Console.ForegroundColor = originalColor;
@@ -284,11 +285,12 @@ public class DiagnosticService : IService
     {
         return new SystemInfo
         {
-            MachineName = Environment.MachineName,
-            OSVersion = Environment.OSVersion.ToString(),
-            ProcessorCount = Environment.ProcessorCount,
-            Is64BitOS = Environment.Is64BitOperatingSystem,
-            CLRVersion = Environment.Version.ToString(),
+            Device = new DeviceInfo
+            {
+                Name = Environment.MachineName,
+                OperatingSystem = Environment.OSVersion.ToString(),
+                Architecture = Environment.Is64BitOperatingSystem ? "x64" : "x86"
+            },
             Timestamp = DateTime.UtcNow
         };
     }
@@ -331,7 +333,7 @@ public class DiagnosticService : IService
         return _providers.Select(kv => new ProviderInfo
         {
             Name = kv.Key,
-            Enabled = kv.Value,
+            Type = ProviderType.Custom,
             Description = $"{kv.Key} diagnostic provider"
         }).ToArray();
     }
@@ -361,8 +363,8 @@ public class DiagnosticService : IService
         return providers.Select(kv => new ProviderHealthResult
         {
             ProviderName = kv.Key,
-            IsHealthy = kv.Value,
-            LastCheck = DateTime.UtcNow
+            Health = kv.Value ? SystemHealth.Healthy : SystemHealth.Degraded,
+            Timestamp = DateTime.UtcNow
         }).ToArray();
     }
 
@@ -373,9 +375,9 @@ public class DiagnosticService : IService
 
         return await Task.FromResult(new HealthCheckResult
         {
-            Health = _currentHealth,
+            OverallHealth = _currentHealth,
             Timestamp = DateTime.UtcNow,
-            Message = allHealthy ? "All systems operational" : "Some providers unhealthy"
+            IsSuccessful = allHealthy
         });
     }
 
@@ -394,9 +396,13 @@ public class DiagnosticService : IService
         return await Task.FromResult(new DiagnosticSessionSummary
         {
             SessionId = sessionId,
+            SessionName = "Diagnostic Session",
             StartTime = DateTime.UtcNow.AddMinutes(-5),
             EndTime = DateTime.UtcNow,
-            EventCount = _eventCount
+            TotalDataPoints = _collectedData.Count,
+            TotalEvents = _eventCount,
+            TotalAlerts = 0,
+            ParticipatingProviders = _providers.Keys.ToList()
         });
     }
 
@@ -404,12 +410,30 @@ public class DiagnosticService : IService
     {
         return new DiagnosticServiceStats
         {
-            TotalEvents = _eventCount,
-            TotalErrors = _errorCount,
-            TotalWarnings = _warningCount,
-            ActiveProviders = _providers.Count(kv => kv.Value),
-            CollectedDataPoints = _collectedData.Count,
-            IsCollecting = _isCollecting
+            ServiceStartTime = DateTime.UtcNow.AddMinutes(-5), // Approximate
+            IsCollecting = _isCollecting,
+            TotalDataCollections = _collectedData.Count,
+            TotalEventsLogged = _eventCount,
+            TotalAlertsTriggered = 0,
+            ActiveSessions = 0,
+            TotalSessionsStarted = 0,
+            TotalSessionsCompleted = 0,
+            RegisteredProviders = _providers.Count,
+            EnabledProviders = _providers.Count(kv => kv.Value),
+            HealthyProviders = _providers.Count(kv => kv.Value),
+            DiagnosticDataMemoryUsage = _collectedData.Count * 1024, // Estimate
+            StoredDataRecords = _collectedData.Count,
+            LastCollectionTime = _collectedData.Any() ? _collectedData.Last().Timestamp : null,
+            ServiceHealth = _currentHealth,
+            RecentServiceErrors = 0,
+            Performance = new ServicePerformanceMetrics
+            {
+                CpuUsage = 0,
+                MemoryUsage = _collectedData.Count * 1024,
+                ThreadCount = Process.GetCurrentProcess().Threads.Count,
+                AverageResponseTime = 0,
+                OperationsPerSecond = 0
+            }
         };
     }
 
@@ -443,7 +467,7 @@ public class DiagnosticService : IService
 
     public IDiagnosticSpan CreateSpan(string operationName, Dictionary<string, string>? tags)
     {
-        var span = new DiagnosticSpan(operationName, tags);
+        var span = new DiagnosticSpan(this, operationName, tags);
         _activeSpans.Add(span);
         return span;
     }
@@ -486,30 +510,92 @@ public class DiagnosticService : IService
 
     private class DiagnosticSpan : IDiagnosticSpan
     {
+        private readonly DiagnosticService _service;
+        private readonly Dictionary<string, string> _tags = new();
+        private readonly List<SpanEvent> _events = new();
+        private SpanStatus _status = SpanStatus.Unknown;
+        private string? _statusDescription;
+
+        public string SpanId { get; } = Guid.NewGuid().ToString("N");
+        public string? ParentSpanId { get; }
         public string OperationName { get; }
-        public Dictionary<string, string>? Tags { get; }
         public DateTime StartTime { get; }
         public DateTime? EndTime { get; private set; }
         public TimeSpan? Duration => EndTime.HasValue ? EndTime.Value - StartTime : null;
+        public bool IsActive => !EndTime.HasValue;
+        public SpanStatus Status => _status;
+        public IReadOnlyDictionary<string, string> Tags => _tags;
+        public IReadOnlyList<SpanEvent> Events => _events;
 
-        public DiagnosticSpan(string operationName, Dictionary<string, string>? tags)
+        public DiagnosticSpan(DiagnosticService service, string operationName, Dictionary<string, string>? tags, string? parentSpanId = null)
         {
+            _service = service;
             OperationName = operationName;
-            Tags = tags;
+            ParentSpanId = parentSpanId;
             StartTime = DateTime.UtcNow;
+            
+            if (tags != null)
+            {
+                foreach (var kv in tags)
+                {
+                    _tags[kv.Key] = kv.Value;
+                }
+            }
         }
 
-        public void End()
+        public void SetTag(string key, string value)
         {
-            EndTime = DateTime.UtcNow;
+            _tags[key] = value;
+        }
+
+        public void SetTags(Dictionary<string, string> tags)
+        {
+            foreach (var kv in tags)
+            {
+                _tags[kv.Key] = kv.Value;
+            }
+        }
+
+        public void AddEvent(string name, Dictionary<string, object>? attributes = null)
+        {
+            _events.Add(SpanEvent.Create(name, attributes));
+        }
+
+        public void AddException(Exception exception)
+        {
+            _events.Add(SpanEvent.FromException(exception));
+            _status = SpanStatus.Error;
+        }
+
+        public void SetStatus(SpanStatus status, string? description = null)
+        {
+            _status = status;
+            _statusDescription = description;
+        }
+
+        public void Finish()
+        {
+            if (!EndTime.HasValue)
+            {
+                EndTime = DateTime.UtcNow;
+                
+                if (_status == SpanStatus.Unknown)
+                {
+                    _status = SpanStatus.Ok;
+                }
+            }
+        }
+
+        public IDiagnosticSpan CreateChild(string operationName, Dictionary<string, string>? tags = null)
+        {
+            var child = new DiagnosticSpan(_service, operationName, tags, SpanId);
+            _service._activeSpans.Add(child);
+            return child;
         }
 
         public void Dispose()
         {
-            if (!EndTime.HasValue)
-            {
-                End();
-            }
+            Finish();
         }
     }
 }

@@ -1,0 +1,13 @@
+<Project>
+  <!-- Import parent package versions -->
+  <Import Project="../../Directory.Packages.props" />
+  
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <!-- Additional test-specific packages for framework tests -->
+    <!-- Note: Microsoft.CodeAnalysis packages are already defined in parent Directory.Packages.props -->
+  </ItemGroup>
+</Project>
