@@ -60,21 +60,21 @@ public class HtmlReportRendererTests
             var errors = string.Join(", ", result.Errors);
             Assert.Fail($"Rendering failed with errors: {errors}");
         }
-        
+
         result.IsSuccess.Should().BeTrue();
         result.OutputPath.Should().NotBeNullOrEmpty();
         result.FileSizeBytes.Should().BeGreaterThan(0);
-        
+
         // Verify file was created
         File.Exists(result.OutputPath).Should().BeTrue();
-        
+
         // Verify HTML content
         var htmlContent = await File.ReadAllTextAsync(result.OutputPath!);
         htmlContent.Should().Contain("<!DOCTYPE html>");
         htmlContent.Should().Contain("Build Metrics");
         htmlContent.Should().Contain("123"); // Build number
         htmlContent.Should().Contain("95"); // Passed tests
-        
+
         // Cleanup
         File.Delete(result.OutputPath!);
     }
@@ -113,17 +113,17 @@ public class HtmlReportRendererTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.OutputPath.Should().NotBeNullOrEmpty();
-        
+
         // Verify file was created
         File.Exists(result.OutputPath).Should().BeTrue();
-        
+
         // Verify HTML content
         var htmlContent = await File.ReadAllTextAsync(result.OutputPath!);
         htmlContent.Should().Contain("<!DOCTYPE html>");
         htmlContent.Should().Contain("Session Statistics");
         htmlContent.Should().Contain("session-456");
         htmlContent.Should().Contain("150"); // Total kills
-        
+
         // Cleanup
         File.Delete(result.OutputPath!);
     }
@@ -164,17 +164,17 @@ public class HtmlReportRendererTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.OutputPath.Should().NotBeNullOrEmpty();
-        
+
         // Verify file was created
         File.Exists(result.OutputPath).Should().BeTrue();
-        
+
         // Verify HTML content
         var htmlContent = await File.ReadAllTextAsync(result.OutputPath!);
         htmlContent.Should().Contain("<!DOCTYPE html>");
         htmlContent.Should().Contain("Plugin Health");
         htmlContent.Should().Contain("TestPlugin");
         htmlContent.Should().Contain("Running");
-        
+
         // Cleanup
         File.Delete(result.OutputPath!);
     }
@@ -235,7 +235,7 @@ public class HtmlReportRendererTests
             FailedTestDetails = new List<TestResult>(),
             LowCoverageFiles = new List<FileCoverage>()
         };
-        
+
         var data2 = new BuildMetricsData
         {
             BuildNumber = "2",
@@ -251,7 +251,7 @@ public class HtmlReportRendererTests
             Format = ReportFormat.HTML,
             OutputPath = Path.Combine(Path.GetTempPath(), "test1.html")
         };
-        
+
         var request2 = new ReportRequest
         {
             Format = ReportFormat.HTML,

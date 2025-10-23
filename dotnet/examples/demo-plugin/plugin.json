@@ -1,14 +1,17 @@
 {
-  "id": "demo-plugin",
-  "name": "Demo Plugin",
-  "version": "1.0.0",
-  "description": "A simple demo plugin to validate the plugin system",
   "author": "Lablab Bean Team",
+  "capabilities": [
+    "demo",
+    "test"
+  ],
+  "dependencies": [],
+  "description": "A simple demo plugin to validate the plugin system",
   "entryPoint": {
     "dotnet.console": "LablabBean.Plugin.Demo.dll,LablabBean.Plugin.Demo.DemoPlugin",
     "dotnet.sadconsole": "LablabBean.Plugin.Demo.dll,LablabBean.Plugin.Demo.DemoPlugin"
   },
-  "dependencies": [],
-  "capabilities": ["demo", "test"],
-  "priority": 100
+  "id": "demo-plugin",
+  "name": "Demo Plugin",
+  "priority": 100,
+  "version": "1.0.0"
 }

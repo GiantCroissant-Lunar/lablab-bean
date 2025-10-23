@@ -28,6 +28,7 @@ dotnet/
 Core domain models, interfaces, and business logic.
 
 **Features:**
+
 - Domain models
 - Service interfaces
 - Command/Query interfaces
@@ -37,12 +38,14 @@ Core domain models, interfaces, and business logic.
 Infrastructure services and cross-cutting concerns.
 
 **Features:**
+
 - Dependency injection setup
 - Logging with Serilog
 - Configuration management
 - Microsoft.Extensions.* integration
 
 **Packages:**
+
 - Microsoft.Extensions.Configuration
 - Microsoft.Extensions.DependencyInjection
 - Microsoft.Extensions.Hosting
@@ -54,6 +57,7 @@ Infrastructure services and cross-cutting concerns.
 Reactive programming utilities and ViewModels.
 
 **Features:**
+
 - ReactiveUI ViewModels
 - System.Reactive extensions
 - ObservableCollections support
@@ -61,6 +65,7 @@ Reactive programming utilities and ViewModels.
 - R3 (Reactive Extensions v3)
 
 **Packages:**
+
 - System.Reactive
 - ReactiveUI
 - ReactiveUI.Fody
@@ -75,6 +80,7 @@ Reactive programming utilities and ViewModels.
 Cross-platform terminal UI application using Terminal.Gui v2.
 
 **Features:**
+
 - Modern TUI with Terminal.Gui v2
 - Menu bar and status bar
 - File operations (New, Open, Save)
@@ -83,12 +89,14 @@ Cross-platform terminal UI application using Terminal.Gui v2.
 - Logging to file
 
 **Run:**
+
 ```bash
 cd console-app/LablabBean.Console
 dotnet run
 ```
 
 **Keyboard Shortcuts:**
+
 - `Ctrl+Q` - Quit
 - `Ctrl+N` - New file
 - `Ctrl+O` - Open file
@@ -99,6 +107,7 @@ dotnet run
 Windows application using SadConsole (roguelike/ASCII graphics).
 
 **Features:**
+
 - Retro ASCII graphics with SadConsole
 - MonoGame backend
 - Menu bar and status bar
@@ -107,29 +116,34 @@ Windows application using SadConsole (roguelike/ASCII graphics).
 - Logging to file
 
 **Run:**
+
 ```bash
 cd windows-app/LablabBean.Windows
 dotnet run
 ```
 
 **Keyboard Shortcuts:**
+
 - `ESC` - Exit
 - `F1` - Help
 
 ## Building
 
 ### Build entire solution
+
 ```bash
 dotnet build
 ```
 
 ### Build specific project
+
 ```bash
 dotnet build console-app/LablabBean.Console
 dotnet build windows-app/LablabBean.Windows
 ```
 
 ### Build in Release mode
+
 ```bash
 dotnet build -c Release
 ```
@@ -137,11 +151,13 @@ dotnet build -c Release
 ## Running
 
 ### Console app
+
 ```bash
 dotnet run --project console-app/LablabBean.Console
 ```
 
 ### Windows app
+
 ```bash
 dotnet run --project windows-app/LablabBean.Windows
 ```
@@ -149,6 +165,7 @@ dotnet run --project windows-app/LablabBean.Windows
 ## Publishing
 
 ### Console app (self-contained)
+
 ```bash
 dotnet publish console-app/LablabBean.Console -c Release -r win-x64 --self-contained
 dotnet publish console-app/LablabBean.Console -c Release -r linux-x64 --self-contained
@@ -156,6 +173,7 @@ dotnet publish console-app/LablabBean.Console -c Release -r osx-x64 --self-conta
 ```
 
 ### Windows app
+
 ```bash
 dotnet publish windows-app/LablabBean.Windows -c Release -r win-x64 --self-contained
 ```
@@ -181,6 +199,7 @@ Both applications use `appsettings.json` for configuration:
 ## Logging
 
 Logs are written to the `logs/` directory with daily rolling:
+
 - Console app: `logs/lablab-bean-.log`
 - Windows app: `logs/lablab-bean-windows-.log`
 

@@ -30,22 +30,22 @@ try
             builder.AddConsole();
             builder.SetMinimumLevel(LogLevel.Warning);
         });
-        
+
         // Register report providers (will use source generator auto-registration when available)
         // For now, register manually until source generator is verified working
         services.AddTransient<BuildMetricsProvider>();
         services.AddTransient<SessionStatisticsProvider>();
         services.AddTransient<PluginHealthProvider>();
-        
+
         // Register renderers
         services.AddSingleton<IReportRenderer, HtmlReportRenderer>();
         services.AddSingleton<IReportRenderer, CsvReportRenderer>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
-        
+
         var rootCommand = new RootCommand("LablabBean Console - Dungeon Crawler Game & Reporting Tool");
         rootCommand.AddCommand(ReportCommand.Create(serviceProvider));
-        
+
         return await rootCommand.InvokeAsync(args);
     }
 

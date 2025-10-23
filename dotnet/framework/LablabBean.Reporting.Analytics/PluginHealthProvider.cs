@@ -31,7 +31,7 @@ public class PluginHealthProvider : IReportProvider
                 // Parse real plugin health data from JSON file
                 var parser = new PluginHealthJsonParser(_logger);
                 var healthData = await parser.ParsePluginHealthAsync(request.DataPath, cancellationToken);
-                
+
                 data.TotalPlugins = healthData.TotalPlugins;
                 data.RunningPlugins = healthData.RunningPlugins;
                 data.FailedPlugins = healthData.FailedPlugins;
@@ -40,8 +40,8 @@ public class PluginHealthProvider : IReportProvider
                 data.Plugins = healthData.Plugins;
                 data.TotalMemoryUsageMB = healthData.TotalMemoryUsageMB;
                 data.TotalLoadTime = healthData.TotalLoadTime;
-                
-                _logger.LogInformation("Loaded {PluginCount} plugins, {RunningCount} running, {FailedCount} failed", 
+
+                _logger.LogInformation("Loaded {PluginCount} plugins, {RunningCount} running, {FailedCount} failed",
                     data.TotalPlugins, data.RunningPlugins, data.FailedPlugins);
             }
             else
@@ -145,8 +145,8 @@ public class PluginHealthProvider : IReportProvider
         data.RunningPlugins = plugins.Count(p => p.State == "Running");
         data.FailedPlugins = plugins.Count(p => p.State == "Failed");
         data.DegradedPlugins = plugins.Count(p => p.State == "Degraded");
-        data.SuccessRate = data.TotalPlugins > 0 
-            ? (decimal)data.RunningPlugins / data.TotalPlugins * 100 
+        data.SuccessRate = data.TotalPlugins > 0
+            ? (decimal)data.RunningPlugins / data.TotalPlugins * 100
             : 0;
         data.TotalMemoryUsageMB = plugins.Sum(p => p.MemoryUsageMB);
         data.TotalLoadTime = TimeSpan.FromMilliseconds(plugins.Sum(p => p.LoadDuration.TotalMilliseconds));

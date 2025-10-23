@@ -18,7 +18,7 @@ public class LocalizationService : IService, IDisposable
     private readonly List<LocalizationError> _recentErrors = new();
     private readonly Dictionary<string, int> _keyAccessCounts = new();
     private readonly Dictionary<string, DateTime> _keyLastAccessed = new();
-    
+
     private LocaleInfo _currentLocale;
     private LocaleInfo _defaultLocale;
     private Dictionary<string, string> _currentTranslations = new();
@@ -44,10 +44,10 @@ public class LocalizationService : IService, IDisposable
     {
         _logger = logger;
         _provider = new JsonLocalizationProvider(logger);
-        
+
         _defaultLocale = new LocaleInfo("en-US", "English (United States)");
         _currentLocale = _defaultLocale;
-        
+
         InitializeDefaultLocales();
         LoadDefaultLocale();
     }
@@ -82,7 +82,7 @@ public class LocalizationService : IService, IDisposable
     public string GetString(string key, string? fallbackValue)
     {
         TrackKeyAccess(key);
-        
+
         if (_currentTranslations.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value))
         {
             return value;
@@ -91,14 +91,14 @@ public class LocalizationService : IService, IDisposable
         _missingTranslations++;
         var evt = new MissingTranslationEvent(key, _currentLocale, fallbackValue);
         MissingTranslation?.Invoke(this, evt);
-        
+
         return fallbackValue ?? $"[{key}]";
     }
 
     public string GetFormattedString(string key, params object[] args)
     {
         var template = GetString(key, null);
-        
+
         try
         {
             return string.Format(template, args);
@@ -114,7 +114,7 @@ public class LocalizationService : IService, IDisposable
     {
         var pluralKey = count == 1 ? $"{key}.singular" : $"{key}.plural";
         var template = GetString(pluralKey, GetString(key, null));
-        
+
         try
         {
             var allArgs = new object[] { count }.Concat(args).ToArray();
@@ -157,22 +157,22 @@ public class LocalizationService : IService, IDisposable
     {
         var startTime = DateTime.UtcNow;
         var previousLocale = _currentLocale;
-        
+
         try
         {
             _logger.LogInformation("Changing locale from {Previous} to {New}", previousLocale.Code, locale.Code);
-            
+
             var translations = await _provider.LoadLocaleAsync(locale.Code, cancellationToken);
             _currentTranslations = translations;
             _currentLocale = locale;
             _localeChanges++;
-            
+
             var changeTime = DateTime.UtcNow - startTime;
             _lastLocaleChangeTime = changeTime;
-            
+
             var evt = new LocaleChangedEvent(previousLocale, locale, changeTime);
             LocaleChanged?.Invoke(this, evt);
-            
+
             return true;
         }
         catch (Exception ex)
@@ -184,10 +184,10 @@ public class LocalizationService : IService, IDisposable
                 ex,
                 LocalizationErrorLevel.Error
             );
-            
+
             _recentErrors.Add(error);
             ErrorOccurred?.Invoke(this, error);
-            
+
             _logger.LogError(ex, "Failed to change locale to {Locale}", locale.Code);
             return false;
         }
@@ -196,18 +196,18 @@ public class LocalizationService : IService, IDisposable
     public async Task ReloadAsync(CancellationToken cancellationToken)
     {
         var startTime = DateTime.UtcNow;
-        
+
         try
         {
             _logger.LogInformation("Reloading locale {Locale}", _currentLocale.Code);
-            
+
             _provider.ClearCache(_currentLocale.Code);
             _currentTranslations = await _provider.LoadLocaleAsync(_currentLocale.Code, cancellationToken);
             _reloadOps++;
-            
+
             var loadTime = DateTime.UtcNow - startTime;
             _lastReloadTime = loadTime;
-            
+
             var evt = new LocalizationReloadedEvent(_currentLocale, _currentTranslations.Count, loadTime);
             LocalizationReloaded?.Invoke(this, evt);
         }
@@ -220,10 +220,10 @@ public class LocalizationService : IService, IDisposable
                 ex,
                 LocalizationErrorLevel.Error
             );
-            
+
             _recentErrors.Add(error);
             ErrorOccurred?.Invoke(this, error);
-            
+
             _logger.LogError(ex, "Failed to reload locale {Locale}", _currentLocale.Code);
         }
     }

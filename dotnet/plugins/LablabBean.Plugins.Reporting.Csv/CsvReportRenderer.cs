@@ -29,7 +29,7 @@ public class CsvReportRenderer : IReportRenderer
         CancellationToken cancellationToken = default)
     {
         var startTime = DateTime.UtcNow;
-        
+
         try
         {
             var dataType = data.GetType();
@@ -75,7 +75,7 @@ public class CsvReportRenderer : IReportRenderer
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to render CSV report");
-            
+
             return new ReportResult
             {
                 IsSuccess = false,

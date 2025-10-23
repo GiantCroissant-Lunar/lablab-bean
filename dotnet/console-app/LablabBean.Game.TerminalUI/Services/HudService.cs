@@ -130,7 +130,7 @@ public class HudService
     public void UpdateLevelDisplay(int currentLevel, int personalBest, int depthInFeet)
     {
         _levelLabel.Text = $"Level: {currentLevel}\nDepth: -{depthInFeet} ft";
-        
+
         if (currentLevel > personalBest)
         {
             _levelLabel.Text += " NEW!";
@@ -143,7 +143,7 @@ public class HudService
     public void UpdateInventory(World world, Entity playerEntity)
     {
         var items = _inventorySystem.GetInventoryItems(world, playerEntity);
-        
+
         // Update inventory frame title with count
         var inventory = world.Has<Inventory>(playerEntity) ? world.Get<Inventory>(playerEntity) : default;
         var count = inventory.CurrentCount;
@@ -181,4 +181,3 @@ public class HudService
         return "[" + new string('=', filled) + new string(' ', empty) + "]";
     }
 }
-

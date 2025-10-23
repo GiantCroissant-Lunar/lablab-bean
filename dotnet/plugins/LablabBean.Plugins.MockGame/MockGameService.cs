@@ -35,8 +35,8 @@ public class MockGameService : IService
             options.Difficulty, options.Seed, options.PlayerName ?? "Unknown");
 
         var oldState = _gameState.State;
-        _gameState = _gameState with 
-        { 
+        _gameState = _gameState with
+        {
             State = GameStateType.Running,
             StartTime = DateTimeOffset.UtcNow
         };

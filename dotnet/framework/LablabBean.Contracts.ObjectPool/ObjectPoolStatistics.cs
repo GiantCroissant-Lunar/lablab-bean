@@ -45,7 +45,7 @@ public readonly struct ObjectPoolStatistics
         TotalObjectsDestroyed = totalObjectsDestroyed;
         Timestamp = timestamp;
     }
-    
+
     public float MemoryUsageMB => EstimatedMemoryUsage / 1024f / 1024f;
     public float UtilizationPercentage => TotalObjects > 0 ? (float)TotalActiveObjects / TotalObjects * 100f : 0f;
     public float EfficiencyPercentage => TotalObjectsCreated > 0 ? (float)(TotalGetOperations - TotalObjectsCreated) / TotalGetOperations * 100f : 0f;

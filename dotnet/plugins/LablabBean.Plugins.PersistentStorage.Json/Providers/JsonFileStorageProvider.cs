@@ -20,7 +20,7 @@ public class JsonFileStorageProvider
         _logger = logger;
         _basePath = basePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LablabBean", "Storage");
         Directory.CreateDirectory(_basePath);
-        
+
         _options = new JsonSerializerOptions
         {
             WriteIndented = true,
@@ -61,7 +61,7 @@ public class JsonFileStorageProvider
     public async Task<T> LoadAsync<T>(string key, CancellationToken cancellationToken)
     {
         var filePath = GetFilePath(key);
-        
+
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException($"Storage file not found for key: {key}", filePath);
@@ -90,7 +90,7 @@ public class JsonFileStorageProvider
     public Task DeleteAsync(string key, CancellationToken cancellationToken)
     {
         var filePath = GetFilePath(key);
-        
+
         if (File.Exists(filePath))
         {
             File.Delete(filePath);

@@ -35,6 +35,8 @@ public class GameStateManager : IDisposable
     public DungeonMap? CurrentMap => _currentMap;
     public GameMode CurrentMode => _worldManager.CurrentMode;
     public StatusEffectSystem StatusEffectSystem => _statusEffectSystem;
+    public CombatSystem CombatSystem => _combatSystem;
+    public InventorySystem InventorySystem => _inventorySystem;
     public LevelManager? LevelManager => _levelManager;
     public int CurrentDungeonLevel => _levelManager?.CurrentLevel ?? 1;
 
@@ -69,7 +71,7 @@ public class GameStateManager : IDisposable
 
         // Initialize difficulty scaling system
         _difficultyScaling = new DifficultyScalingSystem(_worldManager.GetWorld(GameMode.Play));
-        
+
         // Initialize level manager
         var mapGenerator = new MapGenerator();
         _levelManager = new LevelManager(_worldManager.GetWorld(GameMode.Play), mapGenerator, _difficultyScaling);
@@ -98,7 +100,7 @@ public class GameStateManager : IDisposable
     private void InitializePlayWorld()
     {
         var world = _worldManager.GetWorld(GameMode.Play);
-        
+
         if (_currentMap == null)
             throw new InvalidOperationException("Cannot initialize play world without a map");
 
@@ -126,7 +128,7 @@ public class GameStateManager : IDisposable
         // Create enemies across the map
         var random = new Random();
         int enemyCount = 10 + (CurrentDungeonLevel * 2); // More enemies on deeper levels
-        
+
         for (int i = 0; i < enemyCount; i++)
         {
             var enemyPos = FindWalkablePosition(_currentMap, random);
@@ -180,11 +182,11 @@ public class GameStateManager : IDisposable
             return;
 
         int itemCount = 5 + (CurrentDungeonLevel * 2); // More items on deeper levels
-        
+
         for (int i = 0; i < itemCount; i++)
         {
             var itemPos = FindWalkablePosition(_currentMap, random);
-            
+
             // Use difficulty scaling to determine if item should spawn
             if (_difficultyScaling != null && _difficultyScaling.ShouldDropLoot(CurrentDungeonLevel))
             {
@@ -205,7 +207,7 @@ public class GameStateManager : IDisposable
         string enemyType;
         Enemy enemyComponent;
         int baseHealth, baseAttack, baseDefense, baseSpeed;
-        
+
         if (roll < 20) // 20% chance for Toxic Spider
         {
             enemyType = "Toxic Spider";
@@ -213,7 +215,7 @@ public class GameStateManager : IDisposable
             baseAttack = 3;
             baseDefense = 1;
             baseSpeed = 90;
-            
+
             // Create enemy with poison attack (40% chance to poison for 5 turns)
             enemyComponent = new Enemy(enemyType)
             {
@@ -263,7 +265,7 @@ public class GameStateManager : IDisposable
             StatusEffects.CreateEmpty()
         );
 
-        _logger.LogDebug("Created {EnemyType} at {Position} (Level {Level}): {Health} HP, {Attack} ATK", 
+        _logger.LogDebug("Created {EnemyType} at {Position} (Level {Level}): {Health} HP, {Attack} ATK",
             enemyType, position, dungeonLevel, scaledHealth, scaledAttack);
     }
 
@@ -477,7 +479,7 @@ public class GameStateManager : IDisposable
                 // Use first consumable
                 var firstConsumable = consumables[0];
                 var message = _inventorySystem.UseConsumable(world, playerEntity, firstConsumable.ItemEntity);
-                
+
                 if (!message.StartsWith("Cannot") && !message.StartsWith("Already"))
                 {
                     // Item was successfully used - consume energy
@@ -496,7 +498,7 @@ public class GameStateManager : IDisposable
                 // Equip first equippable item
                 var firstEquippable = equippables[0];
                 var (success, message, atkChange, defChange, spdChange) = _inventorySystem.EquipItem(world, playerEntity, firstEquippable.ItemEntity);
-                
+
                 if (success)
                 {
                     // Item was successfully equipped - consume energy
@@ -588,7 +590,7 @@ public class GameStateManager : IDisposable
             if (!_levelManager.CanTransition(playerEntity, direction))
             {
                 var oppositeDir = direction == StaircaseDirection.Down ? "upward" : "downward";
-                _logger.LogInformation("Player not on {Direction} staircase (may be on {Opposite} staircase or no staircase)", 
+                _logger.LogInformation("Player not on {Direction} staircase (may be on {Opposite} staircase or no staircase)",
                     direction, oppositeDir);
                 return;
             }
@@ -607,14 +609,14 @@ public class GameStateManager : IDisposable
             if (result.Success)
             {
                 _logger.LogInformation("Level transition successful: {Message}", result.Message);
-                
+
                 // Update current map reference
                 _currentMap = _levelManager.GetCurrentMap();
-                
+
                 // Clear and reinitialize the world for the new level
                 world.Clear();
                 InitializePlayWorld();
-                
+
                 // Consume energy for the action
                 actor.ConsumeEnergy();
                 actionTaken = true;

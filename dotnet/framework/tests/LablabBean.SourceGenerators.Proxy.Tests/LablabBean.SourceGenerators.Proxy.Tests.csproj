@@ -18,14 +18,15 @@
 
   <ItemGroup>
     <!-- Reference the source generator as an analyzer -->
-    <ProjectReference Include="..\..\framework\LablabBean.SourceGenerators.Proxy\LablabBean.SourceGenerators.Proxy.csproj" 
-                      OutputItemType="Analyzer" 
+    <ProjectReference Include="..\..\..\framework\LablabBean.SourceGenerators.Proxy\LablabBean.SourceGenerators.Proxy.csproj"
+                      OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="LablabBean.Plugins.Contracts.Services" />
   </ItemGroup>
 
 </Project>

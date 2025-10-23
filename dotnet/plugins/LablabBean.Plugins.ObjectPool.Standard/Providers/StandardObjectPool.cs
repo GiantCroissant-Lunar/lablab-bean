@@ -67,7 +67,7 @@ public class StandardObjectPool<T> : IObjectPool<T> where T : class
         if (item == null) return;
 
         _resetAction?.Invoke(item);
-        
+
         if (MaxSize > 0 && _items.Count >= MaxSize)
         {
             _destroyAction?.Invoke(item);

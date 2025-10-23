@@ -96,6 +96,7 @@ To test the plugin system with this demo plugin:
 1. Build the plugin (see Building section above)
 2. Deploy to `plugins/demo-plugin/` directory
 3. Configure the host application's `appsettings.json`:
+
    ```json
    {
      "Plugins": {
@@ -104,6 +105,7 @@ To test the plugin system with this demo plugin:
      }
    }
    ```
+
 4. Run the console or Windows host application
 5. Check logs for plugin initialization messages
 
@@ -121,6 +123,7 @@ The plugin implements `IPlugin` interface with:
 ### Dependencies
 
 The plugin depends on:
+
 - `LablabBean.Plugins.Contracts` (netstandard2.1) - Core plugin interfaces
 - Microsoft.Extensions.Logging.Abstractions - For ILogger
 

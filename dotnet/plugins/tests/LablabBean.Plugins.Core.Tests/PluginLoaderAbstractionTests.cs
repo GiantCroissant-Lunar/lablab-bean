@@ -1,11 +1,12 @@
-namespace LablabBean.Plugins.Core.Tests;
-
 using FluentAssertions;
 using LablabBean.Plugins.Contracts;
+using LablabBean.Plugins.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
+
+namespace LablabBean.Plugins.Core.Tests;
 
 /// <summary>
 /// Tests for IPluginLoader abstraction and factory pattern.
@@ -23,7 +24,7 @@ public class PluginLoaderAbstractionTests
         // Assert
         properties.Should().Contain(p => p.Name == "PluginRegistry");
         properties.Should().Contain(p => p.Name == "ServiceRegistry");
-        
+
         methods.Should().Contain(m => m.Name == "DiscoverAndLoadAsync");
         methods.Should().Contain(m => m.Name == "UnloadPluginAsync");
         methods.Should().Contain(m => m.Name == "UnloadAllAsync");
@@ -34,7 +35,7 @@ public class PluginLoaderAbstractionTests
     {
         // Arrange & Act
         var loaderType = typeof(PluginLoader);
-        
+
         // Assert
         loaderType.Should().Implement<IPluginLoader>();
     }
@@ -43,19 +44,22 @@ public class PluginLoaderAbstractionTests
     public void PluginLoaderFactory_CreatesValidLoader()
     {
         // Arrange
-        var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+        var services = new ServiceCollection();
+        services.AddLogging(x => x.AddConsole());
+        var serviceProvider = services.BuildServiceProvider();
+
+        var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger<PluginLoader>();
         var configuration = new ConfigurationBuilder().Build();
-        var services = new ServiceCollection().BuildServiceProvider();
         var pluginRegistry = new PluginRegistry();
-        var serviceRegistry = new ServiceRegistry(new EventBus());
+        var serviceRegistry = new ServiceRegistry();
 
         // Act
         var loader = PluginLoaderFactory.Create(
             logger,
             loggerFactory,
             configuration,
-            services,
+            serviceProvider,
             pluginRegistry,
             serviceRegistry);
 
@@ -70,19 +74,22 @@ public class PluginLoaderAbstractionTests
     public void PluginLoaderFactory_CreatesAlcLoaderForDotNetPlatform()
     {
         // Arrange
-        var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+        var services = new ServiceCollection();
+        services.AddLogging(x => x.AddConsole());
+        var serviceProvider = services.BuildServiceProvider();
+
+        var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger<PluginLoader>();
         var configuration = new ConfigurationBuilder().Build();
-        var services = new ServiceCollection().BuildServiceProvider();
         var pluginRegistry = new PluginRegistry();
-        var serviceRegistry = new ServiceRegistry(new EventBus());
+        var serviceRegistry = new ServiceRegistry();
 
         // Act
         var loader = PluginLoaderFactory.Create(
             logger,
             loggerFactory,
             configuration,
-            services,
+            serviceProvider,
             pluginRegistry,
             serviceRegistry);
 

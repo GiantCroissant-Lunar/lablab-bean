@@ -17,7 +17,7 @@ public interface IReportProvider
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Report data object (typically BuildMetricsData, SessionStatisticsData, or PluginHealthData)</returns>
     Task<object> GetReportDataAsync(ReportRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Gets metadata about this provider (name, supported data sources, etc.)
     /// </summary>

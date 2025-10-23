@@ -12,12 +12,12 @@ public interface IPluginHost
     /// Create a logger with the specified category name.
     /// </summary>
     ILogger CreateLogger(string categoryName);
-    
+
     /// <summary>
     /// Service provider for host-provided services.
     /// </summary>
     IServiceProvider Services { get; }
-    
+
     /// <summary>
     /// Publish an event to the host event bus.
     /// </summary>

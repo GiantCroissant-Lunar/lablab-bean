@@ -58,21 +58,21 @@ foreach (var plugin in systemStatus.Plugins)
         PluginHealthStatus.Unhealthy => "❌",
         _ => "❓"
     };
-    
+
     Console.WriteLine($"{emoji} {plugin.Name} v{plugin.Version}");
     Console.WriteLine($"   Profile: {plugin.Profile}");
     Console.WriteLine($"   Status: {(plugin.IsLoaded ? "Loaded" : "Not Loaded")}");
     Console.WriteLine($"   Health: {plugin.Health} - {plugin.HealthMessage}");
-    
+
     if (plugin.LoadDuration.HasValue)
         Console.WriteLine($"   Load Time: {plugin.LoadDuration.Value.TotalMilliseconds:F0}ms");
-    
+
     if (plugin.MemoryUsage.HasValue)
         Console.WriteLine($"   Memory: {plugin.MemoryUsage.Value / 1024.0:F1} KB");
-    
+
     if (!string.IsNullOrEmpty(plugin.LoadError))
         Console.WriteLine($"   Error: {plugin.LoadError}");
-    
+
     Console.WriteLine();
 }
 

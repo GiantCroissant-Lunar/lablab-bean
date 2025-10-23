@@ -1,0 +1,32 @@
+{
+  "FFmpegRecording": {
+    "AdditionalArgs": [],
+    "AudioDevice": null,
+    "CRF": 23,
+    "FrameRate": 30,
+    "MaxDurationSeconds": 0,
+    "PixelFormat": "yuv420p",
+    "PlatformSettings": {
+      "Linux": {
+        "Display": ":0.0",
+        "FollowMouse": false,
+        "ShowCursor": true
+      },
+      "MacOS": {
+        "CaptureClicks": false,
+        "ScreenDevice": 1,
+        "ShowCursor": true
+      },
+      "Windows": {
+        "Offset": null,
+        "ShowCursor": true,
+        "WindowTitle": null
+      }
+    },
+    "Preset": "fast",
+    "RecordAudio": false,
+    "Resolution": null,
+    "ShowFFmpegOutput": false,
+    "VideoCodec": "libx264"
+  }
+}

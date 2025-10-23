@@ -19,13 +19,13 @@ public class CsvReportingPlugin : IPlugin
     public Task InitializeAsync(IPluginContext context, CancellationToken ct = default)
     {
         _logger = context.Logger;
-        
+
         // Register the CSV renderer with the registry
         var loggerFactory = context.Host.Services.GetRequiredService<ILoggerFactory>();
         var renderer = new CsvReportRenderer(loggerFactory.CreateLogger<CsvReportRenderer>());
-        
+
         context.Registry.Register<IReportRenderer>(renderer);
-        
+
         _logger.LogInformation("CSV reporting plugin initialized - registered IReportRenderer");
         return Task.CompletedTask;
     }

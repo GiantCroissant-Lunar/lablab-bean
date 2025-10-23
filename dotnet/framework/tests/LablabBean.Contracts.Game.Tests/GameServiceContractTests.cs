@@ -34,7 +34,7 @@ public class GameServiceContractTests
         var methods = serviceType.GetMethods();
 
         // Act - Check async methods
-        var asyncMethods = methods.Where(m => m.ReturnType == typeof(Task) || 
+        var asyncMethods = methods.Where(m => m.ReturnType == typeof(Task) ||
                                               m.ReturnType.IsGenericType && m.ReturnType.GetGenericTypeDefinition() == typeof(Task<>));
 
         // Assert
@@ -45,9 +45,9 @@ public class GameServiceContractTests
         asyncMethods.Should().Contain(m => m.Name == "AttackAsync", "AttackAsync should be async");
 
         // Synchronous methods (getters)
-        var syncMethods = methods.Where(m => m.ReturnType != typeof(Task) && 
+        var syncMethods = methods.Where(m => m.ReturnType != typeof(Task) &&
                                             !(m.ReturnType.IsGenericType && m.ReturnType.GetGenericTypeDefinition() == typeof(Task<>)));
-        
+
         syncMethods.Should().Contain(m => m.Name == "GetGameState", "GetGameState should be synchronous getter");
         syncMethods.Should().Contain(m => m.Name == "GetEntities", "GetEntities should be synchronous getter");
     }
@@ -64,7 +64,7 @@ public class GameServiceContractTests
 
         var entityMovedEvent = typeof(EntityMovedEvent);
         entityMovedEvent.GetProperty("Timestamp").Should().NotBeNull("EntityMovedEvent should have Timestamp property");
-        
+
         var combatEvent = typeof(CombatEvent);
         combatEvent.GetProperty("Timestamp").Should().NotBeNull("CombatEvent should have Timestamp property");
 
@@ -119,13 +119,13 @@ public class GameServiceContractTests
         var references = assembly.GetReferencedAssemblies();
 
         // Assert - Should not reference UI frameworks or game engines
-        references.Should().NotContain(r => r.Name!.Contains("Terminal.Gui"), 
+        references.Should().NotContain(r => r.Name!.Contains("Terminal.Gui"),
             "Game contracts should not reference UI frameworks");
-        references.Should().NotContain(r => r.Name!.Contains("SadConsole"), 
+        references.Should().NotContain(r => r.Name!.Contains("SadConsole"),
             "Game contracts should not reference UI frameworks");
-        references.Should().NotContain(r => r.Name!.Contains("Unity"), 
+        references.Should().NotContain(r => r.Name!.Contains("Unity"),
             "Game contracts should not reference game engines");
-        
+
         // The project reference to LablabBean.Plugins.Contracts exists but may not show in GetReferencedAssemblies
         // due to .NET 8's assembly trimming. The important check is no UI/engine dependencies.
         true.Should().BeTrue("Contract assembly has no implementation dependencies");

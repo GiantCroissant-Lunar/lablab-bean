@@ -54,7 +54,7 @@ public class MenuService : IMenuService
     public void ExecuteAction(MenuActionType action)
     {
         _logger.LogInformation("Executing action: {Action}", action);
-        
+
         // Action execution will be handled by the view
     }
 }

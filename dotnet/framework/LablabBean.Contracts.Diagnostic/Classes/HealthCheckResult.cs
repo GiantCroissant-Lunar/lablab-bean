@@ -118,7 +118,7 @@ public class HealthCheckResult
     public void AddProviderResult(ProviderHealthResult result)
     {
         ProviderResults.Add(result);
-        
+
         if (!result.IsSuccessful && !string.IsNullOrEmpty(result.ErrorMessage))
         {
             HealthIssues.Add($"{result.ProviderName}: {result.ErrorMessage}");

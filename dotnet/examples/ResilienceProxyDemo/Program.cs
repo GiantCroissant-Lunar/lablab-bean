@@ -14,10 +14,10 @@ var host = Host.CreateDefaultBuilder(args)
     {
         // Step 1: Add plugin system (registers IRegistry)
         services.AddPluginSystem(context.Configuration);
-        
+
         // Step 2: Add resilience proxy (auto-generated method!)
         services.AddResilienceServiceProxy();
-        
+
         Console.WriteLine("✅ Resilience proxy registered via source-generated extension method");
     })
     .Build();

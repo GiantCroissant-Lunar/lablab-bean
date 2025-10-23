@@ -1,147 +1,77 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://lablab-bean.dev/schemas/plugin.schema.json",
-  "title": "Lablab Bean Plugin Manifest",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
   "description": "Schema for plugin.json manifest files in Lablab Bean plugin system",
-  "type": "object",
-  "required": ["id", "name", "version", "entryPoint"],
+  "examples": [
+    {
+      "author": "Lablab Bean Team",
+      "capabilities": [
+        "gameplay",
+        "inventory"
+      ],
+      "dependencies": [],
+      "description": "Provides inventory management for items and equipment",
+      "entryPoint": {
+        "dotnet.console": "LablabBean.Plugins.Inventory.dll,LablabBean.Plugins.Inventory.InventoryPlugin"
+      },
+      "id": "inventory",
+      "license": "MIT",
+      "name": "Inventory System",
+      "priority": 100,
+      "version": "1.0.0"
+    },
+    {
+      "author": "Combat Team",
+      "capabilities": [
+        "gameplay",
+        "combat"
+      ],
+      "dependencies": [
+        {
+          "id": "status-effects",
+          "optional": false,
+          "versionRange": ">=1.0.0 <2.0.0"
+        }
+      ],
+      "description": "Enhanced combat mechanics with combos and special moves",
+      "entryPoint": {
+        "dotnet.console": "CombatPlugin.dll,CombatPlugin.AdvancedCombatPlugin"
+      },
+      "id": "advanced-combat",
+      "name": "Advanced Combat System",
+      "priority": 150,
+      "version": "2.0.0"
+    }
+  ],
   "properties": {
     "$schema": {
-      "type": "string",
-      "description": "JSON Schema reference (optional)"
-    },
-    "id": {
-      "type": "string",
-      "description": "Unique plugin identifier (lowercase, kebab-case recommended)",
-      "pattern": "^[a-z0-9][a-z0-9-]*$",
-      "minLength": 1,
-      "maxLength": 50,
-      "examples": ["inventory", "status-effects", "advanced-combat"]
-    },
-    "name": {
-      "type": "string",
-      "description": "Human-readable plugin display name",
-      "minLength": 1,
-      "maxLength": 100,
-      "examples": ["Inventory System", "Status Effects Plugin"]
-    },
-    "version": {
-      "type": "string",
-      "description": "Plugin version (semantic versioning recommended)",
-      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?$",
-      "examples": ["1.0.0", "2.1.3-beta", "0.1.0-alpha.1"]
-    },
-    "description": {
-      "type": "string",
-      "description": "Brief description of plugin functionality",
-      "maxLength": 500
+      "description": "JSON Schema reference (optional)",
+      "type": "string"
     },
     "author": {
-      "type": "string",
       "description": "Plugin author name or organization",
+      "examples": [
+        "Lablab Bean Team",
+        "John Doe <john@example.com>"
+      ],
       "maxLength": 100,
-      "examples": ["Lablab Bean Team", "John Doe <john@example.com>"]
-    },
-    "license": {
-      "type": "string",
-      "description": "SPDX license identifier or custom license",
-      "examples": ["MIT", "Apache-2.0", "GPL-3.0", "Proprietary"]
-    },
-    "homepage": {
-      "type": "string",
-      "description": "Plugin homepage or documentation URL",
-      "format": "uri",
-      "examples": ["https://github.com/user/plugin"]
-    },
-    "repository": {
-      "type": "string",
-      "description": "Source repository URL",
-      "format": "uri",
-      "examples": ["https://github.com/user/plugin.git"]
-    },
-    "tags": {
-      "type": "array",
-      "description": "Searchable tags for plugin categorization",
-      "items": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 30
-      },
-      "uniqueItems": true,
-      "examples": [
-        ["inventory", "items"],
-        ["combat", "gameplay"]
-      ]
-    },
-    "entryPoint": {
-      "type": "object",
-      "description": "Profile-specific entry points for multi-targeting",
-      "properties": {
-        "dotnet.console": {
-          "type": "string",
-          "description": "Entry point for Terminal.Gui console application",
-          "pattern": "^[^,]+\\.dll,[a-zA-Z_][a-zA-Z0-9_.]+$",
-          "examples": ["MyPlugin.dll,MyPlugin.PluginClass"]
-        },
-        "dotnet.sadconsole": {
-          "type": "string",
-          "description": "Entry point for SadConsole UI",
-          "pattern": "^[^,]+\\.dll,[a-zA-Z_][a-zA-Z0-9_.]+$"
-        },
-        "unity": {
-          "type": "string",
-          "description": "Entry point for Unity game engine (future)",
-          "pattern": "^[^,]+\\.dll,[a-zA-Z_][a-zA-Z0-9_.]+$"
-        }
-      },
-      "additionalProperties": false,
-      "minProperties": 1,
-      "examples": [
-        {
-          "dotnet.console": "LablabBean.Plugins.Inventory.dll,LablabBean.Plugins.Inventory.InventoryPlugin"
-        }
-      ]
-    },
-    "dependencies": {
-      "type": "array",
-      "description": "Plugin dependencies (loaded before this plugin)",
-      "items": {
-        "type": "object",
-        "required": ["id"],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Dependency plugin ID",
-            "pattern": "^[a-z0-9][a-z0-9-]*$"
-          },
-          "versionRange": {
-            "type": "string",
-            "description": "Semantic version range (default: *)",
-            "default": "*",
-            "examples": [
-              "*",
-              "1.0.0",
-              ">=1.0.0",
-              ">=1.0.0 <2.0.0",
-              "^1.0.0",
-              "~1.2.0"
-            ]
-          },
-          "optional": {
-            "type": "boolean",
-            "description": "Allow missing dependency (default: false)",
-            "default": false
-          }
-        },
-        "additionalProperties": false
-      },
-      "default": []
+      "type": "string"
     },
     "capabilities": {
-      "type": "array",
+      "default": [],
       "description": "Plugin capabilities for discovery and filtering",
+      "examples": [
+        [
+          "gameplay",
+          "inventory"
+        ],
+        [
+          "ui",
+          "rendering"
+        ]
+      ],
       "items": {
-        "type": "string",
         "enum": [
           "gameplay",
           "ui",
@@ -158,96 +88,220 @@
           "combat",
           "crafting",
           "terminal"
-        ]
+        ],
+        "type": "string"
       },
-      "uniqueItems": true,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "dependencies": {
       "default": [],
+      "description": "Plugin dependencies (loaded before this plugin)",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "Dependency plugin ID",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "type": "string"
+          },
+          "optional": {
+            "default": false,
+            "description": "Allow missing dependency (default: false)",
+            "type": "boolean"
+          },
+          "versionRange": {
+            "default": "*",
+            "description": "Semantic version range (default: *)",
+            "examples": [
+              "*",
+              "1.0.0",
+              ">=1.0.0",
+              ">=1.0.0 <2.0.0",
+              "^1.0.0",
+              "~1.2.0"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "description": {
+      "description": "Brief description of plugin functionality",
+      "maxLength": 500,
+      "type": "string"
+    },
+    "entryPoint": {
+      "additionalProperties": false,
+      "description": "Profile-specific entry points for multi-targeting",
       "examples": [
-        ["gameplay", "inventory"],
-        ["ui", "rendering"]
-      ]
+        {
+          "dotnet.console": "LablabBean.Plugins.Inventory.dll,LablabBean.Plugins.Inventory.InventoryPlugin"
+        }
+      ],
+      "minProperties": 1,
+      "properties": {
+        "dotnet.console": {
+          "description": "Entry point for Terminal.Gui console application",
+          "examples": [
+            "MyPlugin.dll,MyPlugin.PluginClass"
+          ],
+          "pattern": "^[^,]+\\.dll,[a-zA-Z_][a-zA-Z0-9_.]+$",
+          "type": "string"
+        },
+        "dotnet.sadconsole": {
+          "description": "Entry point for SadConsole UI",
+          "pattern": "^[^,]+\\.dll,[a-zA-Z_][a-zA-Z0-9_.]+$",
+          "type": "string"
+        },
+        "unity": {
+          "description": "Entry point for Unity game engine (future)",
+          "pattern": "^[^,]+\\.dll,[a-zA-Z_][a-zA-Z0-9_.]+$",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "homepage": {
+      "description": "Plugin homepage or documentation URL",
+      "examples": [
+        "https://github.com/user/plugin"
+      ],
+      "format": "uri",
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique plugin identifier (lowercase, kebab-case recommended)",
+      "examples": [
+        "inventory",
+        "status-effects",
+        "advanced-combat"
+      ],
+      "maxLength": 50,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "type": "string"
+    },
+    "license": {
+      "description": "SPDX license identifier or custom license",
+      "examples": [
+        "MIT",
+        "Apache-2.0",
+        "GPL-3.0",
+        "Proprietary"
+      ],
+      "type": "string"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "description": "Custom metadata for plugin-specific configuration",
+      "examples": [
+        {
+          "experimental": true,
+          "maxPlayers": 4,
+          "minGameVersion": "1.0.0"
+        }
+      ],
+      "type": "object"
+    },
+    "name": {
+      "description": "Human-readable plugin display name",
+      "examples": [
+        "Inventory System",
+        "Status Effects Plugin"
+      ],
+      "maxLength": 100,
+      "minLength": 1,
+      "type": "string"
     },
     "priority": {
-      "type": "integer",
-      "description": "Plugin load priority (higher = loaded later, default: 100)",
-      "minimum": 0,
-      "maximum": 2000,
       "default": 100,
-      "examples": [100, 200, 1000]
+      "description": "Plugin load priority (higher = loaded later, default: 100)",
+      "examples": [
+        100,
+        200,
+        1000
+      ],
+      "maximum": 2000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "repository": {
+      "description": "Source repository URL",
+      "examples": [
+        "https://github.com/user/plugin.git"
+      ],
+      "format": "uri",
+      "type": "string"
     },
     "security": {
-      "type": "object",
+      "additionalProperties": false,
       "description": "Security configuration (future enhancement)",
       "properties": {
         "permissions": {
-          "type": "array",
           "description": "Required permissions",
           "items": {
-            "type": "string",
             "examples": [
               "FileSystem.Read",
               "FileSystem.Write",
               "Network.Connect",
               "Process.Execute"
-            ]
+            ],
+            "type": "string"
           },
+          "type": "array",
           "uniqueItems": true
         },
         "sandboxed": {
-          "type": "boolean",
+          "default": false,
           "description": "Run in restricted sandbox",
-          "default": false
+          "type": "boolean"
         }
       },
-      "additionalProperties": false
+      "type": "object"
     },
-    "metadata": {
-      "type": "object",
-      "description": "Custom metadata for plugin-specific configuration",
-      "additionalProperties": true,
+    "tags": {
+      "description": "Searchable tags for plugin categorization",
       "examples": [
-        {
-          "minGameVersion": "1.0.0",
-          "maxPlayers": 4,
-          "experimental": true
-        }
-      ]
+        [
+          "inventory",
+          "items"
+        ],
+        [
+          "combat",
+          "gameplay"
+        ]
+      ],
+      "items": {
+        "maxLength": 30,
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "version": {
+      "description": "Plugin version (semantic versioning recommended)",
+      "examples": [
+        "1.0.0",
+        "2.1.3-beta",
+        "0.1.0-alpha.1"
+      ],
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?$",
+      "type": "string"
     }
   },
-  "additionalProperties": false,
-  "examples": [
-    {
-      "id": "inventory",
-      "name": "Inventory System",
-      "version": "1.0.0",
-      "description": "Provides inventory management for items and equipment",
-      "author": "Lablab Bean Team",
-      "license": "MIT",
-      "entryPoint": {
-        "dotnet.console": "LablabBean.Plugins.Inventory.dll,LablabBean.Plugins.Inventory.InventoryPlugin"
-      },
-      "dependencies": [],
-      "capabilities": ["gameplay", "inventory"],
-      "priority": 100
-    },
-    {
-      "id": "advanced-combat",
-      "name": "Advanced Combat System",
-      "version": "2.0.0",
-      "description": "Enhanced combat mechanics with combos and special moves",
-      "author": "Combat Team",
-      "entryPoint": {
-        "dotnet.console": "CombatPlugin.dll,CombatPlugin.AdvancedCombatPlugin"
-      },
-      "dependencies": [
-        {
-          "id": "status-effects",
-          "versionRange": ">=1.0.0 <2.0.0",
-          "optional": false
-        }
-      ],
-      "capabilities": ["gameplay", "combat"],
-      "priority": 150
-    }
-  ]
+  "required": [
+    "id",
+    "name",
+    "version",
+    "entryPoint"
+  ],
+  "title": "Lablab Bean Plugin Manifest",
+  "type": "object"
 }

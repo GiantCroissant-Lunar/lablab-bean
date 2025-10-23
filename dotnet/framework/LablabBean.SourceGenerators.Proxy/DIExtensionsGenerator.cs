@@ -152,11 +152,11 @@ public class DIExtensionsGenerator : IIncrementalGenerator
     {
         // Extract service name from interface (e.g., IService -> Service)
         var serviceName = proxyClass.ServiceInterfaceShortName.TrimStart('I');
-        
+
         // Extract domain from namespace (e.g., LablabBean.Contracts.Resilience -> Resilience)
         var namespaceParts = proxyClass.ProxyNamespace.Split('.');
         var domain = namespaceParts.Length >= 3 ? namespaceParts[2] : "";
-        
+
         // Generate method name: Add{Domain}{Service}Proxy (e.g., AddResilienceServiceProxy)
         var methodName = $"Add{domain}{serviceName}Proxy";
 

@@ -24,7 +24,7 @@ public struct Staircase
     }
 
     public char Glyph => Direction == StaircaseDirection.Down ? '>' : '<';
-    public string Description => Direction == StaircaseDirection.Down 
-        ? $"Descend to Level {TargetLevel}" 
+    public string Description => Direction == StaircaseDirection.Down
+        ? $"Descend to Level {TargetLevel}"
         : $"Ascend to Level {TargetLevel}";
 }

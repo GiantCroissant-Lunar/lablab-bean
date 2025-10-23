@@ -18,7 +18,7 @@ public class ConfigManagerPlugin : IPlugin
 
         var eventBus = context.Registry.Get<IEventBus>();
         var configService = new InMemoryConfigService(eventBus, context.Logger);
-        
+
         context.Registry.Register<LablabBean.Contracts.Config.Services.IService>(
             configService,
             new ServiceMetadata { Priority = 200, Name = "ConfigManager", Version = "1.0.0" }

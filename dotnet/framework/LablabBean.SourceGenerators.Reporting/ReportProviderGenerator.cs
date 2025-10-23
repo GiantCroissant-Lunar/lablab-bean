@@ -68,7 +68,7 @@ public class ReportProviderGenerator : IIncrementalGenerator
         if (reportProviderAttr.ConstructorArguments.Length >= 2)
             category = reportProviderAttr.ConstructorArguments[1].Value?.ToString();
 
-        if (reportProviderAttr.ConstructorArguments.Length >= 3 && 
+        if (reportProviderAttr.ConstructorArguments.Length >= 3 &&
             reportProviderAttr.ConstructorArguments[2].Value is int priorityValue)
             priority = priorityValue;
 

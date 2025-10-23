@@ -43,7 +43,7 @@ public class ObjectPoolService : IService, IDisposable
 
         _pools[identifier] = pool;
         _logger.LogInformation("Created object pool {Identifier} for type {Type}", identifier, typeof(T).Name);
-        
+
         return Task.FromResult<IObjectPool<T>>(pool);
     }
 
@@ -64,7 +64,7 @@ public class ObjectPoolService : IService, IDisposable
         {
             return foundPool as IObjectPool<T>;
         }
-        
+
         return null;
     }
 
@@ -80,7 +80,7 @@ public class ObjectPoolService : IService, IDisposable
                 _logger.LogInformation("Destroyed object pool {Identifier}", key);
             }
         }
-        
+
         return Task.CompletedTask;
     }
 
@@ -92,7 +92,7 @@ public class ObjectPoolService : IService, IDisposable
             pool.Clear();
             _logger.LogInformation("Cleared object pool {Identifier}", pool.Identifier);
         }
-        
+
         return Task.CompletedTask;
     }
 
@@ -171,12 +171,12 @@ public class ObjectPoolService : IService, IDisposable
     public IReadOnlyList<PoolInfo> GetActivePools()
     {
         var pools = new List<PoolInfo>();
-        
+
         foreach (var kvp in _pools)
         {
             var pool = kvp.Value;
             var poolType = pool.GetType();
-            
+
             if (poolType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IObjectPool<>)))
             {
                 var identifierProp = poolType.GetProperty("Identifier");
@@ -209,7 +209,7 @@ public class ObjectPoolService : IService, IDisposable
     public Task PerformCleanupAsync(bool aggressiveCleanup, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Performing cleanup (aggressive: {Aggressive})", aggressiveCleanup);
-        
+
         // Simple cleanup - clear unused pools
         foreach (var pool in _pools.Values)
         {

@@ -111,9 +111,9 @@ public static class ReportCommand
     }
 
     private static async Task<int> HandleBuildReportAsync(
-        IServiceProvider serviceProvider, 
-        string format, 
-        FileInfo output, 
+        IServiceProvider serviceProvider,
+        string format,
+        FileInfo output,
         DirectoryInfo? dataDir)
     {
         try
@@ -122,21 +122,21 @@ public static class ReportCommand
 
             // Get provider from DI (automatically registered by source generator)
             var provider = serviceProvider.GetService<BuildMetricsProvider>();
-            
+
             if (provider == null)
             {
                 throw new InvalidOperationException("BuildMetricsProvider not found. Ensure it's registered via AddReportProviders()");
             }
-            
+
             var request = new ReportRequest
             {
                 Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
                 OutputPath = output.FullName,
                 DataPath = dataDir?.FullName
             };
-            
+
             var data = await provider.GetReportDataAsync(request);
-            
+
             if (data is not BuildMetricsData buildData)
             {
                 throw new InvalidOperationException("Provider returned unexpected data type");
@@ -194,8 +194,8 @@ public static class ReportCommand
 
     private static async Task<int> HandleSessionReportAsync(
         IServiceProvider serviceProvider,
-        string format, 
-        FileInfo output, 
+        string format,
+        FileInfo output,
         FileInfo? dataFile)
     {
         try
@@ -204,21 +204,21 @@ public static class ReportCommand
 
             // Get provider from DI
             var provider = serviceProvider.GetService<SessionStatisticsProvider>();
-            
+
             if (provider == null)
             {
                 throw new InvalidOperationException("SessionStatisticsProvider not found. Ensure it's registered via AddReportProviders()");
             }
-            
+
             var request = new ReportRequest
             {
                 Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
                 OutputPath = output.FullName,
                 DataPath = dataFile?.FullName
             };
-            
+
             var data = await provider.GetReportDataAsync(request);
-            
+
             if (data is not SessionStatisticsData sessionData)
             {
                 throw new InvalidOperationException("Provider returned unexpected data type");
@@ -278,8 +278,8 @@ public static class ReportCommand
 
     private static async Task<int> HandlePluginReportAsync(
         IServiceProvider serviceProvider,
-        string format, 
-        FileInfo output, 
+        string format,
+        FileInfo output,
         FileInfo? dataFile)
     {
         try
@@ -288,21 +288,21 @@ public static class ReportCommand
 
             // Get provider from DI
             var provider = serviceProvider.GetService<PluginHealthProvider>();
-            
+
             if (provider == null)
             {
                 throw new InvalidOperationException("PluginHealthProvider not found. Ensure it's registered via AddReportProviders()");
             }
-            
+
             var request = new ReportRequest
             {
                 Format = format.ToLowerInvariant() == "html" ? ReportFormat.HTML : ReportFormat.CSV,
                 OutputPath = output.FullName,
                 DataPath = dataFile?.FullName
             };
-            
+
             var data = await provider.GetReportDataAsync(request);
-            
+
             if (data is not PluginHealthData pluginData)
             {
                 throw new InvalidOperationException("Provider returned unexpected data type");

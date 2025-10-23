@@ -106,7 +106,7 @@ foreach (var item in pickupable)
         if (e.Id == item.EntityId)
             itemEntity = e;
     });
-    
+
     var result = inventoryService.PickupItem(world, player, itemEntity);
     Console.WriteLine($"  {(result.Success ? "✅" : "❌")} {result.Message}");
 }
@@ -136,7 +136,7 @@ if (consumables.Count > 0)
         if (e.Id == potion.EntityId)
             potionEntity = e;
     });
-    
+
     Console.WriteLine($"  Health before: {world.Get<Health>(player).Current}/{world.Get<Health>(player).Maximum}");
     var result = inventoryService.UseConsumable(world, player, potionEntity);
     Console.WriteLine($"  {(result.Success ? "✅" : "❌")} {result.Message}");
@@ -157,7 +157,7 @@ foreach (var item in equippables)
         if (e.Id == item.EntityId)
             itemEntity = e;
     });
-    
+
     var result = inventoryService.EquipItem(world, player, itemEntity);
     Console.WriteLine($"  {(result.Success ? "✅" : "❌")} {result.Message}");
 }

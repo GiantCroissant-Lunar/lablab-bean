@@ -19,12 +19,12 @@ public class DemoPlugin : IPlugin
     {
         _logger = context.Logger;
         _host = context.Host;
-        
+
         _logger.LogInformation("DemoPlugin initialized");
         _logger.LogInformation("Plugin ID: {Id}, Name: {Name}, Version: {Version}", Id, Name, Version);
         _logger.LogInformation("Configuration available: {ConfigAvailable}", context.Configuration != null);
         _logger.LogInformation("Registry available: {RegistryAvailable}", context.Registry != null);
-        
+
         return Task.CompletedTask;
     }
 
@@ -37,7 +37,7 @@ public class DemoPlugin : IPlugin
         _logger?.LogInformation("  ✓ Lifecycle management (Initialize → Start → Stop)");
         _logger?.LogInformation("  ✓ Host communication via IPluginHost");
         _logger?.LogInformation("  ✓ AssemblyLoadContext isolation");
-        
+
         return Task.CompletedTask;
     }
 

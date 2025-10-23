@@ -11,7 +11,7 @@ public interface IPluginRegistry
     /// Get all registered plugin descriptors.
     /// </summary>
     IReadOnlyCollection<PluginDescriptor> GetAll();
-    
+
     /// <summary>
     /// Get a plugin descriptor by ID.
     /// </summary>

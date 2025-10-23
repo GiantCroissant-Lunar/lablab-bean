@@ -97,18 +97,18 @@ public class ItemSpawnSystem
             // Consumables (60% total)
             (typeof(ItemDefinitions.HealingPotion), 40),
             (typeof(ItemDefinitions.GreaterHealingPotion), 20),
-            
+
             // Weapons (20% total)
             (typeof(ItemDefinitions.Dagger), 8),
             (typeof(ItemDefinitions.IronSword), 8),
             (typeof(ItemDefinitions.SteelSword), 4),
-            
+
             // Armor (15% total)
             (typeof(ItemDefinitions.LeatherArmor), 6),
             (typeof(ItemDefinitions.LeatherHelmet), 4),
             (typeof(ItemDefinitions.WoodenShield), 3),
             (typeof(ItemDefinitions.ChainMail), 2),
-            
+
             // Accessories (5% total)
             (typeof(ItemDefinitions.RingOfStrength), 2),
             (typeof(ItemDefinitions.RingOfProtection), 2),
@@ -186,7 +186,7 @@ public class ItemSpawnSystem
 
             var selectedEquipment = equipmentTable[random.Next(equipmentTable.Length)];
             SpawnItem(world, position, selectedEquipment);
-            
+
             var itemName = selectedEquipment.Name.Replace("ItemDefinitions.", "").Replace("+", " ");
             _logger.LogDebug("Enemy dropped {ItemName} at ({X}, {Y})", itemName, position.X, position.Y);
         }

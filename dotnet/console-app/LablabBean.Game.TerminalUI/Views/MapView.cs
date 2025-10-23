@@ -34,7 +34,7 @@ public class MapView : View
     public override void OnDrawContent(Rect viewport)
     {
         base.OnDrawContent(viewport);
-        
+
         if (_buffer == null)
             return;
 
@@ -53,4 +53,3 @@ public class MapView : View
         }
     }
 }
-

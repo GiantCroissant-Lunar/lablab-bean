@@ -30,7 +30,7 @@ public class HtmlReportRenderer : IReportRenderer
         CancellationToken cancellationToken = default)
     {
         var startTime = DateTime.UtcNow;
-        
+
         try
         {
             var dataType = data.GetType();
@@ -44,19 +44,19 @@ public class HtmlReportRenderer : IReportRenderer
             scriptObject.Import(data, renamer: member => ToSnakeCase(member.Name));
             scriptObject.Add("report_title", dataType.Name.Replace("Data", ""));
             scriptObject.Add("generated_at", DateTime.UtcNow);
-            
+
             var context = new TemplateContext();
-            
+
             // Add custom functions
             var functions = new ScriptObject();
             functions.Import(typeof(TemplateHelpers));
             context.PushGlobal(functions);
-            
+
             context.PushGlobal(scriptObject);
 
             // Render template
             var html = await template.RenderAsync(context);
-            
+
             _logger.LogInformation("HTML report rendered successfully, size: {Size} bytes", html.Length);
 
             // Write to output file if specified
@@ -81,7 +81,7 @@ public class HtmlReportRenderer : IReportRenderer
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to render HTML report");
-            
+
             return ReportResult.Failure(ex.Message);
         }
     }
@@ -95,9 +95,9 @@ public class HtmlReportRenderer : IReportRenderer
 
         var templateName = GetTemplateName(dataType);
         var templateContent = await LoadEmbeddedTemplateAsync(templateName, cancellationToken);
-        
+
         var template = Template.Parse(templateContent);
-        
+
         if (template.HasErrors)
         {
             var errors = string.Join(", ", template.Messages.Select(m => m.Message));
@@ -125,7 +125,7 @@ public class HtmlReportRenderer : IReportRenderer
         var resourceName = $"LablabBean.Plugins.Reporting.Html.Templates.{templateName}";
 
         await using var stream = assembly.GetManifestResourceStream(resourceName);
-        
+
         if (stream == null)
         {
             var availableResources = assembly.GetManifestResourceNames();
@@ -133,7 +133,7 @@ public class HtmlReportRenderer : IReportRenderer
                 "Template not found: {TemplateName}. Available resources: {Resources}",
                 resourceName,
                 string.Join(", ", availableResources));
-            
+
             throw new FileNotFoundException($"Template not found: {templateName}");
         }
 
@@ -178,17 +178,17 @@ public static class TemplateHelpers
         {
             return $"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
         }
-        
+
         if (timeSpan.TotalMinutes >= 1)
         {
             return $"{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
         }
-        
+
         if (timeSpan.TotalSeconds >= 1)
         {
             return $"{timeSpan.TotalSeconds:F2}s";
         }
-        
+
         return $"{timeSpan.TotalMilliseconds:F0}ms";
     }
 }

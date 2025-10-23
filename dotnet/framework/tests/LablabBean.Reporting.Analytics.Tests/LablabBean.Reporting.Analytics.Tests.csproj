@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Analytics\LablabBean.Reporting.Analytics.csproj" />
+    <ProjectReference Include="..\..\..\framework\LablabBean.Reporting.Analytics\LablabBean.Reporting.Analytics.csproj" />
   </ItemGroup>
 
   <ItemGroup>

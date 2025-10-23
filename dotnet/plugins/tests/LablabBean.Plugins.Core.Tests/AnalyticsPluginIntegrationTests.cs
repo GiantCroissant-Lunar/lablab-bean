@@ -24,7 +24,7 @@ public class AnalyticsPluginIntegrationTests
         // Arrange
         var eventBus = new EventBus(NullLogger<EventBus>.Instance);
         var registry = new ServiceRegistry();
-        
+
         // Register EventBus in registry (simulating DI setup)
         registry.Register<IEventBus>(eventBus, new ServiceMetadata
         {
@@ -53,7 +53,7 @@ public class AnalyticsPluginIntegrationTests
         // (In a real scenario, we'd expose metrics or use a test logger to verify)
         // For now, we verify no exceptions were thrown and plugin lifecycle works
         await analyticsPlugin.StopAsync();
-        
+
         // Success: Events were published and received without direct plugin dependency
         true.Should().BeTrue("Analytics plugin successfully received events without direct game plugin dependency");
     }
@@ -89,7 +89,7 @@ public class AnalyticsPluginIntegrationTests
 
         // Assert - Plugin should handle all events without errors
         await analyticsPlugin.StopAsync();
-        
+
         // Success: Multiple events tracked independently
         true.Should().BeTrue("Analytics plugin tracked multiple events without errors");
     }
@@ -118,7 +118,7 @@ public class AnalyticsPluginIntegrationTests
         // Assert - Both plugins should receive the event without interference
         await analyticsPlugin1.StopAsync();
         await analyticsPlugin2.StopAsync();
-        
+
         // Success: Multiple subscribers worked without interference
         true.Should().BeTrue("Multiple subscribers received events without interference");
     }
@@ -137,12 +137,12 @@ public class AnalyticsPluginIntegrationTests
         // Act & Assert - Full lifecycle
         await analyticsPlugin.InitializeAsync(mockContext);
         await analyticsPlugin.StartAsync();
-        
+
         // Publish some events
         await eventBus.PublishAsync(new EntitySpawnedEvent(Guid.NewGuid(), "test", new Position(0, 0)));
-        
+
         await analyticsPlugin.StopAsync();
-        
+
         // Success: Plugin lifecycle completed without errors
         true.Should().BeTrue("Analytics plugin lifecycle completed successfully");
     }

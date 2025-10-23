@@ -18,7 +18,7 @@ public class ResourceLoaderPlugin : IPlugin
 
         var eventBus = context.Registry.Get<IEventBus>();
         var resourceService = new InMemoryResourceService(eventBus, context.Logger);
-        
+
         context.Registry.Register<LablabBean.Contracts.Resource.Services.IService>(
             resourceService,
             new ServiceMetadata { Priority = 200, Name = "ResourceLoader", Version = "1.0.0" }

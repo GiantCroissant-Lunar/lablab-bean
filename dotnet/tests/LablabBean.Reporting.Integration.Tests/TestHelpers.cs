@@ -43,7 +43,7 @@ internal static class TestHelpers
         return new ReportRequest
         {
             DataPath = dataPath,
-            
+
             OutputPath = string.Empty, // Will be set by tests
             Format = ReportFormat.HTML // Default format
         };

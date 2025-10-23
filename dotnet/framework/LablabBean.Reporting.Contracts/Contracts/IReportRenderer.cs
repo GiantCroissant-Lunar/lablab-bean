@@ -19,7 +19,7 @@ public interface IReportRenderer
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result containing output file path and any errors</returns>
     Task<ReportResult> RenderAsync(ReportRequest request, object data, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Gets supported output formats.
     /// </summary>

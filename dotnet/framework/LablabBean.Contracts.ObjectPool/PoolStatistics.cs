@@ -53,7 +53,7 @@ public readonly struct PoolStatistics
         LastGetAt = lastGetAt;
         LastReturnAt = lastReturnAt;
     }
-    
+
     public float UtilizationPercentage => TotalObjects > 0 ? (float)ActiveObjects / TotalObjects * 100f : 0f;
     public float FillPercentage => MaxSize > 0 ? (float)TotalObjects / MaxSize * 100f : 0f;
     public float HitRatio => GetOperations > 0 ? (float)(GetOperations - ObjectsCreated) / GetOperations * 100f : 0f;

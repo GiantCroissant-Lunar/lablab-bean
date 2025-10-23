@@ -24,4 +24,3 @@ Console.WriteLine("Press Ctrl+C to stop");
 Console.WriteLine();
 
 await host.RunAsync();
-

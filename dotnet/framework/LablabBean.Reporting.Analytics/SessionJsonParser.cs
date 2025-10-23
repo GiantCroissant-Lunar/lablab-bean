@@ -21,7 +21,7 @@ public class SessionJsonParser
     {
         var data = new SessionStatisticsData();
         var events = new List<SessionEvent>();
-        
+
         int totalKills = 0;
         int totalDeaths = 0;
         long totalDamageDealt = 0;
@@ -31,7 +31,7 @@ public class SessionJsonParser
         int achievementsUnlocked = 0;
         var frameSamples = new List<int>();
         var loadTimes = new List<double>();
-        
+
         DateTime? sessionStart = null;
         DateTime? sessionEnd = null;
 
@@ -149,22 +149,22 @@ public class SessionJsonParser
             data.SessionStartTime = sessionStart ?? DateTime.UtcNow.AddHours(-1);
             data.SessionEndTime = sessionEnd ?? DateTime.UtcNow;
             data.TotalPlaytime = data.SessionEndTime - data.SessionStartTime;
-            
+
             data.TotalKills = totalKills;
             data.TotalDeaths = totalDeaths;
             data.KillDeathRatio = totalDeaths > 0 ? (decimal)totalKills / totalDeaths : totalKills;
-            
+
             data.TotalDamageDealt = (int)totalDamageDealt;
             data.TotalDamageTaken = (int)totalDamageTaken;
             data.AverageDamagePerKill = totalKills > 0 ? (decimal)totalDamageDealt / totalKills : 0;
-            
+
             data.ItemsCollected = itemsCollected;
             data.LevelsCompleted = levelsCompleted;
             data.AchievementsUnlocked = achievementsUnlocked;
-            
+
             data.AverageFrameRate = frameSamples.Count > 0 ? (int)frameSamples.Average() : 60;
             data.TotalLoadTime = TimeSpan.FromSeconds(loadTimes.Sum());
-            
+
             data.KeyEvents = events.OrderBy(e => e.Timestamp).ToList();
 
             _logger.LogInformation("Parsed {EventCount} events from {FilePath}", events.Count, filePath);

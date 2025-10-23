@@ -106,7 +106,7 @@ public class ResilienceService : IService, IDisposable
         try
         {
             await pipeline.ExecuteAsync(async ct => await operation(), cancellationToken);
-            
+
             if (attemptNumber > 0)
             {
                 Interlocked.Increment(ref _successfulRetries);
@@ -147,13 +147,13 @@ public class ResilienceService : IService, IDisposable
         try
         {
             var result = await pipeline.ExecuteAsync(async ct => await operation(), cancellationToken);
-            
+
             if (attemptNumber > 0)
             {
                 Interlocked.Increment(ref _successfulRetries);
                 OperationSucceededAfterRetry?.Invoke("operation");
             }
-            
+
             return result!;
         }
         catch (Exception ex)

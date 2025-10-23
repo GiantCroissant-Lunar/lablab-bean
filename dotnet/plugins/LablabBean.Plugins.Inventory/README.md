@@ -9,17 +9,20 @@ This plugin encapsulates all inventory-related functionality behind a clean serv
 ## Features
 
 ### Item Management
+
 - **Pickup Items**: Pick up items from the game world
 - **Inventory Storage**: Manage items in player inventory (max capacity: 20)
 - **Item Information**: Query pickupable items, inventory contents
 
 ### Consumables
+
 - **Use Items**: Consume potions and other usable items
 - **Health Restoration**: Heal with health potions
 - **Stack Management**: Automatic handling of stackable items
 - **Status Effects**: Integration with status effect system
 
 ### Equipment
+
 - **Equip Items**: Equip weapons, armor, and accessories
 - **Equipment Slots**: 9 equipment slots (weapon, off-hand, armor pieces, accessories)
 - **Stat Bonuses**: Automatic stat calculation from equipped items
@@ -37,19 +40,19 @@ public interface IInventoryService
     // Pickup
     List<ItemInfo> GetPickupableItems(World world, Entity playerEntity);
     InventoryResult PickupItem(World world, Entity playerEntity, Entity itemEntity);
-    
+
     // Inventory
     List<InventoryItemInfo> GetInventoryItems(World world, Entity playerEntity);
-    
+
     // Consumables
     List<ConsumableItemInfo> GetConsumables(World world, Entity playerEntity);
     InventoryResult UseConsumable(World world, Entity playerEntity, Entity itemEntity, object? statusEffectSystem = null);
-    
+
     // Equipment
     List<EquippableItemInfo> GetEquippables(World world, Entity playerEntity);
     EquipResult EquipItem(World world, Entity playerEntity, Entity itemEntity);
     InventoryResult UnequipItem(World world, Entity playerEntity, EquipmentSlot slot);
-    
+
     // Stats
     (int Attack, int Defense, int Speed) CalculateTotalStats(World world, Entity playerEntity);
 }

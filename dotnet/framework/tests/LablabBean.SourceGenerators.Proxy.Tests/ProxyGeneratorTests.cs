@@ -1,5 +1,6 @@
 using LablabBean.Plugins.Contracts;
 using LablabBean.Plugins.Contracts.Attributes;
+using LablabBean.Plugins.Contracts.Services;
 
 namespace LablabBean.SourceGenerators.Proxy.Tests;
 
@@ -13,13 +14,13 @@ public class ProxyGeneratorTests
     {
         // This test verifies the generator can find and process
         // a partial class marked with [RealizeService]
-        
+
         // Arrange - Create a simple test interface
         var testInterface = typeof(ITestService);
-        
+
         // Act - The generator should process TestProxy class below
         var proxy = new TestProxy(new TestRegistry());
-        
+
         // Assert - Proxy should be created (compilation test)
         Assert.NotNull(proxy);
     }
@@ -30,7 +31,7 @@ public class ProxyGeneratorTests
         // Verify attributes are properly defined and accessible
         var realizeAttr = typeof(RealizeServiceAttribute);
         var strategyAttr = typeof(SelectionStrategyAttribute);
-        
+
         Assert.NotNull(realizeAttr);
         Assert.NotNull(strategyAttr);
     }
@@ -40,14 +41,14 @@ public class ProxyGeneratorTests
     {
         // Arrange
         var proxy = new TestProxy(new TestRegistry());
-        
+
         // Act & Assert - Property getter
         var name = proxy.Name;
         Assert.Equal("TestService", name);
-        
+
         // Act & Assert - Property setter
         proxy.Name = "NewName";
-        
+
         // Act & Assert - Read-only property
         var value = proxy.ReadOnlyValue;
         Assert.Equal(42, value);
@@ -58,11 +59,11 @@ public class ProxyGeneratorTests
     {
         // Arrange
         var proxy = new TestProxy(new TestRegistry());
-        
+
         // Act - Subscribe to event
         EventHandler? handler = (sender, args) => { };
         proxy.DataChanged += handler;
-        
+
         // Assert - Event subscription works (compilation test)
         Assert.NotNull(proxy);
     }
@@ -73,10 +74,10 @@ public class ProxyGeneratorTests
         // T025: Handle read-only properties (get-only, no setter)
         // Arrange
         var proxy = new TestProxy(new TestRegistry());
-        
+
         // Act
         var value = proxy.ReadOnlyValue;
-        
+
         // Assert - Should compile and return value
         Assert.Equal(42, value);
     }
@@ -87,13 +88,13 @@ public class ProxyGeneratorTests
         // T023 & T024: Property getter and setter generation
         // Arrange
         var proxy = new TestProxy(new TestRegistry());
-        
+
         // Act - Get initial value
         var initialValue = proxy.Name;
-        
+
         // Act - Set new value
         proxy.Name = "UpdatedName";
-        
+
         // Assert - Both operations should work
         Assert.Equal("TestService", initialValue);
     }
@@ -105,13 +106,13 @@ public class ProxyGeneratorTests
         // Arrange
         var proxy = new TestProxy(new TestRegistry());
         EventHandler? handler = (sender, args) => { };
-        
+
         // Act - Add event handler
         proxy.DataChanged += handler;
-        
+
         // Act - Remove event handler
         proxy.DataChanged -= handler;
-        
+
         // Assert - Should compile without errors
         Assert.NotNull(proxy);
     }
@@ -122,15 +123,15 @@ public class ProxyGeneratorTests
         // T027: Handle auto-property syntax in generated code
         // Arrange
         var proxy = new PropertyTestProxy(new TestRegistry());
-        
+
         // Act & Assert - Multiple property types
         var readOnly = proxy.ReadOnlyProp;
         Assert.Equal(100, readOnly);
-        
+
         var readWrite = proxy.ReadWriteProp;
         proxy.ReadWriteProp = "Modified";
         Assert.Equal("Default", readWrite);
-        
+
         proxy.WriteOnlyProp = 42;
         // Write-only property set successfully (compilation test)
         Assert.NotNull(proxy);
@@ -144,10 +145,10 @@ public class ProxyGeneratorTests
         // T034: Generate generic methods with type parameters
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act
         var result = proxy.GenericMethod(42);
-        
+
         // Assert - Should compile and work
         Assert.Equal(42, result);
     }
@@ -158,10 +159,10 @@ public class ProxyGeneratorTests
         // T036: Handle multiple type parameters
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act - Call method with multiple type parameters
         var result = proxy.Transform<string, int>("test");
-        
+
         // Assert - Should compile (compilation test)
         Assert.NotNull(proxy);
     }
@@ -172,10 +173,10 @@ public class ProxyGeneratorTests
         // T035: Preserve type constraints
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act - Call method with constraints (where T : class, new())
         var result = proxy.CreateInstance<TestServiceImpl>();
-        
+
         // Assert - Should compile and create instance
         Assert.NotNull(result);
     }
@@ -187,10 +188,10 @@ public class ProxyGeneratorTests
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
         int value = 5;
-        
+
         // Act
         proxy.ModifyValue(ref value);
-        
+
         // Assert - Value should be modified
         Assert.Equal(10, value);
     }
@@ -201,10 +202,10 @@ public class ProxyGeneratorTests
         // T039: Handle out parameters
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act
         var success = proxy.TryGetValue("key", out string value);
-        
+
         // Assert
         Assert.True(success);
         Assert.Equal("Value for key", value);
@@ -217,10 +218,10 @@ public class ProxyGeneratorTests
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
         ReadOnlySpan<byte> data = stackalloc byte[] { 1, 2, 3 };
-        
+
         // Act - Should compile with 'in' modifier
         proxy.ProcessReadOnly(in data);
-        
+
         // Assert - Compilation test
         Assert.NotNull(proxy);
     }
@@ -231,10 +232,10 @@ public class ProxyGeneratorTests
         // T041: Handle params arrays
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act
         var result = proxy.Concatenate("a", "b", "c");
-        
+
         // Assert
         Assert.Equal("a, b, c", result);
     }
@@ -245,13 +246,13 @@ public class ProxyGeneratorTests
         // T044: Preserve default parameter values
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act - Call with defaults
         proxy.MethodWithDefaults();
         proxy.MethodWithDefaults(20);
         proxy.MethodWithDefaults(20, "custom");
         proxy.MethodWithDefaults(20, "custom", false);
-        
+
         // Assert - Should compile with all overloads
         Assert.NotNull(proxy);
     }
@@ -262,10 +263,10 @@ public class ProxyGeneratorTests
         // T042: Handle async methods returning Task
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act
         await proxy.AsyncMethod();
-        
+
         // Assert - Should compile and complete
         Assert.NotNull(proxy);
     }
@@ -276,10 +277,10 @@ public class ProxyGeneratorTests
         // T043: Handle async methods returning Task<T>
         // Arrange
         var proxy = new AdvancedMethodProxy(new TestRegistry());
-        
+
         // Act
         var result = await proxy.AsyncMethodWithResult();
-        
+
         // Assert
         Assert.Equal(42, result);
     }
@@ -293,10 +294,10 @@ public class ProxyGeneratorTests
         // Arrange
         var registry = new SelectionModeTestRegistry();
         var proxy = new SelectionModeOneProxy(registry);
-        
+
         // Act
         var result = proxy.GetValue();
-        
+
         // Assert - Should use SelectionMode.One
         Assert.Equal("One", result);
         Assert.Equal(SelectionMode.One, registry.LastUsedMode);
@@ -309,10 +310,10 @@ public class ProxyGeneratorTests
         // Arrange
         var registry = new SelectionModeTestRegistry();
         var proxy = new SelectionModeHighestPriorityProxy(registry);
-        
+
         // Act
         var result = proxy.GetValue();
-        
+
         // Assert - Should use SelectionMode.HighestPriority
         Assert.Equal("HighestPriority", result);
         Assert.Equal(SelectionMode.HighestPriority, registry.LastUsedMode);
@@ -325,10 +326,10 @@ public class ProxyGeneratorTests
         // Arrange
         var registry = new SelectionModeTestRegistry();
         var proxy = new SelectionModeAllProxy(registry);
-        
+
         // Act
         var result = proxy.GetValue();
-        
+
         // Assert - Should use GetAll()
         Assert.Equal("All", result);
         Assert.True(registry.UsedGetAll);
@@ -341,10 +342,10 @@ public class ProxyGeneratorTests
         // Arrange
         var registry = new SelectionModeTestRegistry();
         var proxy = new NoSelectionStrategyProxy(registry);
-        
+
         // Act
         var result = proxy.GetValue();
-        
+
         // Assert - Should call Get<T>() without explicit mode parameter
         // This will use the default parameter value (HighestPriority) but the generated code doesn't specify it
         Assert.Equal("HighestPriority", result);
@@ -360,12 +361,12 @@ public class ProxyGeneratorTests
         // T071: Nullable annotations preserved
         // Arrange
         var proxy = new NullableTestProxy(new TestRegistry());
-        
+
         // Act - Call methods with nullable types
         var result1 = proxy.GetNullableString();
         proxy.AcceptNullableString(null);
         var result2 = proxy.GetNullableInt();
-        
+
         // Assert - Should compile without warnings (compilation test)
         Assert.NotNull(proxy);
     }
@@ -376,10 +377,10 @@ public class ProxyGeneratorTests
         // T064: Handle nullable return types
         // Arrange
         var proxy = new NullableTestProxy(new TestRegistry());
-        
+
         // Act
         var result = await proxy.GetNullableTaskResult();
-        
+
         // Assert - Should compile and work with nullable Task<string?>
         Assert.NotNull(proxy);
     }
@@ -398,7 +399,7 @@ public class ProxyGeneratorTests
             new SelectionModeOneProxy(new SelectionModeTestRegistry()),
             new NullableTestProxy(new TestRegistry())
         };
-        
+
         // Assert - All proxies created successfully
         Assert.All(proxies, p => Assert.NotNull(p));
     }
@@ -409,13 +410,13 @@ public class ProxyGeneratorTests
         // T066, T067: Auto-generated comment and timestamp
         // This is a meta-test that verifies the generator adds quality markers
         // The actual verification happens at compile time when the generator runs
-        
+
         // Arrange & Act
         var proxy = new TestProxy(new TestRegistry());
-        
+
         // Assert - Proxy should be created (generated code compiled successfully)
         Assert.NotNull(proxy);
-        
+
         // Note: Generated files include:
         // - // <auto-generated />
         // - // Generated by ProxyServiceGenerator at [timestamp] UTC
@@ -438,7 +439,7 @@ public class ProxyGeneratorTests
             new AdvancedMethodProxy(new TestRegistry()),
             new NullableTestProxy(new TestRegistry())
         };
-        
+
         // Assert - All proxies created successfully without errors
         Assert.All(proxies, p => Assert.NotNull(p));
     }
@@ -452,14 +453,14 @@ public class ProxyGeneratorTests
         // - Non-interface target would cause compile error (PROXY001)
         // - Invalid syntax is handled gracefully
         // - All valid proxies compile successfully
-        
+
         // Arrange & Act
         var testProxy = new TestProxy(new TestRegistry());
         var propertyProxy = new PropertyTestProxy(new TestRegistry());
         var advancedProxy = new AdvancedMethodProxy(new TestRegistry());
         var nullableProxy = new NullableTestProxy(new TestRegistry());
         var selectionProxy = new SelectionModeOneProxy(new SelectionModeTestRegistry());
-        
+
         // Assert - All proxies compile and instantiate
         Assert.NotNull(testProxy);
         Assert.NotNull(propertyProxy);
@@ -474,12 +475,12 @@ public class ProxyGeneratorTests
         // T087: Generator handles complex but valid scenarios
         // Arrange
         var registry = new TestRegistry();
-        
+
         // Act - Create proxies with various features
         var basicProxy = new TestProxy(registry);
         var genericProxy = new AdvancedMethodProxy(registry);
         var nullableProxy = new NullableTestProxy(registry);
-        
+
         // Assert - All complex scenarios work
         Assert.NotNull(basicProxy.GetValue());
         Assert.Equal(42, genericProxy.GenericMethod(42));
@@ -492,11 +493,11 @@ public interface ITestService
 {
     void DoSomething();
     string GetValue();
-    
+
     // Properties
     string Name { get; set; }
     int ReadOnlyValue { get; }
-    
+
     // Event
     event EventHandler? DataChanged;
 }
@@ -527,7 +528,7 @@ public class TestRegistry : IRegistry
             return new AdvancedMethodServiceImpl() as T ?? throw new InvalidOperationException();
         if (typeof(T) == typeof(INullableTestService))
             return new NullableTestServiceImpl() as T ?? throw new InvalidOperationException();
-        
+
         throw new InvalidOperationException($"No implementation for {typeof(T).Name}");
     }
 
@@ -571,12 +572,12 @@ public class TestServiceImpl : ITestService
 {
     public void DoSomething() { }
     public string GetValue() => "test";
-    
+
     public string Name { get; set; } = "TestService";
     public int ReadOnlyValue => 42;
-    
+
     public event EventHandler? DataChanged;
-    
+
     protected virtual void OnDataChanged()
     {
         DataChanged?.Invoke(this, EventArgs.Empty);
@@ -596,28 +597,28 @@ public interface IAdvancedMethodService
 {
     // Generic methods (T034)
     T GenericMethod<T>(T value);
-    
+
     // Multiple type parameters (T036)
     TResult Transform<TInput, TResult>(TInput input);
-    
+
     // Type constraints (T035)
     T CreateInstance<T>() where T : class, new();
-    
+
     // Ref parameters (T038)
     void ModifyValue(ref int value);
-    
+
     // Out parameters (T039)
     bool TryGetValue(string key, out string value);
-    
+
     // In parameters (T040)
     void ProcessReadOnly(in ReadOnlySpan<byte> data);
-    
+
     // Params arrays (T041)
     string Concatenate(params string[] values);
-    
+
     // Default parameter values (T044)
     void MethodWithDefaults(int x = 10, string name = "default", bool flag = true);
-    
+
     // Async methods (T042, T043)
     Task AsyncMethod();
     Task<int> AsyncMethodWithResult();
@@ -660,27 +661,27 @@ public partial class AdvancedMethodProxy
 public class AdvancedMethodServiceImpl : IAdvancedMethodService
 {
     public T GenericMethod<T>(T value) => value;
-    
+
     public TResult Transform<TInput, TResult>(TInput input) => default!;
-    
+
     public T CreateInstance<T>() where T : class, new() => new T();
-    
+
     public void ModifyValue(ref int value) => value *= 2;
-    
+
     public bool TryGetValue(string key, out string value)
     {
         value = $"Value for {key}";
         return true;
     }
-    
+
     public void ProcessReadOnly(in ReadOnlySpan<byte> data) { }
-    
+
     public string Concatenate(params string[] values) => string.Join(", ", values);
-    
+
     public void MethodWithDefaults(int x = 10, string name = "default", bool flag = true) { }
-    
+
     public Task AsyncMethod() => Task.CompletedTask;
-    
+
     public Task<int> AsyncMethodWithResult() => Task.FromResult(42);
 }
 
@@ -737,24 +738,24 @@ public class SelectionModeTestRegistry : IRegistry
     public T Get<T>(SelectionMode mode = SelectionMode.HighestPriority) where T : class
     {
         LastUsedMode = mode;
-        
+
         // Track if this was called with default parameter (no explicit mode in generated code)
         // This is a bit of a hack, but we check the stack trace to see if the mode was explicit
         UsedDefaultGet = mode == SelectionMode.HighestPriority;
-        
+
         if (typeof(T) == typeof(ISelectionModeTestService))
         {
             var impl = new SelectionModeTestServiceImpl(mode.ToString());
             return impl as T ?? throw new InvalidOperationException();
         }
-        
+
         throw new InvalidOperationException($"No implementation for {typeof(T).Name}");
     }
 
     public IEnumerable<T> GetAll<T>() where T : class
     {
         UsedGetAll = true;
-        
+
         if (typeof(T) == typeof(ISelectionModeTestService))
         {
             yield return new SelectionModeTestServiceImpl("All") as T ?? throw new InvalidOperationException();
@@ -791,18 +792,18 @@ public interface INullableTestService
     /// </summary>
     /// <returns>A nullable string or null.</returns>
     string? GetNullableString();
-    
+
     /// <summary>
     /// Accepts a nullable string parameter.
     /// </summary>
     /// <param name="value">The nullable string value.</param>
     void AcceptNullableString(string? value);
-    
+
     /// <summary>
     /// Gets a nullable integer.
     /// </summary>
     int? GetNullableInt();
-    
+
     /// <summary>
     /// Returns a task with nullable result.
     /// </summary>

@@ -215,7 +215,7 @@ public class InventoryService : IInventoryService
         UpdatePlayerStats(world, playerEntity);
 
         var statChanges = BuildStatChangeMessage(equippable);
-        var message = statChanges.Length > 0 
+        var message = statChanges.Length > 0
             ? $"Equipped {item.Name}. {statChanges}"
             : $"Equipped {item.Name}.";
 
@@ -231,7 +231,7 @@ public class InventoryService : IInventoryService
         }
 
         var equipment = world.Get<EquipmentSlots>(playerEntity);
-        
+
         if (!equipment.Slots[slot].HasValue)
         {
             return new InventoryResult(false, $"No item equipped in {slot} slot.");
@@ -414,22 +414,22 @@ public class InventoryService : IInventoryService
     {
         // Integration with status effect system (dynamic invocation to avoid hard dependency)
         var systemType = statusEffectSystem.GetType();
-        
+
         if (consumable.AppliesEffect.HasValue)
         {
             var method = systemType.GetMethod("ApplyEffect");
             if (method != null)
             {
-                var result = method.Invoke(statusEffectSystem, new object?[] 
-                { 
-                    world, 
-                    playerEntity, 
+                var result = method.Invoke(statusEffectSystem, new object?[]
+                {
+                    world,
+                    playerEntity,
                     consumable.AppliesEffect.Value,
                     consumable.EffectMagnitude ?? 10,
                     consumable.EffectDuration ?? 5,
                     EffectSource.Consumable
                 });
-                
+
                 if (result != null)
                 {
                     var messageProperty = result.GetType().GetProperty("Message");
@@ -486,7 +486,7 @@ public class InventoryService : IInventoryService
 
         var health = world.Get<Health>(playerEntity);
         int oldHealth = health.Current;
-        
+
         health.Current = Math.Min(health.Current + healAmount, health.Maximum);
         world.Set(playerEntity, health);
 
@@ -497,7 +497,7 @@ public class InventoryService : IInventoryService
     private void UpdatePlayerStats(World world, Entity playerEntity)
     {
         var (newAttack, newDefense, newSpeed) = CalculateTotalStats(world, playerEntity);
-        
+
         if (world.Has<Combat>(playerEntity))
         {
             var combat = world.Get<Combat>(playerEntity);

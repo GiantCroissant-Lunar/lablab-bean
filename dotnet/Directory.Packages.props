@@ -31,6 +31,8 @@
     <!-- Cysharp Libraries -->
     <PackageVersion Include="ObservableCollections" Version="3.0.1" />
     <PackageVersion Include="MessagePipe" Version="1.8.1" />
+    <PackageVersion Include="MessagePack" Version="2.5.187" />
+    <PackageVersion Include="MessagePack.Annotations" Version="2.5.187" />
     <PackageVersion Include="R3" Version="1.2.8" />
     <!-- Utilities -->
     <PackageVersion Include="Serilog" Version="3.1.1" />
@@ -41,6 +43,9 @@
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
     <PackageVersion Include="Scriban" Version="5.10.0" />
     <PackageVersion Include="CsvHelper" Version="33.0.1" />
+    <PackageVersion Include="OpenTelemetry" Version="1.7.0" />
+    <PackageVersion Include="Sentry" Version="4.2.0" />
+    <PackageVersion Include="FirebaseAdmin" Version="2.4.0" />
     <!-- Resilience -->
     <PackageVersion Include="Polly" Version="8.5.0" />
     <PackageVersion Include="Polly.Extensions" Version="8.5.0" />

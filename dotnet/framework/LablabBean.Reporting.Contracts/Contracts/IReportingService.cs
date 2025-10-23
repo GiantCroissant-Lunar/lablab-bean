@@ -19,7 +19,7 @@ public interface IReportingService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result containing output file path and any errors</returns>
     Task<ReportResult> GenerateReportAsync(string providerName, ReportRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Lists all available report providers.
     /// </summary>

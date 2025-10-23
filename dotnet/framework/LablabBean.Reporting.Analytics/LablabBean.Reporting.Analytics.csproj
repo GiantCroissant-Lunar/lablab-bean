@@ -10,8 +10,8 @@
   <ItemGroup>
     <ProjectReference Include="..\LablabBean.Reporting.Contracts\LablabBean.Reporting.Contracts.csproj" />
     <!-- Source generator reference -->
-    <ProjectReference Include="..\LablabBean.SourceGenerators.Reporting\LablabBean.SourceGenerators.Reporting.csproj" 
-                      OutputItemType="Analyzer" 
+    <ProjectReference Include="..\LablabBean.SourceGenerators.Reporting\LablabBean.SourceGenerators.Reporting.csproj"
+                      OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
   </ItemGroup>
 

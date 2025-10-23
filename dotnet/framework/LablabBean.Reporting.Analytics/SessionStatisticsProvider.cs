@@ -32,7 +32,7 @@ public class SessionStatisticsProvider : IReportProvider
                 // Parse real JSONL session data
                 var parser = new SessionJsonParser(_logger);
                 var sessionData = await parser.ParseSessionLogAsync(request.DataPath, cancellationToken);
-                
+
                 data.SessionId = sessionData.SessionId;
                 data.SessionStartTime = sessionData.SessionStartTime;
                 data.SessionEndTime = sessionData.SessionEndTime;
@@ -49,8 +49,8 @@ public class SessionStatisticsProvider : IReportProvider
                 data.AverageFrameRate = sessionData.AverageFrameRate;
                 data.TotalLoadTime = sessionData.TotalLoadTime;
                 data.KeyEvents = sessionData.KeyEvents;
-                
-                _logger.LogInformation("Parsed session data: K/D={KD:F2}, Playtime={Playtime}", 
+
+                _logger.LogInformation("Parsed session data: K/D={KD:F2}, Playtime={Playtime}",
                     data.KillDeathRatio, data.TotalPlaytime);
             }
             else
@@ -88,7 +88,7 @@ public class SessionStatisticsProvider : IReportProvider
         data.SessionStartTime = DateTime.UtcNow.AddHours(-2);
         data.SessionEndTime = DateTime.UtcNow;
         data.TotalPlaytime = TimeSpan.FromHours(2);
-        
+
         // Combat stats
         data.TotalKills = 47;
         data.TotalDeaths = 12;
@@ -96,16 +96,16 @@ public class SessionStatisticsProvider : IReportProvider
         data.TotalDamageDealt = 12450;
         data.TotalDamageTaken = 3820;
         data.AverageDamagePerKill = data.TotalKills > 0 ? (decimal)data.TotalDamageDealt / data.TotalKills : 0;
-        
+
         // Progression
         data.ItemsCollected = 28;
         data.LevelsCompleted = 5;
         data.AchievementsUnlocked = 3;
-        
+
         // Performance
         data.AverageFrameRate = 58;
         data.TotalLoadTime = TimeSpan.FromSeconds(12.5);
-        
+
         // Key events
         data.KeyEvents = new List<SessionEvent>
         {

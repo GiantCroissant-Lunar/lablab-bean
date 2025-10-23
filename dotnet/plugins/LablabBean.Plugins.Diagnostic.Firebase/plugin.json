@@ -1,0 +1,29 @@
+{
+  "$schema": "../../framework/LablabBean.Plugins.Contracts/plugin.schema.json",
+  "author": "LablabBean Team",
+  "capabilities": [
+    "remote-logging",
+    "analytics",
+    "crash-reporting"
+  ],
+  "configuration": {
+    "autoStart": true,
+    "enabled": true,
+    "settings": {
+      "apiKey": "",
+      "logLevel": "Information",
+      "projectId": ""
+    }
+  },
+  "dependencies": [],
+  "description": "Firebase diagnostic provider for remote monitoring and analytics",
+  "entryPoint": "LablabBean.Plugins.Diagnostic.Firebase.dll",
+  "id": "lablab-bean.diagnostic-firebase",
+  "name": "Diagnostic Firebase",
+  "permissions": [
+    "network",
+    "diagnostics"
+  ],
+  "pluginType": "LablabBean.Plugins.Diagnostic.Firebase.FirebasePlugin",
+  "version": "1.0.0"
+}

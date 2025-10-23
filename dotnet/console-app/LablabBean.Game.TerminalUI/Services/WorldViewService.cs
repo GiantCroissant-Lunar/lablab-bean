@@ -67,9 +67,9 @@ public class WorldViewService
         // Update dimensions from current view bounds
         _viewWidth = _renderView.Bounds.Width;
         _viewHeight = _renderView.Bounds.Height;
-        
+
         _logger.LogInformation("Render called: viewWidth={Width}, viewHeight={Height}", _viewWidth, _viewHeight);
-        
+
         if (_viewWidth <= 0 || _viewHeight <= 0)
         {
             _logger.LogWarning("Render aborted: view dimensions invalid");
@@ -83,7 +83,7 @@ public class WorldViewService
             _logger.LogWarning("Render aborted: no player position");
             return;
         }
-        
+
         _logger.LogInformation("Rendering with player at {X},{Y}", playerPos.Value.X, playerPos.Value.Y);
 
         // Calculate camera offset to center on player
@@ -96,7 +96,7 @@ public class WorldViewService
 
         // Build the buffer
         var buffer = new char[_viewHeight, _viewWidth];
-        
+
         for (int y = 0; y < _viewHeight && y + cameraY < map.Height; y++)
         {
             for (int x = 0; x < _viewWidth && x + cameraX < map.Width; x++)
@@ -135,7 +135,7 @@ public class WorldViewService
                         glyph = '▒';  // Dimmer wall (medium shade)
                     }
                 }
-                
+
                 buffer[y, x] = glyph;
             }
         }
@@ -143,7 +143,7 @@ public class WorldViewService
         _logger.LogInformation("Buffer created: {Width}x{Height}, updating view", _viewWidth, _viewHeight);
         _renderView.UpdateBuffer(buffer);
     }
-    
+
     /// <summary>
     /// Gets entity glyph at position if any
     /// </summary>

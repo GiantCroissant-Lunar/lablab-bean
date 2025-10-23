@@ -33,9 +33,9 @@ public class SessionStatisticsProviderTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeOfType<SessionStatisticsData>();
-        
+
         var sessionData = (SessionStatisticsData)result;
-        // Parser may not parse our test data format correctly, 
+        // Parser may not parse our test data format correctly,
         // so we just verify it returns valid data (sample or parsed)
         sessionData.Should().NotBeNull();
         sessionData.ReportGeneratedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));

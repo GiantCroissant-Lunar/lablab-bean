@@ -34,7 +34,7 @@ public class JsonLocalizationProvider
         }
 
         var filePath = Path.Combine(_basePath, $"{localeCode}.json");
-        
+
         if (!File.Exists(filePath))
         {
             _logger.LogWarning("Locale file not found for {Locale}, creating empty", localeCode);
@@ -46,9 +46,9 @@ public class JsonLocalizationProvider
         try
         {
             var json = await File.ReadAllTextAsync(filePath, cancellationToken);
-            var data = JsonSerializer.Deserialize<Dictionary<string, string>>(json) 
+            var data = JsonSerializer.Deserialize<Dictionary<string, string>>(json)
                        ?? new Dictionary<string, string>();
-            
+
             _localeData[localeCode] = data;
             _logger.LogInformation("Loaded {Count} translations for locale {Locale}", data.Count, localeCode);
             return data;
@@ -63,13 +63,13 @@ public class JsonLocalizationProvider
     public async Task SaveLocaleAsync(string localeCode, Dictionary<string, string> data, CancellationToken cancellationToken)
     {
         var filePath = Path.Combine(_basePath, $"{localeCode}.json");
-        
+
         try
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(data, options);
             await File.WriteAllTextAsync(filePath, json, cancellationToken);
-            
+
             _localeData[localeCode] = data;
             _logger.LogInformation("Saved {Count} translations for locale {Locale}", data.Count, localeCode);
         }

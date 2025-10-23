@@ -12,47 +12,47 @@ public class ObjectPoolGlobalSettings
     /// Default maximum size for new pools (0 = unlimited)
     /// </summary>
     public int DefaultMaxPoolSize { get; set; } = 100;
-    
+
     /// <summary>
     /// Default preallocate count for new pools
     /// </summary>
     public int DefaultPreallocateCount { get; set; } = 0;
-    
+
     /// <summary>
     /// Whether to automatically clean up unused pools
     /// </summary>
     public bool AutoCleanupEnabled { get; set; } = true;
-    
+
     /// <summary>
     /// How long a pool must be unused before it's considered for cleanup (in seconds)
     /// </summary>
     public float UnusedPoolCleanupThreshold { get; set; } = 300f;
-    
+
     /// <summary>
     /// How often to perform automatic cleanup (in seconds)
     /// </summary>
     public float AutoCleanupInterval { get; set; } = 60f;
-    
+
     /// <summary>
     /// Whether to track detailed statistics (may have performance impact)
     /// </summary>
     public bool EnableDetailedStatistics { get; set; } = true;
-    
+
     /// <summary>
     /// Whether to log pool operations for debugging
     /// </summary>
     public bool EnableDebugLogging { get; set; } = false;
-    
+
     /// <summary>
     /// Maximum memory usage before triggering aggressive cleanup (in MB, 0 = no limit)
     /// </summary>
     public float MaxMemoryUsageMB { get; set; } = 0f;
-    
+
     /// <summary>
     /// Whether to warn when pools exceed their maximum size
     /// </summary>
     public bool WarnOnPoolOverflow { get; set; } = true;
-    
+
     /// <summary>
     /// Whether to automatically expand pools beyond their maximum size when needed
     /// </summary>
@@ -62,7 +62,7 @@ public class ObjectPoolGlobalSettings
     /// Create default settings
     /// </summary>
     public static ObjectPoolGlobalSettings Default => new();
-    
+
     /// <summary>
     /// Create performance-optimized settings (less tracking, more aggressive cleanup)
     /// </summary>
@@ -79,7 +79,7 @@ public class ObjectPoolGlobalSettings
         WarnOnPoolOverflow = false,
         AllowPoolExpansion = true
     };
-    
+
     /// <summary>
     /// Create memory-conscious settings (smaller pools, aggressive cleanup)
     /// </summary>
@@ -96,7 +96,7 @@ public class ObjectPoolGlobalSettings
         WarnOnPoolOverflow = true,
         AllowPoolExpansion = false
     };
-    
+
     /// <summary>
     /// Create development settings (detailed tracking, logging enabled)
     /// </summary>

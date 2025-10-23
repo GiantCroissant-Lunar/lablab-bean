@@ -54,7 +54,7 @@ public class DungeonCrawlerService : IDisposable
         // Add world view and HUD
         _gameWindow.Add(_worldViewService.WorldView);
         _gameWindow.Add(_hudService.HudView);
-        
+
         // Add debug log panel at the bottom
         var debugFrame = new FrameView("Debug Log (Press L to copy to clipboard)")
         {
@@ -64,7 +64,7 @@ public class DungeonCrawlerService : IDisposable
             Height = 10,
             CanFocus = false
         };
-        
+
         _debugLogView = new TextView()
         {
             X = 0,
@@ -80,19 +80,19 @@ public class DungeonCrawlerService : IDisposable
                 Focus = new Terminal.Gui.Attribute(Color.BrightCyan, Color.Black)
             }
         };
-        
+
         debugFrame.Add(_debugLogView);
         _gameWindow.Add(debugFrame);
 
         // Set up key bindings using Terminal.Gui v2 KeyDown event
         _gameWindow.KeyDown += OnWindowKeyDown;
-        
+
         // Set up a handler to render after layout is complete
         _gameWindow.LayoutComplete += (s, e) =>
         {
             // Render after first layout
             Update();
-            
+
             // Make sure game window has focus
             _gameWindow.SetFocus();
         };
@@ -108,10 +108,10 @@ public class DungeonCrawlerService : IDisposable
     private void OnWindowKeyDown(object? sender, Terminal.Gui.KeyEventEventArgs e)
     {
         AddDebugLog($"KeyDown event received");
-        
+
         // Try different properties to find the key value
         Key? keyValue = null;
-        
+
         // Try KeyEvent property (Terminal.Gui v2 pre-71)
         var keyEventProp = e.GetType().GetProperty("KeyEvent");
         if (keyEventProp != null)
@@ -121,11 +121,11 @@ public class DungeonCrawlerService : IDisposable
             if (keyEvent != null)
             {
                 AddDebugLog($"KeyEvent type: {keyEvent.GetType().Name}");
-                
+
                 // Log all properties of KeyEvent to find the right one
                 var props = keyEvent.GetType().GetProperties();
                 AddDebugLog($"KeyEvent properties: {string.Join(", ", props.Select(p => p.Name))}");
-                
+
                 // KeyEvent might BE the Key directly if it's a Key type
                 if (keyEvent is Key k)
                 {
@@ -141,7 +141,7 @@ public class DungeonCrawlerService : IDisposable
                         var keyValueObj = keyValueProp.GetValue(keyEvent);
                         AddDebugLog($"KeyValue type: {keyValueObj?.GetType().Name ?? "null"}");
                         AddDebugLog($"KeyValue value: {keyValueObj}");
-                        
+
                         // Try direct cast
                         if (keyValueObj is Key keyFromValue)
                         {
@@ -181,7 +181,7 @@ public class DungeonCrawlerService : IDisposable
                 }
             }
         }
-        
+
         // Try KeyCode property (older versions)
         if (!keyValue.HasValue)
         {
@@ -192,7 +192,7 @@ public class DungeonCrawlerService : IDisposable
                 AddDebugLog($"Got key from KeyCode: {keyValue}");
             }
         }
-        
+
         // Try Key property as last resort
         if (!keyValue.HasValue)
         {
@@ -203,7 +203,7 @@ public class DungeonCrawlerService : IDisposable
                 AddDebugLog($"Got key from Key: {keyValue}");
             }
         }
-        
+
         if (keyValue.HasValue && OnKeyDown(keyValue.Value))
         {
             AddDebugLog($"Key {keyValue} handled, action taken");
@@ -219,7 +219,7 @@ public class DungeonCrawlerService : IDisposable
             AddDebugLog($"Key {keyValue} received but no action");
         }
     }
-    
+
     /// <summary>
     /// Adds a message to the debug log view
     /// </summary>
@@ -228,11 +228,11 @@ public class DungeonCrawlerService : IDisposable
         var timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
         var logMessage = $"[{timestamp}] {message}";
         _debugLogs.Add(logMessage);
-        
+
         // Keep only last 100 lines
         if (_debugLogs.Count > 100)
             _debugLogs.RemoveAt(0);
-        
+
         // Update TextView with bright text
         if (_debugLogView != null)
         {
@@ -240,7 +240,7 @@ public class DungeonCrawlerService : IDisposable
             // Scroll to bottom
             _debugLogView.MoveEnd();
         }
-        
+
         // Also add to HUD messages for visibility
         // _hudService.AddMessage(message); // Removed - using Debug Log instead
     }
@@ -280,7 +280,7 @@ public class DungeonCrawlerService : IDisposable
         {
             _worldViewService.Render(_gameStateManager.WorldManager.CurrentWorld, _gameStateManager.CurrentMap);
             _hudService.Update(_gameStateManager.WorldManager.CurrentWorld);
-            
+
             // Update level display
             if (_gameStateManager.LevelManager != null)
             {
@@ -292,7 +292,7 @@ public class DungeonCrawlerService : IDisposable
                 );
             }
         }
-        
+
         // Ensure game window keeps focus
         _gameWindow?.SetFocus();
     }
@@ -314,16 +314,16 @@ public class DungeonCrawlerService : IDisposable
         {
             AddDebugLog("Processing NPC turn...");
             _gameStateManager.Update();
-            
+
             // Render after each NPC action
             if (_gameStateManager.CurrentMap != null)
             {
                 _worldViewService.Render(_gameStateManager.WorldManager.CurrentWorld, _gameStateManager.CurrentMap);
                 _hudService.Update(_gameStateManager.WorldManager.CurrentWorld);
             }
-            
+
             iterations++;
-            
+
             // Small delay to make NPC actions visible (optional, can be removed for instant processing)
             System.Threading.Thread.Sleep(50);
         }
@@ -345,11 +345,11 @@ public class DungeonCrawlerService : IDisposable
     private bool OnKeyDown(Key key)
     {
         AddDebugLog($"OnKeyDown: {key}");
-        
+
         if (!_isRunning || _gameStateManager.CurrentMap == null)
         {
             AddDebugLog($"Game not running or no map!");
-            _logger.LogWarning("Cannot handle key - running: {Running}, map exists: {MapExists}", 
+            _logger.LogWarning("Cannot handle key - running: {Running}, map exists: {MapExists}",
                 _isRunning, _gameStateManager.CurrentMap != null);
             return false;
         }
@@ -452,7 +452,7 @@ public class DungeonCrawlerService : IDisposable
                 AddDebugLog("Attempting to descend stairs");
                 actionTaken = _gameStateManager.HandleStaircaseInteraction(StaircaseDirection.Down);
                 break;
-            
+
             case (Key)'<':
                 AddDebugLog("Attempting to ascend stairs");
                 actionTaken = _gameStateManager.HandleStaircaseInteraction(StaircaseDirection.Up);
@@ -473,10 +473,10 @@ public class DungeonCrawlerService : IDisposable
             AddDebugLog("Action taken, updating game");
             // Update the game after player action
             Update();
-            
+
             // Continue processing NPC turns until it's the player's turn again
             ProcessNPCTurns();
-            
+
             return true;
         }
 
@@ -521,4 +521,3 @@ public class DungeonCrawlerService : IDisposable
         _disposed = true;
     }
 }
-

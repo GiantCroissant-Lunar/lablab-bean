@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\framework\LablabBean.Contracts.Input\LablabBean.Contracts.Input.csproj" />
-    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\framework\LablabBean.Contracts.Input\LablabBean.Contracts.Input.csproj" />
+    <ProjectReference Include="..\..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

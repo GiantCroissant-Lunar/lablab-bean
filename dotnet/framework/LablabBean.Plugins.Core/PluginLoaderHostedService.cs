@@ -59,15 +59,15 @@ public sealed class PluginLoaderHostedService : IHostedService, IDisposable
             return;
         }
 
-        _logger.LogInformation("Loading plugins from {PathCount} path(s): {Paths}", 
-            expandedPaths.Count, 
+        _logger.LogInformation("Loading plugins from {PathCount} path(s): {Paths}",
+            expandedPaths.Count,
             string.Join(", ", expandedPaths));
 
         try
         {
             var loadedCount = await _pluginLoader.DiscoverAndLoadAsync(expandedPaths, cancellationToken);
             _metrics.CompleteSystem();
-            
+
             _logger.LogInformation("Plugin loader service started. Loaded {LoadedCount} plugin(s)", loadedCount);
             _logger.LogInformation("\n{MetricsSummary}", _metrics.GetSummary());
         }

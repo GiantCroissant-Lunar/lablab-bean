@@ -31,11 +31,11 @@ public class CoverletXmlParser
 
         // OpenCover/Coverlet XML format
         var modules = doc.Descendants("Module");
-        
+
         foreach (var module in modules)
         {
             var files = module.Descendants("File");
-            
+
             foreach (var file in files)
             {
                 var fullPath = file.Attribute("fullPath")?.Value ?? "Unknown";
@@ -54,7 +54,7 @@ public class CoverletXmlParser
                         var visitCount = int.Parse(sp.Attribute("vc")?.Value ?? "0");
                         fileLines++;
                         totalLines++;
-                        
+
                         if (visitCount > 0)
                         {
                             fileCoveredLines++;
@@ -66,7 +66,7 @@ public class CoverletXmlParser
                 if (fileLines > 0)
                 {
                     var fileLineCoverage = (decimal)fileCoveredLines / fileLines * 100;
-                    
+
                     fileCoverages.Add(new FileCoverage
                     {
                         FilePath = fullPath,
@@ -97,7 +97,7 @@ public class CoverletXmlParser
             .Take(10)
             .ToList();
 
-        _logger.LogDebug("Parsed coverage: {LineCoverage}% line, {BranchCoverage}% branch", 
+        _logger.LogDebug("Parsed coverage: {LineCoverage}% line, {BranchCoverage}% branch",
             lineCoverage, branchCoverage);
 
         return new CoverageSummary

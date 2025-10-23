@@ -59,7 +59,7 @@ public class StatusEffectService : IStatusEffectService
             var existing = statusEffects.ActiveEffects[existingIndex];
             existing.Duration = duration;
             statusEffects.ActiveEffects[existingIndex] = existing;
-            
+
             _logger.LogDebug($"Refreshed {effectType} on entity {entity.Id} (duration reset to {duration})");
             return EffectResult.Succeeded(GetEffectAppliedMessage(effectType, definition.Category, isRefresh: true));
         }
@@ -77,7 +77,7 @@ public class StatusEffectService : IStatusEffectService
 
         statusEffects.ActiveEffects.Add(newEffect);
         _logger.LogDebug($"Applied {effectType} to entity {entity.Id} (mag:{magnitude}, dur:{duration})");
-        
+
         return EffectResult.Succeeded(GetEffectAppliedMessage(effectType, definition.Category, isRefresh: false));
     }
 
@@ -104,8 +104,8 @@ public class StatusEffectService : IStatusEffectService
             return EffectResult.Failed("No negative effects active");
 
         ref var statusEffects = ref world.Get<StatusEffectsComponent>(entity);
-        var removed = statusEffects.ActiveEffects.RemoveAll(e => 
-            e.Category == EffectCategory.DamageOverTime || 
+        var removed = statusEffects.ActiveEffects.RemoveAll(e =>
+            e.Category == EffectCategory.DamageOverTime ||
             e.Category == EffectCategory.StatDebuff);
 
         if (removed > 0)
@@ -278,7 +278,7 @@ public class StatusEffectService : IStatusEffectService
 
         bool isPlayer = world.Has<Player>(entity);
         string subject = isPlayer ? "You take" : "Enemy takes";
-        
+
         return $"{subject} {actualDamage} damage from {effect.Type.ToString().ToLower()}.";
     }
 
@@ -297,7 +297,7 @@ public class StatusEffectService : IStatusEffectService
 
         bool isPlayer = world.Has<Player>(entity);
         string subject = isPlayer ? "You heal" : "Enemy heals";
-        
+
         return $"{subject} {actualHealing} HP from {effect.Type.ToString().ToLower()}.";
     }
 

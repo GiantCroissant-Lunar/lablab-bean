@@ -1,0 +1,267 @@
+{
+  "name": "GameInput",
+  "maps": [
+    {
+      "name": "Player",
+      "id": "f62a4b92-ef5e-4175-8f4c-69c9c4b7d4f8",
+      "actions": [
+        {
+          "name": "Move",
+          "type": "Value",
+          "id": "1f9b8c7e-2d3a-4b5c-6d7e-8f9a0b1c2d3e",
+          "expectedControlType": "Vector2"
+        },
+        {
+          "name": "Jump",
+          "type": "Button",
+          "id": "2a8b9c0d-3e4f-5c6d-7e8f-9a0b1c2d3e4f",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Attack",
+          "type": "Button",
+          "id": "3b9c0d1e-4f5a-6d7e-8f9a-0b1c2d3e4f5a",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Block",
+          "type": "Button",
+          "id": "4c0d1e2f-5a6b-7e8f-9a0b-1c2d3e4f5a6b",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Interact",
+          "type": "Button",
+          "id": "5d1e2f3a-6b7c-8f9a-0b1c-2d3e4f5a6b7c",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Sprint",
+          "type": "Button",
+          "id": "6e2f3a4b-7c8d-9a0b-1c2d-3e4f5a6b7c8d",
+          "expectedControlType": "Button"
+        }
+      ],
+      "bindings": [
+        {
+          "name": "Axis2D",
+          "id": "7f3a4b5c-8d9e-0b1c-2d3e-4f5a6b7c8d9e",
+          "path": "",
+          "action": "Move",
+          "isComposite": true
+        },
+        {
+          "name": "up",
+          "id": "8a4b5c6d-9e0f-1c2d-3e4f-5a6b7c8d9e0f",
+          "path": "<Keyboard>/w",
+          "action": "Move",
+          "isPartOfComposite": true
+        },
+        {
+          "name": "down",
+          "id": "9b5c6d7e-0f1a-2d3e-4f5a-6b7c8d9e0f1a",
+          "path": "<Keyboard>/s",
+          "action": "Move",
+          "isPartOfComposite": true
+        },
+        {
+          "name": "left",
+          "id": "ac6d7e8f-1a2b-3e4f-5a6b-7c8d9e0f1a2b",
+          "path": "<Keyboard>/a",
+          "action": "Move",
+          "isPartOfComposite": true
+        },
+        {
+          "name": "right",
+          "id": "bd7e8f9a-2b3c-4f5a-6b7c-8d9e0f1a2b3c",
+          "path": "<Keyboard>/d",
+          "action": "Move",
+          "isPartOfComposite": true
+        },
+        {
+          "name": "",
+          "id": "ce8f9a0b-3c4d-5a6b-7c8d-9e0f1a2b3c4d",
+          "path": "<Keyboard>/space",
+          "action": "Jump"
+        },
+        {
+          "name": "",
+          "id": "df9a0b1c-4d5e-6b7c-8d9e-0f1a2b3c4d5e",
+          "path": "<Mouse>/leftButton",
+          "action": "Attack"
+        },
+        {
+          "name": "",
+          "id": "ea0b1c2d-5e6f-7c8d-9e0f-1a2b3c4d5e6f",
+          "path": "<Mouse>/rightButton",
+          "action": "Block"
+        },
+        {
+          "name": "",
+          "id": "fb1c2d3e-6f7a-8d9e-0f1a-2b3c4d5e6f7a",
+          "path": "<Keyboard>/e",
+          "action": "Interact"
+        },
+        {
+          "name": "",
+          "id": "ac2d3e4f-7a8b-9e0f-1a2b-3c4d5e6f7a8b",
+          "path": "<Keyboard>/leftShift",
+          "action": "Sprint"
+        }
+      ]
+    },
+    {
+      "name": "UI",
+      "id": "bd3e4f5a-8b9c-0f1a-2b3c-4d5e6f7a8b9c",
+      "actions": [
+        {
+          "name": "Submit",
+          "type": "Button",
+          "id": "ce4f5a6b-9c0d-1a2b-3c4d-5e6f7a8b9c0d",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Cancel",
+          "type": "Button",
+          "id": "df5a6b7c-0d1e-2b3c-4d5e-6f7a8b9c0d1e",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Navigate",
+          "type": "Button",
+          "id": "ea6b7c8d-1e2f-3c4d-5e6f-7a8b9c0d1e2f",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "OpenInventory",
+          "type": "Button",
+          "id": "fb7c8d9e-2f3a-4d5e-6f7a-8b9c0d1e2f3a",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Pause",
+          "type": "Button",
+          "id": "ac8d9e0f-3a4b-5e6f-7a8b-9c0d1e2f3a4b",
+          "expectedControlType": "Button"
+        }
+      ],
+      "bindings": [
+        {
+          "name": "",
+          "id": "bd9e0f1a-4b5c-6f7a-8b9c-0d1e2f3a4b5c",
+          "path": "<Keyboard>/enter",
+          "action": "Submit"
+        },
+        {
+          "name": "",
+          "id": "ce0f1a2b-5c6d-7a8b-9c0d-1e2f3a4b5c6d",
+          "path": "<Keyboard>/escape",
+          "action": "Cancel"
+        },
+        {
+          "name": "",
+          "id": "df1a2b3c-6d7e-8b9c-0d1e-2f3a4b5c6d7e",
+          "path": "<Keyboard>/tab",
+          "action": "Navigate"
+        },
+        {
+          "name": "",
+          "id": "ea2b3c4d-7e8f-9c0d-1e2f-3a4b5c6d7e8f",
+          "path": "<Keyboard>/i",
+          "action": "OpenInventory"
+        },
+        {
+          "name": "",
+          "id": "fb3c4d5e-8f9a-0d1e-2f3a-4b5c6d7e8f9a",
+          "path": "<Keyboard>/escape",
+          "action": "Pause"
+        }
+      ]
+    },
+    {
+      "name": "Menu",
+      "id": "ac4d5e6f-9a0b-1e2f-3a4b-5c6d7e8f9a0b",
+      "actions": [
+        {
+          "name": "Select",
+          "type": "Button",
+          "id": "bd5e6f7a-0b1c-2f3a-4b5c-6d7e8f9a0b1c",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Back",
+          "type": "Button",
+          "id": "ce6f7a8b-1c2d-3a4b-5c6d-7e8f9a0b1c2d",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Up",
+          "type": "Button",
+          "id": "df7a8b9c-2d3e-4b5c-6d7e-8f9a0b1c2d3e",
+          "expectedControlType": "Button"
+        },
+        {
+          "name": "Down",
+          "type": "Button",
+          "id": "ea8b9c0d-3e4f-5c6d-7e8f-9a0b1c2d3e4f",
+          "expectedControlType": "Button"
+        }
+      ],
+      "bindings": [
+        {
+          "name": "",
+          "id": "fb9c0d1e-4f5a-6d7e-8f9a-0b1c2d3e4f5a",
+          "path": "<Keyboard>/enter",
+          "action": "Select"
+        },
+        {
+          "name": "",
+          "id": "ac0d1e2f-5a6b-7e8f-9a0b-1c2d3e4f5a6b",
+          "path": "<Keyboard>/escape",
+          "action": "Back"
+        },
+        {
+          "name": "",
+          "id": "bd1e2f3a-6b7c-8f9a-0b1c-2d3e4f5a6b7c",
+          "path": "<Keyboard>/w",
+          "action": "Up"
+        },
+        {
+          "name": "",
+          "id": "ce2f3a4b-7c8d-9a0b-1c2d-3e4f5a6b7c8d",
+          "path": "<Keyboard>/s",
+          "action": "Down"
+        }
+      ]
+    }
+  ],
+  "controlSchemes": [
+    {
+      "name": "Keyboard & Mouse",
+      "bindingGroup": "KeyboardMouse",
+      "devices": [
+        {
+          "devicePath": "<Keyboard>",
+          "isOptional": false,
+          "isOR": false
+        },
+        {
+          "devicePath": "<Mouse>",
+          "isOptional": false,
+          "isOR": false
+        }
+      ]
+    },
+    {
+      "name": "Keyboard Only",
+      "bindingGroup": "KeyboardOnly",
+      "devices": [
+        {
+          "devicePath": "<Keyboard>",
+          "isOptional": false,
+          "isOR": false
+        }
+      ]
+    }
+  ]
+}

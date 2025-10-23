@@ -54,8 +54,8 @@ public class PluginHealthJsonParser
             data.RunningPlugins = data.Plugins.Count(p => p.State == "Running");
             data.FailedPlugins = data.Plugins.Count(p => p.State == "Failed");
             data.DegradedPlugins = data.Plugins.Count(p => p.State == "Degraded");
-            data.SuccessRate = data.TotalPlugins > 0 
-                ? (decimal)data.RunningPlugins / data.TotalPlugins * 100 
+            data.SuccessRate = data.TotalPlugins > 0
+                ? (decimal)data.RunningPlugins / data.TotalPlugins * 100
                 : 0;
             data.TotalMemoryUsageMB = data.Plugins.Sum(p => p.MemoryUsageMB);
             data.TotalLoadTime = TimeSpan.FromMilliseconds(data.Plugins.Sum(p => p.LoadDuration.TotalMilliseconds));

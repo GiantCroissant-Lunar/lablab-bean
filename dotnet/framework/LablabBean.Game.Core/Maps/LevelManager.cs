@@ -34,6 +34,10 @@ public class LevelManager
     private readonly Dictionary<int, DungeonLevel> _levelCache;
     private readonly Random _random;
 
+    public event Action<int>? OnLevelCompleted;
+    public event Action<int>? OnNewDepthReached;
+    public event Action? OnDungeonCompleted;
+
     public int CurrentLevel { get; private set; }
     public int PersonalBestDepth { get; private set; }
     public bool EndlessModeEnabled { get; set; }
@@ -62,7 +66,7 @@ public class LevelManager
     {
         CurrentLevel = 1;
         _levelCache[1] = level;
-        
+
         // Place staircases on first level
         PlaceStaircases(level);
     }
@@ -81,6 +85,9 @@ public class LevelManager
             result.Message = "You have reached the Victory Chamber!";
             result.NewLevel = CurrentLevel;
             result.VictoryTriggered = true;
+
+            OnDungeonCompleted?.Invoke();
+
             return result;
         }
 
@@ -104,6 +111,13 @@ public class LevelManager
 
         // Update personal best
         bool newRecord = UpdatePersonalBest(CurrentLevel);
+
+        if (newRecord)
+        {
+            OnNewDepthReached?.Invoke(CurrentLevel);
+        }
+
+        OnLevelCompleted?.Invoke(CurrentLevel - 1);
 
         // Place player at upward staircase
         PlacePlayerAtStaircase(player, Components.StaircaseDirection.Up);
@@ -380,8 +394,8 @@ public class LevelManager
             return;
 
         var level = _levelCache[CurrentLevel];
-        Point targetPos = direction == Components.StaircaseDirection.Up 
-            ? level.UpStaircasePosition 
+        Point targetPos = direction == Components.StaircaseDirection.Up
+            ? level.UpStaircasePosition
             : level.DownStaircasePosition;
 
         if (targetPos != Point.None)
@@ -412,7 +426,7 @@ public class LevelManager
             return null;
 
         var playerPos = _world.Get<Position>(player);
-        
+
         Entity? foundStaircase = null;
         var query = new QueryDescription().WithAll<Staircase, Position>();
         _world.Query(in query, (Entity entity) =>

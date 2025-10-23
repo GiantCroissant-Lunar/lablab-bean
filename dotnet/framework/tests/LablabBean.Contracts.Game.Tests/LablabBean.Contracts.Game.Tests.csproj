@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\framework\LablabBean.Contracts.Game\LablabBean.Contracts.Game.csproj" />
+    <ProjectReference Include="..\..\..\framework\LablabBean.Contracts.Game\LablabBean.Contracts.Game.csproj" />
   </ItemGroup>
 
   <ItemGroup>

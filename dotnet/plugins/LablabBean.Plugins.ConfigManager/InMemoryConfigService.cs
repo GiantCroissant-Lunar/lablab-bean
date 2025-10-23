@@ -58,11 +58,11 @@ public class InMemoryConfigService : IService
         _logger.LogDebug("Config set: {Key} = {Value}", key, value);
 
         // Fire event
-        ConfigChanged?.Invoke(this, new ConfigChangedEventArgs 
-        { 
-            Key = key, 
-            OldValue = oldValue, 
-            NewValue = value 
+        ConfigChanged?.Invoke(this, new ConfigChangedEventArgs
+        {
+            Key = key,
+            OldValue = oldValue,
+            NewValue = value
         });
 
         // Publish event

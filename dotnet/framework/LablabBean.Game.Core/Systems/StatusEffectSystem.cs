@@ -64,7 +64,7 @@ public class StatusEffectSystem
             var existing = statusEffects.ActiveEffects[existingIndex];
             existing.Duration = duration;
             statusEffects.ActiveEffects[existingIndex] = existing;
-            
+
             _logger.LogDebug($"Refreshed {effectType} on entity {entity.Id} (duration reset to {duration})");
             return EffectResult.Succeeded(GetEffectAppliedMessage(effectType, definition.Category, isRefresh: true));
         }
@@ -82,7 +82,7 @@ public class StatusEffectSystem
 
         statusEffects.ActiveEffects.Add(newEffect);
         _logger.LogDebug($"Applied {effectType} to entity {entity.Id} (mag:{magnitude}, dur:{duration})");
-        
+
         return EffectResult.Succeeded(GetEffectAppliedMessage(effectType, definition.Category, isRefresh: false));
     }
 
@@ -115,8 +115,8 @@ public class StatusEffectSystem
             return EffectResult.Failed("No negative effects active");
 
         ref var statusEffects = ref world.Get<StatusEffects>(entity);
-        var removed = statusEffects.ActiveEffects.RemoveAll(e => 
-            e.Category == EffectCategory.DamageOverTime || 
+        var removed = statusEffects.ActiveEffects.RemoveAll(e =>
+            e.Category == EffectCategory.DamageOverTime ||
             e.Category == EffectCategory.StatDebuff);
 
         if (removed > 0)
@@ -309,7 +309,7 @@ public class StatusEffectSystem
             return true;
 
         var statusEffects = world.Get<StatusEffects>(entity);
-        
+
         // Can always refresh existing effect
         if (statusEffects.ActiveEffects.Any(e => e.Type == effectType))
             return true;
@@ -330,7 +330,7 @@ public class StatusEffectSystem
 
         bool isPlayer = world.Has<Player>(entity);
         string subject = isPlayer ? "You take" : "Enemy takes";
-        
+
         return $"{subject} {actualDamage} damage from {effect.Type.ToString().ToLower()}.";
     }
 
@@ -349,7 +349,7 @@ public class StatusEffectSystem
 
         bool isPlayer = world.Has<Player>(entity);
         string subject = isPlayer ? "You heal" : "Enemy heals";
-        
+
         return $"{subject} {actualHealing} HP from {effect.Type.ToString().ToLower()}.";
     }
 
@@ -394,7 +394,7 @@ public class StatusEffectSystem
             EffectColor.Purple => "\x1b[35m",
             _ => "\x1b[0m"
         };
-        
+
         string reset = "\x1b[0m";
         return $"{colorCode}{effect.DisplayName} ({effect.Duration}){reset}";
     }

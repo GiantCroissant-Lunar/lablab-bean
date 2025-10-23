@@ -134,13 +134,13 @@ public class MainWindow : Window
 
     private void OnAbout()
     {
-        MessageBox.Query("About", 
+        MessageBox.Query("About",
             "Lablab Bean v0.1.0\n\n" +
             "A modern TUI application built with:\n" +
             "- Terminal.Gui v2\n" +
             "- .NET 8\n" +
             "- ReactiveUI\n" +
-            "- Microsoft.Extensions.*", 
+            "- Microsoft.Extensions.*",
             "Ok");
     }
 

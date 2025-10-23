@@ -328,7 +328,7 @@ public class ProxyServiceGenerator : IIncrementalGenerator
                 sb.Append(", ");
 
             var param = parameters[i];
-            
+
             // Parameter modifiers: ref/out/in/params (T038-T041)
             if (param.RefKind == RefKind.Ref)
                 sb.Append("ref ");
@@ -336,14 +336,14 @@ public class ProxyServiceGenerator : IIncrementalGenerator
                 sb.Append("out ");
             else if (param.RefKind == RefKind.In)
                 sb.Append("in ");
-            
+
             if (param.IsParams)
                 sb.Append("params ");
-            
+
             sb.Append(param.Type.ToDisplayString());
             sb.Append(" ");
             sb.Append(param.Name);
-            
+
             // Default parameter values (T044)
             if (param.HasExplicitDefaultValue)
             {
@@ -377,7 +377,7 @@ public class ProxyServiceGenerator : IIncrementalGenerator
             foreach (var typeParam in method.TypeParameters)
             {
                 var constraints = new List<string>();
-                
+
                 if (typeParam.HasReferenceTypeConstraint)
                     constraints.Add("class");
                 if (typeParam.HasValueTypeConstraint)
@@ -386,15 +386,15 @@ public class ProxyServiceGenerator : IIncrementalGenerator
                     constraints.Add("unmanaged");
                 if (typeParam.HasNotNullConstraint)
                     constraints.Add("notnull");
-                
+
                 foreach (var constraintType in typeParam.ConstraintTypes)
                 {
                     constraints.Add(constraintType.ToDisplayString());
                 }
-                
+
                 if (typeParam.HasConstructorConstraint)
                     constraints.Add("new()");
-                
+
                 if (constraints.Count > 0)
                 {
                     sb.AppendLine();
@@ -402,7 +402,7 @@ public class ProxyServiceGenerator : IIncrementalGenerator
                 }
             }
         }
-        
+
         sb.AppendLine();
 
         // Method body
@@ -552,21 +552,21 @@ public class ProxyServiceGenerator : IIncrementalGenerator
     {
         if (string.IsNullOrWhiteSpace(xmlDoc))
             return;
-            
+
         // Parse XML documentation and convert to /// comments
         // Simple implementation: extract summary, param, returns tags
         var lines = xmlDoc!.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-        
+
         foreach (var line in lines)
         {
             var trimmed = line.Trim();
             if (string.IsNullOrWhiteSpace(trimmed))
                 continue;
-                
+
             // Skip XML declaration and member tags
             if (trimmed.StartsWith("<?xml") || trimmed.StartsWith("<member"))
                 continue;
-            
+
             // Convert to /// comment format
             sb.Append(indent);
             sb.Append("/// ");

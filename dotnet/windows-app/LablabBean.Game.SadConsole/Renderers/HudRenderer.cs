@@ -100,9 +100,9 @@ public class HudRenderer
         if (_combatSystem != null && entity.Has<StatusEffects>())
         {
             var statusEffects = entity.Get<StatusEffects>();
-            
+
             // Only show modified values if there are stat-modifying effects
-            bool hasStatModifiers = statusEffects.ActiveEffects.Any(e => 
+            bool hasStatModifiers = statusEffects.ActiveEffects.Any(e =>
                 e.Type == EffectType.Strength || e.Type == EffectType.Weakness ||
                 e.Type == EffectType.IronSkin || e.Type == EffectType.Fragile ||
                 e.Type == EffectType.Haste || e.Type == EffectType.Slow);
@@ -112,7 +112,7 @@ public class HudRenderer
                 int modifiedAttack = _combatSystem.GetModifiedAttack(entity, combat.Attack);
                 int modifiedDefense = _combatSystem.GetModifiedDefense(entity, combat.Defense);
                 int modifiedSpeed = _combatSystem.GetModifiedSpeed(entity, actor.Speed);
-                
+
                 _statsLabel.DisplayText = $"Stats:\n" +
                                           $"  ATK: {combat.Attack}{GetStatDiff(combat.Attack, modifiedAttack)}\n" +
                                           $"  DEF: {combat.Defense}{GetStatDiff(combat.Defense, modifiedDefense)}\n" +
@@ -153,7 +153,7 @@ public class HudRenderer
         }
 
         var statusEffects = entity.Get<StatusEffects>();
-        
+
         if (statusEffects.ActiveEffects.Count == 0)
         {
             _effectsLabel.DisplayText = "";
@@ -161,7 +161,7 @@ public class HudRenderer
         }
 
         var effectLines = new List<string> { "Effects:" };
-        
+
         foreach (var effect in statusEffects.ActiveEffects)
         {
             var iconAndName = GetEffectIcon(effect.Type) + " " + effect.DisplayName;
@@ -230,4 +230,3 @@ public class HudRenderer
         _messageList.Items.Clear();
     }
 }
-

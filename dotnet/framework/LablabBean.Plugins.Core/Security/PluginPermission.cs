@@ -7,47 +7,47 @@ namespace LablabBean.Plugins.Core.Security;
 public enum PluginPermission
 {
     None = 0,
-    
+
     // File System
     FileSystemRead = 1 << 0,
     FileSystemWrite = 1 << 1,
     FileSystemDelete = 1 << 2,
-    
+
     // Network
     NetworkAccess = 1 << 3,
     NetworkListen = 1 << 4,
-    
+
     // Registry Access
     RegistryRead = 1 << 5,
     RegistryWrite = 1 << 6,
-    
+
     // Process Management
     ProcessCreate = 1 << 7,
     ProcessKill = 1 << 8,
-    
+
     // System Resources
     SystemInformation = 1 << 9,
     EnvironmentVariables = 1 << 10,
-    
+
     // Database Access
     DatabaseRead = 1 << 11,
     DatabaseWrite = 1 << 12,
-    
+
     // UI Access
     UIDisplay = 1 << 13,
     UIInput = 1 << 14,
-    
+
     // Inter-Plugin Communication
     PluginCommunication = 1 << 15,
-    
+
     // Service Registry
     ServiceRegistryRead = 1 << 16,
     ServiceRegistryWrite = 1 << 17,
-    
+
     // Reflection
     Reflection = 1 << 18,
     UnsafeCode = 1 << 19,
-    
+
     // Presets
     ReadOnly = FileSystemRead | RegistryRead | SystemInformation | ServiceRegistryRead,
     Standard = ReadOnly | FileSystemWrite | NetworkAccess | UIDisplay | PluginCommunication,

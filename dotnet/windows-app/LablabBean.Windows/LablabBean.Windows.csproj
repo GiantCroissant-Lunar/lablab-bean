@@ -10,6 +10,19 @@
     <ProjectReference Include="..\..\framework\LablabBean.Reactive\LablabBean.Reactive.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Core\LablabBean.Plugins.Core.csproj" />
     <ProjectReference Include="..\LablabBean.Game.SadConsole\LablabBean.Game.SadConsole.csproj" />
+
+    <!-- Reporting framework -->
+    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Contracts\LablabBean.Reporting.Contracts.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Analytics\LablabBean.Reporting.Analytics.csproj" />
+
+    <!-- Reporting plugins (for export) -->
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Reporting.Html\LablabBean.Plugins.Reporting.Html.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Reporting.Csv\LablabBean.Plugins.Reporting.Csv.csproj" />
+
+    <!-- Source generator for auto-registration -->
+    <ProjectReference Include="..\..\framework\LablabBean.SourceGenerators.Reporting\LablabBean.SourceGenerators.Reporting.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

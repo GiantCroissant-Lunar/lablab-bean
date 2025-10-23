@@ -1,0 +1,31 @@
+{
+  "$schema": "../../framework/LablabBean.Plugins.Contracts/plugin.schema.json",
+  "author": "LablabBean Team",
+  "capabilities": [
+    "error-tracking",
+    "performance-monitoring",
+    "breadcrumbs",
+    "crash-reporting"
+  ],
+  "configuration": {
+    "autoStart": true,
+    "enabled": true,
+    "settings": {
+      "dsn": "",
+      "environment": "development",
+      "logLevel": "Information",
+      "tracesSampleRate": 1.0
+    }
+  },
+  "dependencies": [],
+  "description": "Sentry diagnostic provider for error tracking and performance monitoring",
+  "entryPoint": "LablabBean.Plugins.Diagnostic.Sentry.dll",
+  "id": "lablab-bean.diagnostic-sentry",
+  "name": "Diagnostic Sentry",
+  "permissions": [
+    "network",
+    "diagnostics"
+  ],
+  "pluginType": "LablabBean.Plugins.Diagnostic.Sentry.SentryPlugin",
+  "version": "1.0.0"
+}

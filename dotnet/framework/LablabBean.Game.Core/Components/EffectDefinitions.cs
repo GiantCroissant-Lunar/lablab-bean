@@ -6,7 +6,7 @@ namespace LablabBean.Game.Core.Components;
 public static class EffectDefinitions
 {
     // Damage Over Time Effects
-    
+
     public static readonly EffectDefinition Poison = new()
     {
         Type = EffectType.Poison,
@@ -16,7 +16,7 @@ public static class EffectDefinitions
         Color = EffectColor.Red,
         Description = "Deals 3 damage per turn for 5 turns"
     };
-    
+
     public static readonly EffectDefinition Bleed = new()
     {
         Type = EffectType.Bleed,
@@ -26,7 +26,7 @@ public static class EffectDefinitions
         Color = EffectColor.DarkRed,
         Description = "Deals 2 damage per turn for 8 turns"
     };
-    
+
     public static readonly EffectDefinition Burning = new()
     {
         Type = EffectType.Burning,
@@ -36,9 +36,9 @@ public static class EffectDefinitions
         Color = EffectColor.Orange,
         Description = "Deals 4 damage per turn for 3 turns"
     };
-    
+
     // Healing Over Time Effects
-    
+
     public static readonly EffectDefinition Regeneration = new()
     {
         Type = EffectType.Regeneration,
@@ -48,7 +48,7 @@ public static class EffectDefinitions
         Color = EffectColor.Green,
         Description = "Heals 2 HP per turn for 10 turns"
     };
-    
+
     public static readonly EffectDefinition Blessed = new()
     {
         Type = EffectType.Blessed,
@@ -58,9 +58,9 @@ public static class EffectDefinitions
         Color = EffectColor.Yellow,
         Description = "Heals 1 HP per turn for 20 turns"
     };
-    
+
     // Stat Buff Effects
-    
+
     public static readonly EffectDefinition Strength = new()
     {
         Type = EffectType.Strength,
@@ -70,7 +70,7 @@ public static class EffectDefinitions
         Color = EffectColor.Green,
         Description = "Increases attack by 5 for 10 turns"
     };
-    
+
     public static readonly EffectDefinition Haste = new()
     {
         Type = EffectType.Haste,
@@ -80,7 +80,7 @@ public static class EffectDefinitions
         Color = EffectColor.Cyan,
         Description = "Increases speed by 20 for 8 turns"
     };
-    
+
     public static readonly EffectDefinition IronSkin = new()
     {
         Type = EffectType.IronSkin,
@@ -90,9 +90,9 @@ public static class EffectDefinitions
         Color = EffectColor.Blue,
         Description = "Increases defense by 5 for 12 turns"
     };
-    
+
     // Stat Debuff Effects
-    
+
     public static readonly EffectDefinition Weakness = new()
     {
         Type = EffectType.Weakness,
@@ -102,7 +102,7 @@ public static class EffectDefinitions
         Color = EffectColor.Red,
         Description = "Decreases attack by 3 for 6 turns"
     };
-    
+
     public static readonly EffectDefinition Slow = new()
     {
         Type = EffectType.Slow,
@@ -112,7 +112,7 @@ public static class EffectDefinitions
         Color = EffectColor.Red,
         Description = "Decreases speed by 30 for 6 turns"
     };
-    
+
     public static readonly EffectDefinition Fragile = new()
     {
         Type = EffectType.Fragile,
@@ -122,7 +122,7 @@ public static class EffectDefinitions
         Color = EffectColor.Red,
         Description = "Decreases defense by 3 for 6 turns"
     };
-    
+
     /// <summary>
     /// Get effect definition by type
     /// </summary>

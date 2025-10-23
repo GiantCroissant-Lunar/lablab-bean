@@ -52,7 +52,7 @@ public class CoverletJsonParser
                     {
                         fileLines++;
                         totalLines++;
-                        
+
                         if (line.Value.GetInt32() > 0)
                         {
                             fileCoveredLines++;
@@ -68,7 +68,7 @@ public class CoverletJsonParser
                     {
                         fileBranches++;
                         totalBranches++;
-                        
+
                         if (branch.TryGetProperty("Hits", out var hits) && hits.GetInt32() > 0)
                         {
                             fileCoveredBranches++;
@@ -100,7 +100,7 @@ public class CoverletJsonParser
             .Take(10)
             .ToList();
 
-        _logger.LogDebug("Parsed coverage: {LineCoverage}% line, {BranchCoverage}% branch", 
+        _logger.LogDebug("Parsed coverage: {LineCoverage}% line, {BranchCoverage}% branch",
             lineCoverage, branchCoverage);
 
         return new CoverageSummary

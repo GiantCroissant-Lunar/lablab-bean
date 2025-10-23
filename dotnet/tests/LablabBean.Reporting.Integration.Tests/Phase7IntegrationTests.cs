@@ -118,10 +118,10 @@ public class Phase7IntegrationTests : IDisposable
         var provider = TestHelpers.CreateBuildMetricsProvider();
         var htmlRenderer = TestHelpers.CreateHtmlRenderer();
         var csvRenderer = TestHelpers.CreateCsvRenderer();
-        
+
         var htmlReq = TestHelpers.CreateRequest();
         htmlReq.OutputPath = Path.Combine(_outputDir, "test.html");
-        
+
         var csvReq = TestHelpers.CreateRequest();
         csvReq.OutputPath = Path.Combine(_outputDir, "test.csv");
 

@@ -17,9 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Reporting.Csv\LablabBean.Plugins.Reporting.Csv.csproj" />
-    <ProjectReference Include="..\..\framework\LablabBean.Reporting.Contracts\LablabBean.Reporting.Contracts.csproj" />
-    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\plugins\LablabBean.Plugins.Reporting.Csv\LablabBean.Plugins.Reporting.Csv.csproj" />
+    <ProjectReference Include="..\..\..\framework\LablabBean.Reporting.Contracts\LablabBean.Reporting.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

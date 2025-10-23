@@ -88,7 +88,7 @@ public class RoomDungeonGenerator
     {
         // Create L-shaped corridor
         var current = start;
-        
+
         // Horizontal then vertical
         if (_random.Next(2) == 0)
         {

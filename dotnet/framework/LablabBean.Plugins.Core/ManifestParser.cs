@@ -59,7 +59,7 @@ public static class ManifestParser
             throw new InvalidOperationException("Manifest must have a non-empty Version");
         }
 
-        bool hasLegacyEntry = !string.IsNullOrWhiteSpace(manifest.EntryAssembly) && 
+        bool hasLegacyEntry = !string.IsNullOrWhiteSpace(manifest.EntryAssembly) &&
                               !string.IsNullOrWhiteSpace(manifest.EntryType);
         bool hasModernEntry = manifest.EntryPoint.Count > 0;
 

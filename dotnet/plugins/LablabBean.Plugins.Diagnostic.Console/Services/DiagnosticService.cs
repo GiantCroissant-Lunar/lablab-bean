@@ -20,7 +20,7 @@ public class DiagnosticService : IService
     private readonly Dictionary<string, bool> _providers = new();
     private readonly Dictionary<string, string> _globalTags = new();
     private readonly List<DiagnosticSpan> _activeSpans = new();
-    
+
     private Timer? _collectionTimer;
     private bool _isCollecting;
     private int _eventCount;
@@ -236,25 +236,25 @@ public class DiagnosticService : IService
 
         var originalColor = System.Console.ForegroundColor;
         System.Console.ForegroundColor = color;
-        
+
         var timestamp = diagnosticEvent.Timestamp.ToString("HH:mm:ss.fff");
         var level = diagnosticEvent.Level.ToString().ToUpper().PadRight(8);
         var category = diagnosticEvent.Category.PadRight(15);
-        
+
         System.Console.WriteLine($"[{timestamp}] [{level}] [{category}] {diagnosticEvent.Message}");
-        
+
         if (diagnosticEvent.Exception != null)
         {
             System.Console.WriteLine($"  Exception: {diagnosticEvent.Exception.GetType().Name}: {diagnosticEvent.Exception.Message}");
         }
-        
+
         System.Console.ForegroundColor = originalColor;
     }
 
     public PerformanceMetrics GetCurrentPerformanceMetrics()
     {
         var process = Process.GetCurrentProcess();
-        
+
         return new PerformanceMetrics
         {
             CpuUsagePercent = 0,
@@ -268,7 +268,7 @@ public class DiagnosticService : IService
     public MemoryInfo GetCurrentMemoryInfo()
     {
         var process = Process.GetCurrentProcess();
-        
+
         return new MemoryInfo
         {
             WorkingSetBytes = process.WorkingSet64,
@@ -295,7 +295,7 @@ public class DiagnosticService : IService
         };
     }
 
-    public async Task<string> ExportDataAsync(DiagnosticExportFormat format, DateTime? startTime, DateTime? endTime, 
+    public async Task<string> ExportDataAsync(DiagnosticExportFormat format, DateTime? startTime, DateTime? endTime,
         string[]? providers, CancellationToken cancellationToken)
     {
         var data = _collectedData.Where(d =>
@@ -356,8 +356,8 @@ public class DiagnosticService : IService
 
     public ProviderHealthResult[] GetProviderHealth(string? providerName)
     {
-        var providers = providerName != null 
-            ? _providers.Where(kv => kv.Key == providerName) 
+        var providers = providerName != null
+            ? _providers.Where(kv => kv.Key == providerName)
             : _providers;
 
         return providers.Select(kv => new ProviderHealthResult
@@ -381,7 +381,7 @@ public class DiagnosticService : IService
         });
     }
 
-    public async Task<string> StartSessionAsync(string sessionName, DiagnosticSessionConfig? configuration, 
+    public async Task<string> StartSessionAsync(string sessionName, DiagnosticSessionConfig? configuration,
         CancellationToken cancellationToken)
     {
         var sessionId = Guid.NewGuid().ToString();
@@ -392,7 +392,7 @@ public class DiagnosticService : IService
     public async Task<DiagnosticSessionSummary> StopSessionAsync(string sessionId)
     {
         _logger.LogInformation("Stopped diagnostic session {SessionId}", sessionId);
-        
+
         return await Task.FromResult(new DiagnosticSessionSummary
         {
             SessionId = sessionId,
@@ -440,7 +440,7 @@ public class DiagnosticService : IService
     public async Task<int> ClearDataAsync(DateTime? olderThan)
     {
         var beforeCount = _collectedData.Count;
-        
+
         if (olderThan.HasValue)
         {
             var toRemove = _collectedData.Where(d => d.Timestamp < olderThan.Value).ToList();
@@ -456,7 +456,7 @@ public class DiagnosticService : IService
 
         var removed = beforeCount - _collectedData.Count;
         _logger.LogInformation("Cleared {Count} diagnostic data points", removed);
-        
+
         return await Task.FromResult(removed);
     }
 
@@ -533,7 +533,7 @@ public class DiagnosticService : IService
             OperationName = operationName;
             ParentSpanId = parentSpanId;
             StartTime = DateTime.UtcNow;
-            
+
             if (tags != null)
             {
                 foreach (var kv in tags)
@@ -578,7 +578,7 @@ public class DiagnosticService : IService
             if (!EndTime.HasValue)
             {
                 EndTime = DateTime.UtcNow;
-                
+
                 if (_status == SpanStatus.Unknown)
                 {
                     _status = SpanStatus.Ok;

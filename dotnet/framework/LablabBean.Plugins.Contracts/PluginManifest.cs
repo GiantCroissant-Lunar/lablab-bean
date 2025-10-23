@@ -11,7 +11,7 @@ public sealed class PluginManifest
     public required string Id { get; init; }
     public required string Name { get; init; }
     public required string Version { get; init; }
-    
+
     public string? Description { get; init; }
     public string? Author { get; init; }
     public string? License { get; init; }
@@ -21,12 +21,12 @@ public sealed class PluginManifest
     /// Single-profile compatibility: use EntryAssembly/EntryType if this is empty.
     /// </summary>
     public Dictionary<string, string> EntryPoint { get; init; } = new();
-    
+
     /// <summary>
     /// Legacy single entry point (for backward compatibility). Prefer EntryPoint dictionary.
     /// </summary>
     public string? EntryAssembly { get; init; }
-    
+
     /// <summary>
     /// Legacy single entry type. Prefer EntryPoint dictionary.
     /// </summary>
@@ -75,12 +75,12 @@ public sealed class PluginManifest
 public sealed class PluginDependency
 {
     public required string Id { get; init; }
-    
+
     /// <summary>
     /// Semantic version range (e.g., ">=1.0.0 &lt;2.0.0", "[1.0.0,2.0.0)").
     /// </summary>
     public string? VersionRange { get; init; }
-    
+
     /// <summary>
     /// If true, plugin loads with reduced features if dependency is missing (soft dep).
     /// If false, plugin fails to load if dependency is missing (hard dep).

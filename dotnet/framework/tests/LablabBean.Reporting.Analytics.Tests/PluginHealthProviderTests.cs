@@ -33,7 +33,7 @@ public class PluginHealthProviderTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeOfType<PluginHealthData>();
-        
+
         var pluginData = (PluginHealthData)result;
         // Parser may return sample data if format doesn't match exactly
         // Just verify we get valid data

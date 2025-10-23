@@ -76,7 +76,7 @@ public class SceneLoaderService : IService
     public void SetCamera(Camera camera)
     {
         _camera = camera ?? throw new ArgumentNullException(nameof(camera));
-        _logger.LogDebug("Camera set to position ({X}, {Y}) with zoom {Zoom}", 
+        _logger.LogDebug("Camera set to position ({X}, {Y}) with zoom {Zoom}",
             camera.Position.X, camera.Position.Y, camera.Zoom);
     }
 

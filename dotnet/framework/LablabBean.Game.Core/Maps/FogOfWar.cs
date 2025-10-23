@@ -76,7 +76,7 @@ public class FogOfWar
 
     private bool IsInBounds(Point position)
     {
-        return position.X >= 0 && position.X < Width && 
+        return position.X >= 0 && position.X < Width &&
                position.Y >= 0 && position.Y < Height;
     }
 }

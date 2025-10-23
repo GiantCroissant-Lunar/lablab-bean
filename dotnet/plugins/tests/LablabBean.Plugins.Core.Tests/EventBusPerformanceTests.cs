@@ -45,7 +45,7 @@ public class EventBusPerformanceTests
 
         // Assert - SC-003: Should complete in under 10ms
         var elapsedMs = stopwatch.Elapsed.TotalMilliseconds;
-        elapsedMs.Should().BeLessThan(10, 
+        elapsedMs.Should().BeLessThan(10,
             "event publishing with 10 subscribers should complete in under 10ms (SC-003)");
 
         // Output for visibility
@@ -140,7 +140,7 @@ public class EventBusPerformanceTests
         }
 
         // Assert - All should be well under 10ms
-        results.Values.Should().AllSatisfy(latency => 
+        results.Values.Should().AllSatisfy(latency =>
             latency.Should().BeLessThan(10, "all configurations should be under 10ms"));
     }
 
@@ -223,7 +223,7 @@ public class EventBusPerformanceTests
         // Assert
         fastSubscriberCompleted.Should().BeTrue("fast subscriber should complete");
         slowSubscriberStarted.Should().BeTrue("slow subscriber should start");
-        
+
         // Note: Sequential execution means total time includes slow subscriber
         // This is expected behavior per spec (sequential execution for predictable ordering)
         stopwatch.Elapsed.TotalMilliseconds.Should().BeGreaterThanOrEqualTo(50,
@@ -238,7 +238,7 @@ public class EventBusPerformanceTests
     {
         // Arrange
         var eventBus = new EventBus(NullLogger<EventBus>.Instance);
-        
+
         eventBus.Subscribe<EntitySpawnedEvent>(async evt =>
         {
             await Task.CompletedTask;
@@ -270,10 +270,10 @@ public class EventBusPerformanceTests
 
         // Assert - Memory usage should be reasonable
         var bytesPerEvent = memoryUsed / 1000.0;
-        
+
         Console.WriteLine($"Memory used for 1000 events: {memoryUsed / 1024.0:F2} KB");
         Console.WriteLine($"Average bytes per event: {bytesPerEvent:F2} bytes");
-        
+
         // This is informational - we don't have a strict requirement, but let's ensure it's reasonable
         bytesPerEvent.Should().BeLessThan(1000, "memory allocation per event should be reasonable");
     }

@@ -37,7 +37,7 @@ public class BuildMetricsProvider : IReportProvider
         _logger.LogInformation("Loading build metrics from: {SourcePath}", request.DataPath ?? "sample data");
 
         var dataPath = request.DataPath;
-        
+
         // If no data path or invalid path, generate sample data
         if (string.IsNullOrEmpty(dataPath) || !Directory.Exists(dataPath))
         {
@@ -50,7 +50,7 @@ public class BuildMetricsProvider : IReportProvider
 
         // Parse test results
         var testResults = await ParseTestResultsAsync(dataPath, cancellationToken);
-        
+
         // Parse code coverage
         var coverage = await ParseCoverageAsync(dataPath, cancellationToken);
 
@@ -68,8 +68,8 @@ public class BuildMetricsProvider : IReportProvider
             PassedTests = testResults.Passed,
             FailedTests = testResults.Failed,
             SkippedTests = testResults.Skipped,
-            PassPercentage = testResults.Total > 0 
-                ? (decimal)testResults.Passed / testResults.Total * 100 
+            PassPercentage = testResults.Total > 0
+                ? (decimal)testResults.Passed / testResults.Total * 100
                 : 0,
             LineCoveragePercentage = coverage.LineCoverage,
             BranchCoveragePercentage = coverage.BranchCoverage,
@@ -87,7 +87,7 @@ public class BuildMetricsProvider : IReportProvider
     private BuildMetricsData GenerateSampleData()
     {
         _logger.LogInformation("Generating sample build metrics data");
-        
+
         return new BuildMetricsData
         {
             TotalTests = 156,
@@ -133,7 +133,7 @@ public class BuildMetricsProvider : IReportProvider
     private async Task<TestResultsSummary> ParseTestResultsAsync(string dataPath, CancellationToken cancellationToken)
     {
         var testResultFiles = Directory.GetFiles(dataPath, "*.xml", SearchOption.AllDirectories)
-            .Where(f => f.Contains("test", StringComparison.OrdinalIgnoreCase) || 
+            .Where(f => f.Contains("test", StringComparison.OrdinalIgnoreCase) ||
                        f.Contains("xunit", StringComparison.OrdinalIgnoreCase) ||
                        f.Contains("results", StringComparison.OrdinalIgnoreCase))
             .ToArray();
@@ -156,9 +156,9 @@ public class BuildMetricsProvider : IReportProvider
             {
                 var parser = new XUnitXmlParser(_logger);
                 var results = await parser.ParseAsync(file, cancellationToken);
-                
+
                 allTests.AddRange(results.Tests);
-                
+
                 if (results.StartTime < earliestStart)
                     earliestStart = results.StartTime;
                 if (results.EndTime > latestEnd)
@@ -182,8 +182,8 @@ public class BuildMetricsProvider : IReportProvider
             Skipped = skipped,
             StartTime = earliestStart != DateTime.MaxValue ? earliestStart : DateTime.UtcNow,
             EndTime = latestEnd != DateTime.MinValue ? latestEnd : DateTime.UtcNow,
-            Duration = latestEnd != DateTime.MinValue && earliestStart != DateTime.MaxValue 
-                ? latestEnd - earliestStart 
+            Duration = latestEnd != DateTime.MinValue && earliestStart != DateTime.MaxValue
+                ? latestEnd - earliestStart
                 : TimeSpan.Zero,
             FailedTests = allTests.Where(t => t.Result == "Failed").ToList()
         };
@@ -205,7 +205,7 @@ public class BuildMetricsProvider : IReportProvider
 
         // For now, just parse the first coverage file
         var coverageFile = coverageFiles[0];
-        
+
         try
         {
             if (coverageFile.EndsWith(".json", StringComparison.OrdinalIgnoreCase))

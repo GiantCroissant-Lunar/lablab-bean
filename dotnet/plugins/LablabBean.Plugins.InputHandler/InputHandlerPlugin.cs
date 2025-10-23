@@ -20,7 +20,7 @@ public class InputHandlerPlugin : IPlugin
 
         // Register input router service
         var routerService = new InputRouterService<LablabBean.Contracts.Input.InputEvent>(
-            eventBus, 
+            eventBus,
             context.Logger
         );
         context.Registry.Register<LablabBean.Contracts.Input.Router.IService<LablabBean.Contracts.Input.InputEvent>>(

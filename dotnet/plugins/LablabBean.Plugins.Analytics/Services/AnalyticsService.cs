@@ -14,7 +14,7 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
     private readonly ConcurrentBag<AnalyticsEvent> _events = new();
     private readonly ConcurrentDictionary<string, object> _userProperties = new();
     private readonly Dictionary<string, ActionHandler> _actions = new();
-    
+
     private string? _userId;
     private string? _currentScreen;
     private int _eventCount;
@@ -43,7 +43,7 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
         _events.Add(evt);
         _eventCount++;
 
-        _logger.LogInformation("Analytics: Event tracked - {EventName} (Total: {Count})", 
+        _logger.LogInformation("Analytics: Event tracked - {EventName} (Total: {Count})",
             eventName, _eventCount);
     }
 
@@ -56,8 +56,8 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
         _screenTrackCount++;
 
         TrackEvent("screen_view", new { screen_name = screenName });
-        
-        _logger.LogInformation("Analytics: Screen tracked - {ScreenName} (Total: {Count})", 
+
+        _logger.LogInformation("Analytics: Screen tracked - {ScreenName} (Total: {Count})",
             screenName, _screenTrackCount);
     }
 
@@ -67,8 +67,8 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
             throw new ArgumentException("Property name cannot be null or empty", nameof(propertyName));
 
         _userProperties[propertyName] = value;
-        
-        _logger.LogDebug("Analytics: User property set - {Property} = {Value}", 
+
+        _logger.LogDebug("Analytics: User property set - {Property} = {Value}",
             propertyName, value);
     }
 
@@ -78,16 +78,16 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
             throw new ArgumentException("User ID cannot be null or empty", nameof(userId));
 
         _userId = userId;
-        
+
         _logger.LogInformation("Analytics: User ID set - {UserId}", userId);
     }
 
     public void FlushEvents()
     {
         var count = _events.Count;
-        
+
         _logger.LogInformation("Analytics: Flushing {Count} events", count);
-        
+
         // In a real implementation, this would send events to analytics backend
         // For now, just log summary
         var eventSummary = _events
@@ -107,7 +107,7 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
             throw new InvalidOperationException($"Action '{actionName}' is not supported");
 
         var handler = _actions[actionName];
-        
+
         if (!handler.HasReturnValue)
             throw new InvalidOperationException($"Action '{actionName}' does not return a value");
 
@@ -155,28 +155,28 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
 
     private void RegisterDefaultActions()
     {
-        RegisterAction("GetEventCount", "Get total number of tracked events", 
+        RegisterAction("GetEventCount", "Get total number of tracked events",
             _ => _eventCount, hasReturnValue: true);
-        
-        RegisterAction("GetScreenTrackCount", "Get total number of screen views tracked", 
+
+        RegisterAction("GetScreenTrackCount", "Get total number of screen views tracked",
             _ => _screenTrackCount, hasReturnValue: true);
-        
-        RegisterAction("GetCurrentUserId", "Get current user ID", 
+
+        RegisterAction("GetCurrentUserId", "Get current user ID",
             _ => _userId ?? "Not set", hasReturnValue: true);
-        
-        RegisterAction("GetCurrentScreen", "Get current screen name", 
+
+        RegisterAction("GetCurrentScreen", "Get current screen name",
             _ => _currentScreen ?? "Not set", hasReturnValue: true);
-        
-        RegisterAction("GetUserProperty", "Get a user property value", 
+
+        RegisterAction("GetUserProperty", "Get a user property value",
             args =>
             {
                 var propName = args[0]?.ToString() ?? throw new ArgumentException("Property name required");
                 return _userProperties.TryGetValue(propName, out var value) ? value : null;
-            }, 
-            hasReturnValue: true, 
+            },
+            hasReturnValue: true,
             parameterNames: new[] { "propertyName" });
-        
-        RegisterAction("GetEventsByName", "Get all events with a specific name", 
+
+        RegisterAction("GetEventsByName", "Get all events with a specific name",
             args =>
             {
                 var eventName = args[0]?.ToString() ?? throw new ArgumentException("Event name required");
@@ -184,16 +184,16 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
             },
             hasReturnValue: true,
             parameterNames: new[] { "eventName" });
-        
-        RegisterAction("ClearEvents", "Clear all tracked events", 
+
+        RegisterAction("ClearEvents", "Clear all tracked events",
             _ =>
             {
                 _events.Clear();
                 _eventCount = 0;
                 return null;
             });
-        
-        RegisterAction("GetAnalyticsSummary", "Get analytics summary", 
+
+        RegisterAction("GetAnalyticsSummary", "Get analytics summary",
             _ => new
             {
                 TotalEvents = _eventCount,
@@ -206,7 +206,7 @@ public class AnalyticsService : LablabBean.Contracts.Analytics.Services.IService
             hasReturnValue: true);
     }
 
-    private void RegisterAction(string name, string description, Func<object[], object?> handler, 
+    private void RegisterAction(string name, string description, Func<object[], object?> handler,
         bool hasReturnValue = false, string[]? parameterNames = null)
     {
         _actions[name] = new ActionHandler

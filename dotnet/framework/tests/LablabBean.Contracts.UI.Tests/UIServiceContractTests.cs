@@ -33,7 +33,7 @@ public class UIServiceContractTests
         var methods = serviceType.GetMethods();
 
         // Act - Check async methods
-        var asyncMethods = methods.Where(m => m.ReturnType == typeof(Task) || 
+        var asyncMethods = methods.Where(m => m.ReturnType == typeof(Task) ||
                                               m.ReturnType.IsGenericType && m.ReturnType.GetGenericTypeDefinition() == typeof(Task<>));
 
         // Assert
@@ -43,9 +43,9 @@ public class UIServiceContractTests
         asyncMethods.Should().Contain(m => m.Name == "HandleInputAsync", "HandleInputAsync should be async");
 
         // Synchronous methods (getters/setters)
-        var syncMethods = methods.Where(m => m.ReturnType != typeof(Task) && 
+        var syncMethods = methods.Where(m => m.ReturnType != typeof(Task) &&
                                             !(m.ReturnType.IsGenericType && m.ReturnType.GetGenericTypeDefinition() == typeof(Task<>)));
-        
+
         syncMethods.Should().Contain(m => m.Name == "GetViewport", "GetViewport should be synchronous getter");
         syncMethods.Should().Contain(m => m.Name == "SetViewportCenter", "SetViewportCenter should be synchronous setter");
     }

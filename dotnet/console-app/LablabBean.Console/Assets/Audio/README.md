@@ -23,6 +23,7 @@ Audio/
 ## Supported Formats
 
 The AudioService uses LibVLCSharp which supports:
+
 - MP3
 - WAV
 - OGG
@@ -40,6 +41,7 @@ The AudioService uses LibVLCSharp which supports:
 ## Free Audio Resources
 
 You can find free game audio from:
+
 - [FreeSound.org](https://freesound.org/)
 - [OpenGameArt.org](https://opengameart.org/)
 - [Incompetech](https://incompetech.com/) (Creative Commons music)

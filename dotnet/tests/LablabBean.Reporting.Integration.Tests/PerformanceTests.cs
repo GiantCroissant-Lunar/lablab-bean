@@ -48,9 +48,9 @@ public class PerformanceTests
         stopwatch.Stop();
 
         // Assert
-        Assert.True(stopwatch.ElapsedMilliseconds < 1000, 
+        Assert.True(stopwatch.ElapsedMilliseconds < 1000,
             $"Build metrics report took {stopwatch.ElapsedMilliseconds}ms, should be < 1000ms");
-        
+
         Assert.NotNull(result.OutputPath);
         _output.WriteLine($"✅ Build metrics report generated in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"   File size: {new FileInfo(result.OutputPath).Length / 1024.0:F1} KB");
@@ -75,9 +75,9 @@ public class PerformanceTests
         stopwatch.Stop();
 
         // Assert
-        Assert.True(stopwatch.ElapsedMilliseconds < 500, 
+        Assert.True(stopwatch.ElapsedMilliseconds < 500,
             $"Session analytics report took {stopwatch.ElapsedMilliseconds}ms, should be < 500ms");
-        
+
         Assert.NotNull(result.OutputPath);
         _output.WriteLine($"✅ Session analytics report generated in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"   File size: {new FileInfo(result.OutputPath).Length / 1024.0:F1} KB");
@@ -102,9 +102,9 @@ public class PerformanceTests
         stopwatch.Stop();
 
         // Assert
-        Assert.True(stopwatch.ElapsedMilliseconds < 500, 
+        Assert.True(stopwatch.ElapsedMilliseconds < 500,
             $"Plugin health report took {stopwatch.ElapsedMilliseconds}ms, should be < 500ms");
-        
+
         Assert.NotNull(result.OutputPath);
         _output.WriteLine($"✅ Plugin health report generated in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"   File size: {new FileInfo(result.OutputPath).Length / 1024.0:F1} KB");
@@ -129,9 +129,9 @@ public class PerformanceTests
         stopwatch.Stop();
 
         // Assert
-        Assert.True(stopwatch.ElapsedMilliseconds < 200, 
+        Assert.True(stopwatch.ElapsedMilliseconds < 200,
             $"CSV export took {stopwatch.ElapsedMilliseconds}ms, should be < 200ms");
-        
+
         Assert.NotNull(result.OutputPath);
         _output.WriteLine($"✅ CSV export generated in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"   File size: {new FileInfo(result.OutputPath).Length} bytes");
@@ -164,9 +164,9 @@ public class PerformanceTests
         var memoryUsed = (memoryAfter - memoryBefore) / 1024.0 / 1024.0; // MB
 
         // Assert
-        Assert.True(memoryUsed < 50.0, 
+        Assert.True(memoryUsed < 50.0,
             $"Memory usage was {memoryUsed:F2} MB, should be < 50 MB");
-        
+
         _output.WriteLine($"✅ Memory usage: {memoryUsed:F2} MB");
     }
 
@@ -224,7 +224,7 @@ public class PerformanceTests
         Assert.True(File.Exists(result.OutputPath), "Report file should exist");
         var fileSize = new FileInfo(result.OutputPath).Length / 1024.0; // KB
         Assert.True(fileSize > 10, "Report should have substantial content");
-        
+
         _output.WriteLine($"✅ Large dataset report generated in {stopwatch.ElapsedMilliseconds}ms");
         _output.WriteLine($"   File size: {fileSize:F1} KB");
         _output.WriteLine($"   Tests: 1000, Failed details: 40, Low coverage files: 50");
@@ -244,7 +244,7 @@ public class PerformanceTests
         for (int i = 0; i < 10; i++)
         {
             var iterationStart = Stopwatch.StartNew();
-            
+
             var request = new ReportRequest
             {
                 OutputPath = Path.Combine(Path.GetTempPath(), $"stress-test-{i}.html"),
@@ -253,7 +253,7 @@ public class PerformanceTests
 
             var data = await provider.GetReportDataAsync(request);
             await renderer.RenderAsync(request, data);
-            
+
             iterationStart.Stop();
             results.Add(iterationStart.Elapsed);
         }
@@ -263,10 +263,10 @@ public class PerformanceTests
         // Assert
         var avgTime = results.Average(ts => ts.TotalMilliseconds);
         var maxTime = results.Max(ts => ts.TotalMilliseconds);
-        
+
         Assert.True(avgTime < 1000, $"Average time {avgTime:F0}ms should be < 1000ms");
         Assert.True(maxTime < 2000, $"Max time {maxTime:F0}ms should be < 2000ms");
-        
+
         _output.WriteLine($"✅ Stress test: 10 reports generated");
         _output.WriteLine($"   Total time: {stopwatch.Elapsed.TotalSeconds:F2}s");
         _output.WriteLine($"   Average: {avgTime:F0}ms");
@@ -309,9 +309,9 @@ public class PerformanceTests
         _output.WriteLine($"Cold cache: {sw1.ElapsedMilliseconds}ms");
         _output.WriteLine($"Warm cache: {sw2.ElapsedMilliseconds}ms");
         _output.WriteLine($"Improvement: {(1.0 - (double)sw2.ElapsedMilliseconds / sw1.ElapsedMilliseconds) * 100:F0}%");
-        
+
         // Warm cache should be faster or similar (within 20% tolerance for variance)
-        Assert.True(sw2.ElapsedMilliseconds <= sw1.ElapsedMilliseconds * 1.2, 
+        Assert.True(sw2.ElapsedMilliseconds <= sw1.ElapsedMilliseconds * 1.2,
             "Cached render should not be significantly slower");
     }
 }

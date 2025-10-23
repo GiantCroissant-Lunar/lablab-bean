@@ -26,7 +26,7 @@ public class PluginSecurityManager
         {
             _securityProfiles[profile.PluginId] = profile;
             _resourceUsage[profile.PluginId] = new ResourceUsage();
-            
+
             _logger.LogInformation(
                 "Registered security profile for plugin {PluginId}: TrustLevel={TrustLevel}, Sandboxed={Sandboxed}",
                 profile.PluginId, profile.TrustLevel, profile.IsSandboxed);

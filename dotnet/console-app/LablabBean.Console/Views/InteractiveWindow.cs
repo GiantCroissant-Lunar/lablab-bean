@@ -156,7 +156,7 @@ public class InteractiveWindow : Window
     private MenuItem[] GetEditMenuItems()
     {
         var actions = _menuService.GetEditMenuActions().ToArray();
-        return actions.Select(a => 
+        return actions.Select(a =>
             new MenuItem(a.Label, a.Description, () => ExecuteMenuAction(a.Type))
         ).ToArray();
     }
@@ -164,7 +164,7 @@ public class InteractiveWindow : Window
     private MenuItem[] GetViewMenuItems()
     {
         var actions = _menuService.GetViewMenuActions().ToArray();
-        return actions.Select(a => 
+        return actions.Select(a =>
             new MenuItem(a.Label, a.Description, () => ExecuteMenuAction(a.Type))
         ).ToArray();
     }
@@ -172,7 +172,7 @@ public class InteractiveWindow : Window
     private MenuItem[] GetBuildMenuItems()
     {
         var actions = _menuService.GetBuildMenuActions().ToArray();
-        return actions.Select(a => 
+        return actions.Select(a =>
             new MenuItem(a.Label, a.Description, () => ExecuteMenuAction(a.Type))
         ).ToArray();
     }
@@ -245,7 +245,7 @@ public class InteractiveWindow : Window
     private void ExecuteMenuAction(MenuActionType actionType)
     {
         _menuService.ExecuteAction(actionType);
-        
+
         switch (actionType)
         {
             case MenuActionType.NewFile:
@@ -338,7 +338,7 @@ public class InteractiveWindow : Window
 
     private void OnAbout()
     {
-        MessageBox.Query("About", 
+        MessageBox.Query("About",
             "Lablab Bean v0.1.0\n\n" +
             "Interactive TUI Application\n\n" +
             "Built with:\n" +
@@ -346,13 +346,13 @@ public class InteractiveWindow : Window
             "• .NET 8\n" +
             "• ReactiveUI\n" +
             "• Microsoft.Extensions.*\n\n" +
-            "Works with xterm.js in browser!", 
+            "Works with xterm.js in browser!",
             "Ok");
     }
 
     private void OnShowShortcuts()
     {
-        MessageBox.Query("Keyboard Shortcuts", 
+        MessageBox.Query("Keyboard Shortcuts",
             "Ctrl+Q - Quit\n" +
             "Ctrl+N - New File\n" +
             "Ctrl+O - Open File\n" +
@@ -361,7 +361,7 @@ public class InteractiveWindow : Window
             "F6 - Build\n" +
             "Ctrl+T - Run Tests\n" +
             "Ctrl+L - View Logs\n" +
-            "F1 - Help", 
+            "F1 - Help",
             "Ok");
     }
 
@@ -375,7 +375,7 @@ public class InteractiveWindow : Window
         var timestamp = DateTime.Now.ToString("HH:mm:ss");
         var logLine = $"[{timestamp}] {message}";
         _outputLines.Add(logLine);
-        
+
         var currentText = _outputView.Text.ToString();
         _outputView.Text = currentText + logLine + "\n";
     }

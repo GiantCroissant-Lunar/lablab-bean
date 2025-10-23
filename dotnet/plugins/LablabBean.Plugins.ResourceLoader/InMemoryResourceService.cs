@@ -35,7 +35,7 @@ public class InMemoryResourceService : IService
         }
 
         var sw = Stopwatch.StartNew();
-        
+
         // Publish start event
         await _eventBus.PublishAsync(new ResourceLoadStartedEvent(resourceId));
         _logger.LogInformation("Loading resource: {ResourceId}", resourceId);
@@ -47,24 +47,24 @@ public class InMemoryResourceService : IService
             for (int i = 0; i <= 10; i++)
             {
                 ct.ThrowIfCancellationRequested();
-                
+
                 var bytesLoaded = (long)(totalBytes * i / 10.0);
                 var percentComplete = i * 10.0f;
-                
+
                 progress?.Report(new LoadProgress(resourceId, bytesLoaded, totalBytes, percentComplete));
-                
+
                 await Task.Delay(10, ct); // Simulate I/O
             }
 
             // Create dummy resource (in real implementation, load from disk/network)
             var resource = CreateDummyResource<T>(resourceId);
-            
+
             // Cache it
             _cache[resourceId] = resource;
             _metadata[resourceId] = new ResourceMetadata(resourceId, typeof(T).Name, totalBytes, $"/{resourceId}");
 
             sw.Stop();
-            
+
             // Publish completion event
             await _eventBus.PublishAsync(new ResourceLoadCompletedEvent(resourceId, sw.ElapsedMilliseconds));
             _logger.LogInformation("Resource loaded: {ResourceId} in {Ms}ms", resourceId, sw.ElapsedMilliseconds);
@@ -74,7 +74,7 @@ public class InMemoryResourceService : IService
         catch (Exception ex)
         {
             sw.Stop();
-            
+
             // Publish failure event
             await _eventBus.PublishAsync(new ResourceLoadFailedEvent(resourceId, ex));
             _logger.LogError(ex, "Failed to load resource: {ResourceId}", resourceId);
@@ -90,7 +90,7 @@ public class InMemoryResourceService : IService
         for (int i = 0; i < ids.Count; i++)
         {
             await LoadAsync<string>(ids[i], progress, ct);
-            
+
             // Report overall progress
             var overallProgress = (i + 1) * 100.0f / ids.Count;
             progress?.Report(new LoadProgress($"Batch-{i}", i + 1, ids.Count, overallProgress));
@@ -135,7 +135,7 @@ public class InMemoryResourceService : IService
         {
             return ($"Resource:{resourceId}" as T)!;
         }
-        
+
         throw new NotSupportedException($"Resource type {typeof(T).Name} not supported in this demo");
     }
 }

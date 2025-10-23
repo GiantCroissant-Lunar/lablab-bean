@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions
         {
             var registry = sp.GetRequiredService<ServiceRegistry>();
             var eventBus = sp.GetRequiredService<EventBus>();
-            
+
             // Register EventBus in the ServiceRegistry so plugins can access it via IRegistry
             registry.Register<IEventBus>(eventBus, new ServiceMetadata
             {
@@ -40,20 +40,20 @@ public static class ServiceCollectionExtensions
                 Name = "EventBus",
                 Version = "1.0.0"
             });
-            
+
             return registry;
         });
         services.AddSingleton<IEventBus>(sp => sp.GetRequiredService<EventBus>());
-        
+
         // Observability services
         services.AddSingleton<PluginSystemMetrics>();
         services.AddSingleton<PluginHealthChecker>();
         services.AddSingleton<PluginAdminService>();
-        
+
         // Security services
         services.AddSingleton<Security.PluginSecurityManager>();
         services.AddSingleton<Security.SecurityAuditLog>();
-        
+
         services.AddSingleton(sp =>
         {
             var options = sp.GetService<IOptions<PluginOptions>>()?.Value ?? new PluginOptions();

@@ -49,7 +49,7 @@ public sealed class DependencyResolver
             if (missingHardDeps.Count > 0)
             {
                 var missing = string.Join(", ", missingHardDeps);
-                _logger.LogError("Plugin {PluginId} excluded: missing hard dependencies: {MissingDeps}", 
+                _logger.LogError("Plugin {PluginId} excluded: missing hard dependencies: {MissingDeps}",
                     manifest.Id, missing);
                 result.ExcludedPlugins.Add(manifest.Id);
                 result.FailureReasons[manifest.Id] = $"Missing hard dependencies: {missing}";
@@ -59,7 +59,7 @@ public sealed class DependencyResolver
             if (missingSoftDeps.Count > 0)
             {
                 var missing = string.Join(", ", missingSoftDeps);
-                _logger.LogWarning("Plugin {PluginId} has missing soft dependencies: {MissingDeps}", 
+                _logger.LogWarning("Plugin {PluginId} has missing soft dependencies: {MissingDeps}",
                     manifest.Id, missing);
             }
         }

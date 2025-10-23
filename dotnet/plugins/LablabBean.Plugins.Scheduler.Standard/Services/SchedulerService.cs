@@ -16,7 +16,7 @@ public class SchedulerService : IService, IDisposable
     private readonly ILogger _logger;
     private readonly ConcurrentDictionary<string, ScheduledTaskItem> _tasks = new();
     private readonly object _statsLock = new();
-    
+
     private int _completedCount;
     private int _cancelledCount;
     private int _failedCount;
@@ -80,10 +80,10 @@ public class SchedulerService : IService, IDisposable
     {
         var task = new ScheduledTaskItem(request, this);
         _tasks[task.Id] = task;
-        
-        _logger.LogInformation("Scheduled task {TaskId} ({Name}) with delay {Delay}", 
+
+        _logger.LogInformation("Scheduled task {TaskId} ({Name}) with delay {Delay}",
             task.Id, task.Name ?? "Unnamed", request.Delay);
-        
+
         task.Start();
         return task;
     }
@@ -101,12 +101,12 @@ public class SchedulerService : IService, IDisposable
     public void CancelAllTasks()
     {
         _logger.LogInformation("Cancelling all tasks ({Count})", _tasks.Count);
-        
+
         foreach (var task in _tasks.Values.ToList())
         {
             task.Cancel();
         }
-        
+
         _tasks.Clear();
     }
 
@@ -120,8 +120,8 @@ public class SchedulerService : IService, IDisposable
         lock (_statsLock)
         {
             var activeCount = _tasks.Count;
-            var avgTime = _completedCount > 0 
-                ? TimeSpan.FromTicks(_totalExecutionTime.Ticks / _completedCount) 
+            var avgTime = _completedCount > 0
+                ? TimeSpan.FromTicks(_totalExecutionTime.Ticks / _completedCount)
                 : TimeSpan.Zero;
 
             return new SchedulerStats
@@ -174,7 +174,7 @@ public class SchedulerService : IService, IDisposable
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         CancelAllTasks();
         _disposed = true;
     }
@@ -207,8 +207,8 @@ public class SchedulerService : IService, IDisposable
         {
             _cts = new CancellationTokenSource();
             var dueTime = (int)_request.Delay.TotalMilliseconds;
-            var period = _request.Repeating && _request.Interval.HasValue 
-                ? (int)_request.Interval.Value.TotalMilliseconds 
+            var period = _request.Repeating && _request.Interval.HasValue
+                ? (int)_request.Interval.Value.TotalMilliseconds
                 : Timeout.Infinite;
 
             _timer = new Timer(ExecuteCallback, null, dueTime, period);
@@ -243,7 +243,7 @@ public class SchedulerService : IService, IDisposable
                 _state = ScheduledTaskState.Failed;
                 _scheduler._logger.LogError(ex, "Task {TaskId} failed", Id);
                 _scheduler.OnTaskFailed(this);
-                
+
                 if (!IsRepeating)
                 {
                     Cancel();

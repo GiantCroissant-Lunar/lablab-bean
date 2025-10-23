@@ -29,7 +29,7 @@ public class XUnitXmlParser
 
         // xUnit v2 format: <assemblies><assembly><collection><test>
         var assemblies = doc.Descendants("assembly");
-        
+
         foreach (var assembly in assemblies)
         {
             var assemblyName = assembly.Attribute("name")?.Value ?? "Unknown";

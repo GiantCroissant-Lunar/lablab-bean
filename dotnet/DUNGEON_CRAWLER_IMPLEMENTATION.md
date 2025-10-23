@@ -37,60 +37,73 @@ dotnet/
 ## 📦 New Projects
 
 ### 1. LablabBean.Game.Core
+
 **Location**: `dotnet/framework/LablabBean.Game.Core/`
 
 Shared game framework that contains all game logic independent of rendering:
 
 #### Components (`Components/`)
+
 - **Transform.cs**: Position, Direction, Velocity
 - **Rendering.cs**: Renderable, Visible, BlocksVision
 - **Actor.cs**: Player, Health, Combat, Enemy, Actor, AI, BlocksMovement, Name
 - **Item.cs**: Item, Inventory, Consumable, Equippable
 
 #### Systems (`Systems/`)
+
 - **MovementSystem.cs**: Handles entity movement and collision
 - **CombatSystem.cs**: Turn-based combat, damage calculation, death handling
 - **AISystem.cs**: AI behaviors (Wander, Chase, Flee, Patrol)
 - **ActorSystem.cs**: Energy-based turn system
 
 #### Maps (`Maps/`)
+
 - **DungeonMap.cs**: Map with FOV and pathfinding integration
 - **MapGenerator.cs**: Procedural dungeon generation (rooms/corridors, caves, test maps)
 
 #### Worlds (`Worlds/`)
+
 - **GameMode.cs**: Play vs Edit mode enumeration
 - **GameWorldManager.cs**: Manages multiple ECS world snapshots for mode switching
 
 #### Services (`Services/`)
+
 - **GameStateManager.cs**: Main game coordinator, handles all systems and mode switching
 
 #### Audio (`Audio/`)
+
 - **AudioService.cs**: LibVLCSharp wrapper for music and sound effects
 
 ### 2. LablabBean.Game.Terminal
+
 **Location**: `dotnet/framework/LablabBean.Game.Terminal/`
 
 Terminal.Gui v2 rendering for console app:
 
 #### Services (`Services/`)
+
 - **HudService.cs**: Displays player stats, health bar, message log
 - **WorldViewService.cs**: Renders dungeon map and entities with camera centering
 
 ### 3. LablabBean.Game.SadConsole
+
 **Location**: `dotnet/framework/LablabBean.Game.SadConsole/`
 
 SadConsole rendering for Windows app:
 
 #### Renderers (`Renderers/`)
+
 - **WorldRenderer.cs**: Renders game world with SadConsole
 - **HudRenderer.cs**: Renders HUD with SadConsole controls
 
 #### Screens (`Screens/`)
+
 - **GameScreen.cs**: Main game screen combining world and HUD
 
 ## 🎯 Features Implemented
 
 ### Core Gameplay
+
 - ✅ **ECS Architecture**: Clean separation of data (components) and logic (systems)
 - ✅ **Turn-Based Combat**: Energy-based actor system with configurable speeds
 - ✅ **Player Character**: Health, attack, defense, energy management
@@ -100,15 +113,18 @@ SadConsole rendering for Windows app:
 - ✅ **Procedural Generation**: Rooms & corridors, cellular automata caves
 
 ### Dual Rendering Modes
+
 - ✅ **Console (TUI)**: Terminal.Gui v2 with separate HUD and world views
 - ✅ **Windows (GUI)**: SadConsole rendering ready for integration
 
 ### Game Modes
+
 - ✅ **Play Mode**: Normal gameplay with enemies and combat
 - ✅ **Edit Mode**: Separate world snapshot for level editing (framework ready)
 - ✅ **Mode Switching**: Press 'E' to toggle between modes
 
 ### UI Features
+
 - ✅ **HUD Display**: Health bar, stats (ATK/DEF/SPD/Energy), message log
 - ✅ **Camera System**: Auto-centers on player
 - ✅ **Responsive**: Adapts to terminal/window size
@@ -116,11 +132,13 @@ SadConsole rendering for Windows app:
 ## 🎮 Controls
 
 ### Movement
+
 - **Arrow Keys** or **WASD**: Move in cardinal directions
 - **Home/PageUp/End/PageDown**: Diagonal movement
 - **Bump into enemies**: Automatic melee attack
 
 ### Game Controls
+
 - **E**: Switch between Play and Edit modes
 - **Q** (console) or **ESC** (windows): Quit game
 
@@ -129,14 +147,18 @@ SadConsole rendering for Windows app:
 ### Modified Files
 
 #### `LablabBean.Console.csproj`
+
 Added project references:
+
 ```xml
 <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
 <ProjectReference Include="..\..\framework\LablabBean.Game.Terminal\LablabBean.Game.Terminal.csproj" />
 ```
 
 #### `Program.cs`
+
 Registered game services:
+
 ```csharp
 // Add game framework services
 services.AddSingleton<GameWorldManager>();
@@ -153,7 +175,9 @@ services.AddSingleton<DungeonCrawlerService>();
 ```
 
 #### `TerminalGuiService.cs`
+
 Updated to launch dungeon crawler game:
+
 ```csharp
 var dungeonCrawlerService = _serviceProvider.GetRequiredService<DungeonCrawlerService>();
 var gameWindow = dungeonCrawlerService.CreateGameWindow();
@@ -164,22 +188,26 @@ Application.Run(gameWindow);
 ### New Files
 
 #### `Services/DungeonCrawlerService.cs`
+
 Main service coordinating game window, rendering, and input handling
 
 ## 📊 Technical Highlights
 
 ### ECS Benefits
+
 - **Performance**: Component-oriented data layout for cache efficiency
 - **Flexibility**: Easy to add new components and systems
 - **Maintainability**: Clear separation between data and logic
 
 ### Shared Framework Design
+
 - **Game.Core**: Platform-agnostic game logic
 - **Game.Terminal**: Terminal.Gui-specific rendering
 - **Game.SadConsole**: SadConsole-specific rendering
 - **Reusability**: Same game logic runs on both console and Windows
 
 ### World Snapshot System
+
 - **Multiple Worlds**: Separate ECS worlds for Play and Edit modes
 - **Fast Switching**: Instant mode changes without data copying
 - **Future Ready**: Can save/load world snapshots for save games
@@ -187,23 +215,27 @@ Main service coordinating game window, rendering, and input handling
 ## 🚀 How to Build and Run
 
 ### Build All Projects
+
 ```bash
 cd dotnet
 dotnet build LablabBean.sln
 ```
 
 ### Run Console App (Terminal.Gui)
+
 ```bash
 cd console-app/LablabBean.Console
 dotnet run
 ```
 
 Or using task:
+
 ```bash
 task dev-stack  # Starts in web terminal
 ```
 
 ### Run Windows App (SadConsole) - Future
+
 ```bash
 cd windows-app/LablabBean.Windows
 dotnet run
@@ -212,7 +244,9 @@ dotnet run
 ## 🎨 Customization
 
 ### Adding New Enemy Types
+
 Edit `GameStateManager.cs` `GetEnemyGlyph()` and `GetEnemyColor()`:
+
 ```csharp
 private char GetEnemyGlyph(string enemyType) => enemyType switch
 {
@@ -223,7 +257,9 @@ private char GetEnemyGlyph(string enemyType) => enemyType switch
 ```
 
 ### Changing Map Generation
+
 Edit `MapGenerator.cs` to adjust parameters:
+
 ```csharp
 // Change room size, count, or use different algorithm
 var map = generator.GenerateRoomsAndCorridors(
@@ -236,7 +272,9 @@ var map = generator.GenerateRoomsAndCorridors(
 ```
 
 ### Adding New AI Behaviors
+
 Add to `AIBehavior` enum and implement in `AISystem.cs`:
+
 ```csharp
 public enum AIBehavior
 {
@@ -251,6 +289,7 @@ public enum AIBehavior
 ## 🔮 Future Enhancements
 
 ### Immediate
+
 - [ ] Implement edit mode functionality (place/remove tiles and entities)
 - [ ] Add inventory system UI
 - [ ] Implement item pickup and usage
@@ -258,6 +297,7 @@ public enum AIBehavior
 - [ ] Integrate audio (background music, sound effects)
 
 ### Advanced
+
 - [ ] Save/load game system using world snapshots
 - [ ] Multiple dungeon levels (stairs up/down)
 - [ ] More AI behaviors (Ambush, Guard, etc.)
@@ -267,6 +307,7 @@ public enum AIBehavior
 - [ ] Procedural item generation
 
 ### Polish
+
 - [ ] Better color mapping between SadRogue.Primitives.Color and Terminal.Gui.Color
 - [ ] Animation system for movements and attacks
 - [ ] More sophisticated map generation algorithms
@@ -283,12 +324,14 @@ public enum AIBehavior
 ## 📚 Code References
 
 ### Key Entry Points
+
 - Game initialization: `GameStateManager.InitializeNewGame()` (dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs:51)
 - Player movement: `GameStateManager.HandlePlayerMove()` (dotnet/framework/LablabBean.Game.Core/Services/GameStateManager.cs:168)
 - Map generation: `MapGenerator.GenerateRoomsAndCorridors()` (dotnet/framework/LablabBean.Game.Core/Maps/MapGenerator.cs:16)
 - AI processing: `AISystem.ProcessAI()` (dotnet/framework/LablabBean.Game.Core/Systems/AISystem.cs:28)
 
 ### UI Services
+
 - Terminal.Gui HUD: `HudService` (dotnet/framework/LablabBean.Game.Terminal/Services/HudService.cs:13)
 - Terminal.Gui World: `WorldViewService` (dotnet/framework/LablabBean.Game.Terminal/Services/WorldViewService.cs:15)
 - SadConsole rendering: `WorldRenderer` (dotnet/framework/LablabBean.Game.SadConsole/Renderers/WorldRenderer.cs:13)

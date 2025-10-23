@@ -103,7 +103,7 @@ public class DungeonMap
     public void CalculateFOV(Point origin, int radius)
     {
         _fov.Calculate(origin, radius);
-        
+
         // Update fog of war with newly visible tiles
         _fogOfWar.Explore(_fov.CurrentFOV);
     }

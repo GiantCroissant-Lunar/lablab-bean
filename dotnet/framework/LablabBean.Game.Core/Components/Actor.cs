@@ -53,7 +53,7 @@ public struct Combat
 public struct Enemy
 {
     public string Type { get; set; }
-    
+
     // Status effect attack properties
     public EffectType? InflictsEffect { get; set; }
     public int? EffectProbability { get; set; }  // 0-100 percentage

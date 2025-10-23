@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>LablabBean.Plugins.Recording.FFmpeg</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Lablab Bean Team</Authors>
+    <Description>FFmpeg-based video recording plugin for Lablab Bean</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../framework/LablabBean.Contracts.Recording/LablabBean.Contracts.Recording.csproj" />
+    <ProjectReference Include="../../framework/LablabBean.Contracts.Game/LablabBean.Contracts.Game.csproj" />
+    <ProjectReference Include="../../framework/LablabBean.Plugins.Contracts/LablabBean.Plugins.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

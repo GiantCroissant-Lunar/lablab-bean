@@ -55,7 +55,7 @@ public class AnalyticsPlugin : IPlugin
         _logger?.LogInformation(
             "Entity spawned: {Type} at ({X}, {Y}). Total spawns: {Count}",
             evt.EntityType, evt.Position.X, evt.Position.Y, _entitySpawnCount);
-        
+
         // Track in analytics service
         _analyticsService?.TrackEvent("entity_spawned", new
         {
@@ -63,7 +63,7 @@ public class AnalyticsPlugin : IPlugin
             position_x = evt.Position.X,
             position_y = evt.Position.Y
         });
-        
+
         return Task.CompletedTask;
     }
 
@@ -74,7 +74,7 @@ public class AnalyticsPlugin : IPlugin
             "Entity moved: {Id} from ({X1},{Y1}) to ({X2},{Y2}). Total moves: {Count}",
             evt.EntityId, evt.OldPosition.X, evt.OldPosition.Y,
             evt.NewPosition.X, evt.NewPosition.Y, _entityMoveCount);
-        
+
         // Track in analytics service (sample every 10th move to reduce noise)
         if (_entityMoveCount % 10 == 0)
         {
@@ -84,7 +84,7 @@ public class AnalyticsPlugin : IPlugin
                 distance = Math.Abs(evt.NewPosition.X - evt.OldPosition.X) + Math.Abs(evt.NewPosition.Y - evt.OldPosition.Y)
             });
         }
-        
+
         return Task.CompletedTask;
     }
 
@@ -94,7 +94,7 @@ public class AnalyticsPlugin : IPlugin
         _logger?.LogInformation(
             "Combat: {Attacker} → {Target}, Damage: {Damage}, Hit: {Hit}, Kill: {Kill}. Total combats: {Count}",
             evt.AttackerId, evt.TargetId, evt.DamageDealt, evt.IsHit, evt.IsKill, _combatEventCount);
-        
+
         // Track in analytics service
         _analyticsService?.TrackEvent("combat", new
         {
@@ -104,7 +104,7 @@ public class AnalyticsPlugin : IPlugin
             is_hit = evt.IsHit,
             is_kill = evt.IsKill
         });
-        
+
         return Task.CompletedTask;
     }
 
@@ -119,10 +119,10 @@ public class AnalyticsPlugin : IPlugin
         _logger?.LogInformation(
             "Analytics summary - Spawns: {Spawns}, Moves: {Moves}, Combats: {Combats}",
             _entitySpawnCount, _entityMoveCount, _combatEventCount);
-        
+
         // Flush analytics events
         _analyticsService?.FlushEvents();
-        
+
         return Task.CompletedTask;
     }
 }

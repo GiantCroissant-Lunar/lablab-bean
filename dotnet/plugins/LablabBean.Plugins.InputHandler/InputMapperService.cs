@@ -29,7 +29,7 @@ public class InputMapperService : IService
         if (_keyToAction.TryGetValue(keyString, out var actionName))
         {
             _logger.LogDebug("Mapped key {Key} to action {Action}", keyString, actionName);
-            
+
             // Publish event
             _eventBus.PublishAsync(new InputActionTriggeredEvent(actionName)).GetAwaiter().GetResult();
         }
@@ -46,9 +46,9 @@ public class InputMapperService : IService
 
     public void RegisterMapping(string actionName, RawKeyEvent key)
     {
-        if (string.IsNullOrEmpty(actionName)) 
+        if (string.IsNullOrEmpty(actionName))
             throw new ArgumentException("Action name cannot be null or empty", nameof(actionName));
-        if (key == null) 
+        if (key == null)
             throw new ArgumentNullException(nameof(key));
 
         var keyString = GetKeyString(key);
@@ -86,8 +86,8 @@ public class InputMapperService : IService
 
     private static string GetKeyString(RawKeyEvent key)
     {
-        return string.IsNullOrEmpty(key.Modifiers) 
-            ? key.Key 
+        return string.IsNullOrEmpty(key.Modifiers)
+            ? key.Key
             : $"{key.Modifiers}+{key.Key}";
     }
 }

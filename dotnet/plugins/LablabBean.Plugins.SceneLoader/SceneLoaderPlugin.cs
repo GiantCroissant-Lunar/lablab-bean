@@ -19,14 +19,14 @@ public class SceneLoaderPlugin : IPlugin
         // Create and register the scene service
         var eventBus = context.Registry.Get<IEventBus>();
         var sceneService = new SceneLoaderService(eventBus, context.Logger);
-        
+
         context.Registry.Register<LablabBean.Contracts.Scene.Services.IService>(
             sceneService,
-            new ServiceMetadata 
-            { 
-                Priority = 200, 
-                Name = "SceneLoader", 
-                Version = "1.0.0" 
+            new ServiceMetadata
+            {
+                Priority = 200,
+                Name = "SceneLoader",
+                Version = "1.0.0"
             }
         );
 

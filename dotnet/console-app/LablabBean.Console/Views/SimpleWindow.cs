@@ -55,7 +55,7 @@ public class SimpleWindow : Window
 
     private void OnHelp()
     {
-        MessageBox.Query("Help", 
+        MessageBox.Query("Help",
             "Lablab Bean Interactive TUI\n\n" +
             "Keyboard Shortcuts:\n" +
             "  ESC - Quit application\n" +
@@ -65,7 +65,7 @@ public class SimpleWindow : Window
             "• Browser (via xterm.js)\n" +
             "• PTY session (node-pty)\n" +
             "• Managed by PM2\n\n" +
-            "Version: 0.1.0", 
+            "Version: 0.1.0",
             "OK");
     }
 

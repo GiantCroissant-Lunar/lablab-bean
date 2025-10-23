@@ -3,6 +3,7 @@
 ## Overview
 
 This library provides the core plugin system infrastructure, including:
+
 - Plugin loading and lifecycle management
 - Service registry and dependency injection integration
 - Plugin discovery and dependency resolution
@@ -15,6 +16,7 @@ The plugin system is designed to support multiple platforms through the `IPlugin
 ### Current Implementation
 
 **AssemblyLoadContext (ALC) Loader**
+
 - Implementation: `PluginLoader` class
 - Platform: .NET 5+ (Windows, Linux, macOS)
 - Features:
@@ -46,10 +48,12 @@ await loader.DiscoverAndLoadAsync(pluginPaths);
 The `IPluginLoader` interface enables support for additional platforms:
 
 **HybridCLR (Unity)**
+
 - Future implementation could load IL2CPP-compatible plugins
 - Would implement `IPluginLoader` with Unity-specific loading
 
 **WebAssembly**
+
 - Future implementation for browser-based plugins
 - Would implement `IPluginLoader` with WASM module loading
 
@@ -85,6 +89,7 @@ These assemblies are shared between host and plugins to avoid ALC boundary issue
 ## Usage
 
 See the console application for a complete example:
+
 - `dotnet/console-app/LablabBean.Console/`
 
 Basic usage:
@@ -127,19 +132,19 @@ public class HybridClrPluginLoader : IPluginLoader
 {
     public IPluginRegistry PluginRegistry { get; }
     public IRegistry ServiceRegistry { get; }
-    
+
     public Task<int> DiscoverAndLoadAsync(
-        IEnumerable<string> pluginPaths, 
+        IEnumerable<string> pluginPaths,
         CancellationToken ct = default)
     {
         // Platform-specific loading logic
     }
-    
+
     public Task UnloadPluginAsync(string pluginId, CancellationToken ct = default)
     {
         // Platform-specific unload logic
     }
-    
+
     public Task UnloadAllAsync(CancellationToken ct = default)
     {
         // Platform-specific cleanup

@@ -157,4 +157,3 @@ public class WorldRenderer
         return result;
     }
 }
-

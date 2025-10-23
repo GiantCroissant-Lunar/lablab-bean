@@ -66,7 +66,7 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
         foreach (var pluginPath in pluginPaths)
         {
             var absolutePath = Path.GetFullPath(pluginPath);
-            
+
             if (!Directory.Exists(absolutePath))
             {
                 _logger.LogWarning("Plugin path does not exist: {PluginPath}", absolutePath);
@@ -142,7 +142,7 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
             {
                 _logger.LogError(ex, "Failed to load plugin: {PluginId}", pluginId);
                 _pluginRegistry.UpdateState(pluginId, PluginState.Failed, ex.Message);
-                
+
                 var failedMetrics = _metrics?.Plugins.FirstOrDefault(m => m.PluginName == pluginId);
                 if (failedMetrics != null)
                 {
@@ -222,7 +222,7 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
         // Check if type implements IPlugin by name (cross-ALC compatibility)
         var implementsIPlugin = pluginType.GetInterfaces()
             .Any(i => i.FullName == typeof(IPlugin).FullName);
-            
+
         if (!implementsIPlugin)
         {
             throw new InvalidOperationException($"Plugin type does not implement IPlugin: {typeName}");
@@ -299,7 +299,7 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
         if (_enableHotReload && loadedPlugin.LoadContext != null)
         {
             loadedPlugin.LoadContext.Unload();
-            
+
             for (int i = 0; i < 10; i++)
             {
                 GC.Collect();

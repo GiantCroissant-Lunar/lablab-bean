@@ -16,17 +16,17 @@ public class BuildMetricsData
     public int SkippedTests { get; set; }
     public decimal PassPercentage { get; set; }
     public List<TestResult> FailedTestDetails { get; set; } = new();
-    
+
     // Code Coverage (FR-022)
     public decimal LineCoveragePercentage { get; set; }
     public decimal BranchCoveragePercentage { get; set; }
     public List<FileCoverage> LowCoverageFiles { get; set; } = new();
-    
+
     // Build Timing (FR-023)
     public TimeSpan BuildDuration { get; set; }
     public DateTime BuildStartTime { get; set; }
     public DateTime BuildEndTime { get; set; }
-    
+
     // Metadata (FR-024, FR-025)
     public string BuildNumber { get; set; } = string.Empty;
     public string Repository { get; set; } = string.Empty;

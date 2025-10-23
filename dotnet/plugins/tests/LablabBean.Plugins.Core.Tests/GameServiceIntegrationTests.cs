@@ -23,7 +23,7 @@ public class GameServiceIntegrationTests
         // Arrange
         var eventBus = new EventBus(NullLogger<EventBus>.Instance);
         var registry = new ServiceRegistry();
-        
+
         registry.Register<IEventBus>(eventBus, new ServiceMetadata { Priority = 1000, Name = "EventBus", Version = "1.0.0" });
 
         var mockGamePlugin = new MockGamePlugin();
@@ -51,20 +51,20 @@ public class GameServiceIntegrationTests
 
         // Register first implementation with priority 100
         var service1 = new MockGameService(eventBus, NullLogger.Instance);
-        registry.Register<IService>(service1, new ServiceMetadata 
-        { 
-            Priority = 100, 
-            Name = "LowPriorityService", 
-            Version = "1.0.0" 
+        registry.Register<IService>(service1, new ServiceMetadata
+        {
+            Priority = 100,
+            Name = "LowPriorityService",
+            Version = "1.0.0"
         });
 
         // Register second implementation with priority 200 (higher)
         var service2 = new MockGameService(eventBus, NullLogger.Instance);
-        registry.Register<IService>(service2, new ServiceMetadata 
-        { 
-            Priority = 200, 
-            Name = "HighPriorityService", 
-            Version = "1.0.0" 
+        registry.Register<IService>(service2, new ServiceMetadata
+        {
+            Priority = 200,
+            Name = "HighPriorityService",
+            Version = "1.0.0"
         });
 
         // Act - Get service with highest priority

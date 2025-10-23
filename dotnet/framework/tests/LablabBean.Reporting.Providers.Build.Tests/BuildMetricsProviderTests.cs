@@ -34,7 +34,7 @@ public class BuildMetricsProviderTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeOfType<BuildMetricsData>();
-        
+
         var buildData = (BuildMetricsData)result;
         buildData.TotalTests.Should().BeGreaterThan(0);
         buildData.PassedTests.Should().BeGreaterOrEqualTo(0);
@@ -58,7 +58,7 @@ public class BuildMetricsProviderTests
         // Assert
         result.Should().NotBeNull();
         var buildData = (BuildMetricsData)result;
-        
+
         // Should have coverage data
         buildData.LineCoveragePercentage.Should().BeGreaterOrEqualTo(0);
         buildData.BranchCoveragePercentage.Should().BeGreaterOrEqualTo(0);

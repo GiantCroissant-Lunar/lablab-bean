@@ -24,7 +24,7 @@ public sealed class EventBus : IEventBus
             throw new ArgumentNullException(nameof(eventData));
 
         var eventType = typeof(T);
-        
+
         if (!_subscribers.TryGetValue(eventType, out var handlers))
         {
             // No subscribers - this is valid, just return
@@ -32,7 +32,7 @@ public sealed class EventBus : IEventBus
             return;
         }
 
-        _logger.LogDebug("Publishing event {EventType} to {Count} subscribers", 
+        _logger.LogDebug("Publishing event {EventType} to {Count} subscribers",
             eventType.Name, handlers.Count);
 
         // Execute subscribers sequentially
@@ -44,9 +44,9 @@ public sealed class EventBus : IEventBus
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, 
-                    "Event subscriber failed for {EventType}. Event: {@Event}", 
-                    eventType.Name, 
+                _logger.LogError(ex,
+                    "Event subscriber failed for {EventType}. Event: {@Event}",
+                    eventType.Name,
                     eventData);
                 // Continue to next subscriber - error isolation
             }
@@ -59,7 +59,7 @@ public sealed class EventBus : IEventBus
             throw new ArgumentNullException(nameof(handler));
 
         var eventType = typeof(T);
-        
+
         // Wrap typed handler in object handler
         Func<object, Task> wrappedHandler = obj => handler((T)obj);
 
@@ -75,7 +75,7 @@ public sealed class EventBus : IEventBus
                 lock (existing)
                 {
                     existing.Add(wrappedHandler);
-                    _logger.LogDebug("Subscriber registered for event type {EventType}. Total subscribers: {Count}", 
+                    _logger.LogDebug("Subscriber registered for event type {EventType}. Total subscribers: {Count}",
                         eventType.Name, existing.Count);
                 }
                 return existing;

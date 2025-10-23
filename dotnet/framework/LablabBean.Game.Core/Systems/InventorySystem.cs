@@ -13,6 +13,8 @@ public class InventorySystem
 {
     private readonly ILogger<InventorySystem> _logger;
 
+    public event Action<Entity, Entity>? OnItemPickedUp;
+
     public InventorySystem(ILogger<InventorySystem> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -137,6 +139,9 @@ public class InventorySystem
         var countStr = count > 1 ? $" x{count}" : "";
 
         _logger.LogInformation("Picked up {ItemName}{Count}", item.Name, countStr);
+
+        OnItemPickedUp?.Invoke(playerEntity, itemEntity);
+
         return $"Picked up {item.Name}{countStr}";
     }
 
@@ -159,7 +164,7 @@ public class InventorySystem
             // We'll query all items and match by ID since we can't reconstruct Entity from just ID
             var query = new QueryDescription().WithAll<Item>();
             var found = false;
-            
+
             world.Query(in query, (Entity entity, ref Item item) =>
             {
                 if (entity.Id == itemId)
@@ -170,7 +175,7 @@ public class InventorySystem
                     found = true;
                 }
             });
-            
+
             if (!found)
             {
                 _logger.LogWarning("Item entity {ItemId} in inventory not found in world", itemId);
@@ -216,7 +221,7 @@ public class InventorySystem
         foreach (var itemId in inventory.Items)
         {
             var query = new QueryDescription().WithAll<Item, Consumable>();
-            
+
             world.Query(in query, (Entity entity, ref Item item, ref Consumable consumable) =>
             {
                 if (entity.Id == itemId)
@@ -312,7 +317,7 @@ public class InventorySystem
                 consumable.EffectDuration ?? EffectDefinitions.GetDefinition(consumable.AppliesEffect.Value).DefaultDuration,
                 EffectSource.Consumable
             );
-            
+
             message = result.Message;
         }
         // Check if this consumable removes a specific status effect
@@ -397,7 +402,7 @@ public class InventorySystem
 
         var health = world.Get<Health>(playerEntity);
         int oldHealth = health.Current;
-        
+
         health.Current = Math.Min(health.Current + healAmount, health.Maximum);
         world.Set(playerEntity, health);
 
@@ -434,7 +439,7 @@ public class InventorySystem
         foreach (var itemId in inventory.Items)
         {
             var query = new QueryDescription().WithAll<Item, Equippable>();
-            
+
             world.Query(in query, (Entity entity, ref Item item, ref Equippable equippable) =>
             {
                 if (entity.Id == itemId)
@@ -496,7 +501,7 @@ public class InventorySystem
         {
             var oldItemId = equipment.Slots[equippable.Slot]!.Value;
             var oldItemQuery = new QueryDescription().WithAll<Item>();
-            
+
             world.Query(in oldItemQuery, (Entity entity, ref Item oldItem) =>
             {
                 if (entity.Id == oldItemId)
@@ -512,21 +517,21 @@ public class InventorySystem
 
         // Update player stats
         var (newAttack, newDefense, newSpeed) = CalculateTotalStats(world, playerEntity);
-        
+
         if (world.Has<Combat>(playerEntity))
         {
             var combat = world.Get<Combat>(playerEntity);
             var oldAttack = combat.Attack;
             var oldDefense = combat.Defense;
-            
+
             combat.Attack = newAttack;
             combat.Defense = newDefense;
             world.Set(playerEntity, combat);
-            
+
             var attackChange = newAttack - oldAttack;
             var defenseChange = newDefense - oldDefense;
-            
-            _logger.LogInformation("Equipped {ItemName}. ATK: {OldAtk} → {NewAtk}, DEF: {OldDef} → {NewDef}", 
+
+            _logger.LogInformation("Equipped {ItemName}. ATK: {OldAtk} → {NewAtk}, DEF: {OldDef} → {NewDef}",
                 item.Name, oldAttack, newAttack, oldDefense, newDefense);
         }
 
@@ -534,12 +539,12 @@ public class InventorySystem
         {
             var actor = world.Get<Actor>(playerEntity);
             var oldSpeed = actor.Speed;
-            
+
             actor.Speed = newSpeed;
             world.Set(playerEntity, actor);
-            
+
             var speedChange = newSpeed - oldSpeed;
-            
+
             _logger.LogInformation("Speed updated: {OldSpeed} → {NewSpeed}", oldSpeed, newSpeed);
         }
 
@@ -552,7 +557,7 @@ public class InventorySystem
         if (equippable.SpeedModifier != 0)
             statChanges.Add($"SPD {(equippable.SpeedModifier > 0 ? "+" : "")}{equippable.SpeedModifier}");
 
-        var message = statChanges.Count > 0 
+        var message = statChanges.Count > 0
             ? $"Equipped {item.Name}. {string.Join(", ", statChanges)}"
             : $"Equipped {item.Name}.";
 
@@ -570,7 +575,7 @@ public class InventorySystem
         }
 
         var equipment = world.Get<EquipmentSlots>(playerEntity);
-        
+
         if (!equipment.Slots[slot].HasValue)
         {
             return (false, $"No item equipped in {slot} slot.");
@@ -595,7 +600,7 @@ public class InventorySystem
 
         // Recalculate stats
         var (newAttack, newDefense, newSpeed) = CalculateTotalStats(world, playerEntity);
-        
+
         if (world.Has<Combat>(playerEntity))
         {
             var combat = world.Get<Combat>(playerEntity);

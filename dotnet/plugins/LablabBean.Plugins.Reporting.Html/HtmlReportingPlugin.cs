@@ -19,13 +19,13 @@ public class HtmlReportingPlugin : IPlugin
     public Task InitializeAsync(IPluginContext context, CancellationToken ct = default)
     {
         _logger = context.Logger;
-        
+
         // Register the HTML renderer with the registry
         var loggerFactory = context.Host.Services.GetRequiredService<ILoggerFactory>();
         var renderer = new HtmlReportRenderer(loggerFactory.CreateLogger<HtmlReportRenderer>());
-        
+
         context.Registry.Register<IReportRenderer>(renderer);
-        
+
         _logger.LogInformation("HTML reporting plugin initialized - registered IReportRenderer");
         return Task.CompletedTask;
     }

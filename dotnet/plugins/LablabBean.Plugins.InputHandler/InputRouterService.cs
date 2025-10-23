@@ -27,7 +27,7 @@ public class InputRouterService<TInputEvent> : IService<TInputEvent> where TInpu
         if (scope == null) throw new ArgumentNullException(nameof(scope));
 
         _scopeStack.Push(scope);
-        _logger.LogDebug("Pushed input scope: {ScopeName} (depth: {Depth})", 
+        _logger.LogDebug("Pushed input scope: {ScopeName} (depth: {Depth})",
             scope.Name, _scopeStack.Count);
 
         // Publish event
@@ -67,7 +67,7 @@ public class InputRouterService<TInputEvent> : IService<TInputEvent> where TInpu
                 expectedScope.Name, actualScope.Name);
         }
 
-        _logger.LogDebug("Popped input scope: {ScopeName} (depth: {Depth})", 
+        _logger.LogDebug("Popped input scope: {ScopeName} (depth: {Depth})",
             actualScope.Name, _scopeStack.Count);
 
         // Publish event

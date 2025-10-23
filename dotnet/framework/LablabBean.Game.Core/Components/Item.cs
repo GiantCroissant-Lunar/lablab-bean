@@ -74,7 +74,7 @@ public struct Consumable
     public ConsumableEffect Effect { get; set; }
     public int EffectValue { get; set; }
     public bool UsableOutOfCombat { get; set; }
-    
+
     // Status effect properties
     public EffectType? AppliesEffect { get; set; }
     public int? EffectMagnitude { get; set; }

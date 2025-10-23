@@ -163,7 +163,7 @@ public class PluginSandbox : IDisposable
 
         _resourceMonitor?.Dispose();
         _executionCts?.Dispose();
-        
+
         _disposed = true;
     }
 }
