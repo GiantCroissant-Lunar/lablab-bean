@@ -11,13 +11,13 @@ Validates all markdown files in docs/ for:
 Generates docs/index/registry.json for agent consumption.
 """
 
-import pathlib
-import sys
-import re
-import json
 import hashlib
-from typing import Dict, List, Tuple, Optional
+import json
+import pathlib
+import re
+import sys
 from datetime import datetime, timezone
+from typing import Dict, List, Optional, Tuple
 
 try:
     import yaml
@@ -55,10 +55,28 @@ EXCLUDE_PATTERNS = [
 ]
 
 # Required front-matter fields
-REQUIRED_FIELDS = ["doc_id", "title", "doc_type", "status", "canonical", "created", "tags", "summary"]
+REQUIRED_FIELDS = [
+    "doc_id",
+    "title",
+    "doc_type",
+    "status",
+    "canonical",
+    "created",
+    "tags",
+    "summary",
+]
 
 # Valid values
-VALID_DOC_TYPES = ["spec", "rfc", "adr", "plan", "finding", "guide", "glossary", "reference"]
+VALID_DOC_TYPES = [
+    "spec",
+    "rfc",
+    "adr",
+    "plan",
+    "finding",
+    "guide",
+    "glossary",
+    "reference",
+]
 VALID_STATUSES = ["draft", "active", "superseded", "rejected", "archived"]
 
 
@@ -81,7 +99,7 @@ def extract_frontmatter(text: str) -> Tuple[Optional[Dict], str]:
 
     try:
         meta = yaml.safe_load(match.group(1))
-        body = text[match.end():]
+        body = text[match.end() :]
         return meta or {}, body
     except yaml.YAMLError as e:
         return {"_parse_error": str(e)}, text
@@ -127,52 +145,76 @@ def validate_frontmatter(path: pathlib.Path, meta: Dict) -> List[ValidationError
 
     # Check for parse errors
     if "_parse_error" in meta:
-        errors.append(ValidationError(path, f"YAML parse error: {meta['_parse_error']}"))
+        errors.append(
+            ValidationError(path, f"YAML parse error: {meta['_parse_error']}")
+        )
         return errors
 
     # Check required fields
     missing = [field for field in REQUIRED_FIELDS if field not in meta]
     if missing:
-        errors.append(ValidationError(path, f"Missing required fields: {', '.join(missing)}"))
+        errors.append(
+            ValidationError(path, f"Missing required fields: {', '.join(missing)}")
+        )
 
     # Validate doc_type
     if "doc_type" in meta and meta["doc_type"] not in VALID_DOC_TYPES:
-        errors.append(ValidationError(
-            path,
-            f"Invalid doc_type '{meta['doc_type']}'. Must be one of: {', '.join(VALID_DOC_TYPES)}"
-        ))
+        errors.append(
+            ValidationError(
+                path,
+                f"Invalid doc_type '{meta['doc_type']}'. Must be one of: {', '.join(VALID_DOC_TYPES)}",
+            )
+        )
 
     # Validate status
     if "status" in meta and meta["status"] not in VALID_STATUSES:
-        errors.append(ValidationError(
-            path,
-            f"Invalid status '{meta['status']}'. Must be one of: {', '.join(VALID_STATUSES)}"
-        ))
+        errors.append(
+            ValidationError(
+                path,
+                f"Invalid status '{meta['status']}'. Must be one of: {', '.join(VALID_STATUSES)}",
+            )
+        )
 
     # Validate canonical is boolean
     if "canonical" in meta and not isinstance(meta["canonical"], bool):
-        errors.append(ValidationError(path, f"Field 'canonical' must be boolean, got: {type(meta['canonical']).__name__}"))
+        errors.append(
+            ValidationError(
+                path,
+                f"Field 'canonical' must be boolean, got: {type(meta['canonical']).__name__}",
+            )
+        )
 
     # Validate created date format
     if "created" in meta:
         try:
             datetime.fromisoformat(str(meta["created"]))
         except (ValueError, TypeError):
-            errors.append(ValidationError(path, f"Field 'created' must be ISO date (YYYY-MM-DD), got: {meta['created']}"))
+            errors.append(
+                ValidationError(
+                    path,
+                    f"Field 'created' must be ISO date (YYYY-MM-DD), got: {meta['created']}",
+                )
+            )
 
     # Validate tags is list
     if "tags" in meta and not isinstance(meta["tags"], list):
-        errors.append(ValidationError(path, f"Field 'tags' must be a list, got: {type(meta['tags']).__name__}"))
+        errors.append(
+            ValidationError(
+                path, f"Field 'tags' must be a list, got: {type(meta['tags']).__name__}"
+            )
+        )
 
     # Check doc_id format
     if "doc_id" in meta:
         doc_id = str(meta["doc_id"])
         if not re.match(r"^[A-Z]+-\d{4}-\d{5}$", doc_id):
-            errors.append(ValidationError(
-                path,
-                f"Invalid doc_id format '{doc_id}'. Expected: PREFIX-YYYY-NNNNN (e.g., DOC-2025-00042)",
-                severity="warning"
-            ))
+            errors.append(
+                ValidationError(
+                    path,
+                    f"Invalid doc_id format '{doc_id}'. Expected: PREFIX-YYYY-NNNNN (e.g., DOC-2025-00042)",
+                    severity="warning",
+                )
+            )
 
     return errors
 
@@ -197,10 +239,13 @@ def validate_canonical_uniqueness(entries: List[Dict]) -> List[ValidationError]:
 
         if len(canonical) > 1:
             paths = [e["path"] for e in canonical]
-            errors.append(ValidationError(
-                ROOT,
-                f"Multiple canonical docs for concept '{concept}':\n  " + "\n  ".join(paths)
-            ))
+            errors.append(
+                ValidationError(
+                    ROOT,
+                    f"Multiple canonical docs for concept '{concept}':\n  "
+                    + "\n  ".join(paths),
+                )
+            )
 
     return errors
 
@@ -234,14 +279,16 @@ def detect_near_duplicates(entries: List[Dict]) -> List[ValidationError]:
                 title_score = fuzz.token_set_ratio(inbox_title, corpus_title)
 
                 if title_score >= 80:
-                    errors.append(ValidationError(
-                        ROOT,
-                        f"Near-duplicate detected:\n"
-                        f"  Inbox:  {inbox_entry['path']}\n"
-                        f"  Corpus: {corpus_entry['path']}\n"
-                        f"  Title similarity: {title_score}%, Content similarity: {100 - hamming * 2}%",
-                        severity="warning"
-                    ))
+                    errors.append(
+                        ValidationError(
+                            ROOT,
+                            f"Near-duplicate detected:\n"
+                            f"  Inbox:  {inbox_entry['path']}\n"
+                            f"  Corpus: {corpus_entry['path']}\n"
+                            f"  Title similarity: {title_score}%, Content similarity: {100 - hamming * 2}%",
+                            severity="warning",
+                        )
+                    )
                     break  # Only report first match per inbox doc
 
     return errors
@@ -269,11 +316,13 @@ def process_documents() -> Tuple[List[Dict], List[ValidationError]]:
         if meta is None:
             # Only warn for non-inbox files
             if "/_inbox/" not in str(md_path):
-                errors.append(ValidationError(
-                    md_path,
-                    "Missing YAML front-matter. See docs/DOCUMENTATION-SCHEMA.md",
-                    severity="warning"
-                ))
+                errors.append(
+                    ValidationError(
+                        md_path,
+                        "Missing YAML front-matter. See docs/DOCUMENTATION-SCHEMA.md",
+                        severity="warning",
+                    )
+                )
             continue
 
         # Validate front-matter
@@ -305,7 +354,7 @@ def generate_registry(entries: List[Dict]):
     REGISTRY.parent.mkdir(parents=True, exist_ok=True)
 
     registry = {
-        "generated_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "total_docs": len(entries),
         "by_type": {},
         "by_status": {},
@@ -319,9 +368,9 @@ def generate_registry(entries: List[Dict]):
         registry["by_type"][doc_type] = registry["by_type"].get(doc_type, 0) + 1
         registry["by_status"][status] = registry["by_status"].get(status, 0) + 1
 
-    with open(REGISTRY, "w", encoding="utf-8", newline='\n') as f:
+    with open(REGISTRY, "w", encoding="utf-8", newline="\n") as f:
         json.dump(registry, f, indent=2, ensure_ascii=False)
-        f.write('\n')  # Ensure final newline
+        f.write("\n")  # Ensure final newline
 
     print(f"Registry generated: {REGISTRY.relative_to(ROOT)}")
     print(f"   Total docs: {len(entries)}")
@@ -332,9 +381,14 @@ def generate_registry(entries: List[Dict]):
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Validate documentation and generate registry")
-    parser.add_argument("--pre-commit", action="store_true",
-                        help="Pre-commit mode: validate only, don't regenerate registry")
+    parser = argparse.ArgumentParser(
+        description="Validate documentation and generate registry"
+    )
+    parser.add_argument(
+        "--pre-commit",
+        action="store_true",
+        help="Pre-commit mode: validate only, don't regenerate registry",
+    )
     args = parser.parse_args()
 
     print("Validating documentation...")

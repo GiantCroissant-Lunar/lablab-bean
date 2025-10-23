@@ -12,7 +12,7 @@
 
 .EXAMPLE
     .\scripts\deploy-demo-plugin.ps1
-    
+
 .EXAMPLE
     .\scripts\deploy-demo-plugin.ps1 -Configuration Debug
 #>
