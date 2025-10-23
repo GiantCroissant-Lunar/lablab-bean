@@ -3,6 +3,7 @@ using Arch.Core.Extensions;
 using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Events;
 using LablabBean.Plugins.Quest.Components;
+using LablabBean.Plugins.Progression.Services;
 
 namespace LablabBean.Plugins.Quest.Systems;
 
@@ -13,10 +14,19 @@ public class QuestRewardSystem
 {
     private readonly World _world;
     private Action<QuestCompletedEvent>? _onQuestCompleted;
+    private ProgressionService? _progressionService;
 
     public QuestRewardSystem(World world)
     {
         _world = world;
+    }
+
+    /// <summary>
+    /// Sets the progression service for awarding XP
+    /// </summary>
+    public void SetProgressionService(ProgressionService progressionService)
+    {
+        _progressionService = progressionService;
     }
 
     /// <summary>
@@ -49,9 +59,18 @@ public class QuestRewardSystem
             gold.Add(rewards.Gold);
         }
 
-        // Grant experience points (will be handled by progression system)
-        // For now, we just mark the quest as rewarded in the quest log
+        // Grant experience points via Progression system
+        if (rewards.ExperiencePoints > 0 && _progressionService != null)
+        {
+            // TODO: Proper entity ID mapping when available
+            // For now, use a placeholder GUID
+            var playerId = Guid.Empty;
+            bool leveledUp = _progressionService.AwardExperience(playerId, rewards.ExperiencePoints);
 
+            // TODO: Show level-up notification if leveledUp is true
+        }
+
+        // Mark quest as rewarded in quest log
         if (playerEntity.Has<QuestLog>())
         {
             ref var questLog = ref playerEntity.Get<QuestLog>();

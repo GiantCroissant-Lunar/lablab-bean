@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using LablabBean.Plugins.Contracts;
 using LablabBean.Plugins.Quest.Services;
 using LablabBean.Plugins.Quest.Systems;
+using LablabBean.Plugins.Progression.Services;
 
 namespace LablabBean.Plugins.Quest;
 
@@ -31,8 +32,20 @@ public class QuestPlugin : IPlugin
         _questProgressSystem = new QuestProgressSystem(_world);
         _questRewardSystem = new QuestRewardSystem(_world);
 
+        // Try to get ProgressionService and inject it
+        var progressionService = context.Registry.Get<ProgressionService>();
+        if (progressionService != null && _questRewardSystem != null)
+        {
+            _questRewardSystem.SetProgressionService(progressionService);
+            context.Logger.LogInformation("Quest plugin: ProgressionService integrated for XP rewards");
+        }
+        else
+        {
+            context.Logger.LogWarning("Quest plugin: ProgressionService not found - XP rewards will not be granted");
+        }
+
         // Initialize service
-        _questService = new QuestService(_world, _questSystem, _questProgressSystem, _questRewardSystem);
+        _questService = new QuestService(_world, _questSystem, _questProgressSystem, _questRewardSystem!);
 
         // Register service in plugin context
         context.Registry.Register<QuestService>(_questService, priority: 100);

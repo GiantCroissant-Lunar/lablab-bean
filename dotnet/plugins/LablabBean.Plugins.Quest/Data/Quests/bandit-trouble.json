@@ -1,0 +1,44 @@
+{
+  "description": "Bandits have been terrorizing the trade routes. Eliminate their leader.",
+  "flavorText": "These bandits won't stop until someone stops them. Are you brave enough?",
+  "id": "bandit-trouble",
+  "name": "Bandit Trouble",
+  "objectives": [
+    {
+      "description": "Eliminate 10 bandits",
+      "id": "eliminate-bandits",
+      "required": 10,
+      "target": "bandit",
+      "type": "Kill"
+    },
+    {
+      "description": "Defeat the Bandit Leader",
+      "id": "defeat-bandit-leader",
+      "required": 1,
+      "target": "bandit-leader",
+      "type": "Kill"
+    },
+    {
+      "description": "Report to the Mayor",
+      "id": "return-to-mayor",
+      "required": 1,
+      "target": "mayor",
+      "type": "Talk"
+    }
+  ],
+  "prerequisites": {
+    "minLevel": 3,
+    "requiredItems": [],
+    "requiredQuests": [
+      "training-grounds"
+    ]
+  },
+  "questGiverId": "mayor",
+  "rewards": {
+    "experiencePoints": 350,
+    "gold": 75,
+    "items": [
+      "steel-sword"
+    ]
+  }
+}

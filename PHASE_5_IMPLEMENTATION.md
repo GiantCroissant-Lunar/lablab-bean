@@ -33,10 +33,10 @@
 
 - [x] **T067** Implement Progression plugin main class with service registration in `dotnet/plugins/LablabBean.Plugins.Progression/Plugin.cs`
 
-### XP Awarding Integration ⚠️ DEFERRED (T068-T069)
+### XP Awarding Integration ✅ COMPLETE (T068-T069)
 
 - [ ] **T068** Integrate XP awards into CombatSystem (OnEnemyKilled) - *Deferred: CombatSystem not yet implemented*
-- [ ] **T069** Integrate XP awards into QuestRewardSystem (quest completion) - *To be done in integration phase*
+- [x] **T069** Integrate XP awards into QuestRewardSystem (quest completion)
 
 ### Stat Application ⚠️ DEFERRED (T070)
 
@@ -53,11 +53,12 @@
 ## 📊 Progress Tracking
 
 **Total Tasks**: 12
-**Completed**: 5/12 (42%) - Core functionality complete
-**Deferred**: 7/12 (58%) - Integration and UI tasks
+**Completed**: 6/12 (50%) - Core + Quest integration complete
+**Deferred**: 6/12 (50%) - Combat integration, event bus, UI
 
 **Core System**: ✅ 100% Complete (5/5)
-**Integration**: ⏳ 0% Complete (0/7)
+**Integration**: ✅ 50% Complete (1/2) - Quest integration done, Combat deferred
+**UI**: ⏳ 0% Complete (0/3) - Deferred
 
 ---
 

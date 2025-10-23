@@ -1,0 +1,35 @@
+{
+  "description": "The town guard captain wants you to complete basic combat training.",
+  "flavorText": "Every adventurer must start somewhere. Show me what you're made of!",
+  "id": "training-grounds",
+  "name": "Training Grounds",
+  "objectives": [
+    {
+      "description": "Defeat 5 training dummies",
+      "id": "defeat-training-dummies",
+      "required": 5,
+      "target": "training-dummy",
+      "type": "Kill"
+    },
+    {
+      "description": "Report back to the Guard Captain",
+      "id": "return-to-captain",
+      "required": 1,
+      "target": "guard-captain",
+      "type": "Talk"
+    }
+  ],
+  "prerequisites": {
+    "minLevel": 1,
+    "requiredItems": [],
+    "requiredQuests": []
+  },
+  "questGiverId": "guard-captain",
+  "rewards": {
+    "experiencePoints": 100,
+    "gold": 25,
+    "items": [
+      "wooden-sword"
+    ]
+  }
+}

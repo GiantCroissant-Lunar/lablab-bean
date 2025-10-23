@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
+    <ProjectReference Include="..\LablabBean.Plugins.Progression\LablabBean.Plugins.Progression.csproj" />
   </ItemGroup>
 
   <ItemGroup>
