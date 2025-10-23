@@ -54,6 +54,7 @@ dotnet run -- --path ../../../../dotnet --mode check --json
 The tool is integrated via the `one-type-per-file-check` script in the git-hooks directory.
 
 **Manual run:**
+
 ```bash
 ./git-hooks/one-type-per-file-check
 ```
@@ -104,6 +105,7 @@ task one-type-fix     # Fix violations
 ### Example
 
 **Before (Events.cs):**
+
 ```csharp
 using System;
 
@@ -119,6 +121,7 @@ public record ConfigReloadedEvent(DateTime Timestamp);
 **After fixing:**
 
 **ConfigChangedEvent.cs:**
+
 ```csharp
 using System;
 
@@ -129,6 +132,7 @@ public record ConfigChangedEvent(string Key, object Value);
 ```
 
 **ConfigReloadedEvent.cs:**
+
 ```csharp
 using System;
 

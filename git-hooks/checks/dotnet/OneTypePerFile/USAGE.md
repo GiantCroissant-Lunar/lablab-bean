@@ -172,6 +172,7 @@ git commit -m "refactor: split files to one type per file"
 ### "File already exists" warning
 
 The tool won't overwrite existing files. Either:
+
 - Delete the existing file first
 - Rename it manually
 - Use a different name for the new type
