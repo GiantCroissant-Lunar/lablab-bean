@@ -23,14 +23,14 @@ repos:
   - id: markdownlint
     args: [--fix]
 
-  # YAML formatting (and JSON formatting)
+  # YAML formatting
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
   rev: v2.15.0
   hooks:
   - id: pretty-format-yaml
     args: [--autofix, --indent, '2']
 
-  # Add JSON pretty-formatting using pre-commit-hooks repo
+  # JSON formatting
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
   hooks:
@@ -49,10 +49,8 @@ repos:
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.14.1
   hooks:
-      # Run the linter
   - id: ruff
     args: [--fix]
-      # Run the formatter (replaces black)
   - id: ruff-format
 
   # Optional: Type checking with mypy
@@ -60,7 +58,7 @@ repos:
   rev: v1.13.0
   hooks:
   - id: mypy
-    additional_dependencies: []
+    additional_dependencies: [types-PyYAML]
     args: [--ignore-missing-imports, --no-strict-optional]
 
   # Shell scripts: lint and format
@@ -97,7 +95,6 @@ repos:
   # Custom hooks (organized in git-hooks/ directory)
 - repo: local
   hooks:
-      # General checks
   - id: prevent-nul-file
     name: Prevent Windows nul file
     entry: python git-hooks/checks/general/prevent_nul_file.py

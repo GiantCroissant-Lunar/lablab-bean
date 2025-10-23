@@ -17,7 +17,7 @@ import pathlib
 import re
 import sys
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 try:
     import yaml
@@ -219,10 +219,12 @@ def validate_frontmatter(path: pathlib.Path, meta: Dict) -> List[ValidationError
     return errors
 
 
-def validate_canonical_uniqueness(entries: List[Dict]) -> List[ValidationError]:
+def validate_canonical_uniqueness(
+    entries: List[Dict[str, Any]],
+) -> List[ValidationError]:
     """Ensure only one canonical doc per concept (normalized title)."""
-    errors = []
-    by_concept = {}
+    errors: List[ValidationError] = []
+    by_concept: Dict[str, List[Dict[str, Any]]] = {}
 
     for entry in entries:
         # Normalize title to concept key
@@ -250,12 +252,12 @@ def validate_canonical_uniqueness(entries: List[Dict]) -> List[ValidationError]:
     return errors
 
 
-def detect_near_duplicates(entries: List[Dict]) -> List[ValidationError]:
+def detect_near_duplicates(entries: List[Dict[str, Any]]) -> List[ValidationError]:
     """Detect near-duplicate documents between inbox and corpus."""
     if Simhash is None or fuzz is None:
         return []
 
-    errors = []
+    errors: List[ValidationError] = []
     inbox_entries = [e for e in entries if "/_inbox/" in e["path"]]
     corpus_entries = [e for e in entries if "/_inbox/" not in e["path"]]
 
@@ -294,10 +296,10 @@ def detect_near_duplicates(entries: List[Dict]) -> List[ValidationError]:
     return errors
 
 
-def process_documents() -> Tuple[List[Dict], List[ValidationError]]:
+def process_documents() -> Tuple[List[Dict[str, Any]], List[ValidationError]]:
     """Process all markdown documents and collect errors."""
-    entries = []
-    errors = []
+    entries: List[Dict[str, Any]] = []
+    errors: List[ValidationError] = []
 
     # Find all markdown files in docs/
     for md_path in DOCS.rglob("*.md"):
@@ -329,7 +331,7 @@ def process_documents() -> Tuple[List[Dict], List[ValidationError]]:
         errors.extend(validate_frontmatter(md_path, meta))
 
         # Build registry entry
-        entry = {
+        entry: Dict[str, Any] = {
             "path": str(md_path.relative_to(ROOT)).replace("\\", "/"),
             "doc_id": meta.get("doc_id", ""),
             "title": meta.get("title", ""),
@@ -349,24 +351,27 @@ def process_documents() -> Tuple[List[Dict], List[ValidationError]]:
     return entries, errors
 
 
-def generate_registry(entries: List[Dict]):
+def generate_registry(entries: List[Dict[str, Any]]) -> None:
     """Generate machine-readable registry JSON."""
     REGISTRY.parent.mkdir(parents=True, exist_ok=True)
 
-    registry = {
+    by_type: Dict[str, int] = {}
+    by_status: Dict[str, int] = {}
+
+    registry: Dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "total_docs": len(entries),
-        "by_type": {},
-        "by_status": {},
+        "by_type": by_type,
+        "by_status": by_status,
         "docs": sorted(entries, key=lambda e: e.get("created", ""), reverse=True),
     }
 
     # Compute stats
     for entry in entries:
-        doc_type = entry.get("doc_type", "unknown")
-        status = entry.get("status", "unknown")
-        registry["by_type"][doc_type] = registry["by_type"].get(doc_type, 0) + 1
-        registry["by_status"][status] = registry["by_status"].get(status, 0) + 1
+        doc_type = str(entry.get("doc_type", "unknown"))
+        status = str(entry.get("status", "unknown"))
+        by_type[doc_type] = by_type.get(doc_type, 0) + 1
+        by_status[status] = by_status.get(status, 0) + 1
 
     with open(REGISTRY, "w", encoding="utf-8", newline="\n") as f:
         json.dump(registry, f, indent=2, ensure_ascii=False)
