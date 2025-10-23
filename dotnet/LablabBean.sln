@@ -119,6 +119,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Resilience", "framework\LablabBean.Contracts.Resilience\LablabBean.Contracts.Resilience.csproj", "{E6BDE80A-3D1D-4B52-9196-75294DE12530}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Resilience.Polly", "plugins\LablabBean.Plugins.Resilience.Polly\LablabBean.Plugins.Resilience.Polly.csproj", "{260BD041-A376-42D8-81A1-014ED1A17EFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Serialization.Json", "plugins\LablabBean.Plugins.Serialization.Json\LablabBean.Plugins.Serialization.Json.csproj", "{91F9F174-2FCA-4118-B390-ACCAEF92B357}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.ObjectPool.Standard", "plugins\LablabBean.Plugins.ObjectPool.Standard\LablabBean.Plugins.ObjectPool.Standard.csproj", "{9FC289DF-9C10-41D0-A86F-CF32B55EAA6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -333,6 +339,18 @@ Global
 		{E6BDE80A-3D1D-4B52-9196-75294DE12530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6BDE80A-3D1D-4B52-9196-75294DE12530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6BDE80A-3D1D-4B52-9196-75294DE12530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{260BD041-A376-42D8-81A1-014ED1A17EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{260BD041-A376-42D8-81A1-014ED1A17EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{260BD041-A376-42D8-81A1-014ED1A17EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{260BD041-A376-42D8-81A1-014ED1A17EFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91F9F174-2FCA-4118-B390-ACCAEF92B357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91F9F174-2FCA-4118-B390-ACCAEF92B357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91F9F174-2FCA-4118-B390-ACCAEF92B357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91F9F174-2FCA-4118-B390-ACCAEF92B357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FC289DF-9C10-41D0-A86F-CF32B55EAA6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC289DF-9C10-41D0-A86F-CF32B55EAA6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC289DF-9C10-41D0-A86F-CF32B55EAA6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC289DF-9C10-41D0-A86F-CF32B55EAA6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{10000000-0000-0000-0000-000000000001} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
@@ -387,5 +405,8 @@ Global
 		{E7A3AE80-D517-458A-88A8-76B0DF7333CA} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
 		{B86D3ACD-508F-4475-8444-F7078A682412} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
 		{E6BDE80A-3D1D-4B52-9196-75294DE12530} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{260BD041-A376-42D8-81A1-014ED1A17EFA} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
+		{91F9F174-2FCA-4118-B390-ACCAEF92B357} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
+		{9FC289DF-9C10-41D0-A86F-CF32B55EAA6C} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
 	EndGlobalSection
 EndGlobal
