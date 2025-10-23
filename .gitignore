@@ -68,3 +68,6 @@ yarn-error.log
 ref-projects/
 
 tools/
+
+# ignore local temp files
+/temp_*
