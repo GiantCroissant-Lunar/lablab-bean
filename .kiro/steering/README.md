@@ -20,6 +20,7 @@ Kiro automatically reads these markdown files to understand project context. Fil
 This project uses a unified agent instruction system in `.agent/` that all AI assistants follow. The steering files in this directory provide Kiro-specific context while referencing the canonical rules.
 
 **Architecture**:
+
 ```
 Kiro steering files (.kiro/steering/) → Kiro adapter (.agent/adapters/kiro.md) → Base rules (.agent/base/)
 ```
@@ -27,6 +28,7 @@ Kiro steering files (.kiro/steering/) → Kiro adapter (.agent/adapters/kiro.md)
 ## Quick Reference
 
 ### For Kiro
+
 - **Full Instructions**: [../../.agent/adapters/kiro.md](../../.agent/adapters/kiro.md)
 - **Base Rules**: [../../.agent/base/20-rules.md](../../.agent/base/20-rules.md)
 - **Principles**: [../../.agent/base/10-principles.md](../../.agent/base/10-principles.md)

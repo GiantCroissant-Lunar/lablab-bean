@@ -14,20 +14,24 @@ This project uses a structured agent instruction system in `.agent/`.
 ## Key Rules
 
 ### Documentation (R-DOC)
+
 - Write new docs to `docs/_inbox/` only
 - Include YAML front-matter in all docs
 - Check `docs/index/registry.json` before creating new docs
 
 ### Code Quality (R-CODE)
+
 - No hardcoded secrets
 - Use meaningful variable/function names
 - Comment non-obvious code
 
 ### Testing (R-TST)
+
 - Test critical functionality
 - Ensure builds pass
 
 ### Git (R-GIT)
+
 - Use descriptive commit messages
 - Never commit secrets
 
