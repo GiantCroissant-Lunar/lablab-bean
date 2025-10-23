@@ -41,7 +41,7 @@ if ($response -eq "" -or $response -eq "Y" -or $response -eq "y") {
     Write-Host ""
     Write-Host "🚀 Starting stack..." -ForegroundColor Cyan
     task stack-run
-    
+
     Write-Host ""
     Write-Host "✓ Stack started!" -ForegroundColor Green
     Write-Host ""

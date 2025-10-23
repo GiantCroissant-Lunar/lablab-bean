@@ -37,6 +37,7 @@ class Build : NukeBuild
     AbsolutePath LogsDirectory => VersionedArtifactsDirectory / "logs";
     AbsolutePath TestResultsDirectory => VersionedArtifactsDirectory / "test-results";
     AbsolutePath TestReportsDirectory => VersionedArtifactsDirectory / "test-reports";
+    AbsolutePath SessionReportsDirectory => VersionedArtifactsDirectory / "reports" / "sessions";
 
     Target PrintVersion => _ => _
         .Executes(() =>
@@ -54,18 +55,18 @@ class Build : NukeBuild
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(d => 
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(d =>
             {
                 if (System.IO.Directory.Exists(d))
                     DeleteDirectory(d);
             });
-            
+
             // Skip website cleaning if directory doesn't exist or is incomplete
             if (System.IO.Directory.Exists(WebsiteDirectory))
             {
                 try
                 {
-                    WebsiteDirectory.GlobDirectories("**/dist").ForEach(d => 
+                    WebsiteDirectory.GlobDirectories("**/dist").ForEach(d =>
                     {
                         if (System.IO.Directory.Exists(d))
                             DeleteDirectory(d);
@@ -76,7 +77,7 @@ class Build : NukeBuild
                     Serilog.Log.Warning("Skipping website cleanup due to missing directories");
                 }
             }
-            
+
             BuildArtifactsDirectory.CreateOrCleanDirectory();
         });
 
@@ -84,17 +85,26 @@ class Build : NukeBuild
         .Executes(() =>
         {
             DotNetRestore(s => s
-                .SetProjectFile(Solution));
+                .SetProjectFile(SourceDirectory / "LablabBean.sln"));
         });
 
     Target Compile => _ => _
         .DependsOn(Restore)
         .Executes(() =>
         {
-            // Build only Console app (skip Windows app due to compilation errors)
+            // Build Console app
             var consoleProjectPath = SourceDirectory / "console-app" / "LablabBean.Console" / "LablabBean.Console.csproj";
+            Serilog.Log.Information("Building Console App...");
             DotNetBuild(s => s
                 .SetProjectFile(consoleProjectPath)
+                .SetConfiguration(Configuration)
+                .EnableNoRestore());
+
+            // Build Windows app
+            var windowsProjectPath = SourceDirectory / "windows-app" / "LablabBean.Windows" / "LablabBean.Windows.csproj";
+            Serilog.Log.Information("Building Windows App...");
+            DotNetBuild(s => s
+                .SetProjectFile(windowsProjectPath)
                 .SetConfiguration(Configuration)
                 .EnableNoRestore());
         });
@@ -115,16 +125,16 @@ class Build : NukeBuild
         .Executes(() =>
         {
             TestResultsDirectory.CreateOrCleanDirectory();
-            
+
             var testProjects = Solution.GetAllProjects("*.Tests");
-            
+
             foreach (var testProject in testProjects)
             {
                 var projectName = testProject.Name;
                 var testResultFile = TestResultsDirectory / $"{projectName}.trx";
-                
+
                 Serilog.Log.Information("Running tests for {Project}...", projectName);
-                
+
                 DotNetTest(s => s
                     .SetProjectFile(testProject)
                     .SetConfiguration(Configuration)
@@ -134,7 +144,7 @@ class Build : NukeBuild
                     .SetDataCollector("XPlat Code Coverage")
                     .SetResultsDirectory(TestResultsDirectory));
             }
-            
+
             Serilog.Log.Information("Test results saved to: {Path}", TestResultsDirectory);
         });
 
@@ -143,32 +153,35 @@ class Build : NukeBuild
         .Executes(() =>
         {
             TestReportsDirectory.CreateOrCleanDirectory();
-            
+
             var reportingToolPath = SourceDirectory / "console-app" / "LablabBean.Console" / "bin" / Configuration / "net8.0" / "LablabBean.Console.dll";
-            
+
             if (!System.IO.File.Exists(reportingToolPath))
             {
                 Serilog.Log.Error("❌ Reporting tool not found at {Path}", reportingToolPath);
                 Serilog.Log.Information("Run 'nuke Compile' first to build the reporting tool");
                 throw new Exception("Reporting tool not built. Run 'nuke Compile' first.");
             }
-            
+
             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
             var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? Version;
-            
+
             var buildReportPath = TestReportsDirectory / $"build-metrics-{buildNumber}-{timestamp}.html";
             var buildReportCsvPath = TestReportsDirectory / $"build-metrics-{buildNumber}-{timestamp}.csv";
             var sessionReportPath = TestReportsDirectory / $"session-analytics-{buildNumber}-{timestamp}.html";
             var sessionReportCsvPath = TestReportsDirectory / $"session-analytics-{buildNumber}-{timestamp}.csv";
             var pluginReportPath = TestReportsDirectory / $"plugin-metrics-{buildNumber}-{timestamp}.html";
             var pluginReportCsvPath = TestReportsDirectory / $"plugin-metrics-{buildNumber}-{timestamp}.csv";
-            
+            var windowsReportPath = TestReportsDirectory / $"windows-session-{buildNumber}-{timestamp}.html";
+            var windowsReportCsvPath = TestReportsDirectory / $"windows-session-{buildNumber}-{timestamp}.csv";
+
             var latestBuildReportPath = TestReportsDirectory / "build-metrics-latest.html";
             var latestSessionReportPath = TestReportsDirectory / "session-analytics-latest.html";
             var latestPluginReportPath = TestReportsDirectory / "plugin-metrics-latest.html";
-            
+            var latestWindowsReportPath = TestReportsDirectory / "windows-session-latest.html";
+
             Serilog.Log.Information("Generating build metrics report...");
-            
+
             bool buildMetricsSuccess = false;
             try
             {
@@ -177,18 +190,18 @@ class Build : NukeBuild
                       $"--data \"{TestResultsDirectory}\" " +
                       $"--format html",
                       workingDirectory: RootDirectory);
-                
+
                 DotNet($"{reportingToolPath} report build " +
                       $"--output \"{buildReportCsvPath}\" " +
                       $"--data \"{TestResultsDirectory}\" " +
                       $"--format csv",
                       workingDirectory: RootDirectory);
-                
+
                 if (System.IO.File.Exists(buildReportPath))
                 {
                     System.IO.File.Copy(buildReportPath, latestBuildReportPath, true);
                 }
-                
+
                 Serilog.Log.Information("✅ Build metrics report: {Path}", buildReportPath);
                 Serilog.Log.Information("✅ Build metrics CSV: {Path}", buildReportCsvPath);
                 buildMetricsSuccess = true;
@@ -197,9 +210,9 @@ class Build : NukeBuild
             {
                 Serilog.Log.Error("❌ Build metrics report failed: {Message}", ex.Message);
             }
-            
+
             Serilog.Log.Information("Generating session analytics report...");
-            
+
             bool sessionSuccess = false;
             try
             {
@@ -208,18 +221,18 @@ class Build : NukeBuild
                       $"--data \"{TestResultsDirectory}\" " +
                       $"--format html",
                       workingDirectory: RootDirectory);
-                
+
                 DotNet($"{reportingToolPath} report session " +
                       $"--output \"{sessionReportCsvPath}\" " +
                       $"--data \"{TestResultsDirectory}\" " +
                       $"--format csv",
                       workingDirectory: RootDirectory);
-                
+
                 if (System.IO.File.Exists(sessionReportPath))
                 {
                     System.IO.File.Copy(sessionReportPath, latestSessionReportPath, true);
                 }
-                
+
                 Serilog.Log.Information("✅ Session analytics report: {Path}", sessionReportPath);
                 Serilog.Log.Information("✅ Session analytics CSV: {Path}", sessionReportCsvPath);
                 sessionSuccess = true;
@@ -228,9 +241,9 @@ class Build : NukeBuild
             {
                 Serilog.Log.Error("❌ Session analytics report failed: {Message}", ex.Message);
             }
-            
+
             Serilog.Log.Information("Generating plugin metrics report...");
-            
+
             bool pluginSuccess = false;
             try
             {
@@ -239,18 +252,18 @@ class Build : NukeBuild
                       $"--data \"{TestResultsDirectory}\" " +
                       $"--format html",
                       workingDirectory: RootDirectory);
-                
+
                 DotNet($"{reportingToolPath} report plugin " +
                       $"--output \"{pluginReportCsvPath}\" " +
                       $"--data \"{TestResultsDirectory}\" " +
                       $"--format csv",
                       workingDirectory: RootDirectory);
-                
+
                 if (System.IO.File.Exists(pluginReportPath))
                 {
                     System.IO.File.Copy(pluginReportPath, latestPluginReportPath, true);
                 }
-                
+
                 Serilog.Log.Information("✅ Plugin metrics report: {Path}", pluginReportPath);
                 Serilog.Log.Information("✅ Plugin metrics CSV: {Path}", pluginReportCsvPath);
                 pluginSuccess = true;
@@ -259,7 +272,61 @@ class Build : NukeBuild
             {
                 Serilog.Log.Error("❌ Plugin metrics report failed: {Message}", ex.Message);
             }
-            
+
+            // Check for Windows session reports
+            Serilog.Log.Information("Checking for Windows session reports...");
+            bool windowsSuccess = false;
+            try
+            {
+                if (System.IO.Directory.Exists(SessionReportsDirectory))
+                {
+                    var windowsSessionFiles = System.IO.Directory.GetFiles(SessionReportsDirectory, "windows-session-*.json")
+                        .OrderByDescending(f => System.IO.File.GetCreationTimeUtc(f))
+                        .ToArray();
+
+                    if (windowsSessionFiles.Length > 0)
+                    {
+                        var latestWindowsSession = windowsSessionFiles[0];
+                        Serilog.Log.Information("Found Windows session: {Path}", latestWindowsSession);
+
+                        // Generate HTML report from Windows session
+                        DotNet($"{reportingToolPath} report session " +
+                              $"--output \"{windowsReportPath}\" " +
+                              $"--data \"{latestWindowsSession}\" " +
+                              $"--format html",
+                              workingDirectory: RootDirectory);
+
+                        // Generate CSV report
+                        DotNet($"{reportingToolPath} report session " +
+                              $"--output \"{windowsReportCsvPath}\" " +
+                              $"--data \"{latestWindowsSession}\" " +
+                              $"--format csv",
+                              workingDirectory: RootDirectory);
+
+                        if (System.IO.File.Exists(windowsReportPath))
+                        {
+                            System.IO.File.Copy(windowsReportPath, latestWindowsReportPath, true);
+                        }
+
+                        Serilog.Log.Information("✅ Windows session report: {Path}", windowsReportPath);
+                        Serilog.Log.Information("✅ Windows session CSV: {Path}", windowsReportCsvPath);
+                        windowsSuccess = true;
+                    }
+                    else
+                    {
+                        Serilog.Log.Information("ℹ️  No Windows session reports found. Run the Windows app to generate session data.");
+                    }
+                }
+                else
+                {
+                    Serilog.Log.Information("ℹ️  Windows session reports directory does not exist yet.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning("⚠️  Windows session report processing failed: {Message}", ex.Message);
+            }
+
             Serilog.Log.Information("\n╔════════════════════════════════════════╗");
             Serilog.Log.Information("║     📊 REPORTS GENERATED! 🎉         ║");
             Serilog.Log.Information("╚════════════════════════════════════════╝");
@@ -277,12 +344,81 @@ class Build : NukeBuild
             {
                 Serilog.Log.Information("  ✅ plugin-metrics-{0}-{1}.html/.csv", buildNumber, timestamp);
             }
+            if (windowsSuccess)
+            {
+                Serilog.Log.Information("  ✅ windows-session-{0}-{1}.html/.csv", buildNumber, timestamp);
+            }
             Serilog.Log.Information("════════════════════════════════════════\n");
-            
+
             if (!buildMetricsSuccess || !sessionSuccess || !pluginSuccess)
             {
                 Serilog.Log.Warning("⚠️  Some reports failed to generate. Check logs above.");
             }
+        });
+
+    Target GenerateWindowsMetrics => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            SessionReportsDirectory.CreateOrCleanDirectory();
+
+            var windowsAppPath = SourceDirectory / "windows-app" / "LablabBean.Windows" / "bin" / Configuration / "net8.0" / "LablabBean.Windows.dll";
+
+            if (!System.IO.File.Exists(windowsAppPath))
+            {
+                Serilog.Log.Error("❌ Windows app not found at {Path}", windowsAppPath);
+                Serilog.Log.Information("Run 'nuke Compile' first to build the Windows app");
+                throw new Exception("Windows app not built. Run 'nuke Compile' first.");
+            }
+
+            Serilog.Log.Information("╔════════════════════════════════════════╗");
+            Serilog.Log.Information("║  🎮 Windows App Build-Time Metrics    ║");
+            Serilog.Log.Information("╚════════════════════════════════════════╝");
+            Serilog.Log.Information("");
+            Serilog.Log.Information("Windows app compiled successfully!");
+            Serilog.Log.Information("Binary: {Path}", windowsAppPath);
+            Serilog.Log.Information("Size: {Size:N0} bytes", new System.IO.FileInfo(windowsAppPath).Length);
+            Serilog.Log.Information("");
+            Serilog.Log.Information("Session reports will be generated when you run the app.");
+            Serilog.Log.Information("Reports location: {Path}", SessionReportsDirectory);
+            Serilog.Log.Information("");
+            Serilog.Log.Information("To generate session data:");
+            Serilog.Log.Information("  1. Run: dotnet run --project dotnet/windows-app/LablabBean.Windows");
+            Serilog.Log.Information("  2. Play the game (kill enemies, collect items, etc.)");
+            Serilog.Log.Information("  3. Exit the game to save session report");
+            Serilog.Log.Information("  4. Run: nuke GenerateReports");
+            Serilog.Log.Information("");
+            Serilog.Log.Information("════════════════════════════════════════");
+
+            // Create a build-time metrics file
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+            var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? Version;
+            var buildMetricsPath = SessionReportsDirectory / $"windows-build-metrics-{buildNumber}-{timestamp}.json";
+
+            var buildMetrics = new
+            {
+                buildNumber = buildNumber,
+                version = Version,
+                timestamp = DateTime.UtcNow.ToString("o"),
+                binaryPath = windowsAppPath.ToString(),
+                binarySize = new System.IO.FileInfo(windowsAppPath).Length,
+                configuration = Configuration,
+                framework = "net8.0",
+                platform = "win-x64",
+                features = new[]
+                {
+                    "SessionMetrics",
+                    "KillTracking",
+                    "DeathTracking",
+                    "ItemCollection",
+                    "LevelProgression",
+                    "DepthTracking",
+                    "DungeonCompletion"
+                }
+            };
+
+            System.IO.File.WriteAllText(buildMetricsPath, System.Text.Json.JsonSerializer.Serialize(buildMetrics, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+            Serilog.Log.Information("Build metrics saved: {Path}", buildMetricsPath);
         });
 
     Target Publish => _ => _
@@ -332,23 +468,23 @@ class Build : NukeBuild
         .Executes(() =>
         {
             Serilog.Log.Information("Copying website artifacts...");
-            
+
             // Expect website to be already built by separate build process
             var webDist = WebsiteDirectory / "apps" / "web" / "dist";
             if (!System.IO.Directory.Exists(webDist))
             {
                 throw new Exception("Website not built. Please run: task build-website first");
             }
-            
+
             // Copy built website to artifacts
             var websiteArtifacts = PublishDirectory / "website";
             websiteArtifacts.CreateOrCleanDirectory();
-            
+
             CopyDirectoryRecursively(
                 webDist,
                 websiteArtifacts,
                 DirectoryExistsPolicy.Merge);
-            
+
             Serilog.Log.Information("Website artifacts copied to: {Path}", websiteArtifacts);
         });
 
@@ -383,17 +519,19 @@ class Build : NukeBuild
         {
             Serilog.Log.Information("Release artifacts created at: {Path}", VersionedArtifactsDirectory);
             Serilog.Log.Information("Version: {Version}", Version);
-            
+
             // Create directory structure
             LogsDirectory.CreateDirectory();
             TestResultsDirectory.CreateDirectory();
             TestReportsDirectory.CreateDirectory();
-            
+            SessionReportsDirectory.CreateDirectory();
+
             // Create .gitkeep files
             System.IO.File.WriteAllText(LogsDirectory / ".gitkeep", "");
             System.IO.File.WriteAllText(TestResultsDirectory / ".gitkeep", "");
             System.IO.File.WriteAllText(TestReportsDirectory / ".gitkeep", "");
-            
+            System.IO.File.WriteAllText(SessionReportsDirectory / ".gitkeep", "");
+
             // Create version info file
             var versionFile = VersionedArtifactsDirectory / "version.json";
             System.IO.File.WriteAllText(versionFile, System.Text.Json.JsonSerializer.Serialize(new
@@ -403,26 +541,29 @@ class Build : NukeBuild
                 branch = GitVersion?.BranchName ?? "unknown",
                 commit = GitVersion?.Sha ?? "unknown",
                 buildDate = DateTime.UtcNow.ToString("o"),
-                components = new string[] { "console", "website" },
+                components = new string[] { "console", "windows", "website" },
                 directories = new
                 {
                     publish = "publish/",
                     logs = "logs/",
                     testResults = "test-results/",
-                    testReports = "test-reports/"
+                    testReports = "test-reports/",
+                    sessionReports = "reports/sessions/"
                 }
             }, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-            
+
             Serilog.Log.Information("Version file created: {File}", versionFile);
-            
+
             // List all artifacts
             Serilog.Log.Information("\n=== Release Artifacts ===");
             Serilog.Log.Information("Version: {Version}", Version);
             Serilog.Log.Information("Console App: {Path}", PublishDirectory / "console");
+            Serilog.Log.Information("Windows App: {Path}", PublishDirectory / "windows");
             Serilog.Log.Information("Website: {Path}", PublishDirectory / "website");
             Serilog.Log.Information("Logs: {Path}", LogsDirectory);
             Serilog.Log.Information("Test Results: {Path}", TestResultsDirectory);
             Serilog.Log.Information("Test Reports: {Path}", TestReportsDirectory);
+            Serilog.Log.Information("Session Reports: {Path}", SessionReportsDirectory);
             Serilog.Log.Information("========================\n");
         });
 }

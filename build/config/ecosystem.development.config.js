@@ -2,15 +2,15 @@ const path = require('path');
 
 /**
  * PM2 Development Configuration
- * 
+ *
  * This configuration runs the stack in development mode with hot reload:
  * - Astro dev server (hot reload enabled)
  * - PTY terminal backend (WebSocket server on port 3001)
- * 
+ *
  * Note: Console app is NOT included in dev stack because Terminal.Gui
  * requires an interactive terminal. Run it manually when needed:
  *   cd dotnet/console-app/LablabBean.Console && dotnet run
- * 
+ *
  * Usage: pnpm pm2:dev or task dev-stack
  */
 

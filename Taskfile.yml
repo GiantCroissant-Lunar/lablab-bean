@@ -4,61 +4,61 @@ tasks:
   build:
     desc: Build using NUKE default target (Compile)
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1
 
   build:console:
     desc: Build console app via NUKE (Compile)
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Compile --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Compile --configuration Debug
 
   build:windows:
     desc: Build Windows app via NUKE (PublishWindows or Compile if configured)
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target PublishWindows --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target PublishWindows --configuration Debug
 
   build:restore:
     desc: Restore via NUKE
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Restore
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Restore
 
   publish:
     desc: Publish console and windows apps into build/_artifacts/<version>/publish
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target PublishAll --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target PublishAll --configuration Debug
 
   release:
     desc: Full release packaging (includes website copy; may require website build)
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Release --configuration Release
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Release --configuration Release
 
   build:artifacts:
     desc: Compile then publish (shortcut for build + publish)
     cmds:
-      - task: build
-      - task: publish
+    - task: build
+    - task: publish
 
   test:
     desc: Run all tests via NUKE
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Test --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Test --configuration Debug
 
   test:coverage:
     desc: Run tests with code coverage
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target TestWithCoverage --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target TestWithCoverage --configuration Debug
 
   reports:
     desc: Generate HTML and CSV reports (builds, session, plugin metrics)
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports --configuration Debug
 
   reports:ci:
     desc: Run tests with coverage and generate all reports (full CI workflow)
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target TestWithCoverage --configuration Debug
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target TestWithCoverage --configuration Debug
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target GenerateReports --configuration Debug
 
   clean:
     desc: Clean all build artifacts via NUKE
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Clean
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Clean
