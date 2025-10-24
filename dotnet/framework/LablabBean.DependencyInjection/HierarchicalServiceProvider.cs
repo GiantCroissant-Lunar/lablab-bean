@@ -1,16 +1,19 @@
 using LablabBean.DependencyInjection.Exceptions;
+using LablabBean.DependencyInjection.Diagnostics;
+using System.Diagnostics;
 
 namespace LablabBean.DependencyInjection;
 
 /// <summary>
 /// Hierarchical service provider implementation supporting parent-child container relationships.
 /// </summary>
-public sealed class HierarchicalServiceProvider : IHierarchicalServiceProvider, ISupportRequiredService, IServiceScopeFactory
+public sealed class HierarchicalServiceProvider : IHierarchicalServiceProvider, ISupportRequiredService, IServiceScopeFactory, IServiceProviderIsService
 {
     private const int MaxDepth = 10;
     private readonly IServiceProvider _innerProvider;
     private readonly List<HierarchicalServiceProvider> _children = new();
     private bool _isDisposed;
+    internal Guid Id { get; } = Guid.NewGuid();
 
     public HierarchicalServiceProvider(
         IServiceCollection services,
@@ -29,6 +32,9 @@ public sealed class HierarchicalServiceProvider : IHierarchicalServiceProvider, 
         _innerProvider = options != null
             ? services.BuildServiceProvider(options)
             : services.BuildServiceProvider();
+
+        // Emit diagnostic event after construction completes
+        HierarchicalContainerDiagnostics.RaiseContainerCreated(this);
     }
 
     public string Name { get; }
@@ -40,14 +46,44 @@ public sealed class HierarchicalServiceProvider : IHierarchicalServiceProvider, 
     public object? GetService(Type serviceType)
     {
         ThrowIfDisposed();
+        var serviceTypeName = serviceType.FullName ?? serviceType.Name;
 
-        var service = _innerProvider.GetService(serviceType);
-        if (service != null || Parent == null)
+        // Emit start diagnostics
+        HierarchicalContainerEventSource.Log.ResolveStart(Id, Name, Depth, serviceTypeName);
+
+        Activity? activity = null;
+        if (HierarchicalContainerActivity.Source.HasListeners())
         {
-            return service;
+            activity = HierarchicalContainerActivity.Source.StartActivity("di.resolve", ActivityKind.Internal);
+            if (activity is not null)
+            {
+                activity.SetTag("di.service.type", serviceTypeName);
+                activity.SetTag("di.container.name", Name);
+                activity.SetTag("di.container.depth", Depth);
+                activity.SetTag("di.container.id", Id);
+            }
         }
 
-        return Parent.GetService(serviceType);
+        var service = ResolveInternal(serviceType, out var resolvedDepth);
+
+        var outcome = service is not null
+            ? (resolvedDepth == Depth ? ResolveOutcome.LocalHit : ResolveOutcome.ParentHit)
+            : ResolveOutcome.NotFound;
+
+        // Emit stop diagnostics with outcome
+        HierarchicalContainerEventSource.Log.ResolveStop(Id, Name, Depth, serviceTypeName, (int)outcome, service is null ? -1 : resolvedDepth);
+
+        if (activity is not null)
+        {
+            activity.SetTag("di.resolve.outcome", outcome.ToString());
+            if (service is not null)
+            {
+                activity.SetTag("di.resolved.depth", resolvedDepth);
+            }
+            activity.Dispose();
+        }
+
+        return service;
     }
 
     public object GetRequiredService(Type serviceType)
@@ -57,10 +93,65 @@ public sealed class HierarchicalServiceProvider : IHierarchicalServiceProvider, 
         var service = GetService(serviceType);
         if (service == null)
         {
-            throw new ServiceResolutionException(serviceType, Name);
+            var ex = new ServiceResolutionException(serviceType, Name);
+            var serviceTypeName = serviceType.FullName ?? serviceType.Name;
+            HierarchicalContainerDiagnostics.RaiseResolveFailure(this, serviceTypeName, ex);
+            throw ex;
         }
 
         return service;
+    }
+
+    private object? ResolveInternal(Type serviceType, out int resolvedDepth)
+    {
+        // Try local
+        var local = _innerProvider.GetService(serviceType);
+        if (local is not null)
+        {
+            resolvedDepth = Depth;
+            return local;
+        }
+
+        // Try parent chain without re-emitting diagnostics
+        if (Parent is HierarchicalServiceProvider parent)
+        {
+            return parent.ResolveInternal(serviceType, out resolvedDepth);
+        }
+        else if (Parent is not null)
+        {
+            var svc = Parent.GetService(serviceType);
+            resolvedDepth = svc is not null ? Parent.Depth : -1;
+            return svc;
+        }
+
+        resolvedDepth = -1;
+        return null;
+    }
+
+    public bool IsService(Type serviceType)
+    {
+        ThrowIfDisposed();
+
+        // Prefer the inner provider's non-instantiating check when available
+        if (_innerProvider is IServiceProviderIsService isService)
+        {
+            if (isService.IsService(serviceType))
+            {
+                return true;
+            }
+        }
+        else
+        {
+            // Fallback: attempt a best-effort check (may instantiate)
+            var local = _innerProvider.GetService(serviceType);
+            if (local is not null)
+            {
+                return true;
+            }
+        }
+
+        // Delegate to parent if not available locally
+        return Parent is IServiceProviderIsService parentIsService && parentIsService.IsService(serviceType);
     }
 
     public IHierarchicalServiceProvider CreateChildContainer(
@@ -80,6 +171,7 @@ public sealed class HierarchicalServiceProvider : IHierarchicalServiceProvider, 
 
         var child = new HierarchicalServiceProvider(services, name, this);
         _children.Add(child);
+        HierarchicalContainerDiagnostics.RaiseChildAdded(child);
 
         return child;
     }
@@ -134,6 +226,18 @@ public sealed class HierarchicalServiceProvider : IHierarchicalServiceProvider, 
         }
 
         _isDisposed = true;
+
+        // Emit diagnostic event after disposal completes
+        HierarchicalContainerDiagnostics.RaiseContainerDisposed(this);
+
+        // If we have a parent, remove ourselves from its children and emit event
+        if (Parent is HierarchicalServiceProvider parent)
+        {
+            if (parent._children.Remove(this))
+            {
+                HierarchicalContainerDiagnostics.RaiseChildRemoved(this);
+            }
+        }
     }
 
     private void ThrowIfDisposed()

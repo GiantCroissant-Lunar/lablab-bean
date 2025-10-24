@@ -147,6 +147,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.DependencyInject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.DependencyInjection.Tests", "tests\LablabBean.DependencyInjection.Tests\LablabBean.DependencyInjection.Tests.csproj", "{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.DependencyInjection.Benchmarks", "tests\LablabBean.DependencyInjection.Benchmarks\LablabBean.DependencyInjection.Benchmarks.csproj", "{9717A328-DFA9-4B5E-904D-AC62527C3F32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -409,6 +411,10 @@ Global
 		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9717A328-DFA9-4B5E-904D-AC62527C3F32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9717A328-DFA9-4B5E-904D-AC62527C3F32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9717A328-DFA9-4B5E-904D-AC62527C3F32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9717A328-DFA9-4B5E-904D-AC62527C3F32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{10000000-0000-0000-0000-000000000001} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
@@ -477,5 +483,6 @@ Global
 		{C63A925F-3A18-4521-94A1-C9000E7273D7} = {515688BC-882E-4280-9665-F2470BA396B3}
 		{07C13419-B582-4F1E-89EE-B128047D0D77} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
 		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25} = {83F45A0E-898B-450E-B071-7804E854933A}
+		{9717A328-DFA9-4B5E-904D-AC62527C3F32} = {83F45A0E-898B-450E-B071-7804E854933A}
 	EndGlobalSection
 EndGlobal
