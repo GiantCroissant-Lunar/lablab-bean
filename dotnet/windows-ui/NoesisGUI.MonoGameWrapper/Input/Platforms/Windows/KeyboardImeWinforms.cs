@@ -396,13 +396,13 @@
 
             private const int EM_GETTEXTLENGTHEX = (WM_USER + 95);
 
-            // Flags for the GETEXTEX data structure  
+            // Flags for the GETEXTEX data structure
             private const int GT_DEFAULT = 0;
 
-            private const int GTL_CLOSE = 4; // Fast computation of a "close" answer 
+            private const int GTL_CLOSE = 4; // Fast computation of a "close" answer
 
-            // Flags for the GETTEXTLENGTHEX data structure 
-            private const int GTL_DEFAULT = 0; // Do default (return # of chars) 
+            // Flags for the GETTEXTLENGTHEX data structure
+            private const int GTL_DEFAULT = 0; // Do default (return # of chars)
 
             private const int WM_USER = 0x0400;
 

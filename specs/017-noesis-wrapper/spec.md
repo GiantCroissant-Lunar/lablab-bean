@@ -58,4 +58,3 @@ Acceptance checks per scenario are measurable by visuals on launch, button click
 
 - `ref-projects/NoesisGUI.MonoGameWrapper` (source)
 - `NoesisWrapper.cs`, `NoesisViewWrapper.cs`, `Config/NoesisConfig.cs`
-
