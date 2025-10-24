@@ -1,0 +1,8 @@
+<Project>
+  <!-- When publishing an app that references plugin projects, avoid output conflicts -->
+  <ItemGroup Condition="'$(PluginJsonTargetSubfolder)'=='true'">
+    <None Update="plugin.json">
+      <TargetPath>plugins\$(MSBuildProjectName)\plugin.json</TargetPath>
+    </None>
+  </ItemGroup>
+</Project>

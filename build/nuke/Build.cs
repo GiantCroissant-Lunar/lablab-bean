@@ -149,12 +149,11 @@ class Build : NukeBuild
         });
 
     Target GenerateReports => _ => _
-        .DependsOn(TestWithCoverage)
         .Executes(() =>
         {
             TestReportsDirectory.CreateOrCleanDirectory();
 
-            var reportingToolPath = SourceDirectory / "console-app" / "LablabBean.Console" / "bin" / Configuration / "net8.0" / "LablabBean.Console.dll";
+            var reportingToolPath = VersionedArtifactsDirectory / "publish" / "console" / "LablabBean.Console.exe";
 
             if (!System.IO.File.Exists(reportingToolPath))
             {
@@ -185,17 +184,17 @@ class Build : NukeBuild
             bool buildMetricsSuccess = false;
             try
             {
-                DotNet($"{reportingToolPath} report build " +
-                      $"--output \"{buildReportPath}\" " +
-                      $"--data \"{TestResultsDirectory}\" " +
-                      $"--format html",
-                      workingDirectory: RootDirectory);
+                var pBuildHtml = ProcessTasks.StartProcess(
+                    reportingToolPath,
+                    $"report build --output \"{buildReportPath}\" --data \"{TestResultsDirectory}\" --format html",
+                    RootDirectory);
+                pBuildHtml.AssertZeroExitCode();
 
-                DotNet($"{reportingToolPath} report build " +
-                      $"--output \"{buildReportCsvPath}\" " +
-                      $"--data \"{TestResultsDirectory}\" " +
-                      $"--format csv",
-                      workingDirectory: RootDirectory);
+                var pBuildCsv = ProcessTasks.StartProcess(
+                    reportingToolPath,
+                    $"report build --output \"{buildReportCsvPath}\" --data \"{TestResultsDirectory}\" --format csv",
+                    RootDirectory);
+                pBuildCsv.AssertZeroExitCode();
 
                 if (System.IO.File.Exists(buildReportPath))
                 {
@@ -216,17 +215,17 @@ class Build : NukeBuild
             bool sessionSuccess = false;
             try
             {
-                DotNet($"{reportingToolPath} report session " +
-                      $"--output \"{sessionReportPath}\" " +
-                      $"--data \"{TestResultsDirectory}\" " +
-                      $"--format html",
-                      workingDirectory: RootDirectory);
+                var pSessionHtml = ProcessTasks.StartProcess(
+                    reportingToolPath,
+                    $"report session --output \"{sessionReportPath}\" --data \"{TestResultsDirectory}\" --format html",
+                    RootDirectory);
+                pSessionHtml.AssertZeroExitCode();
 
-                DotNet($"{reportingToolPath} report session " +
-                      $"--output \"{sessionReportCsvPath}\" " +
-                      $"--data \"{TestResultsDirectory}\" " +
-                      $"--format csv",
-                      workingDirectory: RootDirectory);
+                var pSessionCsv = ProcessTasks.StartProcess(
+                    reportingToolPath,
+                    $"report session --output \"{sessionReportCsvPath}\" --data \"{TestResultsDirectory}\" --format csv",
+                    RootDirectory);
+                pSessionCsv.AssertZeroExitCode();
 
                 if (System.IO.File.Exists(sessionReportPath))
                 {
@@ -247,17 +246,17 @@ class Build : NukeBuild
             bool pluginSuccess = false;
             try
             {
-                DotNet($"{reportingToolPath} report plugin " +
-                      $"--output \"{pluginReportPath}\" " +
-                      $"--data \"{TestResultsDirectory}\" " +
-                      $"--format html",
-                      workingDirectory: RootDirectory);
+                var pPluginHtml = ProcessTasks.StartProcess(
+                    reportingToolPath,
+                    $"report plugin --output \"{pluginReportPath}\" --data \"{TestResultsDirectory}\" --format html",
+                    RootDirectory);
+                pPluginHtml.AssertZeroExitCode();
 
-                DotNet($"{reportingToolPath} report plugin " +
-                      $"--output \"{pluginReportCsvPath}\" " +
-                      $"--data \"{TestResultsDirectory}\" " +
-                      $"--format csv",
-                      workingDirectory: RootDirectory);
+                var pPluginCsv = ProcessTasks.StartProcess(
+                    reportingToolPath,
+                    $"report plugin --output \"{pluginReportCsvPath}\" --data \"{TestResultsDirectory}\" --format csv",
+                    RootDirectory);
+                pPluginCsv.AssertZeroExitCode();
 
                 if (System.IO.File.Exists(pluginReportPath))
                 {
@@ -442,13 +441,40 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
+            var consoleOut = PublishDirectory / "console";
             DotNetPublish(s => s
-                .SetProject(Solution.GetProject("LablabBean.Console"))
+                .SetProject(SourceDirectory / "console-app" / "LablabBean.Console" / "LablabBean.Console.csproj")
                 .SetConfiguration(Configuration)
-                .SetOutput(PublishDirectory / "console")
+                .SetOutput(consoleOut)
                 .SetRuntime("win-x64")
                 .SetSelfContained(true)
-                .EnableNoRestore());
+                .SetProcessArgumentConfigurator(args => args.Add("/p:PluginJsonTargetSubfolder=true")));
+
+            // Publish plugins next to console app for runtime loading
+            var pluginsRoot = consoleOut / "plugins";
+            pluginsRoot.CreateOrCleanDirectory();
+
+            var pluginProjects = (RootDirectory / "dotnet" / "plugins")
+                .GlobFiles("**/*.csproj")
+                .Where(p => {
+                    var n = p.ToString().Replace('\\','/');
+                    return !n.Contains("/tests/", StringComparison.OrdinalIgnoreCase)
+                           && !n.Contains("/LablabBean.Plugins.Diagnostic.", StringComparison.OrdinalIgnoreCase);
+                })
+                .ToList();
+
+            foreach (var pluginCsproj in pluginProjects)
+            {
+                var pluginName = System.IO.Path.GetFileNameWithoutExtension(pluginCsproj);
+                var dest = pluginsRoot / pluginName;
+                Serilog.Log.Information("Publishing plugin {Plugin} -> {Dest}", pluginName, dest);
+                DotNetPublish(s => s
+                    .SetProject(pluginCsproj)
+                    .SetConfiguration(Configuration)
+                    .SetOutput(dest)
+                    .EnableNoRestore()
+                    .SetProcessArgumentConfigurator(args => args.Add("/p:PluginJsonTargetSubfolder=true")));
+            }
         });
 
     Target PublishWindows => _ => _
@@ -456,12 +482,11 @@ class Build : NukeBuild
         .Executes(() =>
         {
             DotNetPublish(s => s
-                .SetProject(Solution.GetProject("LablabBean.Windows"))
+                .SetProject(SourceDirectory / "windows-app" / "LablabBean.Windows" / "LablabBean.Windows.csproj")
                 .SetConfiguration(Configuration)
                 .SetOutput(PublishDirectory / "windows")
                 .SetRuntime("win-x64")
-                .SetSelfContained(true)
-                .EnableNoRestore());
+                .SetSelfContained(true));
         });
 
     Target BuildWebsite => _ => _
@@ -495,12 +520,37 @@ class Build : NukeBuild
             // Publish Console App
             var consoleProjectPath = SourceDirectory / "console-app" / "LablabBean.Console" / "LablabBean.Console.csproj";
             Serilog.Log.Information("Publishing Console App...");
+            var consoleOut = PublishDirectory / "console";
             DotNetPublish(s => s
                 .SetProject(consoleProjectPath)
                 .SetConfiguration(Configuration)
-                .SetOutput(PublishDirectory / "console")
+                .SetOutput(consoleOut)
                 .SetRuntime("win-x64")
-                .SetSelfContained(true));
+                .SetSelfContained(true)
+                .SetProcessArgumentConfigurator(args => args.Add("/p:PluginJsonTargetSubfolder=true")));
+
+            // Publish Plugins next to console app
+            var pluginsRoot = consoleOut / "plugins";
+            pluginsRoot.CreateOrCleanDirectory();
+            var pluginProjects = (RootDirectory / "dotnet" / "plugins")
+                .GlobFiles("**/*.csproj")
+                .Where(p => {
+                    var n = p.ToString().Replace('\\','/');
+                    return !n.Contains("/tests/", StringComparison.OrdinalIgnoreCase)
+                           && !n.Contains("/LablabBean.Plugins.Diagnostic.", StringComparison.OrdinalIgnoreCase);
+                })
+                .ToList();
+            foreach (var pluginCsproj in pluginProjects)
+            {
+                var pluginName = System.IO.Path.GetFileNameWithoutExtension(pluginCsproj);
+                var dest = pluginsRoot / pluginName;
+                Serilog.Log.Information("Publishing plugin {Plugin} -> {Dest}", pluginName, dest);
+                DotNetPublish(s => s
+                    .SetProject(pluginCsproj)
+                    .SetConfiguration(Configuration)
+                    .SetOutput(dest)
+                    .SetProcessArgumentConfigurator(args => args.Add("/p:PluginJsonTargetSubfolder=true")));
+            }
 
             // Publish Windows App
             var windowsProjectPath = SourceDirectory / "windows-app" / "LablabBean.Windows" / "LablabBean.Windows.csproj";

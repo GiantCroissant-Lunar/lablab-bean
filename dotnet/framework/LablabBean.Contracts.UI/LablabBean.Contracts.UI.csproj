@@ -14,4 +14,8 @@
                       ReferenceOutputAssembly="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="TheSadRogue.Primitives" />
+  </ItemGroup>
+
 </Project>

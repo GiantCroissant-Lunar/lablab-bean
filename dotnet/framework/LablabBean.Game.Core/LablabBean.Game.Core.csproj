@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LablabBean.Core\LablabBean.Core.csproj" />
+    <ProjectReference Include="..\LablabBean.Contracts.UI\LablabBean.Contracts.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
