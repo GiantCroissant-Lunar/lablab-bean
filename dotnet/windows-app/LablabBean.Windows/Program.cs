@@ -21,6 +21,11 @@ using SadConsole;
 using SadConsole.Configuration;
 using Serilog;
 using System.Reflection;
+#if WINDOWS_DX
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using LablabBean.UI.Noesis;
+#endif
 
 try
 {
@@ -84,6 +89,8 @@ try
     services.AddSingleton<InventorySystem>();
     services.AddSingleton<ItemSpawnSystem>();
     services.AddSingleton<StatusEffectSystem>();
+    services.AddSingleton<ActivityLogSystem>();
+    services.AddSingleton<LablabBean.Contracts.UI.Services.IActivityLogService, LablabBean.Game.Core.Services.ActivityLogService>();
     services.AddSingleton<LevelManager>();
     services.AddSingleton<GameStateManager>();
 
@@ -105,6 +112,102 @@ try
 
     // Start SadConsole with a callback to set up the screen after initialization
     Game.Create(builder);
+
+#if WINDOWS_DX
+    // Gate Noesis overlay behind config flag (disabled by default)
+    var noesisEnabled = configuration.GetValue<bool>("Noesis:Enabled", false);
+    if (noesisEnabled)
+    {
+        // Try to locate the underlying MonoGame Game and Graphics manager via reflection
+        static T? FindInObjectGraph<T>(object root, int maxDepth = 3) where T : class
+        {
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+            var queue = new Queue<(object obj, int depth)>();
+            queue.Enqueue((root, 0));
+        visited.Add(root);
+        while (queue.Count > 0)
+        {
+            var (current, depth) = queue.Dequeue();
+            if (current is T found)
+                return found;
+            if (depth >= maxDepth) continue;
+            var type = current.GetType();
+            const BindingFlags bf = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            foreach (var prop in type.GetProperties(bf))
+            {
+                if (!prop.CanRead) continue;
+                object? val = null;
+                try { val = prop.GetValue(current); } catch { }
+                if (val == null || visited.Contains(val)) continue;
+                visited.Add(val);
+                queue.Enqueue((val, depth + 1));
+            }
+            foreach (var field in type.GetFields(bf))
+            {
+                object? val = null;
+                try { val = field.GetValue(current); } catch { }
+                if (val == null || visited.Contains(val)) continue;
+                visited.Add(val);
+                queue.Enqueue((val, depth + 1));
+            }
+        }
+        return null;
+    }
+
+        // Resolve MonoGame objects
+        var mgGame = FindInObjectGraph<Game>(Game.Instance) ?? throw new InvalidOperationException("MonoGame Game instance not found for WINDOWS_DX");
+        var gdm = FindInObjectGraph<GraphicsDeviceManager>(mgGame) ?? FindInObjectGraph<GraphicsDeviceManager>(Game.Instance)
+                  ?? throw new InvalidOperationException("GraphicsDeviceManager not found for WINDOWS_DX");
+        var graphicsDevice = mgGame.GraphicsDevice ?? throw new InvalidOperationException("GraphicsDevice not available");
+        var gameWindow = mgGame.Window ?? throw new InvalidOperationException("GameWindow not available");
+
+        // Prepare Noesis layer
+        var noesisLayer = new NoesisLayer(gameWindow, gdm, graphicsDevice, () => graphicsDevice.Viewport);
+        var licenseName = Environment.GetEnvironmentVariable("NOESIS_LICENSE_NAME") ?? configuration["Noesis:LicenseName"];
+        var licenseKey  = Environment.GetEnvironmentVariable("NOESIS_LICENSE_KEY")  ?? configuration["Noesis:LicenseKey"];
+        var xamlRoot = Path.GetFullPath("dotnet/windows-ui/LablabBean.UI.Noesis/Assets/Root.xaml");
+        var xamlTheme = Path.GetFullPath("dotnet/windows-ui/LablabBean.UI.Noesis/Assets/Theme.xaml");
+        try
+        {
+            noesisLayer.Initialize(licenseName, licenseKey, xamlRoot, xamlTheme);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Noesis overlay initialization failed; continuing without overlay");
+        }
+
+        // Add a MonoGame component to drive Noesis update and render each frame
+        if (noesisLayer.IsEnabled)
+        {
+            mgGame.Components.Add(new NoesisComponent(mgGame, noesisLayer));
+            Log.Information("Noesis overlay enabled (WINDOWS_DX)");
+        }
+
+        // Local component type
+        sealed class NoesisComponent : DrawableGameComponent
+        {
+            private readonly NoesisLayer _layer;
+            public NoesisComponent(Game game, NoesisLayer layer) : base(game) { _layer = layer; }
+            public override void Update(GameTime gameTime)
+            {
+                _layer.UpdateInput(gameTime, Game.IsActive);
+                _layer.Update(gameTime);
+                base.Update(gameTime);
+            }
+            public override void Draw(GameTime gameTime)
+            {
+                _layer.PreRender();
+                _layer.Render();
+                base.Draw(gameTime);
+            }
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) _layer.Dispose();
+                base.Dispose(disposing);
+            }
+        }
+    }
+#endif
 
     // SadConsole is now initialized, safe to create screens
     Game.Instance.Started += (sender, args) =>
@@ -235,6 +338,9 @@ try
 
     Game.Instance.Run();
     Game.Instance.Dispose();
+#if WINDOWS_DX
+    // NoesisLayer is disposed by the component; nothing else to do here
+#endif
 
     // Export session report before exit
     var metricsCollector = serviceProvider.GetService<SessionMetricsCollector>();
