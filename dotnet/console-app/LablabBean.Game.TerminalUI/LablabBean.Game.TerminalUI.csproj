@@ -7,6 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Core\LablabBean.Core.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.Quest\LablabBean.Plugins.Quest.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.NPC\LablabBean.Plugins.NPC.csproj" />
   </ItemGroup>
 
   <ItemGroup>

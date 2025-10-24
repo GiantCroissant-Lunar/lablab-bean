@@ -25,15 +25,40 @@
                       ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="SadConsole" />
-    <PackageReference Include="SadConsole.Host.MonoGame" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Serilog" />
-  </ItemGroup>
+  <Choose>
+    <When Condition="'$(WINDOWS_DX)' == 'true'">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);WINDOWS_DX</DefineConstants>
+        <UseWPF>false</UseWPF>
+        <UseWindowsForms>false</UseWindowsForms>
+        <TargetFramework>net8.0-windows</TargetFramework>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="SadConsole" />
+        <PackageReference Include="SadConsole.Host.MonoGame" />
+        <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.4" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Serilog" />
+      </ItemGroup>
+      <ItemGroup>
+        <ProjectReference Include="..\..\windows-ui\NoesisGUI.MonoGameWrapper\NoesisGUI.MonoGameWrapper.csproj" />
+        <ProjectReference Include="..\..\windows-ui\LablabBean.UI.Noesis\LablabBean.UI.Noesis.csproj" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="SadConsole" />
+        <PackageReference Include="SadConsole.Host.MonoGame" />
+        <PackageReference Include="MonoGame.Framework.DesktopGL" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Serilog" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 
   <ItemGroup>
     <None Update="appsettings.json">

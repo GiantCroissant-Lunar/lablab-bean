@@ -1,0 +1,86 @@
+{
+  "id": "eldrin-dialogue",
+  "nodes": [
+    {
+      "choices": [
+        {
+          "id": "ask-about-quest",
+          "nextNodeId": "quest-offer",
+          "text": "Do you have any tasks for me?"
+        },
+        {
+          "id": "ask-about-lore",
+          "nextNodeId": "lore-response",
+          "text": "Tell me about this place."
+        },
+        {
+          "id": "goodbye",
+          "nextNodeId": "end",
+          "text": "Farewell."
+        }
+      ],
+      "id": "greeting",
+      "npcText": "Greetings, adventurer! I am Eldrin, keeper of ancient knowledge."
+    },
+    {
+      "choices": [
+        {
+          "action": {
+            "questId": "retrieve-artifact",
+            "type": "AcceptQuest"
+          },
+          "id": "accept_quest",
+          "nextNodeId": "quest-accepted",
+          "text": "I accept your quest!"
+        },
+        {
+          "id": "decline_quest",
+          "nextNodeId": "quest-declined",
+          "text": "Not right now."
+        }
+      ],
+      "id": "quest-offer",
+      "npcText": "Indeed! I seek a brave soul to retrieve an ancient artifact from the fifth level of the dungeon. The path is perilous, but the reward is great. Will you accept this quest?"
+    },
+    {
+      "choices": [
+        {
+          "id": "continue",
+          "nextNodeId": "end",
+          "text": "I'll return soon."
+        }
+      ],
+      "id": "quest-accepted",
+      "npcText": "Excellent! May the ancient powers guide you. Return to me when you have the artifact."
+    },
+    {
+      "choices": [
+        {
+          "id": "continue",
+          "nextNodeId": "end",
+          "text": "Farewell."
+        }
+      ],
+      "id": "quest-declined",
+      "npcText": "I understand. Perhaps another time, when you feel ready."
+    },
+    {
+      "choices": [
+        {
+          "id": "continue",
+          "nextNodeId": "greeting",
+          "text": "I see. Thank you."
+        }
+      ],
+      "id": "lore-response",
+      "npcText": "This dungeon was built centuries ago by a forgotten civilization. Many treasures and dangers lie within its depths."
+    },
+    {
+      "choices": [],
+      "id": "end",
+      "npcText": "Farewell, adventurer."
+    }
+  ],
+  "npcId": "eldrin-sage",
+  "rootNode": "greeting"
+}

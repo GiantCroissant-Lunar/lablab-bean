@@ -1,0 +1,24 @@
+{
+  "author": "Lablab Bean Team",
+  "capabilities": [
+    "merchant",
+    "trading",
+    "gold",
+    "shop"
+  ],
+  "dependencies": [
+    "npc"
+  ],
+  "description": "Merchant trading system with gold economy and item transactions",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.Merchant.dll,LablabBean.Plugins.Merchant.MerchantPlugin",
+    "dotnet.sadconsole": "LablabBean.Plugins.Merchant.dll,LablabBean.Plugins.Merchant.MerchantPlugin"
+  },
+  "id": "merchant",
+  "name": "Merchant System",
+  "permissions": {
+    "profile": "Standard"
+  },
+  "priority": 100,
+  "version": "1.0.0"
+}

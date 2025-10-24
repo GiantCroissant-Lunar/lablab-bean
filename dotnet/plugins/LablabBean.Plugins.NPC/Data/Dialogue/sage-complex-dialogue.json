@@ -1,0 +1,271 @@
+{
+  "id": "sage_complex_dialogue",
+  "name": "Sage Aldric - Complex Dialogue Tree",
+  "nodes": {
+    "dangers_warning": {
+      "choices": [
+        {
+          "id": "thanks_for_warning",
+          "nextNodeId": "greeting",
+          "text": "I'll be careful. Thank you."
+        }
+      ],
+      "emotion": "concerned",
+      "id": "dangers_warning",
+      "npcName": "Sage Aldric",
+      "tags": [
+        "warning"
+      ],
+      "text": "Beware the Guardian Constructs on level 5. And the Crimson Serpent lurks in the deepest levels - many adventurers have fallen to its venom. Also, environmental hazards: spike traps, poison gas... this place is designed to kill."
+    },
+    "dungeon_lore": {
+      "choices": [
+        {
+          "id": "ask_more_lore",
+          "nextNodeId": "shadowmancers_lore",
+          "text": "Tell me more about the Shadowmancers."
+        },
+        {
+          "id": "ask_dangers",
+          "nextNodeId": "dangers_warning",
+          "text": "What dangers should I watch for?"
+        },
+        {
+          "id": "back_to_main",
+          "nextNodeId": "greeting",
+          "text": "I see. What else can you tell me?"
+        }
+      ],
+      "emotion": "serious",
+      "id": "dungeon_lore",
+      "npcName": "Sage Aldric",
+      "onEnterActions": [
+        {
+          "parameters": {
+            "key": "told_about_dungeon",
+            "value": "true"
+          },
+          "type": "SetNPCState"
+        }
+      ],
+      "tags": [
+        "lore"
+      ],
+      "text": "This dungeon... it's ancient. Built by the Shadowmancers a thousand years ago. They sought to harness the power beneath the earth. The deeper you go, the more dangerous it becomes. But also... the more rewarding."
+    },
+    "goodbye": {
+      "choices": [],
+      "emotion": "farewell",
+      "id": "goodbye",
+      "npcName": "Sage Aldric",
+      "tags": [
+        "goodbye"
+      ],
+      "text": "Safe travels, adventurer. May wisdom light your path through the darkness."
+    },
+    "greeting": {
+      "choices": [
+        {
+          "choiceType": "lore",
+          "id": "ask_about_dungeon",
+          "nextNodeId": "dungeon_lore",
+          "text": "Tell me about this dungeon."
+        },
+        {
+          "choiceType": "quest",
+          "id": "ask_about_quest",
+          "nextNodeId": "quest_check",
+          "text": "Do you have any work for me?"
+        },
+        {
+          "choiceType": "special",
+          "condition": "level >= 3",
+          "id": "ask_about_magic",
+          "nextNodeId": "magic_check",
+          "requirementsText": "Requires: Level 3+",
+          "text": "Can you teach me magic?"
+        },
+        {
+          "choiceType": "goodbye",
+          "id": "goodbye_early",
+          "nextNodeId": "goodbye",
+          "text": "Just browsing, thanks."
+        }
+      ],
+      "emotion": "neutral",
+      "id": "greeting",
+      "npcName": "Sage Aldric",
+      "tags": [
+        "greeting"
+      ],
+      "text": "Ah, a visitor! Welcome to my humble library. Few adventurers seek knowledge these days... Are you here for wisdom, or merely passing through?"
+    },
+    "magic_check": {
+      "choices": [
+        {
+          "actions": [
+            {
+              "parameters": {
+                "amount": 500
+              },
+              "type": "TakeGold"
+            },
+            {
+              "message": "Received: Firebolt Scroll",
+              "parameters": {
+                "itemId": "firebolt_scroll",
+                "quantity": 1
+              },
+              "type": "GiveItem"
+            }
+          ],
+          "condition": "hasGold(500)",
+          "id": "buy_spell",
+          "nextNodeId": "spell_purchased",
+          "requirementsText": "Requires: 500 gold",
+          "text": "Yes, I'll take it! [Pay 500 gold]"
+        },
+        {
+          "id": "decline_spell",
+          "nextNodeId": "no_spell",
+          "text": "Too expensive for me."
+        }
+      ],
+      "emotion": "neutral",
+      "id": "magic_check",
+      "npcName": "Sage Aldric",
+      "tags": [
+        "trade"
+      ],
+      "text": "Magic, eh? You show promise... I could teach you a basic spell, but it will cost you. 500 gold for a Firebolt scroll. Interested?"
+    },
+    "no_spell": {
+      "choices": [
+        {
+          "id": "maybe_later",
+          "nextNodeId": "greeting",
+          "text": "Maybe when I have more gold."
+        }
+      ],
+      "emotion": "neutral",
+      "id": "no_spell",
+      "npcName": "Sage Aldric",
+      "text": "Understandable. Magic is a luxury, not a necessity. But it could save your life down there..."
+    },
+    "quest_accepted": {
+      "choices": [
+        {
+          "id": "quest_more_info",
+          "nextNodeId": "quest_advice",
+          "text": "Any other advice?"
+        },
+        {
+          "id": "quest_goodbye",
+          "nextNodeId": "goodbye",
+          "text": "I'll get right on it."
+        }
+      ],
+      "emotion": "happy",
+      "id": "quest_accepted",
+      "npcName": "Sage Aldric",
+      "tags": [
+        "quest_accepted"
+      ],
+      "text": "Excellent! The tome should be somewhere on level 7 or 8. It has a distinctive red leather binding. Return when you have it, and your reward awaits!"
+    },
+    "quest_advice": {
+      "choices": [
+        {
+          "id": "thanks_advice",
+          "nextNodeId": "goodbye",
+          "text": "Thank you, I'll be ready."
+        }
+      ],
+      "emotion": "serious",
+      "id": "quest_advice",
+      "npcName": "Sage Aldric",
+      "text": "The tome may be guarded. I sensed powerful magic around level 8... Be prepared for a fight. And... trust your instincts down there."
+    },
+    "quest_check": {
+      "choices": [
+        {
+          "actions": [
+            {
+              "message": "Quest accepted: Find the Ancient Tome",
+              "parameters": {
+                "questId": "find_ancient_tome"
+              },
+              "type": "AcceptQuest"
+            },
+            {
+              "parameters": {
+                "key": "gave_tome_quest",
+                "value": "true"
+              },
+              "type": "SetNPCState"
+            }
+          ],
+          "id": "accept_tome_quest",
+          "nextNodeId": "quest_accepted",
+          "text": "I'll find this tome for you."
+        },
+        {
+          "id": "decline_tome_quest",
+          "nextNodeId": "quest_declined",
+          "text": "Not interested in books right now."
+        }
+      ],
+      "emotion": "interested",
+      "id": "quest_check",
+      "npcName": "Sage Aldric",
+      "tags": [
+        "quest"
+      ],
+      "text": "Ah, a practical mind! Yes, I do have a task... I seek an ancient tome, lost somewhere in the dungeon. Find it, and I'll reward you handsomely."
+    },
+    "quest_declined": {
+      "choices": [
+        {
+          "id": "back_from_decline",
+          "nextNodeId": "greeting",
+          "text": "What else can you tell me?"
+        }
+      ],
+      "emotion": "disappointed",
+      "id": "quest_declined",
+      "npcName": "Sage Aldric",
+      "text": "Ah well, perhaps another time. Knowledge can wait... unlike treasure, I suppose."
+    },
+    "shadowmancers_lore": {
+      "choices": [
+        {
+          "id": "continue_exploration",
+          "nextNodeId": "goodbye",
+          "text": "Fascinating. I should continue my exploration."
+        }
+      ],
+      "emotion": "mysterious",
+      "id": "shadowmancers_lore",
+      "npcName": "Sage Aldric",
+      "tags": [
+        "lore",
+        "deep_lore"
+      ],
+      "text": "The Shadowmancers were a secretive order of wizards who mastered dark magic. They vanished mysteriously, leaving only this dungeon and scattered artifacts. Some say they transcended to another plane... others believe they were consumed by their own power."
+    },
+    "spell_purchased": {
+      "choices": [
+        {
+          "id": "spell_thanks",
+          "nextNodeId": "goodbye",
+          "text": "I will. Thank you!"
+        }
+      ],
+      "emotion": "happy",
+      "id": "spell_purchased",
+      "npcName": "Sage Aldric",
+      "text": "Excellent! Study that scroll carefully. Fire magic is powerful, but temperamental. Use it wisely."
+    }
+  },
+  "startNodeId": "greeting"
+}
