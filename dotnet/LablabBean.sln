@@ -143,6 +143,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{515688BC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.SourceGenerators.Proxy.Tests", "framework\tests\LablabBean.SourceGenerators.Proxy.Tests\LablabBean.SourceGenerators.Proxy.Tests.csproj", "{C63A925F-3A18-4521-94A1-C9000E7273D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.DependencyInjection", "framework\LablabBean.DependencyInjection\LablabBean.DependencyInjection.csproj", "{07C13419-B582-4F1E-89EE-B128047D0D77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.DependencyInjection.Tests", "tests\LablabBean.DependencyInjection.Tests\LablabBean.DependencyInjection.Tests.csproj", "{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -397,6 +401,14 @@ Global
 		{C63A925F-3A18-4521-94A1-C9000E7273D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C63A925F-3A18-4521-94A1-C9000E7273D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C63A925F-3A18-4521-94A1-C9000E7273D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07C13419-B582-4F1E-89EE-B128047D0D77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07C13419-B582-4F1E-89EE-B128047D0D77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07C13419-B582-4F1E-89EE-B128047D0D77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07C13419-B582-4F1E-89EE-B128047D0D77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{10000000-0000-0000-0000-000000000001} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
@@ -463,5 +475,7 @@ Global
 		{66BF7504-039B-4DDA-AB4F-D61C5B4087BF} = {B13FD440-EB73-4A71-9701-8F2D5574005C}
 		{515688BC-882E-4280-9665-F2470BA396B3} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
 		{C63A925F-3A18-4521-94A1-C9000E7273D7} = {515688BC-882E-4280-9665-F2470BA396B3}
+		{07C13419-B582-4F1E-89EE-B128047D0D77} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
+		{0DE5B58F-8AB2-49EC-8844-FEE4A8641C25} = {83F45A0E-898B-450E-B071-7804E854933A}
 	EndGlobalSection
 EndGlobal

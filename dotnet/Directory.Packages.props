@@ -44,6 +44,8 @@
     <PackageVersion Include="Scriban" Version="5.10.0" />
     <PackageVersion Include="CsvHelper" Version="33.0.1" />
     <PackageVersion Include="OpenTelemetry" Version="1.7.0" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.7.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.7.0" />
     <PackageVersion Include="Sentry" Version="4.2.0" />
     <PackageVersion Include="FirebaseAdmin" Version="2.4.0" />
     <!-- Resilience -->
@@ -67,5 +69,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+    <PackageVersion Include="NSubstitute" Version="5.1.0" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
   </ItemGroup>
 </Project>
