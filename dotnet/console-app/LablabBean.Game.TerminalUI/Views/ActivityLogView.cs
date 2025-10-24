@@ -15,8 +15,9 @@ public class ActivityLogView : FrameView
     private bool _showTimestamps = true;
     private IActivityLogService? _service;
 
-    public ActivityLogView(string title = "Activity") : base(title)
+    public ActivityLogView(string title = "Activity") : base()
     {
+        Title = title;
         X = 0;
         Y = Pos.AnchorEnd(10);
         Width = Dim.Fill(30);

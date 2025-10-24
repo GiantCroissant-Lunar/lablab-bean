@@ -14,7 +14,7 @@ public class QuestLogView : Window
     private ListView? _activeQuestsList;
     private TextView? _questDetailsView;
 
-    public QuestLogView(QuestService questService, Entity playerEntity) : base("Quest Log")
+    public QuestLogView(QuestService questService, Entity playerEntity) : base()
     {
         _questService = questService;
         _playerEntity = playerEntity;
@@ -25,6 +25,7 @@ public class QuestLogView : Window
 
     private void InitializeUI()
     {
+        Title = "Quest Log";
         X = 0;
         Y = 0;
         Width = Dim.Fill();
@@ -72,7 +73,7 @@ public class QuestLogView : Window
             X = Pos.Center(),
             Y = Pos.Bottom(this) - 2
         };
-        closeButton.Clicked += () => Application.RequestStop();
+        closeButton.Clicked += (s, e) => Application.RequestStop();
         Add(closeButton);
     }
 
@@ -87,7 +88,7 @@ public class QuestLogView : Window
         }
     }
 
-    private void OnQuestSelected(ListViewItemEventArgs args)
+    private void OnQuestSelected(object? sender, ListViewItemEventArgs args)
     {
         var activeQuests = _questService.GetActiveQuests(_playerEntity);
 

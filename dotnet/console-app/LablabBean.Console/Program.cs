@@ -49,6 +49,14 @@ try
         return await rootCommand.InvokeAsync(args);
     }
 
+    // Plugins CLI (discovery / listing without starting TUI)
+    if (args.Length > 0 && args[0] == "plugins")
+    {
+        var rootCommand = new RootCommand("LablabBean Console - Plugins CLI");
+        rootCommand.AddCommand(PluginsCommand.Create());
+        return await rootCommand.InvokeAsync(args);
+    }
+
     // Otherwise, run interactive Terminal.Gui mode
     var host = Host.CreateDefaultBuilder(args)
         .UseLablabBeanInfrastructure()

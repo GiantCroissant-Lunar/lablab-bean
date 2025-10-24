@@ -6,12 +6,14 @@ Perfect for game development, plugin systems, and any application that needs iso
 
 ## Features
 
-✨ **Hierarchical Containers** - Create parent-child container relationships with automatic service resolution up the hierarchy  
-🔒 **MSDI Compatible** - Fully implements `IServiceProvider`, `IServiceScope`, and `IServiceScopeFactory`  
-🎮 **Scene Management** - High-level API for managing game scenes with automatic lifecycle management  
-🧵 **Thread-Safe** - ConcurrentDictionary-based registry for safe multi-threaded access  
-⚡ **High Performance** - < 1μs overhead for service resolution through 3-level hierarchies  
-🗑️ **Automatic Cleanup** - Cascading disposal ensures no memory leaks  
+✨ **Hierarchical Containers** - Create parent-child container relationships with automatic service resolution up the hierarchy
+🔒 **MSDI Compatible** - Fully implements `IServiceProvider`, `IServiceScope`, and `IServiceScopeFactory`
+🧭 **Service Introspection** - Implements `IServiceProviderIsService` for non-instantiating availability checks
+🎮 **Scene Management** - High-level API for managing game scenes with automatic lifecycle management
+🧵 **Thread-Safe** - ConcurrentDictionary-based registry for safe multi-threaded access
+⚡ **High Performance** - < 1μs overhead for service resolution through 3-level hierarchies
+🗑️ **Automatic Cleanup** - Cascading disposal ensures no memory leaks
+📣 **Diagnostics** - Global events for `ContainerCreated` and `ContainerDisposed`
 
 ## Quick Start
 
@@ -81,6 +83,7 @@ manager.UnloadScene("Floor1"); // Automatically disposes container
 ### Hierarchical Service Resolution
 
 Services are resolved by searching:
+
 1. **Local container** - Check if service registered locally
 2. **Parent container** - If not found, check parent
 3. **Grandparent container** - Continue up the hierarchy
@@ -93,6 +96,7 @@ Global Container (SaveSystem, AudioManager)
 ```
 
 When Floor1 requests a service:
+
 - `ILootSystem` → Resolved locally
 - `ICombatSystem` → Resolved from Dungeon parent
 - `ISaveSystem` → Resolved from Global grandparent
@@ -114,6 +118,7 @@ services.AddTransient<IService3, Service3>();    // New each time
 ### Automatic Disposal
 
 Disposing a container automatically:
+
 - Disposes all registered services
 - Disposes all child containers
 - Removes from parent's children collection
@@ -137,14 +142,101 @@ public interface IHierarchicalServiceProvider : IServiceProvider, IDisposable
     IReadOnlyList<IHierarchicalServiceProvider> Children { get; }
     int Depth { get; }
     bool IsDisposed { get; }
-    
+
     IHierarchicalServiceProvider CreateChildContainer(
-        Action<IServiceCollection> configureServices, 
+        Action<IServiceCollection> configureServices,
         string? name = null);
-    
+
     string GetHierarchyPath();
 }
 ```
+
+### IServiceProviderIsService
+
+The provider implements `IServiceProviderIsService` to allow inexpensive, non-instantiating checks to see if a service is available locally or up the hierarchy:
+
+```csharp
+var isp = (IServiceProviderIsService)provider;
+if (isp.IsService(typeof(IMyService)))
+{
+    // Safe to request without handling null
+    var svc = provider.GetRequiredService<IMyService>();
+}
+```
+
+### Diagnostics Events
+
+Subscribe to container lifecycle events globally:
+
+```csharp
+using LablabBean.DependencyInjection.Diagnostics;
+
+var created = new List<string>();
+HierarchicalContainerDiagnostics.ContainerCreated += (_, e) =>
+{
+    created.Add($"{e.TimestampUtc:o} {e.ParentName} -> {e.Name} (depth {e.Depth}) id={e.ContainerId} parentId={e.ParentId}");
+};
+
+var services = new ServiceCollection();
+var root = services.BuildHierarchicalServiceProvider("Global");
+var child = root.CreateChildContainer(_ => { }, "Dungeon");
+
+// On Dispose, child disposes before parent and raises events in that order
+root.Dispose();
+```
+
+Structured tracing is also available via `EventSource`:
+
+```csharp
+// Enable ETW listener or EventListener in-process
+using LablabBean.DependencyInjection.Diagnostics;
+using System.Diagnostics.Tracing;
+
+var listener = new ConsoleEventListener();
+listener.EnableEvents(HierarchicalContainerEventSource.Log, EventLevel.Informational);
+
+// ... run your app ...
+
+sealed class ConsoleEventListener : EventListener
+{
+    protected override void OnEventWritten(EventWrittenEventArgs eventData)
+    {
+        Console.WriteLine($"{eventData.EventName}: {string.Join(",", eventData.Payload ?? new())}");
+    }
+}
+```
+
+### OpenTelemetry (ActivitySource)
+
+Service resolution is instrumented with `ActivitySource` for OTEL integration.
+
+```csharp
+using LablabBean.DependencyInjection.Diagnostics;
+using System.Diagnostics;
+
+using var listener = new ActivityListener
+{
+    ShouldListenTo = s => s.Name == "LablabBean.DependencyInjection.HierarchicalContainer",
+    Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
+};
+ActivitySource.AddActivityListener(listener);
+
+// Resolve services as usual; emitted activities have tags:
+// - di.service.type
+// - di.container.name
+// - di.container.depth
+// - di.container.id
+// - di.resolve.outcome (LocalHit|ParentHit|NotFound)
+// - di.resolved.depth (when resolved)
+```
+
+### Additional Events
+
+- ChildAdded / ChildRemoved
+  - Raised when a child container is added to or removed from a parent (also emitted via EventSource).
+- ResolveFailure (EventSource + in-process)
+  - Emitted when `GetRequiredService` fails.
+  - In-process args include: container IDs, name, depth, service type, exception.
 
 ### ISceneContainerManager
 
@@ -153,14 +245,14 @@ public interface ISceneContainerManager
 {
     IHierarchicalServiceProvider? GlobalContainer { get; }
     bool IsInitialized { get; }
-    
+
     void InitializeGlobalContainer(IServiceCollection services);
-    
+
     IHierarchicalServiceProvider CreateSceneContainer(
         string sceneName,
         IServiceCollection sceneServices,
         string? parentSceneName = null);
-    
+
     IHierarchicalServiceProvider? GetSceneContainer(string sceneName);
     void UnloadScene(string sceneName);
     IEnumerable<string> GetSceneNames();
@@ -236,6 +328,17 @@ Benchmarked on .NET 8.0:
 
 ✅ All targets met: < 1μs overhead, < 16ms disposal
 
+### Running Benchmarks
+
+Benchmark project included: `dotnet/tests/LablabBean.DependencyInjection.Benchmarks`
+
+- Run all benchmarks:
+  `dotnet run -c Release --project dotnet/tests/LablabBean.DependencyInjection.Benchmarks`
+
+- Example filters:
+  `--filter *ServiceResolutionBenchmarks*`
+  `--filter *ContainerLifecycleBenchmarks*`
+
 ## Thread Safety
 
 - ✅ **Service Resolution** - Thread-safe (delegates to MSDI)
@@ -305,5 +408,5 @@ Contributions welcome! Please see CONTRIBUTING.md for guidelines.
 
 ---
 
-**Version**: 1.0.0  
+**Version**: 1.0.0
 **Status**: Production-Ready ✅

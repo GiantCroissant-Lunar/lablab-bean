@@ -18,7 +18,7 @@ public class DialogueView : Window
     private ListView? _choicesList;
     private List<DialogueChoice>? _currentChoices;
 
-    public DialogueView(NPCService npcService, Entity playerEntity, Entity npcEntity, string npcName) : base($"Dialogue with {npcName}")
+    public DialogueView(NPCService npcService, Entity playerEntity, Entity npcEntity, string npcName) : base()
     {
         _npcService = npcService;
         _playerEntity = playerEntity;
@@ -31,6 +31,7 @@ public class DialogueView : Window
 
     private void InitializeUI()
     {
+        Title = $"Dialogue with {_npcName}";
         X = Pos.Center();
         Y = Pos.Center();
         Width = Dim.Percent(70);
@@ -104,7 +105,7 @@ public class DialogueView : Window
         }
     }
 
-    private void OnChoiceSelected(ListViewItemEventArgs args)
+    private void OnChoiceSelected(object? sender, ListViewItemEventArgs args)
     {
         if (_currentChoices == null || args.Item < 0 || args.Item >= _currentChoices.Count)
             return;
