@@ -24,6 +24,13 @@ public class ProgressionPlugin : IPlugin
 
     public Task InitializeAsync(IPluginContext context, CancellationToken ct = default)
     {
+        // Gracefully handle missing World service in host
+        if (!context.Registry.IsRegistered<World>())
+        {
+            context.Logger.LogWarning("World service not found; Progression plugin will initialize in passive mode.");
+            return Task.CompletedTask;
+        }
+
         var worldService = context.Registry.Get<World>();
         _world = worldService ?? throw new InvalidOperationException("World service not found");
 

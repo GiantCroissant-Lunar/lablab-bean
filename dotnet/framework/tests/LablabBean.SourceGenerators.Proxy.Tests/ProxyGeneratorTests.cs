@@ -1,6 +1,5 @@
 using LablabBean.Plugins.Contracts;
 using LablabBean.Plugins.Contracts.Attributes;
-using LablabBean.Plugins.Contracts.Services;
 
 namespace LablabBean.SourceGenerators.Proxy.Tests;
 

@@ -165,14 +165,14 @@ class Build : NukeBuild
             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
             var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? Version;
 
-            var buildReportPath = TestReportsDirectory / $"build-metrics-{buildNumber}-{timestamp}.html";
-            var buildReportCsvPath = TestReportsDirectory / $"build-metrics-{buildNumber}-{timestamp}.csv";
-            var sessionReportPath = TestReportsDirectory / $"session-analytics-{buildNumber}-{timestamp}.html";
-            var sessionReportCsvPath = TestReportsDirectory / $"session-analytics-{buildNumber}-{timestamp}.csv";
-            var pluginReportPath = TestReportsDirectory / $"plugin-metrics-{buildNumber}-{timestamp}.html";
-            var pluginReportCsvPath = TestReportsDirectory / $"plugin-metrics-{buildNumber}-{timestamp}.csv";
-            var windowsReportPath = TestReportsDirectory / $"windows-session-{buildNumber}-{timestamp}.html";
-            var windowsReportCsvPath = TestReportsDirectory / $"windows-session-{buildNumber}-{timestamp}.csv";
+            var buildReportPath = TestReportsDirectory / $"build-metrics-{Version}-{buildNumber}-{timestamp}.html";
+            var buildReportCsvPath = TestReportsDirectory / $"build-metrics-{Version}-{buildNumber}-{timestamp}.csv";
+            var sessionReportPath = TestReportsDirectory / $"session-analytics-{Version}-{buildNumber}-{timestamp}.html";
+            var sessionReportCsvPath = TestReportsDirectory / $"session-analytics-{Version}-{buildNumber}-{timestamp}.csv";
+            var pluginReportPath = TestReportsDirectory / $"plugin-metrics-{Version}-{buildNumber}-{timestamp}.html";
+            var pluginReportCsvPath = TestReportsDirectory / $"plugin-metrics-{Version}-{buildNumber}-{timestamp}.csv";
+            var windowsReportPath = TestReportsDirectory / $"windows-session-{Version}-{buildNumber}-{timestamp}.html";
+            var windowsReportCsvPath = TestReportsDirectory / $"windows-session-{Version}-{buildNumber}-{timestamp}.csv";
 
             var latestBuildReportPath = TestReportsDirectory / "build-metrics-latest.html";
             var latestSessionReportPath = TestReportsDirectory / "session-analytics-latest.html";
@@ -392,7 +392,7 @@ class Build : NukeBuild
             // Create a build-time metrics file
             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
             var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? Version;
-            var buildMetricsPath = SessionReportsDirectory / $"windows-build-metrics-{buildNumber}-{timestamp}.json";
+            var buildMetricsPath = SessionReportsDirectory / $"windows-build-metrics-{Version}-{buildNumber}-{timestamp}.json";
 
             var buildMetrics = new
             {
@@ -459,7 +459,7 @@ class Build : NukeBuild
                 .Where(p => {
                     var n = p.ToString().Replace('\\','/');
                     return !n.Contains("/tests/", StringComparison.OrdinalIgnoreCase)
-                           && !n.Contains("/LablabBean.Plugins.Diagnostic.", StringComparison.OrdinalIgnoreCase);
+                           && !n.Contains("/LablabBean.Plugins.Merchant/", StringComparison.OrdinalIgnoreCase);
                 })
                 .ToList();
 
@@ -473,7 +473,24 @@ class Build : NukeBuild
                     .SetConfiguration(Configuration)
                     .SetOutput(dest)
                     .EnableNoRestore()
+                    // Route all plugin.json to a subfolder during publish to avoid collisions between referenced plugins
                     .SetProcessArgumentConfigurator(args => args.Add("/p:PluginJsonTargetSubfolder=true")));
+
+                // After publish, copy this project's own plugin.json back to root for loader simplicity
+                try
+                {
+                    var thisPluginName = System.IO.Path.GetFileNameWithoutExtension(pluginCsproj);
+                    var nested = dest / "plugins" / thisPluginName / "plugin.json";
+                    var rootManifest = dest / "plugin.json";
+                    if (System.IO.File.Exists(nested))
+                    {
+                        System.IO.File.Copy(nested, rootManifest, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Warning("Could not normalize plugin.json for {Plugin}: {Message}", pluginCsproj, ex.Message);
+                }
             }
         });
 
@@ -537,7 +554,7 @@ class Build : NukeBuild
                 .Where(p => {
                     var n = p.ToString().Replace('\\','/');
                     return !n.Contains("/tests/", StringComparison.OrdinalIgnoreCase)
-                           && !n.Contains("/LablabBean.Plugins.Diagnostic.", StringComparison.OrdinalIgnoreCase);
+                           && !n.Contains("/LablabBean.Plugins.Merchant/", StringComparison.OrdinalIgnoreCase);
                 })
                 .ToList();
             foreach (var pluginCsproj in pluginProjects)
@@ -550,6 +567,21 @@ class Build : NukeBuild
                     .SetConfiguration(Configuration)
                     .SetOutput(dest)
                     .SetProcessArgumentConfigurator(args => args.Add("/p:PluginJsonTargetSubfolder=true")));
+
+                try
+                {
+                    var thisPluginName = System.IO.Path.GetFileNameWithoutExtension(pluginCsproj);
+                    var nested = dest / "plugins" / thisPluginName / "plugin.json";
+                    var rootManifest = dest / "plugin.json";
+                    if (System.IO.File.Exists(nested))
+                    {
+                        System.IO.File.Copy(nested, rootManifest, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Warning("Could not normalize plugin.json for {Plugin}: {Message}", pluginCsproj, ex.Message);
+                }
             }
 
             // Publish Windows App
@@ -615,5 +647,60 @@ class Build : NukeBuild
             Serilog.Log.Information("Test Reports: {Path}", TestReportsDirectory);
             Serilog.Log.Information("Session Reports: {Path}", SessionReportsDirectory);
             Serilog.Log.Information("========================\n");
+        });
+
+    Target ReleaseConsole => _ => _
+        .DependsOn(PrintVersion, PublishConsole, VerifyArtifact, GenerateReports)
+        .Executes(() =>
+        {
+            Serilog.Log.Information("ReleaseConsole complete. Artifacts at: {Path}", VersionedArtifactsDirectory);
+        });
+
+    // Verifies the published console artifact by invoking its built-in verification and reporting commands.
+    Target VerifyArtifact => _ => _
+        .DependsOn(PublishConsole)
+        .Executes(() =>
+        {
+            var consoleDir = PublishDirectory / "console";
+            var exePath = consoleDir / "LablabBean.Console.exe";
+            if (!System.IO.File.Exists(exePath))
+            {
+                throw new Exception($"Console not found at {exePath}. Run PublishConsole first.");
+            }
+
+            TestReportsDirectory.CreateDirectory();
+
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+            var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? Version;
+            var verifyJson = TestReportsDirectory / $"plugin-health-artifact-{Version}-{buildNumber}-{timestamp}.json";
+            var verifyHtml = TestReportsDirectory / $"plugin-health-artifact-{Version}-{buildNumber}-{timestamp}.html";
+            var verifyCsv  = TestReportsDirectory / $"plugin-health-artifact-{Version}-{buildNumber}-{timestamp}.csv";
+
+            Serilog.Log.Information("Running artifact verification from: {Dir}", consoleDir);
+
+            // Run verification against local plugins folder inside the artifact
+            var pVerify = ProcessTasks.StartProcess(
+                exePath,
+                $"plugins verify --paths plugins --output \"{verifyJson}\"",
+                consoleDir);
+            pVerify.AssertZeroExitCode();
+
+            // Render HTML and CSV using the same artifact exe
+            var pHtml = ProcessTasks.StartProcess(
+                exePath,
+                $"report plugin --output \"{verifyHtml}\" --data \"{verifyJson}\" --format html",
+                consoleDir);
+            pHtml.AssertZeroExitCode();
+
+            var pCsv = ProcessTasks.StartProcess(
+                exePath,
+                $"report plugin --output \"{verifyCsv}\" --data \"{verifyJson}\" --format csv",
+                consoleDir);
+            pCsv.AssertZeroExitCode();
+
+            Serilog.Log.Information("Artifact verification complete:");
+            Serilog.Log.Information("  JSON: {Path}", verifyJson);
+            Serilog.Log.Information("  HTML: {Path}", verifyHtml);
+            Serilog.Log.Information("  CSV : {Path}", verifyCsv);
         });
 }

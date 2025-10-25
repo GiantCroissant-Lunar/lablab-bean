@@ -71,3 +71,5 @@ tools/
 
 # ignore local temp files
 /temp_*
+
+appsettings.Development.json

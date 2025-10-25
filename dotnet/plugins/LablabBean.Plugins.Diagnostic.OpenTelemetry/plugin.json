@@ -1,5 +1,7 @@
 {
   "$schema": "../../framework/LablabBean.Plugins.Contracts/plugin.schema.json",
+  "EntryAssembly": "LablabBean.Plugins.Diagnostic.OpenTelemetry.dll",
+  "EntryType": "LablabBean.Plugins.Diagnostic.OpenTelemetry.OpenTelemetryPlugin",
   "author": "LablabBean Team",
   "capabilities": [
     "distributed-tracing",
@@ -19,7 +21,6 @@
   },
   "dependencies": [],
   "description": "OpenTelemetry diagnostic provider for distributed tracing and metrics",
-  "entryPoint": "LablabBean.Plugins.Diagnostic.OpenTelemetry.dll",
   "id": "lablab-bean.diagnostic-opentelemetry",
   "name": "Diagnostic OpenTelemetry",
   "permissions": [

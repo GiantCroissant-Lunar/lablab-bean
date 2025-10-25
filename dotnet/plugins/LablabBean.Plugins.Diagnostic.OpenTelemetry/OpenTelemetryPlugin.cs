@@ -1,7 +1,7 @@
+using LablabBean.Contracts.Diagnostic;
 using LablabBean.Contracts.Diagnostic.Services;
 using LablabBean.Plugins.Contracts;
 using LablabBean.Plugins.Diagnostic.OpenTelemetry.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace LablabBean.Plugins.Diagnostic.OpenTelemetry;
@@ -23,11 +23,13 @@ public class OpenTelemetryPlugin : IPlugin
         // Register the diagnostic provider
         _provider = new OpenTelemetryDiagnosticProvider(_logger);
 
-        // Register with DI if service collection is available
-        if (context.Services is IServiceCollection services)
+        // Register provider into host registry
+        context.Registry.Register<IDiagnosticProvider>(_provider, new ServiceMetadata
         {
-            services.AddSingleton(_provider);
-        }
+            Priority = 200,
+            Name = Name,
+            Version = Version
+        });
 
         await _provider.InitializeAsync(ct);
 

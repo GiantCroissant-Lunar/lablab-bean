@@ -26,7 +26,8 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
-    <Using Include="LablabBean.Plugins.Contracts.Services" />
+    <Using Include="LablabBean.Plugins.Contracts" />
+    <Using Include="LablabBean.Plugins.Contracts.Attributes" />
   </ItemGroup>
 
 </Project>

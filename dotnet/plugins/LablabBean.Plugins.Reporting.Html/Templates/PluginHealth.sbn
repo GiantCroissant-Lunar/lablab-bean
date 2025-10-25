@@ -164,6 +164,26 @@
             color: #374151;
         }
 
+        .badge {
+            display: inline-block;
+            font-size: 0.75em;
+            padding: 3px 6px;
+            border-radius: 999px;
+            margin-right: 6px;
+        }
+
+        .badge-ok {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .badge-fail {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border: 1px solid #fca5a5;
+        }
+
         .plugin-details {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -245,6 +265,15 @@
         <div class="header">
             <h1>{{ report_title }}</h1>
             <div class="subtitle">Plugin Health Report • Generated {{ generated_at | date.to_string '%Y-%m-%d %H:%M:%S UTC' }}</div>
+            {{ if version }}
+            <div class="subtitle">Version: {{ version }}</div>
+            {{ end }}
+            {{ if filters }}
+            <div class="subtitle">
+                {{ if filters.include }}Include: {{ for it in filters.include }}{{ it }}{{ if for.last }}{{ else }}, {{ end }}{{ end }}{{ end }}
+                {{ if filters.exclude }} {{ if filters.include }}• {{ end }}Exclude: {{ for it in filters.exclude }}{{ it }}{{ if for.last }}{{ else }}, {{ end }}{{ end }}{{ end }}
+            </div>
+            {{ end }}
         </div>
 
         <div class="content">
@@ -296,6 +325,15 @@
                                 {{ plugin.name }}
                             </div>
                             <div class="plugin-version">Version {{ plugin.version }}</div>
+                            {{ if plugin.contract_probes }}
+                            <div style="margin-top:6px;">
+                                {{ for kv in plugin.contract_probes }}
+                                <span class="badge {{ if kv.value.ok }}badge-ok{{ else }}badge-fail{{ end }}" title="{{ if kv.value.message }}{{ kv.value.message }}{{ end }}">
+                                    {{ kv.key }}: {{ if kv.value.ok }}PASS{{ else }}FAIL{{ end }}
+                                </span>
+                                {{ end }}
+                            </div>
+                            {{ end }}
                         </div>
                         <span class="status-badge {{ if plugin.state == 'Running' }}healthy{{ else if plugin.state == 'Degraded' }}degraded{{ else if plugin.state == 'Failed' }}error{{ else }}disabled{{ end }}">
                             {{ plugin.state }}

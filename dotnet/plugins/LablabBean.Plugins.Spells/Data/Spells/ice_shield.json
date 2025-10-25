@@ -1,0 +1,19 @@
+{
+  "areaRadius": 0,
+  "cooldown": 5,
+  "description": "Conjures a protective barrier of ice that increases defense.",
+  "effects": [
+    {
+      "duration": 5,
+      "type": "Shield",
+      "value": 15
+    }
+  ],
+  "id": "c4d6e8f1-7a9b-6c2e-1f3a-5d7e9b2d4f6a",
+  "manaCost": 12,
+  "minLevel": 4,
+  "name": "Ice Shield",
+  "range": 0,
+  "targeting": "Self",
+  "type": "Defensive"
+}

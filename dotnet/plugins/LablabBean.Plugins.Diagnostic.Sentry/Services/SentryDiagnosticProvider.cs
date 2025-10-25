@@ -122,20 +122,23 @@ public class SentryDiagnosticProvider : IDiagnosticProvider
 
     public Task<ProviderHealthResult> CheckHealthAsync(CancellationToken cancellationToken = default)
     {
+        var started = _startTime;
+        var duration = TimeSpan.FromMilliseconds(8); // Simulated
+
         var result = new ProviderHealthResult
         {
             ProviderName = Name,
             Health = _isHealthy ? SystemHealth.Healthy : SystemHealth.Degraded,
             Timestamp = DateTime.UtcNow,
+            Duration = duration,
             IsSuccessful = _isHealthy,
-            ResponseTime = TimeSpan.FromMilliseconds(8), // Simulated
-            Details = new Dictionary<string, object>
+            Details = new List<HealthCheckDetail>
             {
-                { "Initialized", _isInitialized },
-                { "Enabled", _isEnabled },
-                { "UptimeSeconds", (DateTime.UtcNow - _startTime).TotalSeconds },
-                { "EventsLogged", _eventsLogged },
-                { "ExceptionsLogged", _exceptionsLogged }
+                new HealthCheckDetail { Name = "Initialized", IsSuccessful = _isInitialized, Message = _isInitialized ? "Provider initialized" : "Not initialized" },
+                new HealthCheckDetail { Name = "Enabled", IsSuccessful = _isEnabled, Message = _isEnabled ? "Enabled" : "Disabled" },
+                new HealthCheckDetail { Name = "UptimeSeconds", IsSuccessful = true, Message = ((DateTime.UtcNow - started).TotalSeconds).ToString("F2") },
+                new HealthCheckDetail { Name = "EventsLogged", IsSuccessful = true, Message = _eventsLogged.ToString() },
+                new HealthCheckDetail { Name = "ExceptionsLogged", IsSuccessful = true, Message = _exceptionsLogged.ToString() }
             }
         };
 

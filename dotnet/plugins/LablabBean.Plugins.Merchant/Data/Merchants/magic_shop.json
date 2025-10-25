@@ -1,0 +1,60 @@
+{
+  "buyPriceMultiplier": 0.6,
+  "description": "Arcane items and spell components",
+  "id": "c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+  "inventory": [
+    {
+      "basePrice": 150,
+      "description": "Learn the Magic Missile spell",
+      "initialStock": 1,
+      "isInfinite": false,
+      "itemId": "30000000-0000-0000-0000-000000000001",
+      "itemName": "Spell Tome: Magic Missile",
+      "minLevel": 1,
+      "rarity": "Uncommon"
+    },
+    {
+      "basePrice": 300,
+      "description": "Learn the Fireball spell",
+      "initialStock": 1,
+      "isInfinite": false,
+      "itemId": "30000000-0000-0000-0000-000000000002",
+      "itemName": "Spell Tome: Fireball",
+      "minLevel": 3,
+      "rarity": "Uncommon"
+    },
+    {
+      "basePrice": 500,
+      "description": "Increases spell damage by 25%",
+      "initialStock": 1,
+      "isInfinite": false,
+      "itemId": "30000000-0000-0000-0000-000000000003",
+      "itemName": "Staff of Power",
+      "minLevel": 5,
+      "rarity": "Rare"
+    },
+    {
+      "basePrice": 400,
+      "description": "Permanently increases max mana by 20",
+      "initialStock": 2,
+      "isInfinite": false,
+      "itemId": "30000000-0000-0000-0000-000000000004",
+      "itemName": "Mana Crystal",
+      "minLevel": 4,
+      "rarity": "Rare"
+    },
+    {
+      "basePrice": 200,
+      "description": "Single-use: Teleport to dungeon entrance",
+      "initialStock": 3,
+      "isInfinite": false,
+      "itemId": "30000000-0000-0000-0000-000000000005",
+      "itemName": "Scroll of Teleportation",
+      "minLevel": 2,
+      "rarity": "Uncommon"
+    }
+  ],
+  "name": "Elara's Mystical Emporium",
+  "sellPriceMultiplier": 1.5,
+  "type": "MagicShop"
+}

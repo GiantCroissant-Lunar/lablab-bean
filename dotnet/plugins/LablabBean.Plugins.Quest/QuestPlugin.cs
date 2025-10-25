@@ -1,14 +1,17 @@
 using Arch.Core;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.AI;
 using LablabBean.Plugins.Contracts;
 using LablabBean.Plugins.Quest.Services;
 using LablabBean.Plugins.Quest.Systems;
+using LablabBean.Plugins.Quest.Agents;
+using LablabBean.Plugins.Quest.Factories;
 using LablabBean.Plugins.Progression.Services;
 
 namespace LablabBean.Plugins.Quest;
 
 /// <summary>
-/// Quest plugin - provides quest-driven exploration system
+/// Quest plugin - provides quest-driven exploration system with optional LLM quest generation
 /// </summary>
 public class QuestPlugin : IPlugin
 {
@@ -17,15 +20,38 @@ public class QuestPlugin : IPlugin
     private QuestProgressSystem? _questProgressSystem;
     private QuestRewardSystem? _questRewardSystem;
     private QuestService? _questService;
+    private QuestGeneratorAgent? _questGenerator;
+    private QuestFactory? _questFactory;
 
     public string Id => "quest";
     public string Name => "Quest System";
-    public string Version => "1.0.0";
+    public string Version => "1.1.0";
 
     public Task InitializeAsync(IPluginContext context, CancellationToken ct = default)
     {
+        if (!context.Registry.IsRegistered<World>())
+        {
+            context.Logger.LogWarning("Quest plugin: World service not found; initializing in passive mode.");
+            return Task.CompletedTask;
+        }
+
         var worldService = context.Registry.Get<World>();
         _world = worldService ?? throw new InvalidOperationException("World service not found");
+
+        // Try to get IChatClient for LLM quest generation
+        var chatClient = context.Registry.Get<IChatClient>();
+        if (chatClient != null)
+        {
+            _questGenerator = new QuestGeneratorAgent(chatClient);
+            context.Logger.LogInformation("Quest plugin: LLM quest generation enabled");
+        }
+        else
+        {
+            context.Logger.LogInformation("Quest plugin: LLM quest generation disabled (no IChatClient available)");
+        }
+
+        // Initialize quest factory with optional LLM generator
+        _questFactory = new QuestFactory(_world, _questGenerator);
 
         // Initialize systems
         _questSystem = new QuestSystem(_world);
@@ -47,13 +73,17 @@ public class QuestPlugin : IPlugin
         // Initialize service
         _questService = new QuestService(_world, _questSystem, _questProgressSystem, _questRewardSystem!);
 
-        // Register service in plugin context
+        // Register services in plugin context
         context.Registry.Register<QuestService>(_questService, priority: 100);
+        context.Registry.Register<QuestFactory>(_questFactory, priority: 100);
+
+        if (_questGenerator != null)
+            context.Registry.Register<QuestGeneratorAgent>(_questGenerator, priority: 100);
 
         // Subscribe to game events
         SubscribeToEvents(context);
 
-        context.Logger.LogInformation("Quest plugin initialized");
+        context.Logger.LogInformation("Quest plugin initialized (LLM: {HasLLM})", _questGenerator != null);
         return Task.CompletedTask;
     }
 

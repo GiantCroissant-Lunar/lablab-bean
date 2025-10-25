@@ -37,6 +37,7 @@ public static class PluginsCommand
                 b.AddConsole();
                 b.SetMinimumLevel(LogLevel.Information);
             });
+            services.AddSingleton<IConfiguration>(configuration);
             services.AddPluginSystem(configuration);
 
             using var sp = services.BuildServiceProvider();

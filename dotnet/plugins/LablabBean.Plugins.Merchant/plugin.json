@@ -7,7 +7,10 @@
     "shop"
   ],
   "dependencies": [
-    "npc"
+    {
+      "id": "npc",
+      "optional": false
+    }
   ],
   "description": "Merchant trading system with gold economy and item transactions",
   "entryPoint": {

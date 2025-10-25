@@ -1,0 +1,19 @@
+{
+  "areaRadius": 0,
+  "cooldown": 0,
+  "description": "A simple offensive spell that never misses. Perfect for beginners.",
+  "effects": [
+    {
+      "duration": 0,
+      "type": "Damage",
+      "value": 15
+    }
+  ],
+  "id": "d5e7f9a2-8b1c-7d3f-2e4b-6f8a1c3e5d7b",
+  "manaCost": 8,
+  "minLevel": 1,
+  "name": "Magic Missile",
+  "range": 4,
+  "targeting": "Single",
+  "type": "Offensive"
+}

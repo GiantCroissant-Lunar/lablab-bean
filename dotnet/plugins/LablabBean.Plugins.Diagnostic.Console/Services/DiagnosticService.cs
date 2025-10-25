@@ -229,7 +229,7 @@ public class DiagnosticService : IService
             DiagnosticLevel.Critical => ConsoleColor.Magenta,
             DiagnosticLevel.Error => ConsoleColor.Red,
             DiagnosticLevel.Warning => ConsoleColor.Yellow,
-            DiagnosticLevel.Info => ConsoleColor.Cyan,
+            DiagnosticLevel.Information => ConsoleColor.Cyan,
             DiagnosticLevel.Debug => ConsoleColor.Gray,
             _ => ConsoleColor.White
         };
@@ -255,13 +255,12 @@ public class DiagnosticService : IService
     {
         var process = Process.GetCurrentProcess();
 
+        // Map to current contracts: use available fields only
         return new PerformanceMetrics
         {
-            CpuUsagePercent = 0,
-            MemoryUsageMB = process.WorkingSet64 / 1024.0 / 1024.0,
-            ThreadCount = process.Threads.Count,
-            HandleCount = process.HandleCount,
-            Timestamp = DateTime.UtcNow
+            CpuUsage = 0, // Placeholder without sampling window
+            MemoryUsage = process.WorkingSet64,
+            Uptime = DateTime.UtcNow - process.StartTime.ToUniversalTime()
         };
     }
 
@@ -271,12 +270,11 @@ public class DiagnosticService : IService
 
         return new MemoryInfo
         {
-            WorkingSetBytes = process.WorkingSet64,
-            PrivateMemoryBytes = process.PrivateMemorySize64,
-            ManagedMemoryBytes = GC.GetTotalMemory(false),
-            Gen0Collections = GC.CollectionCount(0),
-            Gen1Collections = GC.CollectionCount(1),
-            Gen2Collections = GC.CollectionCount(2),
+            // Total/Available/Used may require OS APIs; populate managed/GC info
+            ManagedHeapSize = GC.GetTotalMemory(false),
+            GCGen0Collections = GC.CollectionCount(0),
+            GCGen1Collections = GC.CollectionCount(1),
+            GCGen2Collections = GC.CollectionCount(2),
             Timestamp = DateTime.UtcNow
         };
     }
@@ -288,7 +286,11 @@ public class DiagnosticService : IService
             Device = new DeviceInfo
             {
                 Name = Environment.MachineName,
-                OperatingSystem = Environment.OSVersion.ToString(),
+                OperatingSystem = Environment.OSVersion.ToString()
+            },
+            Cpu = new CpuInfo
+            {
+                ProcessorCount = Environment.ProcessorCount,
                 Architecture = Environment.Is64BitOperatingSystem ? "x64" : "x86"
             },
             Timestamp = DateTime.UtcNow
@@ -301,7 +303,7 @@ public class DiagnosticService : IService
         var data = _collectedData.Where(d =>
             (!startTime.HasValue || d.Timestamp >= startTime.Value) &&
             (!endTime.HasValue || d.Timestamp <= endTime.Value) &&
-            (providers == null || providers.Contains(d.Provider))
+            (providers == null || providers.Contains(d.ProviderName))
         ).ToList();
 
         var sb = new StringBuilder();
@@ -311,10 +313,37 @@ public class DiagnosticService : IService
 
         foreach (var item in data)
         {
-            sb.AppendLine($"[{item.Timestamp:HH:mm:ss.fff}] Provider: {item.Provider}");
-            foreach (var kv in item.Data)
+            sb.AppendLine($"[{item.Timestamp:HH:mm:ss.fff}] Provider: {item.ProviderName} ({item.ProviderType})");
+
+            if (item.Performance != null)
             {
-                sb.AppendLine($"  {kv.Key}: {kv.Value}");
+                sb.AppendLine($"  Performance: CpuUsage={item.Performance.CpuUsage:F1}%, MemoryUsage={item.Performance.MemoryUsage} bytes, Uptime={item.Performance.Uptime}");
+            }
+            if (item.Memory != null)
+            {
+                sb.AppendLine($"  Memory: ManagedHeap={item.Memory.ManagedHeapSize} bytes, GC0={item.Memory.GCGen0Collections}, GC1={item.Memory.GCGen1Collections}, GC2={item.Memory.GCGen2Collections}");
+            }
+            if (item.Cpu != null)
+            {
+                sb.AppendLine($"  CPU: Arch={item.Cpu.Architecture}, Logical={item.Cpu.ProcessorCount}");
+            }
+            if (item.Device != null)
+            {
+                sb.AppendLine($"  Device: {item.Device.Name} / {item.Device.OperatingSystem}");
+            }
+            if (item.CustomMetrics?.Count > 0)
+            {
+                foreach (var kv in item.CustomMetrics)
+                {
+                    sb.AppendLine($"  Metric {kv.Key}: {kv.Value}");
+                }
+            }
+            if (item.Metadata?.Count > 0)
+            {
+                foreach (var kv in item.Metadata)
+                {
+                    sb.AppendLine($"  Meta {kv.Key}: {kv.Value}");
+                }
             }
             sb.AppendLine();
         }

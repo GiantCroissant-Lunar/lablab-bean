@@ -52,6 +52,18 @@ public class HtmlReportRenderer : IReportRenderer
             functions.Import(typeof(TemplateHelpers));
             context.PushGlobal(functions);
 
+            // Add app version if available (entry assembly version)
+            try
+            {
+                var entryAsm = Assembly.GetEntryAssembly();
+                var ver = entryAsm?.GetName()?.Version?.ToString();
+                if (!string.IsNullOrWhiteSpace(ver))
+                {
+                    scriptObject.Add("version", ver);
+                }
+            }
+            catch { }
+
             context.PushGlobal(scriptObject);
 
             // Render template

@@ -1,0 +1,60 @@
+{
+  "buyPriceMultiplier": 0.4,
+  "description": "Quality weapons and armor forged with care",
+  "id": "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+  "inventory": [
+    {
+      "basePrice": 100,
+      "description": "A basic but reliable sword. +5 Attack",
+      "initialStock": 3,
+      "isInfinite": false,
+      "itemId": "20000000-0000-0000-0000-000000000001",
+      "itemName": "Iron Sword",
+      "minLevel": 1,
+      "rarity": "Common"
+    },
+    {
+      "basePrice": 100,
+      "description": "Sturdy iron shield. +5 Defense",
+      "initialStock": 3,
+      "isInfinite": false,
+      "itemId": "20000000-0000-0000-0000-000000000002",
+      "itemName": "Iron Shield",
+      "minLevel": 1,
+      "rarity": "Common"
+    },
+    {
+      "basePrice": 250,
+      "description": "Well-crafted steel blade. +10 Attack",
+      "initialStock": 2,
+      "isInfinite": false,
+      "itemId": "20000000-0000-0000-0000-000000000003",
+      "itemName": "Steel Sword",
+      "minLevel": 3,
+      "rarity": "Uncommon"
+    },
+    {
+      "basePrice": 300,
+      "description": "Full steel plate armor. +10 Defense",
+      "initialStock": 2,
+      "isInfinite": false,
+      "itemId": "20000000-0000-0000-0000-000000000004",
+      "itemName": "Steel Armor",
+      "minLevel": 3,
+      "rarity": "Uncommon"
+    },
+    {
+      "basePrice": 1000,
+      "description": "Legendary lightweight blade. +20 Attack",
+      "initialStock": 1,
+      "isInfinite": false,
+      "itemId": "20000000-0000-0000-0000-000000000005",
+      "itemName": "Mithril Sword",
+      "minLevel": 8,
+      "rarity": "Rare"
+    }
+  ],
+  "name": "Tormund's Forge",
+  "sellPriceMultiplier": 1.2,
+  "type": "Blacksmith"
+}

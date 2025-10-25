@@ -75,9 +75,11 @@
               "PublishConsole",
               "PublishWindows",
               "Release",
+              "ReleaseConsole",
               "Restore",
               "Test",
-              "TestWithCoverage"
+              "TestWithCoverage",
+              "VerifyArtifact"
             ],
             "type": "string"
           },
@@ -102,9 +104,11 @@
               "PublishConsole",
               "PublishWindows",
               "Release",
+              "ReleaseConsole",
               "Restore",
               "Test",
-              "TestWithCoverage"
+              "TestWithCoverage",
+              "VerifyArtifact"
             ],
             "type": "string"
           },

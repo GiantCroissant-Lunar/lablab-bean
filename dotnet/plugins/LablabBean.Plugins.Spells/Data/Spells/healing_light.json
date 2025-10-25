@@ -1,0 +1,19 @@
+{
+  "areaRadius": 0,
+  "cooldown": 3,
+  "description": "Channels divine energy to restore health to yourself.",
+  "effects": [
+    {
+      "duration": 0,
+      "type": "Heal",
+      "value": 40
+    }
+  ],
+  "id": "a2c4e6f8-5d7b-4a9c-8e1f-3b5d7a9c1e2f",
+  "manaCost": 20,
+  "minLevel": 2,
+  "name": "Healing Light",
+  "range": 0,
+  "targeting": "Self",
+  "type": "Healing"
+}

@@ -1,0 +1,19 @@
+{
+  "areaRadius": 0,
+  "cooldown": 6,
+  "description": "Channels raw power to temporarily increase attack strength.",
+  "effects": [
+    {
+      "duration": 4,
+      "type": "Buff",
+      "value": 10
+    }
+  ],
+  "id": "e6f8a1c3-9d2e-8f4a-3b5d-7e9a2c4f6d8b",
+  "manaCost": 18,
+  "minLevel": 6,
+  "name": "Battle Fury",
+  "range": 0,
+  "targeting": "Self",
+  "type": "Utility"
+}

@@ -1,5 +1,7 @@
 {
   "$schema": "../../framework/LablabBean.Plugins.Contracts/plugin.schema.json",
+  "EntryAssembly": "LablabBean.Plugins.Diagnostic.Sentry.dll",
+  "EntryType": "LablabBean.Plugins.Diagnostic.Sentry.SentryPlugin",
   "author": "LablabBean Team",
   "capabilities": [
     "error-tracking",
@@ -19,7 +21,6 @@
   },
   "dependencies": [],
   "description": "Sentry diagnostic provider for error tracking and performance monitoring",
-  "entryPoint": "LablabBean.Plugins.Diagnostic.Sentry.dll",
   "id": "lablab-bean.diagnostic-sentry",
   "name": "Diagnostic Sentry",
   "permissions": [

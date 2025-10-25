@@ -73,27 +73,70 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
                 continue;
             }
 
+            // If the provided path is itself a plugin directory (contains plugin.json), process directly
+            var selfManifest = Path.Combine(absolutePath, "plugin.json");
+            if (File.Exists(selfManifest))
+            {
+                try
+                {
+                    var manifest = ManifestParser.ParseFile(selfManifest);
+                    manifests.Add((absolutePath, manifest));
+                    _logger.LogInformation("Discovered plugin: {PluginId} v{Version}", manifest.Id, manifest.Version);
+                    continue; // don't enumerate children
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to parse manifest: {ManifestPath}", selfManifest);
+                    continue;
+                }
+            }
+
             _logger.LogInformation("Scanning for plugins in: {PluginPath}", absolutePath);
 
             var pluginDirs = Directory.GetDirectories(absolutePath);
             foreach (var pluginDir in pluginDirs)
             {
                 var manifestPath = Path.Combine(pluginDir, "plugin.json");
-                if (!File.Exists(manifestPath))
+                if (File.Exists(manifestPath))
                 {
-                    _logger.LogDebug("No plugin.json found in: {PluginDir}", pluginDir);
+                    try
+                    {
+                        var manifest = ManifestParser.ParseFile(manifestPath);
+                        manifests.Add((pluginDir, manifest));
+                        _logger.LogInformation("Discovered plugin: {PluginId} v{Version}", manifest.Id, manifest.Version);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to parse manifest: {ManifestPath}", manifestPath);
+                    }
                     continue;
                 }
 
-                try
+                // Defensive: also discover manifests nested under "plugins/<name>/plugin.json"
+                var nestedPluginsRoot = Path.Combine(pluginDir, "plugins");
+                if (Directory.Exists(nestedPluginsRoot))
                 {
-                    var manifest = ManifestParser.ParseFile(manifestPath);
-                    manifests.Add((pluginDir, manifest));
-                    _logger.LogInformation("Discovered plugin: {PluginId} v{Version}", manifest.Id, manifest.Version);
+                    foreach (var nestedDir in Directory.GetDirectories(nestedPluginsRoot))
+                    {
+                        var nestedManifest = Path.Combine(nestedDir, "plugin.json");
+                        if (!File.Exists(nestedManifest))
+                            continue;
+
+                        try
+                        {
+                            var manifest = ManifestParser.ParseFile(nestedManifest);
+                            manifests.Add((nestedDir, manifest));
+                            _logger.LogInformation("Discovered plugin (nested): {PluginId} v{Version}", manifest.Id, manifest.Version);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Failed to parse nested manifest: {ManifestPath}", nestedManifest);
+                        }
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.LogError(ex, "Failed to parse manifest: {ManifestPath}", manifestPath);
+                    _logger.LogDebug("No plugin.json found in: {PluginDir}", pluginDir);
                 }
             }
         }

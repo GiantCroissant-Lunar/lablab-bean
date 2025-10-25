@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
+    <ProjectReference Include="..\LablabBean.Plugins.NPC\LablabBean.Plugins.NPC.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +22,9 @@
 
   <ItemGroup>
     <None Update="plugin.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\**\*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,5 +1,7 @@
 {
   "$schema": "../../framework/LablabBean.Plugins.Contracts/plugin.schema.json",
+  "EntryAssembly": "LablabBean.Plugins.Diagnostic.Firebase.dll",
+  "EntryType": "LablabBean.Plugins.Diagnostic.Firebase.FirebasePlugin",
   "author": "LablabBean Team",
   "capabilities": [
     "remote-logging",
@@ -17,7 +19,6 @@
   },
   "dependencies": [],
   "description": "Firebase diagnostic provider for remote monitoring and analytics",
-  "entryPoint": "LablabBean.Plugins.Diagnostic.Firebase.dll",
   "id": "lablab-bean.diagnostic-firebase",
   "name": "Diagnostic Firebase",
   "permissions": [

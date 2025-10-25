@@ -1,0 +1,19 @@
+{
+  "areaRadius": 2,
+  "cooldown": 4,
+  "description": "Summons a bolt of lightning to strike all enemies in an area.",
+  "effects": [
+    {
+      "duration": 0,
+      "type": "Damage",
+      "value": 35
+    }
+  ],
+  "id": "b3d5e7f9-6c8a-5b1d-9f2e-4c6d8a1c3e4f",
+  "manaCost": 30,
+  "minLevel": 5,
+  "name": "Lightning Strike",
+  "range": 6,
+  "targeting": "AOE",
+  "type": "AOE"
+}

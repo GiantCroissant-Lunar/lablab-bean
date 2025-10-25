@@ -9,7 +9,18 @@ dotnet/
 ├── framework/                    # Shared libraries
 │   ├── LablabBean.Core/         # Core domain models and interfaces
 │   ├── LablabBean.Infrastructure/ # Infrastructure services (DI, Logging, Config)
-│   └── LablabBean.Reactive/     # Reactive programming utilities
+│   ├── LablabBean.Reactive/     # Reactive programming utilities
+│   ├── LablabBean.AI.Core/      # Intelligent avatar core abstractions
+│   ├── LablabBean.AI.Actors/    # Akka.NET actor implementations
+│   └── LablabBean.AI.Agents/    # Semantic Kernel AI agents
+├── plugins/                      # Gameplay plugins (ECS-based)
+│   ├── LablabBean.Plugins.Quest/      # Quest system with AI generation
+│   ├── LablabBean.Plugins.NPC/        # NPC dialogue and reputation
+│   ├── LablabBean.Plugins.Progression/ # Leveling and stat growth
+│   ├── LablabBean.Plugins.Spells/     # Magic system (15 spells)
+│   ├── LablabBean.Plugins.Merchant/   # Trading and shops
+│   ├── LablabBean.Plugins.Boss/       # Boss encounters
+│   └── LablabBean.Plugins.Hazards/    # Environmental hazards
 ├── console-app/                  # Terminal.Gui v2 console application
 │   └── LablabBean.Console/
 └── windows-app/                  # SadConsole Windows application
@@ -72,6 +83,106 @@ Reactive programming utilities and ViewModels.
 - ObservableCollections (Cysharp)
 - MessagePipe (Cysharp)
 - R3 (Cysharp)
+
+### LablabBean.AI.Core
+
+Core abstractions for intelligent avatar system.
+
+**Features:**
+
+- ECS bridge components (AkkaActorRef, SemanticAgent, IntelligentAI)
+- Avatar models (AvatarContext, AvatarState, AvatarMemory, AvatarRelationship)
+- AI decision models
+- Event definitions (AIThoughtEvent, AIBehaviorChangedEvent)
+
+### LablabBean.AI.Actors
+
+Akka.NET actor implementations for intelligent avatars.
+
+**Features:**
+
+- BossActor and EmployeeActor with Akka.Persistence
+- Message-driven architecture
+- EventBus bridge for ECS integration
+- State serialization and snapshots
+
+**Packages:**
+
+- Akka 1.5.35
+- Akka.Hosting
+- Akka.Persistence.Sql
+
+### LablabBean.AI.Agents
+
+Semantic Kernel AI agents for decision-making.
+
+**Features:**
+
+- BossIntelligenceAgent with OpenAI integration
+- EmployeeIntelligenceAgent for NPC behaviors
+- YAML-based personality system
+- Chat-based AI decision making
+
+**Packages:**
+
+- Microsoft.SemanticKernel 1.25.0
+- Microsoft.SemanticKernel.Agents.Core
+- Microsoft.SemanticKernel.Connectors.OpenAI
+
+## Gameplay Plugins
+
+The solution includes 7 gameplay plugins built on **Arch ECS** (Entity Component System), providing a complete dungeon crawler experience.
+
+### 🎮 Plugin Overview
+
+| Plugin | Description | Key Features |
+|--------|-------------|--------------|
+| **Quest** | Quest management | AI generation, objectives, rewards, quest chains |
+| **NPC** | Interactive NPCs | Dialogue trees, reputation, 10 unique NPCs |
+| **Progression** | Character growth | Leveling (1-20), stat growth, ability unlocks |
+| **Spells** | Magic system | 15 spells across 3 schools (Fire, Ice, Lightning) |
+| **Merchant** | Trading | 3 merchants, 50+ items, dynamic pricing |
+| **Boss** | Epic encounters | 5 bosses, multi-phase battles, special mechanics |
+| **Hazards** | Environmental dangers | Traps, damage-over-time, triggered effects |
+
+### 📖 Plugin Documentation
+
+Each plugin has comprehensive documentation:
+
+- [Quest System README](plugins/LablabBean.Plugins.Quest/README.md)
+- [NPC System README](plugins/LablabBean.Plugins.NPC/README.md)
+- [Progression README](plugins/LablabBean.Plugins.Progression/README.md)
+- [Spells README](plugins/LablabBean.Plugins.Spells/README.md)
+- [Merchant README](plugins/LablabBean.Plugins.Merchant/README.md)
+- [Boss README](plugins/LablabBean.Plugins.Boss/README.md)
+- [Hazards README](plugins/LablabBean.Plugins.Hazards/README.md)
+
+### 🏗️ Plugin Architecture
+
+**Tech Stack:**
+
+- **Arch ECS**: High-performance entity component system (5M+ entities/sec)
+- **Event-Driven**: Loosely coupled via `IEventBus` (1.1M+ events/sec)
+- **Service-Oriented**: Clean service interfaces for integration
+- **Data-Driven**: JSON/YAML configuration for game content
+
+**Integration Example:**
+
+```csharp
+// Quest System
+questService.StartQuest(playerEntity, "fetch_herbs");
+questService.CompleteQuest(playerEntity, "fetch_herbs");
+
+// Spell System
+spellService.CastSpell(playerEntityId, spellId, targetEntityId);
+
+// Merchant System
+merchantService.BuyItem(playerEntity, merchantEntity, itemId, quantity);
+
+// NPC System
+npcService.StartDialogue(playerEntity, npcEntity);
+npcService.SelectChoice(playerEntity, "help_quest");
+```
 
 ## Applications
 

@@ -1,0 +1,60 @@
+{
+  "buyPriceMultiplier": 0.5,
+  "description": "Everything you need for your adventure",
+  "id": "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+  "inventory": [
+    {
+      "basePrice": 50,
+      "description": "Restores 50 HP instantly",
+      "initialStock": -1,
+      "isInfinite": true,
+      "itemId": "10000000-0000-0000-0000-000000000001",
+      "itemName": "Health Potion",
+      "minLevel": 1,
+      "rarity": "Common"
+    },
+    {
+      "basePrice": 50,
+      "description": "Restores 50 Mana instantly",
+      "initialStock": -1,
+      "isInfinite": true,
+      "itemId": "10000000-0000-0000-0000-000000000002",
+      "itemName": "Mana Potion",
+      "minLevel": 1,
+      "rarity": "Common"
+    },
+    {
+      "basePrice": 30,
+      "description": "Cures poison",
+      "initialStock": 10,
+      "isInfinite": false,
+      "itemId": "10000000-0000-0000-0000-000000000003",
+      "itemName": "Antidote",
+      "minLevel": 1,
+      "rarity": "Common"
+    },
+    {
+      "basePrice": 10,
+      "description": "Provides light in dark places",
+      "initialStock": -1,
+      "isInfinite": true,
+      "itemId": "10000000-0000-0000-0000-000000000004",
+      "itemName": "Torch",
+      "minLevel": 1,
+      "rarity": "Common"
+    },
+    {
+      "basePrice": 20,
+      "description": "50 feet of sturdy rope",
+      "initialStock": 5,
+      "isInfinite": false,
+      "itemId": "10000000-0000-0000-0000-000000000005",
+      "itemName": "Rope",
+      "minLevel": 1,
+      "rarity": "Common"
+    }
+  ],
+  "name": "Mara's General Store",
+  "sellPriceMultiplier": 1.0,
+  "type": "GeneralStore"
+}

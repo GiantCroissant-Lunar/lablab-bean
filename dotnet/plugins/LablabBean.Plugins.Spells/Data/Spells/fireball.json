@@ -1,0 +1,19 @@
+{
+  "areaRadius": 0,
+  "cooldown": 2,
+  "description": "Hurls a ball of fire that explodes on impact, dealing damage to the target.",
+  "effects": [
+    {
+      "duration": 0,
+      "type": "Damage",
+      "value": 25
+    }
+  ],
+  "id": "f7a9d8c5-3b12-4e8f-9c7a-1d5e6f8a9b2c",
+  "manaCost": 15,
+  "minLevel": 3,
+  "name": "Fireball",
+  "range": 5,
+  "targeting": "Single",
+  "type": "Offensive"
+}

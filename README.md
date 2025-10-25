@@ -180,6 +180,143 @@ See [plugins/examples/](plugins/examples/) for working examples.
 - **Performance**: [specs/007-tiered-contract-architecture/performance-results.md](specs/007-tiered-contract-architecture/performance-results.md)
 - **Spec**: [specs/007-tiered-contract-architecture/spec.md](specs/007-tiered-contract-architecture/spec.md)
 
+## Gameplay Plugins
+
+The project includes a comprehensive suite of gameplay plugins built on the **Arch ECS** (Entity Component System) architecture, providing a complete dungeon crawler experience.
+
+### 🎮 Available Gameplay Plugins
+
+#### 1. Quest System (`LablabBean.Plugins.Quest`)
+
+Complete quest management with objectives, rewards, and AI-generated content.
+
+**Features:**
+
+- Quest creation with multiple objective types (kill, collect, interact, explore)
+- Quest chains and prerequisites
+- Dynamic reward system (XP, gold, items)
+- AI-powered quest generation using Semantic Kernel
+- Quest state tracking (NotStarted, Active, Completed, Failed, Abandoned)
+
+**Documentation:** [Quest Plugin README](dotnet/plugins/LablabBean.Plugins.Quest/README.md)
+
+#### 2. NPC System (`LablabBean.Plugins.NPC`)
+
+Interactive NPCs with dialogue trees and reputation systems.
+
+**Features:**
+
+- 10 unique NPCs (Guard, Merchant, Blacksmith, etc.)
+- Branching dialogue trees with multiple response options
+- Reputation tracking affects NPC interactions
+- Disposition states (Friendly, Neutral, Hostile, Fearful)
+- Quest giver integration
+
+**Documentation:** [NPC Plugin README](dotnet/plugins/LablabBean.Plugins.NPC/README.md)
+
+#### 3. Progression System (`LablabBean.Plugins.Progression`)
+
+Character leveling, stat growth, and ability unlocks.
+
+**Features:**
+
+- Level 1-20 progression with exponential XP curve
+- Stat growth (Health, Mana, Strength, Intelligence, Agility, Vitality)
+- Ability unlocks every 3 levels
+- Class specializations (Warrior, Mage, Rogue)
+- Prestige system for endgame
+
+**Documentation:** [Progression Plugin README](dotnet/plugins/LablabBean.Plugins.Progression/README.md)
+
+#### 4. Spell System (`LablabBean.Plugins.Spells`)
+
+Magic system with 15 spells across 3 schools of magic.
+
+**Features:**
+
+- **Fire Magic**: Fireball, Flame Strike, Meteor
+- **Ice Magic**: Ice Shard, Frost Nova, Blizzard
+- **Lightning Magic**: Lightning Bolt, Chain Lightning, Thunderstorm
+- Mana management and regeneration
+- Spell cooldowns and costs
+- Area-of-effect and single-target spells
+
+**Documentation:** [Spells Plugin README](dotnet/plugins/LablabBean.Plugins.Spells/README.md)
+
+#### 5. Merchant System (`LablabBean.Plugins.Merchant`)
+
+Trading system with dynamic pricing and 3 merchant types.
+
+**Features:**
+
+- 3 merchant types (General, Blacksmith, Apothecary)
+- 50+ items across categories (weapons, armor, potions, materials)
+- Dynamic pricing based on reputation and item rarity
+- Buy/sell/trade mechanics
+- Item quality tiers (Common, Uncommon, Rare, Epic, Legendary)
+
+**Documentation:** [Merchant Plugin README](dotnet/plugins/LablabBean.Plugins.Merchant/README.md)
+
+#### 6. Boss System (`LablabBean.Plugins.Boss`)
+
+Epic boss encounters with multi-phase battles and special mechanics.
+
+**Features:**
+
+- 5 unique bosses with distinct mechanics
+- Multi-phase encounters (2-3 phases per boss)
+- Special abilities and attack patterns
+- Enrage mechanics and phase transitions
+- Unique loot tables per boss
+
+**Documentation:** [Boss Plugin README](dotnet/plugins/LablabBean.Plugins.Boss/README.md)
+
+#### 7. Hazards System (`LablabBean.Plugins.Hazards`)
+
+Environmental hazards and dungeon obstacles.
+
+**Features:**
+
+- Spike traps, fire traps, poison gas, falling rocks
+- Periodic and triggered hazard types
+- Damage-over-time effects
+- Visual indicators for hazards
+
+**Documentation:** [Hazards Plugin README](dotnet/plugins/LablabBean.Plugins.Hazards/README.md)
+
+### 🏗️ Architecture
+
+All gameplay plugins are built on:
+
+- **Arch ECS**: High-performance entity component system (5M+ entities/sec)
+- **Event-Driven**: Loosely coupled via `IEventBus`
+- **Service-Oriented**: Clean service interfaces for easy integration
+- **Data-Driven**: JSON/YAML configuration for game content
+
+### 📖 Plugin Development Guides
+
+- **Event-Driven Development**: [docs/plugins/event-driven-development.md](docs/plugins/event-driven-development.md)
+- **Plugin Architecture**: [specs/007-tiered-contract-architecture/spec.md](specs/007-tiered-contract-architecture/spec.md)
+- **ECS Guide**: [Arch ECS Documentation](https://github.com/genaray/Arch)
+
+### 🎯 Integration Example
+
+```csharp
+// Start a quest
+questService.StartQuest(playerEntity, "fetch_herbs");
+
+// Cast a spell
+spellService.CastSpell(playerEntityId, spellId, targetEntityId);
+
+// Trade with merchant
+merchantService.BuyItem(playerEntity, merchantEntity, itemId, quantity);
+
+// Talk to NPC
+npcService.StartDialogue(playerEntity, npcEntity);
+```
+
+All plugins publish events through the `IEventBus` for loose coupling and reactive UIs.
+
 ## Available Tasks
 
 View all available tasks:

@@ -109,18 +109,19 @@ public class FirebaseDiagnosticProvider : IDiagnosticProvider
 
     public Task<ProviderHealthResult> CheckHealthAsync(CancellationToken cancellationToken = default)
     {
+        var duration = TimeSpan.FromMilliseconds(10); // Simulated
         var result = new ProviderHealthResult
         {
             ProviderName = Name,
             Health = _isHealthy ? SystemHealth.Healthy : SystemHealth.Degraded,
             Timestamp = DateTime.UtcNow,
+            Duration = duration,
             IsSuccessful = _isHealthy,
-            ResponseTime = TimeSpan.FromMilliseconds(10), // Simulated
-            Details = new Dictionary<string, object>
+            Details = new List<HealthCheckDetail>
             {
-                { "Initialized", _isInitialized },
-                { "Enabled", _isEnabled },
-                { "UptimeSeconds", (DateTime.UtcNow - _startTime).TotalSeconds }
+                new HealthCheckDetail { Name = "Initialized", IsSuccessful = _isInitialized, Message = _isInitialized ? "Provider initialized" : "Not initialized" },
+                new HealthCheckDetail { Name = "Enabled", IsSuccessful = _isEnabled, Message = _isEnabled ? "Enabled" : "Disabled" },
+                new HealthCheckDetail { Name = "UptimeSeconds", IsSuccessful = true, Message = ((DateTime.UtcNow - _startTime).TotalSeconds).ToString("F2") }
             }
         };
 

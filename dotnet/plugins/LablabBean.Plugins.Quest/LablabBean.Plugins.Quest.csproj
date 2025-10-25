@@ -18,6 +18,7 @@
     <PackageReference Include="Arch" />
     <PackageReference Include="Arch.System" />
     <PackageReference Include="GoRogue" />
+    <PackageReference Include="Microsoft.Extensions.AI" />
   </ItemGroup>
 
   <ItemGroup>
