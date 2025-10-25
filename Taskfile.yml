@@ -62,3 +62,8 @@ tasks:
     desc: Clean all build artifacts via NUKE
     cmds:
     - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Clean
+
+  scc:
+    desc: Run scc (code counter) on the repository
+    cmds:
+    - scc .
