@@ -1,3 +1,4 @@
+using LablabBean.AI.Actors.Systems;
 using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Services;
 using LablabBean.Game.Core.Systems;
@@ -17,6 +18,8 @@ public class DungeonCrawlerService : IDisposable
     private readonly GameStateManager _gameStateManager;
     private readonly HudService _hudService;
     private readonly WorldViewService _worldViewService;
+    private readonly IntelligentAISystem? _intelligentAISystem;
+    private readonly IntelligentEntityFactory? _entityFactory;
     private Window? _gameWindow;
     private TextView? _debugLogView;
     private readonly List<string> _debugLogs = new();
@@ -27,12 +30,16 @@ public class DungeonCrawlerService : IDisposable
         ILogger<DungeonCrawlerService> logger,
         GameStateManager gameStateManager,
         HudService hudService,
-        WorldViewService worldViewService)
+        WorldViewService worldViewService,
+        IntelligentAISystem? intelligentAISystem = null,
+        IntelligentEntityFactory? entityFactory = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _gameStateManager = gameStateManager ?? throw new ArgumentNullException(nameof(gameStateManager));
         _hudService = hudService ?? throw new ArgumentNullException(nameof(hudService));
         _worldViewService = worldViewService ?? throw new ArgumentNullException(nameof(worldViewService));
+        _intelligentAISystem = intelligentAISystem;
+        _entityFactory = entityFactory;
     }
 
     /// <summary>
@@ -255,6 +262,9 @@ public class DungeonCrawlerService : IDisposable
         _gameStateManager.InitializeNewGame(80, 40);
         _isRunning = true;
 
+        // Spawn test intelligent entities
+        SpawnIntelligentTestEntities();
+
         // _hudService.AddMessage("Welcome to the Dungeon!"); // Removed - using Debug Log instead
         // _hudService.AddMessage("Use arrow keys or WASD to move."); // Removed - using Debug Log instead
         // _hudService.AddMessage("Press 'E' to switch to edit mode."); // Removed - using Debug Log instead
@@ -262,6 +272,33 @@ public class DungeonCrawlerService : IDisposable
 
         // Don't call Update here - it will be called after layout
         // Update();
+    }
+
+    /// <summary>
+    /// Spawns test entities with IntelligentAI components for testing
+    /// </summary>
+    private void SpawnIntelligentTestEntities()
+    {
+        if (_entityFactory == null)
+        {
+            _logger.LogWarning("IntelligentEntityFactory not available, skipping test entity spawn");
+            return;
+        }
+
+        try
+        {
+            var world = _gameStateManager.WorldManager.CurrentWorld;
+            var (bosses, employees) = _entityFactory.CreateTestScenario(world);
+
+            AddDebugLog($"Spawned {bosses.Count} intelligent bosses and {employees.Count} employees!");
+            _logger.LogInformation("Spawned {BossCount} bosses and {EmployeeCount} employees with IntelligentAI",
+                bosses.Count, employees.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to spawn intelligent test entities");
+            AddDebugLog($"ERROR spawning intelligent entities: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -274,6 +311,9 @@ public class DungeonCrawlerService : IDisposable
 
         // Update game logic
         _gameStateManager.Update();
+
+        // Update IntelligentAISystem (actor-based AI)
+        _intelligentAISystem?.Update(_gameStateManager.WorldManager.CurrentWorld, 0.016f); // ~60 FPS
 
         // Render
         if (_gameStateManager.CurrentMap != null)
@@ -516,6 +556,7 @@ public class DungeonCrawlerService : IDisposable
             return;
 
         Stop();
+        _intelligentAISystem?.Shutdown();
         _gameStateManager?.Dispose();
 
         _disposed = true;

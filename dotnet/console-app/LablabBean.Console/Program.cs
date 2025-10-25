@@ -14,6 +14,7 @@ using LablabBean.Plugins.Reporting.Csv;
 using LablabBean.Reporting.Providers.Build;
 using LablabBean.Reporting.Analytics;
 using LablabBean.AI.Actors.Extensions;
+using LablabBean.AI.Actors.Systems;
 using LablabBean.AI.Agents.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -86,6 +87,12 @@ try
             services.AddSingleton<ItemSpawnSystem>();
             services.AddSingleton<StatusEffectSystem>();
             services.AddSingleton<GameStateManager>();
+
+            // Add IntelligentAISystem (bridges ECS with Akka.NET actors)
+            services.AddSingleton<IntelligentAISystem>();
+
+            // Add test entity factory for creating intelligent NPCs
+            services.AddSingleton<IntelligentEntityFactory>();
 
             // Add Terminal.Gui rendering services
             services.AddSingleton<HudService>();

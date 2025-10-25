@@ -67,3 +67,29 @@ tasks:
     desc: Run scc (code counter) on the repository
     cmds:
     - scc .
+
+  docs:organize:
+    desc: Analyze documentation organization (dry-run)
+    cmds:
+    - python git-hooks/checks/python/organize_docs.py --dry-run
+
+  docs:organize:auto:
+    desc: Automatically organize scattered documentation files
+    cmds:
+    - python git-hooks/checks/python/organize_docs.py --auto-move
+
+  docs:validate:
+    desc: Validate documentation schema and generate registry
+    cmds:
+    - python scripts/validate_docs.py
+
+  docs:check:
+    desc: Check documentation organization and validation
+    cmds:
+    - task: docs:organize
+    - task: docs:validate
+
+  docs:status:
+    desc: Quick status of documentation organization (no validation)
+    cmds:
+    - python git-hooks/checks/python/organize_docs.py --dry-run
