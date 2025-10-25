@@ -2,7 +2,7 @@ using Akka.Actor;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using LablabBean.AI.Core.Models;
-using LablabBean.AI.Agents.Configuration;
+using LablabBean.AI.Core.Interfaces;
 using LablabBean.AI.Actors;
 using LablabBean.AI.Actors.Bridges;
 

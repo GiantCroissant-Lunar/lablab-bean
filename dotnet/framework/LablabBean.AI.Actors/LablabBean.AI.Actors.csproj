@@ -10,12 +10,15 @@
     <PackageReference Include="Akka" />
     <PackageReference Include="Akka.Hosting" />
     <PackageReference Include="Akka.Persistence.Sql" />
+    <PackageReference Include="Arch" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="TheSadRogue.Primitives" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LablabBean.AI.Core\LablabBean.AI.Core.csproj" />
+    <ProjectReference Include="..\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
   </ItemGroup>
 
 </Project>

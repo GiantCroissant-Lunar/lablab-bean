@@ -3,7 +3,7 @@ using YamlDotNet.Serialization.NamingConventions;
 using Microsoft.Extensions.Logging;
 using LablabBean.AI.Core.Models;
 
-namespace LablabBean.AI.Agents.Configuration;
+namespace LablabBean.AI.Core.Interfaces;
 
 /// <summary>
 /// Loads and manages employee personality configurations from YAML files
