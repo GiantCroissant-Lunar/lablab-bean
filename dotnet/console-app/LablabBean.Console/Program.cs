@@ -13,6 +13,8 @@ using LablabBean.Plugins.Reporting.Html;
 using LablabBean.Plugins.Reporting.Csv;
 using LablabBean.Reporting.Providers.Build;
 using LablabBean.Reporting.Analytics;
+using LablabBean.AI.Actors.Extensions;
+using LablabBean.AI.Agents.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -69,6 +71,10 @@ try
 
             // Add plugin system
             services.AddPluginSystem(context.Configuration);
+
+            // Add intelligent avatar system (Akka.NET + Semantic Kernel)
+            services.AddAkkaActors(context.Configuration);
+            services.AddSemanticKernelAgents(context.Configuration);
 
             // Add game framework services
             services.AddSingleton<GameWorldManager>();

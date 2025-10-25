@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using LablabBean.AI.Agents.Configuration;
+using LablabBean.AI.Core.Interfaces;
 
 #pragma warning disable SKEXP0010
 
@@ -12,6 +13,32 @@ namespace LablabBean.AI.Agents.Extensions;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Add Semantic Kernel agents for intelligent avatars (convenience method)
+    /// </summary>
+    public static IServiceCollection AddSemanticKernelAgents(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // Add Semantic Kernel with OpenAI
+        services.AddSemanticKernelWithOpenAI(configuration);
+
+        // Register personality loaders
+        services.AddSingleton<BossPersonalityLoader>();
+        services.AddSingleton<EmployeePersonalityLoader>();
+
+        // Register intelligence agents
+        services.AddSingleton<IIntelligenceAgent, BossIntelligenceAgent>();
+        services.AddSingleton<IIntelligenceAgent, EmployeeIntelligenceAgent>();
+        services.AddSingleton<TacticsAgent>();
+
+        // Register factories
+        services.AddSingleton<BossFactory>();
+        services.AddSingleton<EmployeeFactory>();
+
+        return services;
+    }
+
     /// <summary>
     /// Add Semantic Kernel with OpenAI connector
     /// </summary>

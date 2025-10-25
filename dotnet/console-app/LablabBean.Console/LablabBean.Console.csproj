@@ -18,6 +18,9 @@
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Providers.Build\LablabBean.Reporting.Providers.Build.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reporting.Analytics\LablabBean.Reporting.Analytics.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.SourceGenerators.Reporting\LablabBean.SourceGenerators.Reporting.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\framework\LablabBean.AI.Core\LablabBean.AI.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.AI.Actors\LablabBean.AI.Actors.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.AI.Agents\LablabBean.AI.Agents.csproj" />
   </ItemGroup>
 
   <ItemGroup>
