@@ -64,7 +64,7 @@ public sealed class BossFactory
             // Create intelligence agent with optional tactics
             var agent = new BossIntelligenceAgent(
                 _kernel,
-                personality,
+                _personalityLoader,
                 _loggerFactory.CreateLogger<BossIntelligenceAgent>(),
                 entityId,
                 tacticsAgent
@@ -78,7 +78,7 @@ public sealed class BossFactory
 
             // Create actor - use explicit arguments to avoid lambda closure issues
             var actor = actorSystem.ActorOf(
-                Props.Create<BossActor>(entityId, personality, adapter, agent),
+                Props.Create<BossActor>(entityId, personality, adapter, agent, 10),
                 $"boss-{entityId}"
             );
 

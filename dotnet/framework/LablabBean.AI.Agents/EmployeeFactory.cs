@@ -53,7 +53,7 @@ public sealed class EmployeeFactory
             // Create intelligence agent
             var agent = new EmployeeIntelligenceAgent(
                 _kernel,
-                personality,
+                _personalityLoader,
                 _loggerFactory.CreateLogger<EmployeeIntelligenceAgent>(),
                 entityId
             );
@@ -66,7 +66,7 @@ public sealed class EmployeeFactory
 
             // Create actor
             var actor = actorSystem.ActorOf(
-                Props.Create<EmployeeActor>(entityId, personality, adapter, agent),
+                Props.Create<EmployeeActor>(entityId, personality, adapter, agent, 10),
                 $"employee-{entityId}"
             );
 

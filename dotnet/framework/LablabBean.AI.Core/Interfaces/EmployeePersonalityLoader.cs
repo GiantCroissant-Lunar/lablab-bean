@@ -106,6 +106,123 @@ public sealed class EmployeePersonalityLoader
     }
 
     /// <summary>
+    /// Create a default employee personality programmatically (no file required)
+    /// </summary>
+    public EmployeePersonality CreateDefault()
+    {
+        _logger.LogInformation("Creating default employee personality programmatically");
+
+        return new EmployeePersonality
+        {
+            Name = "Employee (Default)",
+            Version = "1.0.0",
+            AvatarType = "employee",
+            Traits = new EmployeeTraits
+            {
+                Diligence = 0.75f,
+                Friendliness = 0.70f,
+                Adaptability = 0.65f,
+                Creativity = 0.60f,
+                Teamwork = 0.70f,
+                AttentionToDetail = 0.70f,
+                Enthusiasm = 0.65f,
+                Resilience = 0.65f
+            },
+            Behavior = new EmployeeBehavior
+            {
+                TaskCompletionSpeed = 0.70f,
+                InitiativeLevel = 0.60f,
+                CustomerFocus = 0.75f,
+                LearningRate = 0.65f,
+                StressTolerance = 0.60f,
+                MistakeRecovery = 0.65f
+            },
+            Skills = new EmployeeSkills
+            {
+                CoffeeMaking = 0.60f,
+                CustomerService = 0.65f,
+                CashHandling = 0.55f,
+                Cleaning = 0.70f,
+                Multitasking = 0.50f,
+                ProblemSolving = 0.55f
+            },
+            Preferences = new WorkPreferences
+            {
+                PreferredTasks = new List<string> { "coffee_making", "customer_service" },
+                DislikedTasks = new List<string> { "cleaning" },
+                PreferredShift = "morning",
+                TeamWorkPreference = 0.70f
+            },
+            Growth = new GrowthParameters
+            {
+                SkillImprovementRate = 0.02f,
+                ConfidenceBuildRate = 0.05f,
+                ConfidenceDecayRate = 0.02f,
+                BurnoutThreshold = 0.80f,
+                MotivationBaseline = 0.70f
+            },
+            Performance = new PerformanceFactors
+            {
+                BaseEfficiency = 0.70f,
+                QualityFocus = 0.65f,
+                Consistency = 0.70f,
+                PeakHoursBoost = 0.15f,
+                FatigueImpact = 0.20f
+            },
+            Learning = new Dictionary<string, LearningCurve>
+            {
+                ["coffee_making"] = new LearningCurve { PlateauLevel = 0.90f, PracticeRequired = 100 },
+                ["customer_service"] = new LearningCurve { PlateauLevel = 0.85f, PracticeRequired = 80 }
+            },
+            TaskModifiers = new Dictionary<string, TaskModifier>
+            {
+                ["coffee_making"] = new TaskModifier { BaseTime = 1.0f, QualityBonus = 1.0f, EnergyImpact = 0.1f, BaseSatisfaction = 0.7f, FriendlinessBonus = 0.1f, StressPenalty = 0.05f, DetailBonus = 0.15f, FatiguePenalty = 0.1f }
+            },
+            Memory = new MemoryConfiguration
+            {
+                ShortTermCapacity = 8,
+                LongTermPriority = 0.70f,
+                EmotionalWeight = 0.60f
+            },
+            Dialogue = new DialogueStyle
+            {
+                Formality = 0.60f,
+                Verbosity = 0.55f,
+                Positivity = 0.70f,
+                Directness = 0.65f
+            },
+            Relationships = new EmployeeRelationshipDynamics
+            {
+                BossRespect = 0.65f,
+                PeerFriendliness = 0.70f,
+                CustomerWarmth = 0.75f,
+                ConflictTolerance = 0.50f,
+                FeedbackReceptivity = 0.70f
+            },
+            Prompts = new SystemPrompts
+            {
+                SystemPrompt = "You are a dedicated employee. Do good work and maintain positive relationships.",
+                DecisionTemplate = "Context: {context}\nSituation: {situation}\nWhat should you do?",
+                DialogueTemplate = "Speaking to: {listener_name}\nRelationship: {relationship_level}\nRespond naturally."
+            },
+            Emotions = new EmotionalStates
+            {
+                Default = "neutral",
+                Available = new List<string> { "neutral", "happy", "content", "focused", "stressed", "tired", "frustrated", "proud", "anxious", "motivated" },
+                Triggers = new Dictionary<string, List<string>>()
+            },
+            ResponseTemplates = new Dictionary<string, Dictionary<string, List<string>>>(),
+            Metadata = new PersonalityMetadata
+            {
+                Author = "LablabBean",
+                Created = DateTime.UtcNow.ToString("yyyy-MM-dd"),
+                Tags = new List<string> { "employee", "default" },
+                Description = "Default employee personality"
+            }
+        };
+    }
+
+    /// <summary>
     /// List available employee personality files
     /// </summary>
     public async Task<List<string>> ListAvailablePersonalitiesAsync(

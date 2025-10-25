@@ -35,9 +35,10 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<BossPersonalityLoader>();
         services.AddSingleton<EmployeePersonalityLoader>();
 
-        // Register intelligence agents
-        services.AddSingleton<IIntelligenceAgent, BossIntelligenceAgent>();
-        services.AddSingleton<IIntelligenceAgent, EmployeeIntelligenceAgent>();
+        // NOTE: Intelligence agents are NOT registered as singletons
+        // They are created per-entity by the IntelligentAISystem or factories
+        // Each agent needs a unique agentId which can't be provided via DI
+
         services.AddSingleton<TacticsAgent>();
 
         // Register factories

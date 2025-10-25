@@ -22,12 +22,12 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
 
     public EmployeeIntelligenceAgent(
         Kernel kernel,
-        EmployeePersonality personality,
+        EmployeePersonalityLoader personalityLoader,
         ILogger<EmployeeIntelligenceAgent> logger,
         string agentId)
     {
         _kernel = kernel;
-        _personality = personality;
+        _personality = personalityLoader.CreateDefault();
         _logger = logger;
         AgentId = agentId;
 

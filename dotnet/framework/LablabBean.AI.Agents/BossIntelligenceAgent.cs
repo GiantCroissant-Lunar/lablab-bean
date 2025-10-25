@@ -25,13 +25,13 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
 
     public BossIntelligenceAgent(
         Kernel kernel,
-        BossPersonality personality,
+        BossPersonalityLoader personalityLoader,
         ILogger<BossIntelligenceAgent> logger,
         string agentId,
         TacticsAgent? tacticsAgent = null)
     {
         _kernel = kernel;
-        _personality = personality;
+        _personality = personalityLoader.CreateDefault();
         _logger = logger;
         AgentId = agentId;
         _tacticsAgent = tacticsAgent;

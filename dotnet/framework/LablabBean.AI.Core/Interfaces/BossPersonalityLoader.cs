@@ -106,6 +106,95 @@ public sealed class BossPersonalityLoader
     }
 
     /// <summary>
+    /// Create a default boss personality programmatically (no file required)
+    /// </summary>
+    public BossPersonality CreateDefault()
+    {
+        _logger.LogInformation("Creating default boss personality programmatically");
+
+        return new BossPersonality
+        {
+            Name = "Boss (Default)",
+            Version = "1.0.0",
+            AvatarType = "boss",
+            Traits = new PersonalityTraits
+            {
+                Leadership = 0.85f,
+                Strictness = 0.65f,
+                Fairness = 0.75f,
+                Empathy = 0.55f,
+                Efficiency = 0.80f,
+                Humor = 0.45f,
+                Patience = 0.60f,
+                Innovation = 0.70f
+            },
+            Behavior = new BehaviorParameters
+            {
+                DecisionSpeed = 0.70f,
+                RiskTolerance = 0.45f,
+                Delegation = 0.75f,
+                Micromanagement = 0.35f,
+                PraiseFrequency = 0.60f,
+                CriticismDirectness = 0.70f
+            },
+            Memory = new MemoryConfiguration
+            {
+                ShortTermCapacity = 10,
+                LongTermPriority = 0.75f,
+                EmotionalWeight = 0.65f
+            },
+            Dialogue = new DialogueStyle
+            {
+                Formality = 0.70f,
+                Verbosity = 0.60f,
+                Positivity = 0.65f,
+                Directness = 0.75f
+            },
+            Relationships = new RelationshipDynamics
+            {
+                TrustBuildRate = 0.50f,
+                TrustDecayRate = 0.30f,
+                AuthorityImportance = 0.80f,
+                TeamBonding = 0.65f
+            },
+            Priorities = new DecisionPriorities
+            {
+                BusinessGoals = 0.35f,
+                EmployeeWellbeing = 0.25f,
+                Efficiency = 0.25f,
+                Innovation = 0.15f
+            },
+            Modifiers = new ContextualModifiers
+            {
+                StressThreshold = 0.70f,
+                FatigueImpact = 0.50f,
+                SuccessBoost = 0.20f,
+                FailureImpact = 0.30f
+            },
+            Prompts = new SystemPrompts
+            {
+                SystemPrompt = "You are a fair but demanding boss. Balance business success with employee development.",
+                DecisionTemplate = "Context: {context}\nState: {state}\nMemory: {memory}\n\nMake a decision.",
+                DialogueTemplate = "Speaking to: {employee_name}\nRelationship: {relationship_level}\nContext: {context}\n\nRespond naturally."
+            },
+            Emotions = new EmotionalStates
+            {
+                Default = "neutral",
+                Available = new List<string> { "neutral", "calm", "focused", "pleased", "concerned", "frustrated", "stressed", "motivated" },
+                Triggers = new Dictionary<string, List<string>>()
+            },
+            ResponseTemplates = new Dictionary<string, Dictionary<string, List<string>>>(),
+            Metadata = new PersonalityMetadata
+            {
+                Author = "LablabBean",
+                Created = DateTime.UtcNow.ToString("yyyy-MM-dd"),
+                Tags = new List<string> { "boss", "default" },
+                Description = "Default boss personality"
+            }
+        };
+    }
+
+    /// <summary>
     /// List available personality files
     /// </summary>
     public async Task<List<string>> ListAvailablePersonalitiesAsync(
