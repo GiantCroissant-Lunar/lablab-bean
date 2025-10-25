@@ -1,8 +1,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using LablabBean.AI.Agents.Configuration;
 using LablabBean.AI.Core.Interfaces;
+using LablabBean.Contracts.AI.Memory;
+using LablabBean.AI.Agents.Services;
+using LablabBean.AI.Agents.Services.KnowledgeBase;
 
 #pragma warning disable SKEXP0010
 
@@ -44,6 +48,58 @@ public static class ServiceCollectionExtensions
         // Register factories
         services.AddSingleton<BossFactory>();
         services.AddSingleton<EmployeeFactory>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Add Kernel Memory services for NPC memory storage and retrieval
+    /// </summary>
+    public static IServiceCollection AddKernelMemory(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // Bind configuration
+        services.Configure<KernelMemoryOptions>(
+            configuration.GetSection(KernelMemoryOptions.SectionName));
+
+        // Register IKernelMemory instance
+        services.AddSingleton<Microsoft.KernelMemory.IKernelMemory>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<Microsoft.KernelMemory.KernelMemoryBuilder>>();
+
+            logger.LogInformation("Initializing Kernel Memory with volatile (in-memory) storage");
+
+            // Build Kernel Memory with simple in-memory storage
+            // Note: This uses SimpleVectorDb for development/testing
+            // In production (Phase 4), this will be replaced with Qdrant
+            var builder = new Microsoft.KernelMemory.KernelMemoryBuilder();
+
+            return builder.Build<Microsoft.KernelMemory.MemoryServerless>();
+        });
+
+        // Register memory service
+        services.AddSingleton<IMemoryService, MemoryService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Add Knowledge Base services for RAG (Retrieval Augmented Generation)
+    /// </summary>
+    public static IServiceCollection AddKnowledgeBase(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // Register document processing services
+        services.AddSingleton<IDocumentLoader, DocumentLoader>();
+        services.AddSingleton<IDocumentChunker, DocumentChunker>();
+
+        // Register knowledge base service (depends on IKernelMemory)
+        services.AddSingleton<IKnowledgeBaseService, KnowledgeBaseService>();
+
+        // Register prompt augmentation service
+        services.AddSingleton<IPromptAugmentationService, PromptAugmentationService>();
 
         return services;
     }

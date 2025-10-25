@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using LablabBean.AI.Core.Interfaces;
 using LablabBean.AI.Core.Models;
 using LablabBean.AI.Core.Events;
+using LablabBean.Contracts.AI.Memory;
 
 namespace LablabBean.AI.Agents;
 
@@ -18,28 +19,35 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
     private readonly ILogger<BossIntelligenceAgent> _logger;
     private readonly ChatHistory _chatHistory;
     private readonly TacticsAgent? _tacticsAgent;
+    private readonly IMemoryService? _memoryService;
+    private readonly IPromptAugmentationService? _promptAugmentation;
 
     public string AgentId { get; }
     public string AgentType => "Boss";
     public bool HasTacticalCapability => _tacticsAgent != null;
+    public bool HasKnowledgeBase => _promptAugmentation != null;
 
     public BossIntelligenceAgent(
         Kernel kernel,
         BossPersonalityLoader personalityLoader,
         ILogger<BossIntelligenceAgent> logger,
         string agentId,
-        TacticsAgent? tacticsAgent = null)
+        TacticsAgent? tacticsAgent = null,
+        IMemoryService? memoryService = null,
+        IPromptAugmentationService? promptAugmentation = null)
     {
         _kernel = kernel;
         _personality = personalityLoader.CreateDefault();
         _logger = logger;
         AgentId = agentId;
         _tacticsAgent = tacticsAgent;
+        _memoryService = memoryService;
+        _promptAugmentation = promptAugmentation;
 
         _chatService = kernel.GetRequiredService<IChatCompletionService>();
         _chatHistory = new ChatHistory(_personality.Prompts.SystemPrompt);
 
-        _logger.LogInformation($"BossIntelligenceAgent initialized: {agentId} (Tactical: {HasTacticalCapability})");
+        _logger.LogInformation($"BossIntelligenceAgent initialized: {agentId} (Tactical: {HasTacticalCapability}, SemanticMemory: {_memoryService != null}, KnowledgeBase: {HasKnowledgeBase})");
     }
 
     public async Task InitializeAsync()
@@ -57,8 +65,8 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
         {
             _logger.LogDebug($"Making decision for context: {context.EntityId}");
 
-            // Build decision prompt
-            var prompt = BuildDecisionPrompt(context, state, memory);
+            // Build decision prompt with semantic memory retrieval (T025)
+            var prompt = await BuildDecisionPromptWithSemanticMemoryAsync(context, state, memory);
 
             // Get AI response
             _chatHistory.AddUserMessage(prompt);
@@ -101,8 +109,19 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
         {
             _logger.LogDebug($"Generating dialogue for {context.ListenerId}");
 
-            // Build dialogue prompt
-            var prompt = BuildDialoguePrompt(context);
+            // Check if this is a question that could benefit from knowledge base
+            var useKnowledgeBase = ShouldUseKnowledgeBase(context);
+
+            // Build dialogue prompt (with or without RAG)
+            string prompt;
+            if (useKnowledgeBase && _promptAugmentation != null)
+            {
+                prompt = await BuildDialoguePromptWithRagAsync(context);
+            }
+            else
+            {
+                prompt = BuildDialoguePrompt(context);
+            }
 
             // Create temporary chat history for dialogue
             var dialogueHistory = new ChatHistory(_personality.Prompts.SystemPrompt);
@@ -116,7 +135,7 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
 
             var dialogue = response.Content ?? "...";
 
-            _logger.LogInformation($"Dialogue generated for {context.ListenerId}");
+            _logger.LogInformation($"Dialogue generated for {context.ListenerId} (RAG: {useKnowledgeBase})");
 
             return dialogue;
         }
@@ -127,8 +146,10 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
         }
     }
 
-    // Additional helper methods for extended functionality
-    public async Task<MemoryEntry> ProcessMemoryAsync(
+    /// <summary>
+    /// Additional helper methods for extended functionality
+    /// </summary>
+    public async Task<Core.Models.MemoryEntry> ProcessMemoryAsync(
         string content,
         float emotionalIntensity,
         CancellationToken cancellationToken = default)
@@ -137,9 +158,8 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
         {
             _logger.LogDebug($"Processing memory: {content[..Math.Min(50, content.Length)]}...");
 
-            // TODO: Use Semantic Kernel for memory embeddings and semantic search
-            // For MVP, create simple memory entry
-            var memory = new MemoryEntry
+            // Create memory entry
+            var memory = new Core.Models.MemoryEntry
             {
                 EventType = "processed_memory",
                 Description = content,
@@ -152,8 +172,36 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
                 }
             };
 
-            _logger.LogInformation("Memory processed successfully");
+            // T027: Dual-write to semantic memory if available
+            if (_memoryService != null)
+            {
+                try
+                {
+                    var semanticMemory = new Contracts.AI.Memory.MemoryEntry
+                    {
+                        Id = $"{AgentId}_{DateTime.UtcNow:yyyyMMddHHmmss}",
+                        Content = content,
+                        EntityId = AgentId,
+                        MemoryType = "processed_memory",
+                        Importance = emotionalIntensity,
+                        Timestamp = DateTimeOffset.UtcNow,
+                        Tags = new Dictionary<string, string>
+                        {
+                            { "agent_type", AgentType }
+                        }
+                    };
 
+                    await _memoryService.StoreMemoryAsync(semanticMemory, cancellationToken);
+                    _logger.LogDebug("Dual-wrote processed memory to semantic memory");
+                }
+                catch (Exception ex)
+                {
+                    // T028: Fallback - log error but don't fail
+                    _logger.LogWarning(ex, "Failed to dual-write processed memory to semantic store");
+                }
+            }
+
+            _logger.LogInformation("Memory processed successfully");
             return await Task.FromResult(memory);
         }
         catch (Exception ex)
@@ -233,7 +281,61 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
 
     #region Helper Methods
 
-    private string BuildDecisionPrompt(AvatarContext context, AvatarState state, AvatarMemory memory)
+    private async Task<string> BuildDecisionPromptWithSemanticMemoryAsync(
+        AvatarContext context,
+        AvatarState state,
+        AvatarMemory memory)
+    {
+        string recentMemories;
+
+        // T025: Use semantic retrieval if available, fallback to legacy (T028)
+        if (_memoryService != null)
+        {
+            try
+            {
+                // Build query from current context
+                var query = $"{state.CurrentBehavior} {string.Join(" ", context.EnvironmentFactors.Values)}";
+
+                var options = new MemoryRetrievalOptions
+                {
+                    EntityId = context.EntityId,
+                    Limit = 5,
+                    MinRelevanceScore = 0.7,
+                    MinImportance = 0.3
+                };
+
+                var semanticMemories = await _memoryService.RetrieveRelevantMemoriesAsync(query, options);
+
+                if (semanticMemories.Any())
+                {
+                    recentMemories = string.Join("\n",
+                        semanticMemories.Select(m => $"- {m.Memory.Content} (relevance: {m.RelevanceScore:F2})"));
+                    _logger.LogDebug($"Using {semanticMemories.Count} semantic memories for decision");
+                }
+                else
+                {
+                    // Fallback to legacy memory
+                    recentMemories = string.Join("\n", memory.GetRecentMemories(5).Select(m => $"- {m.Description}"));
+                    _logger.LogDebug("No semantic memories found, using legacy memory");
+                }
+            }
+            catch (Exception ex)
+            {
+                // T028: Fallback to legacy on error
+                _logger.LogWarning(ex, "Semantic memory retrieval failed, falling back to legacy memory");
+                recentMemories = string.Join("\n", memory.GetRecentMemories(5).Select(m => $"- {m.Description}"));
+            }
+        }
+        else
+        {
+            // No semantic memory service, use legacy
+            recentMemories = string.Join("\n", memory.GetRecentMemories(5).Select(m => $"- {m.Description}"));
+        }
+
+        return BuildDecisionPrompt(context, state, recentMemories);
+    }
+
+    private string BuildDecisionPrompt(AvatarContext context, AvatarState state, string recentMemories)
     {
         var template = _personality.Prompts.DecisionTemplate;
 
@@ -241,8 +343,6 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
         var stateInfo = $"Emotion: {state.EmotionalState}, " +
                        $"Behavior: {state.CurrentBehavior}, " +
                        $"Health: {state.HealthPercentage:P0}";
-
-        var recentMemories = string.Join("\n", memory.GetRecentMemories(5).Select(m => $"- {m.Description}"));
 
         var environment = string.Join("\n", context.EnvironmentFactors.Select(kv =>
             $"- {kv.Key}: {kv.Value}"));
@@ -269,6 +369,98 @@ public sealed class BossIntelligenceAgent : IIntelligenceAgent
             .Replace("{relationship_level}", relationshipLevel)
             .Replace("{context}", context.ConversationTopic)
             .Replace("{current_mood}", context.SpeakerEmotionalState);
+    }
+
+    /// <summary>
+    /// Build dialogue prompt with RAG context from knowledge base
+    /// </summary>
+    private async Task<string> BuildDialoguePromptWithRagAsync(DialogueContext context)
+    {
+        if (_promptAugmentation == null)
+        {
+            return BuildDialoguePrompt(context);
+        }
+
+        try
+        {
+            _logger.LogDebug("Augmenting dialogue with knowledge base context");
+
+            // Get RAG context for the conversation topic
+            var ragContext = await _promptAugmentation.AugmentQueryAsync(
+                query: context.ConversationTopic,
+                topK: 3,
+                category: DetermineCategory(context.ConversationTopic));
+
+            if (!ragContext.RetrievedDocuments.Any())
+            {
+                _logger.LogDebug("No relevant knowledge base documents found, using standard prompt");
+                return BuildDialoguePrompt(context);
+            }
+
+            // Build augmented prompt
+            var systemPrompt = _personality.Prompts.SystemPrompt + "\n\n" +
+                "You have access to factual knowledge about the game world. " +
+                "Use this information to provide accurate, grounded responses.";
+
+            var userQuery = BuildDialoguePrompt(context);
+
+            var augmentedPrompt = _promptAugmentation.BuildAugmentedPrompt(
+                systemPrompt,
+                userQuery,
+                ragContext);
+
+            _logger.LogInformation($"Augmented prompt with {ragContext.RetrievedDocuments.Count} knowledge base documents");
+
+            return augmentedPrompt;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to augment prompt with knowledge base, falling back to standard prompt");
+            return BuildDialoguePrompt(context);
+        }
+    }
+
+    /// <summary>
+    /// Determine if the dialogue should use knowledge base
+    /// </summary>
+    private bool ShouldUseKnowledgeBase(DialogueContext context)
+    {
+        if (_promptAugmentation == null)
+            return false;
+
+        var topic = context.ConversationTopic.ToLowerInvariant();
+
+        // Question keywords that indicate the player is asking for information
+        var questionKeywords = new[]
+        {
+            "what", "where", "who", "when", "why", "how",
+            "tell me", "know about", "explain", "describe",
+            "quest", "location", "dragon", "kingdom", "city",
+            "history", "ancient", "legend"
+        };
+
+        return questionKeywords.Any(keyword => topic.Contains(keyword));
+    }
+
+    /// <summary>
+    /// Determine knowledge base category from conversation topic
+    /// </summary>
+    private string? DetermineCategory(string topic)
+    {
+        var lowerTopic = topic.ToLowerInvariant();
+
+        if (lowerTopic.Contains("quest") || lowerTopic.Contains("mission") || lowerTopic.Contains("contract"))
+            return "quest";
+
+        if (lowerTopic.Contains("city") || lowerTopic.Contains("location") || lowerTopic.Contains("place") ||
+            lowerTopic.Contains("where"))
+            return "location";
+
+        if (lowerTopic.Contains("history") || lowerTopic.Contains("ancient") || lowerTopic.Contains("dragon") ||
+            lowerTopic.Contains("legend") || lowerTopic.Contains("kingdom"))
+            return "lore";
+
+        return null; // Search all categories
     }
 
     private AIDecision ParseDecisionResponse(string response, AvatarContext context, AvatarState state)

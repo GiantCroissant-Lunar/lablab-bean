@@ -1,0 +1,381 @@
+# NPC Personality Templates
+# Defines pre-configured personality archetypes for quick NPC setup
+# All trait values range from 0.0 (low) to 1.0 (high)
+
+personalities:
+  # ===== MERCHANT ARCHETYPES =====
+
+  friendly_merchant:
+    name: Friendly Merchant
+    description: Warm, welcoming shopkeeper who loves to chat with customers
+    traits:
+      friendliness: 0.9
+      courage: 0.5
+      formality: 0.3
+      honesty: 0.8
+      chattiness: 0.9
+      greed: 0.4
+    style: casual
+    emotional_range: expressive
+    custom_traits:
+      salesmanship: 0.9
+      patience: 0.8
+
+  greedy_merchant:
+    name: Greedy Merchant
+    description: Shrewd trader who always seeks maximum profit
+    traits:
+      friendliness: 0.5
+      courage: 0.4
+      formality: 0.6
+      honesty: 0.4
+      chattiness: 0.7
+      greed: 0.95
+    style: formal
+    emotional_range: stable
+    custom_traits:
+      salesmanship: 0.9
+      haggling: 0.95
+
+  honest_trader:
+    name: Honest Trader
+    description: Fair merchant who values reputation over profit
+    traits:
+      friendliness: 0.7
+      courage: 0.6
+      formality: 0.5
+      honesty: 0.95
+      chattiness: 0.6
+      greed: 0.2
+    style: casual
+    emotional_range: stable
+    custom_traits:
+      salesmanship: 0.7
+      trustworthiness: 0.95
+
+  # ===== WARRIOR ARCHETYPES =====
+
+  gruff_warrior:
+    name: Gruff Warrior
+    description: Battle-hardened fighter with little patience for talk
+    traits:
+      friendliness: 0.3
+      courage: 0.95
+      formality: 0.4
+      honesty: 0.9
+      chattiness: 0.2
+      greed: 0.1
+    style: gruff
+    emotional_range: stoic
+    custom_traits:
+      loyalty: 0.9
+      discipline: 0.85
+
+  honorable_knight:
+    name: Honorable Knight
+    description: Noble warrior who values duty and honor above all
+    traits:
+      friendliness: 0.6
+      courage: 0.9
+      formality: 0.8
+      honesty: 0.95
+      chattiness: 0.5
+      greed: 0.1
+    style: formal
+    emotional_range: stable
+    custom_traits:
+      honor: 0.95
+      duty: 0.9
+      compassion: 0.7
+
+  berserker:
+    name: Berserker
+    description: Fierce warrior with volatile emotions and love of battle
+    traits:
+      friendliness: 0.4
+      courage: 1.0
+      formality: 0.2
+      honesty: 0.7
+      chattiness: 0.4
+      greed: 0.3
+    style: gruff
+    emotional_range: volatile
+    custom_traits:
+      bloodlust: 0.9
+      recklessness: 0.85
+
+  # ===== NOBLE ARCHETYPES =====
+
+  scheming_noble:
+    name: Scheming Noble
+    description: Aristocrat who manipulates others for personal gain
+    traits:
+      friendliness: 0.6
+      courage: 0.4
+      formality: 0.95
+      honesty: 0.3
+      chattiness: 0.7
+      greed: 0.8
+    style: flowery
+    emotional_range: stable
+    custom_traits:
+      manipulation: 0.9
+      ambition: 0.95
+
+  benevolent_lord:
+    name: Benevolent Lord
+    description: Kind ruler who genuinely cares for their people
+    traits:
+      friendliness: 0.8
+      courage: 0.7
+      formality: 0.7
+      honesty: 0.8
+      chattiness: 0.6
+      greed: 0.2
+    style: formal
+    emotional_range: stable
+    custom_traits:
+      compassion: 0.9
+      wisdom: 0.8
+      generosity: 0.85
+
+  arrogant_noble:
+    name: Arrogant Noble
+    description: Haughty aristocrat who looks down on commoners
+    traits:
+      friendliness: 0.2
+      courage: 0.5
+      formality: 0.9
+      honesty: 0.6
+      chattiness: 0.6
+      greed: 0.7
+    style: flowery
+    emotional_range: expressive
+    custom_traits:
+      pride: 0.95
+      entitlement: 0.9
+
+  # ===== ROGUE ARCHETYPES =====
+
+  charming_thief:
+    name: Charming Thief
+    description: Smooth-talking rogue who wins people over with charisma
+    traits:
+      friendliness: 0.8
+      courage: 0.7
+      formality: 0.3
+      honesty: 0.4
+      chattiness: 0.8
+      greed: 0.6
+    style: casual
+    emotional_range: expressive
+    custom_traits:
+      charisma: 0.9
+      deception: 0.8
+      quick_wit: 0.85
+
+  cynical_assassin:
+    name: Cynical Assassin
+    description: Cold professional who trusts no one
+    traits:
+      friendliness: 0.2
+      courage: 0.8
+      formality: 0.5
+      honesty: 0.5
+      chattiness: 0.3
+      greed: 0.6
+    style: minimal
+    emotional_range: stoic
+    custom_traits:
+      paranoia: 0.8
+      professionalism: 0.9
+      ruthlessness: 0.85
+
+  # ===== SCHOLAR ARCHETYPES =====
+
+  wise_sage:
+    name: Wise Sage
+    description: Elderly scholar with vast knowledge and patience
+    traits:
+      friendliness: 0.7
+      courage: 0.5
+      formality: 0.6
+      honesty: 0.9
+      chattiness: 0.8
+      greed: 0.2
+    style: formal
+    emotional_range: stable
+    custom_traits:
+      wisdom: 0.95
+      patience: 0.9
+      curiosity: 0.8
+
+  eccentric_mage:
+    name: Eccentric Mage
+    description: Quirky wizard obsessed with magical research
+    traits:
+      friendliness: 0.5
+      courage: 0.6
+      formality: 0.4
+      honesty: 0.7
+      chattiness: 0.9
+      greed: 0.3
+    style: casual
+    emotional_range: volatile
+    custom_traits:
+      eccentricity: 0.95
+      curiosity: 0.95
+      focus: 0.6
+
+  # ===== PEASANT ARCHETYPES =====
+
+  simple_farmer:
+    name: Simple Farmer
+    description: Hardworking peasant with simple needs and honest ways
+    traits:
+      friendliness: 0.6
+      courage: 0.4
+      formality: 0.3
+      honesty: 0.9
+      chattiness: 0.5
+      greed: 0.2
+    style: casual
+    emotional_range: stable
+    custom_traits:
+      work_ethic: 0.9
+      humility: 0.8
+
+  fearful_villager:
+    name: Fearful Villager
+    description: Timid peasant easily frightened by danger
+    traits:
+      friendliness: 0.5
+      courage: 0.1
+      formality: 0.4
+      honesty: 0.8
+      chattiness: 0.4
+      greed: 0.3
+    style: casual
+    emotional_range: volatile
+    custom_traits:
+      anxiety: 0.9
+      caution: 0.95
+
+  # ===== INNKEEPER ARCHETYPES =====
+
+  jovial_innkeeper:
+    name: Jovial Innkeeper
+    description: Cheerful host who loves stories and company
+    traits:
+      friendliness: 0.95
+      courage: 0.5
+      formality: 0.3
+      honesty: 0.7
+      chattiness: 0.95
+      greed: 0.4
+    style: casual
+    emotional_range: expressive
+    custom_traits:
+      hospitality: 0.95
+      storytelling: 0.9
+
+  weary_bartender:
+    name: Weary Bartender
+    description: Tired server who has heard it all before
+    traits:
+      friendliness: 0.4
+      courage: 0.5
+      formality: 0.4
+      honesty: 0.7
+      chattiness: 0.3
+      greed: 0.5
+    style: minimal
+    emotional_range: stoic
+    custom_traits:
+      cynicism: 0.8
+      weariness: 0.9
+
+  # ===== GUARD ARCHETYPES =====
+
+  dutiful_guard:
+    name: Dutiful Guard
+    description: Professional soldier who follows orders strictly
+    traits:
+      friendliness: 0.4
+      courage: 0.7
+      formality: 0.7
+      honesty: 0.8
+      chattiness: 0.4
+      greed: 0.3
+    style: formal
+    emotional_range: stoic
+    custom_traits:
+      discipline: 0.95
+      vigilance: 0.9
+
+  corrupt_guard:
+    name: Corrupt Guard
+    description: Crooked soldier willing to look the other way for coin
+    traits:
+      friendliness: 0.5
+      courage: 0.5
+      formality: 0.6
+      honesty: 0.3
+      chattiness: 0.5
+      greed: 0.9
+    style: casual
+    emotional_range: stable
+    custom_traits:
+      corruption: 0.9
+      greed: 0.95
+
+  # ===== HEALER ARCHETYPES =====
+
+  compassionate_healer:
+    name: Compassionate Healer
+    description: Kind medic dedicated to helping others
+    traits:
+      friendliness: 0.9
+      courage: 0.6
+      formality: 0.5
+      honesty: 0.9
+      chattiness: 0.7
+      greed: 0.1
+    style: casual
+    emotional_range: expressive
+    custom_traits:
+      compassion: 0.95
+      empathy: 0.9
+      dedication: 0.85
+
+  stern_doctor:
+    name: Stern Doctor
+    description: No-nonsense physician focused on results
+    traits:
+      friendliness: 0.3
+      courage: 0.7
+      formality: 0.8
+      honesty: 0.9
+      chattiness: 0.3
+      greed: 0.4
+    style: formal
+    emotional_range: stoic
+    custom_traits:
+      professionalism: 0.9
+      competence: 0.95
+
+  # ===== NEUTRAL/DEFAULT =====
+
+  neutral:
+    name: Neutral
+    description: Balanced personality with no strong traits
+    traits:
+      friendliness: 0.5
+      courage: 0.5
+      formality: 0.5
+      honesty: 0.5
+      chattiness: 0.5
+      greed: 0.5
+    style: casual
+    emotional_range: stable
+    custom_traits: {}

@@ -472,7 +472,6 @@ class Build : NukeBuild
                     .SetProject(pluginCsproj)
                     .SetConfiguration(Configuration)
                     .SetOutput(dest)
-                    .EnableNoRestore()
                     // Route all plugin.json to a subfolder during publish to avoid collisions between referenced plugins
                     .SetProcessArgumentConfigurator(args => args.Add("/p:PluginJsonTargetSubfolder=true")));
 

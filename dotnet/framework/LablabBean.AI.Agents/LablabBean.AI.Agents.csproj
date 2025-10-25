@@ -11,6 +11,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.KernelMemory.Core" />
+    <PackageReference Include="Microsoft.KernelMemory.MemoryDb.Qdrant" />
+    <PackageReference Include="Microsoft.KernelMemory.SemanticKernelPlugin" />
     <PackageReference Include="Microsoft.SemanticKernel" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" />
@@ -20,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LablabBean.AI.Core\LablabBean.AI.Core.csproj" />
     <ProjectReference Include="..\LablabBean.AI.Actors\LablabBean.AI.Actors.csproj" />
+    <ProjectReference Include="..\LablabBean.Contracts.AI\LablabBean.Contracts.AI.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,47 +1,22 @@
 # Documentation Organization Report
 
-*Generated: 2025-10-25T04:14:17.951123+00:00*
+*Generated: 2025-10-25T17:20:20.282661+00:00*
 
 ## Summary
 
 This report documents the automatic organization of scattered markdown files
 according to the R-DOC-001 rule.
 
-### Files Moved (33)
+### Files Moved (8)
 
-- `NEXT_STEPS.md` → `docs\_inbox\NEXT_STEPS.md`
-- `PHASE10_COMPLETION_REPORT.md` → `docs\_inbox\PHASE10_COMPLETION_REPORT.md`
-- `SESSION_SUMMARY.md` → `docs\_inbox\SESSION_SUMMARY.md`
-- `TASK1_COMPLETE.md` → `docs\_inbox\TASK1_COMPLETE.md`
-- `TASK3_COMPLETE.md` → `docs\_inbox\TASK3_COMPLETE.md`
-- `TASK4_TESTING.md` → `docs\_inbox\TASK4_TESTING.md`
-- `TASKS_3_4_FINAL_SUMMARY.md` → `docs\_inbox\TASKS_3_4_FINAL_SUMMARY.md`
-- `docs\ARCHITECTURE.md` → `docs\guides\ARCHITECTURE.md`
-- `docs\CONTRIBUTING.md` → `docs\guides\CONTRIBUTING.md`
-- `docs\DOCUMENTATION-SCHEMA.md` → `docs\guides\DOCUMENTATION-SCHEMA.md`
-- `docs\ORGANIZATION.md` → `docs\guides\ORGANIZATION.md`
-- `docs\QUICK-REFERENCE.md` → `docs\guides\QUICK-REFERENCE.md`
-- `docs\QUICKSTART-DEV.md` → `docs\guides\QUICKSTART-DEV.md`
-- `docs\QUICKSTART.md` → `docs\guides\QUICKSTART.md`
-- `docs\README.md` → `docs\guides\README.md`
-- `docs\RELEASE.md` → `docs\guides\RELEASE.md`
-- `docs\guides\debugging.md` → `docs\findings\debugging.md`
-- `docs\specs\monster-template-example.md` → `docs\guides\monster-template-example.md`
-- `docs\specs\README.md` → `docs\guides\README.md`
-- `docs\_inbox\2025-10-20-documentation-system-setup--DOC-2025-00015.md` → `docs\findings\2025-10-20-documentation-system-setup--DOC-2025-00015.md`
-- `docs\_inbox\2025-10-20-ui-improvements--DOC-2025-00017.md` → `docs\specs\2025-10-20-ui-improvements--DOC-2025-00017.md`
-- `docs\_inbox\2025-10-21-bugfix-player-movement-after-inventory--DOC-2025-00037.md` → `docs\findings\2025-10-21-bugfix-player-movement-after-inventory--DOC-2025-00037.md`
-- `docs\_inbox\2025-10-21-build-verification-status-effects--DOC-2025-00038.md` → `docs\findings\2025-10-21-build-verification-status-effects--DOC-2025-00038.md`
-- `docs\_inbox\2025-10-21-doc-organization-summary--DOC-2025-00040.md` → `docs\findings\2025-10-21-doc-organization-summary--DOC-2025-00040.md`
-- `docs\_inbox\2025-10-21-implementation-summaries-index--DOC-2025-00039.md` → `docs\guides\2025-10-21-implementation-summaries-index--DOC-2025-00039.md`
-- `docs\_inbox\2025-10-21-plugin-contracts-api--DOC-2025-00038.md` → `docs\guides\2025-10-21-plugin-contracts-api--DOC-2025-00038.md`
-- `docs\_inbox\2025-10-21-plugin-development-quickstart--DOC-2025-00037.md` → `docs\guides\2025-10-21-plugin-development-quickstart--DOC-2025-00037.md`
-- `docs\_inbox\2025-10-21-plugin-manifest-schema--DOC-2025-00039.md` → `docs\guides\2025-10-21-plugin-manifest-schema--DOC-2025-00039.md`
-- `docs\_inbox\2025-10-21-plugin-system-overview--DOC-2025-00040.md` → `docs\guides\2025-10-21-plugin-system-overview--DOC-2025-00040.md`
-- `docs\_inbox\2025-10-21-windows-nul-file-prevention--DOC-2025-00041.md` → `docs\guides\2025-10-21-windows-nul-file-prevention--DOC-2025-00041.md`
-- `docs\_inbox\2025-10-22-dotnet-naming-architecture-adjustment--DOC-2025-00042.md` → `docs\specs\2025-10-22-dotnet-naming-architecture-adjustment--DOC-2025-00042.md`
-- `docs\_inbox\2025-10-24-akka-sk-ecs-intelligent-avatars--DOC-2025-00037.md` → `docs\adrs\2025-10-24-akka-sk-ecs-intelligent-avatars--DOC-2025-00037.md`
-- `docs\_inbox\2025-10-25-intelligent-avatar-implementation-review.md` → `docs\findings\2025-10-25-intelligent-avatar-implementation-review.md`
+- `PHASE3_USER_STORY_1_COMPLETION.md` → `docs\_inbox\PHASE3_USER_STORY_1_COMPLETION.md`
+- `PHASE4_USER_STORY_2_COMPLETION.md` → `docs\_inbox\PHASE4_USER_STORY_2_COMPLETION.md`
+- `PHASE4_USER_STORY_2_PLAN.md` → `docs\_inbox\PHASE4_USER_STORY_2_PLAN.md`
+- `PHASE4_USER_STORY_2_PROGRESS.md` → `docs\_inbox\PHASE4_USER_STORY_2_PROGRESS.md`
+- `PHASE5_TASK_5.11_COMPLETION.md` → `docs\_inbox\PHASE5_TASK_5.11_COMPLETION.md`
+- `PHASE5_USER_STORY_3_PLAN.md` → `docs\_inbox\PHASE5_USER_STORY_3_PLAN.md`
+- `PHASE5_USER_STORY_3_PROGRESS.md` → `docs\_inbox\PHASE5_USER_STORY_3_PROGRESS.md`
+- `PHASE5_USER_STORY_3_SUMMARY.md` → `docs\_inbox\PHASE5_USER_STORY_3_SUMMARY.md`
 
 ## Organization Rules Applied
 

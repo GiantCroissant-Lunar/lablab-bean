@@ -5,6 +5,7 @@ using LablabBean.AI.Core.Models;
 using LablabBean.AI.Core.Interfaces;
 using LablabBean.AI.Actors;
 using LablabBean.AI.Actors.Bridges;
+using LablabBean.Contracts.AI.Memory;
 
 namespace LablabBean.AI.Agents;
 
@@ -16,15 +17,21 @@ public sealed class BossFactory
     private readonly ILoggerFactory _loggerFactory;
     private readonly Kernel _kernel;
     private readonly BossPersonalityLoader _personalityLoader;
+    private readonly IMemoryService? _memoryService;
+    private readonly IPromptAugmentationService? _promptAugmentation;
 
     public BossFactory(
         ILoggerFactory loggerFactory,
         Kernel kernel,
-        BossPersonalityLoader personalityLoader)
+        BossPersonalityLoader personalityLoader,
+        IMemoryService? memoryService = null,
+        IPromptAugmentationService? promptAugmentation = null)
     {
         _loggerFactory = loggerFactory;
         _kernel = kernel;
         _personalityLoader = personalityLoader;
+        _memoryService = memoryService;
+        _promptAugmentation = promptAugmentation;
     }
 
     /// <summary>
@@ -67,7 +74,9 @@ public sealed class BossFactory
                 _personalityLoader,
                 _loggerFactory.CreateLogger<BossIntelligenceAgent>(),
                 entityId,
-                tacticsAgent
+                tacticsAgent,
+                _memoryService,
+                _promptAugmentation
             );
 
             // Create event bus adapter if not provided

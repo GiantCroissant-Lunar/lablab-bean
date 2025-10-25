@@ -1,0 +1,266 @@
+{
+  "loot": [
+    {
+      "bossId": "goblin_king",
+      "experienceReward": 500,
+      "guaranteedLoot": [
+        {
+          "dropChance": 1.0,
+          "itemId": "crown_of_goblin_king",
+          "itemName": "Crown of the Goblin King",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Rare",
+          "stats": {
+            "charisma": 3,
+            "defense": 5,
+            "goblinsRespectYou": true
+          }
+        }
+      ],
+      "maxGold": 200,
+      "minGold": 100,
+      "randomLoot": [
+        {
+          "dropChance": 0.3,
+          "itemId": "goblin_blade",
+          "itemName": "Goblin Blade",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Uncommon",
+          "stats": {
+            "attackSpeed": 1.2,
+            "damage": 15
+          }
+        },
+        {
+          "dropChance": 0.5,
+          "itemId": "goblin_armor",
+          "itemName": "Goblin Leather Armor",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Common",
+          "stats": {
+            "defense": 8
+          }
+        }
+      ]
+    },
+    {
+      "bossId": "corrupted_treant",
+      "experienceReward": 800,
+      "guaranteedLoot": [
+        {
+          "dropChance": 1.0,
+          "itemId": "bark_shield",
+          "itemName": "Bark Shield",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Epic",
+          "stats": {
+            "defense": 15,
+            "healthRegen": 2,
+            "poisonResistance": 50
+          }
+        }
+      ],
+      "maxGold": 300,
+      "minGold": 150,
+      "randomLoot": [
+        {
+          "dropChance": 0.5,
+          "itemId": "nature_essence",
+          "itemName": "Nature Essence",
+          "maxQuantity": 3,
+          "minQuantity": 1,
+          "rarity": "Rare",
+          "stats": {
+            "craftingMaterial": true
+          }
+        },
+        {
+          "dropChance": 0.25,
+          "itemId": "ancient_seed",
+          "itemName": "Ancient Seed",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Rare",
+          "stats": {
+            "growsInto": "healing_tree",
+            "plantable": true
+          }
+        }
+      ]
+    },
+    {
+      "bossId": "flame_warden",
+      "experienceReward": 1200,
+      "guaranteedLoot": [
+        {
+          "dropChance": 1.0,
+          "itemId": "wardens_flame_staff",
+          "itemName": "Warden's Flame Staff",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Epic",
+          "stats": {
+            "fireDamageBonus": 50,
+            "magicDamage": 30,
+            "manaRegen": 5
+          }
+        }
+      ],
+      "maxGold": 400,
+      "minGold": 200,
+      "randomLoot": [
+        {
+          "dropChance": 0.4,
+          "itemId": "flame_crystal",
+          "itemName": "Flame Crystal",
+          "maxQuantity": 2,
+          "minQuantity": 1,
+          "rarity": "Rare",
+          "stats": {
+            "craftingMaterial": true,
+            "enchantmentMaterial": true
+          }
+        },
+        {
+          "dropChance": 0.15,
+          "itemId": "phoenix_feather",
+          "itemName": "Phoenix Feather",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Epic",
+          "stats": {
+            "resurrection": true,
+            "usesPerBattle": 1
+          }
+        }
+      ]
+    },
+    {
+      "bossId": "shadow_assassin",
+      "experienceReward": 1500,
+      "guaranteedLoot": [
+        {
+          "dropChance": 1.0,
+          "itemId": "assassins_cloak",
+          "itemName": "Assassin's Cloak",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Legendary",
+          "stats": {
+            "critChance": 50,
+            "defense": 10,
+            "dodgeChance": 30,
+            "stealthBonus": 100
+          }
+        }
+      ],
+      "maxGold": 500,
+      "minGold": 300,
+      "randomLoot": [
+        {
+          "dropChance": 0.6,
+          "itemId": "shadow_essence",
+          "itemName": "Shadow Essence",
+          "maxQuantity": 2,
+          "minQuantity": 1,
+          "rarity": "Epic",
+          "stats": {
+            "craftingMaterial": true
+          }
+        },
+        {
+          "dropChance": 0.4,
+          "itemId": "poison_vial",
+          "itemName": "Master Poison Vial",
+          "maxQuantity": 3,
+          "minQuantity": 1,
+          "rarity": "Rare",
+          "stats": {
+            "duration": 10,
+            "poisonDamage": 50
+          }
+        }
+      ]
+    },
+    {
+      "bossId": "ancient_dragon",
+      "experienceReward": 5000,
+      "guaranteedLoot": [
+        {
+          "dropChance": 1.0,
+          "itemId": "dragonscale_armor",
+          "itemName": "Dragonscale Armor",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Legendary",
+          "stats": {
+            "defense": 50,
+            "fireResistance": 80,
+            "healthBonus": 200,
+            "physicalResistance": 30
+          }
+        },
+        {
+          "dropChance": 1.0,
+          "itemId": "dragon_heart",
+          "itemName": "Dragon Heart",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Legendary",
+          "stats": {
+            "consumable": true,
+            "fireResistance": 25,
+            "healthBonus": 100,
+            "permanentStatBoost": true
+          }
+        }
+      ],
+      "maxGold": 2000,
+      "minGold": 1000,
+      "randomLoot": [
+        {
+          "dropChance": 0.8,
+          "itemId": "dragon_scale",
+          "itemName": "Dragon Scale",
+          "maxQuantity": 5,
+          "minQuantity": 3,
+          "rarity": "Epic",
+          "stats": {
+            "craftingMaterial": true,
+            "defense": 5
+          }
+        },
+        {
+          "dropChance": 0.5,
+          "itemId": "dragon_tooth",
+          "itemName": "Dragon Tooth",
+          "maxQuantity": 3,
+          "minQuantity": 1,
+          "rarity": "Rare",
+          "stats": {
+            "craftingMaterial": true,
+            "weaponMaterial": true
+          }
+        },
+        {
+          "dropChance": 0.3,
+          "itemId": "dragon_blood",
+          "itemName": "Vial of Dragon Blood",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "rarity": "Epic",
+          "stats": {
+            "consumable": true,
+            "damageBonus": 0.5,
+            "duration": 300,
+            "tempStatBoost": true
+          }
+        }
+      ]
+    }
+  ]
+}

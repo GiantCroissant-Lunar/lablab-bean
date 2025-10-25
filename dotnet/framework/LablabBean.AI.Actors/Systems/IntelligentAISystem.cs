@@ -33,9 +33,20 @@ public class IntelligentAISystem
         _entityActorMap = new Dictionary<int, IActorRef>();
         _entityCapabilityMap = new Dictionary<int, AICapability>();
 
-        _eventBusAdapter = _actorSystem.ActorOf(
-            EventBusAkkaAdapter.Props(eventPublisher),
-            "event-bus-adapter");
+        // Reuse existing event-bus-adapter if already created by Akka.Hosting setup; otherwise create it
+        try
+        {
+            _eventBusAdapter = _actorSystem
+                .ActorSelection("/user/event-bus-adapter")
+                .ResolveOne(System.TimeSpan.FromSeconds(1))
+                .GetAwaiter().GetResult();
+        }
+        catch
+        {
+            _eventBusAdapter = _actorSystem.ActorOf(
+                EventBusAkkaAdapter.Props(eventPublisher),
+                "event-bus-adapter");
+        }
 
         _logger.LogInformation("IntelligentAISystem initialized with ActorSystem: {ActorSystem}", _actorSystem.Name);
     }
