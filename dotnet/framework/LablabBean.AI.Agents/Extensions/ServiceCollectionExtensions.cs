@@ -20,8 +20,16 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Add Semantic Kernel with OpenAI
-        services.AddSemanticKernelWithOpenAI(configuration);
+        // Try to add Semantic Kernel with OpenAI, but make it optional
+        try
+        {
+            services.AddSemanticKernelWithOpenAI(configuration);
+        }
+        catch (InvalidOperationException)
+        {
+            // SK not configured - add mock kernel instead for testing
+            services.AddKernel();
+        }
 
         // Register personality loaders
         services.AddSingleton<BossPersonalityLoader>();
@@ -49,7 +57,8 @@ public static class ServiceCollectionExtensions
         var options = configuration.GetSection(SemanticKernelOptions.SectionName)
             .Get<SemanticKernelOptions>() ?? new SemanticKernelOptions();
 
-        if (!options.IsValid())
+        // Check if API key is set to placeholder or missing
+        if (!options.IsValid() || options.ApiKey == "YOUR_OPENAI_API_KEY_HERE")
         {
             throw new InvalidOperationException(
                 "Invalid Semantic Kernel configuration. Ensure ApiKey and ModelId are set in appsettings.json");

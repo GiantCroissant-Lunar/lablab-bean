@@ -52,6 +52,38 @@ try
         return await rootCommand.InvokeAsync(args);
     }
 
+    // Test IntelligentAISystem without TUI
+    if (args.Length > 0 && args[0] == "test-ai")
+    {
+        try
+        {
+            System.Console.WriteLine("Starting IntelligentAISystem test...");
+            var testHost = Host.CreateDefaultBuilder(args)
+                .UseLablabBeanInfrastructure()
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddLablabBeanInfrastructure(context.Configuration);
+                    services.AddAkkaActors(context.Configuration);
+                    services.AddSemanticKernelAgents(context.Configuration);
+                    services.AddSingleton<IntelligentAISystem>();
+                    services.AddSingleton<IntelligentEntityFactory>();
+                })
+                .Build();
+
+            System.Console.WriteLine("Host built successfully");
+            var serviceProvider = testHost.Services;
+            await LablabBean.Console.Tests.IntelligentAISystemTest.RunTest(serviceProvider);
+            System.Console.WriteLine("Test completed successfully");
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Test failed: {ex.Message}");
+            System.Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            return 1;
+        }
+    }
+
     // Plugins CLI (discovery / listing without starting TUI)
     if (args.Length > 0 && args[0] == "plugins")
     {
