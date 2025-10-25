@@ -3,12 +3,19 @@
 """
 Documentation Organization Script
 
-Scans the repository for scattered markdown files and organizes them according to
-the R-DOC-001 rule: new docs should go to docs/_inbox/ first, then be properly
-categorized.
+Organizes root-level markdown files according to the R-DOC-001 rule: new docs
+should go to docs/_inbox/ first, then be properly categorized.
+
+SCOPE: This script ONLY processes:
+- Markdown files directly at the repository root level (*.md)
+- Files in docs/ directory that may need reorganization
+- NEVER touches .agent/, .kiro/, or other system directories
+
+PROTECTION: Agent system files (AGENTS.md, CLAUDE.md, KIRO.md) are explicitly
+excluded and will never be moved.
 
 This script:
-1. Finds scattered .md files throughout the repository
+1. Finds root-level .md files and docs/ files needing organization
 2. Analyzes their content and front-matter
 3. Suggests or automatically moves them to appropriate docs/ subdirectories
 4. Updates internal cross-references
@@ -52,6 +59,8 @@ def is_relative_to(path: pathlib.Path, parent: pathlib.Path) -> bool:
 # Directories to exclude from scanning
 EXCLUDE_DIRS = {
     ".git",
+    ".agent",  # Agent system files - NEVER move these
+    ".kiro",  # Kiro steering files - managed separately
     "node_modules",
     "build",
     "_artifacts",
@@ -81,6 +90,7 @@ EXCLUDE_FILES = {
     "CONTRIBUTING.md",  # Keep in root for GitHub
     "AGENTS.md",
     "CLAUDE.md",  # Agent pointer files (managed by generate_pointers.py)
+    "KIRO.md",  # Kiro pointer file
 }
 
 # Valid doc types from the schema
@@ -215,24 +225,40 @@ class DocumentOrganizer:
         self.moves_performed: List[Tuple[pathlib.Path, pathlib.Path]] = []
 
     def scan_repository(self) -> List[DocumentFile]:
-        """Scan repository for markdown files."""
-        print("Scanning repository for markdown files...")
+        """Scan repository for markdown files at root level only."""
+        print("Scanning root level for markdown files...")
 
         found_files = []
+        excluded_count = 0
 
-        for md_file in ROOT.rglob("*.md"):
-            # Skip excluded directories
-            if any(part in EXCLUDE_DIRS for part in md_file.parts):
-                continue
-
+        # Only scan root level files (*.md directly in ROOT)
+        for md_file in ROOT.glob("*.md"):
             # Skip excluded files
             if md_file.name in EXCLUDE_FILES:
+                excluded_count += 1
                 continue
 
-            # Skip files already in proper docs structure (unless misplaced)
+            # Skip agent system files (extra protection)
+            if md_file.name in {"AGENTS.md", "CLAUDE.md", "KIRO.md"}:
+                excluded_count += 1
+                continue
+
             found_files.append(md_file)
 
-        print(f"Found {len(found_files)} markdown files")
+        # Also check docs/ directory for files that might need reorganization
+        if DOCS_DIR.exists():
+            for md_file in DOCS_DIR.rglob("*.md"):
+                # Skip files already in proper subdirectories unless they're misplaced
+                relative_to_docs = md_file.relative_to(DOCS_DIR)
+
+                # If it's directly in docs/ (not in a subdirectory), it might need organizing
+                if len(relative_to_docs.parts) == 1:
+                    found_files.append(md_file)
+                # If it's in a subdirectory, check if it has proper frontmatter for that location
+                else:
+                    found_files.append(md_file)
+
+        print(f"Found {len(found_files)} markdown files (excluded {excluded_count})")
 
         # Analyze each file
         self.documents = []
