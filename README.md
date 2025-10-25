@@ -1,5 +1,14 @@
 # Lablab Bean
 
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Astro](https://img.shields.io/badge/Astro-4.0+-FF5D01?style=flat-square&logo=astro&logoColor=white)](https://astro.build/)
+[![Task](https://img.shields.io/badge/Task-Automation-29BEB0?style=flat-square&logo=task&logoColor=white)](https://taskfile.dev/)
+[![Pre-commit](https://img.shields.io/badge/Pre--commit-Enabled-FAB040?style=flat-square&logo=pre-commit&logoColor=black)](https://pre-commit.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey?style=flat-square)](https://github.com/your-username/lablab-bean)
+
 A multi-platform development toolkit featuring task automation, web terminal, and cross-platform console applications.
 
 ## Features
