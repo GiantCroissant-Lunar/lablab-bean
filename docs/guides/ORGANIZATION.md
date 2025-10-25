@@ -278,5 +278,5 @@ task test-report
 
 - [QUICKSTART.md](QUICKSTART.md) - Quick start guide
 - [RELEASE.md](RELEASE.md) - Release & deployment guide
-- [README.md](../README.md) - Main documentation
-- [Taskfile.yml](../Taskfile.yml) - All available tasks
+- [README.md](..\..\README.md) - Main documentation
+- [Taskfile.yml](..\..\Taskfile.yml) - All available tasks

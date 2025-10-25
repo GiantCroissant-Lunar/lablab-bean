@@ -102,4 +102,4 @@ Current documents: 14 canonical + 2 inbox
 - [Full Schema](DOCUMENTATION-SCHEMA.md)
 - [Main README](README.md)
 - [Agent Instructions](../AGENTS.md)
-- [Registry](index/registry.json)
+- [Registry](..\index\registry.json)

@@ -322,9 +322,9 @@ git commit --amend --no-edit
 
 ## See Also
 
-- [Pre-commit Hooks Guide](../guides/development.md)
+- [Pre-commit Hooks Guide](development.md)
 - [Git Best Practices](../CONTRIBUTING.md)
-- [Windows Development Setup](../guides/project-setup.md)
+- [Windows Development Setup](project-setup.md)
 
 ---
 

@@ -74,7 +74,7 @@ code docs/specs/feature-name.md
 
 | Specification | Status | Version | Description |
 |--------------|--------|---------|-------------|
-| [dungeon-generation-system.md](./dungeon-generation-system.md) | ✅ Implemented | 0.0.2 | Dungeon generation with rooms and corridors |
+| [dungeon-generation-system.md](..\specs\dungeon-generation-system.md) | ✅ Implemented | 0.0.2 | Dungeon generation with rooms and corridors |
 
 ### Templates & Examples
 
@@ -155,7 +155,7 @@ public void CreateCorridor(Point start, Point end)
 ### In Documentation
 
 ```markdown
-Refer to [Dungeon Generation Specification](./specs/dungeon-generation-system.md)
+Refer to [Dungeon Generation Specification](..\specs\dungeon-generation-system.md)
 for detailed algorithm description.
 ```
 
