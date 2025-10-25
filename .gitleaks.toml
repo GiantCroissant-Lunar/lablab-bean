@@ -1,0 +1,54 @@
+# Gitleaks configuration for secret detection
+# See https://github.com/gitleaks/gitleaks for more information
+
+title = "Gitleaks Configuration"
+
+# Global allowlist for common false positives
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''.*\.example$''',  # Allow in example files
+    '''.*\.template$''',  # Allow in template files
+    '''.*test.*''',      # Allow in test files (be careful)
+    '''ref-projects/.*''', # Allow in reference projects
+]
+
+# Custom rules for additional secret types
+[[rules]]
+id = "custom-api-key"
+description = "Generic API Key"
+regex = '''(?i)(api[_-]?key|apikey)['"]*\s*[:=]\s*['"][a-zA-Z0-9]{20,}['"]'''
+keywords = ["apikey", "api_key", "api-key"]
+
+[[rules]]
+id = "custom-bearer-token"
+description = "Bearer Token"
+regex = '''(?i)bearer\s+[a-zA-Z0-9\-_\.]{20,}'''
+keywords = ["bearer"]
+
+[[rules]]
+id = "custom-database-url"
+description = "Database Connection String"
+regex = '''(?i)(database_url|db_url|connection_string)['"]*\s*[:=]\s*['"][^'"]{20,}['"]'''
+keywords = ["database_url", "db_url", "connection_string"]
+
+[[rules]]
+id = "custom-jwt-token"
+description = "JWT Token"
+regex = '''eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*'''
+keywords = ["jwt", "token"]
+
+# Entropy detection for high-entropy strings
+[[rules]]
+id = "high-entropy-base64"
+description = "High entropy base64 string"
+regex = '''[A-Za-z0-9+/]{40,}={0,2}'''
+entropy = 4.5
+secretGroup = 0
+
+[[rules]]
+id = "high-entropy-hex"
+description = "High entropy hex string"
+regex = '''[a-fA-F0-9]{32,}'''
+entropy = 3.5
+secretGroup = 0
