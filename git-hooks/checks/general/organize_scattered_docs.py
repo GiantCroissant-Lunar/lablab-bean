@@ -41,9 +41,9 @@ def main():
         )
 
         if result.returncode == 0:
-            print("✓ Documentation organization completed successfully")
+            print("SUCCESS: Documentation organization completed successfully")
         else:
-            print("✗ Documentation organization failed")
+            print("ERROR: Documentation organization failed")
 
         sys.exit(result.returncode)
     else:
@@ -57,11 +57,11 @@ def main():
 
         if result.returncode == 0:
             # No files need to be moved
-            print("✓ All documentation files are properly organized")
+            print("SUCCESS: All documentation files are properly organized")
             sys.exit(0)
         else:
             # Files need to be moved
-            print("⚠️  Scattered documentation files detected!")
+            print("WARNING: Scattered documentation files detected!")
             print("\nThe following files should be organized:")
             print(result.stdout)
             print("\nTo automatically organize these files, run:")
