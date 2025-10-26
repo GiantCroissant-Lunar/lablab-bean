@@ -145,20 +145,30 @@ repos:
     always_run: false
     stages: [pre-commit]
 
-      # .NET specific checks (uncomment if working with .NET code)
-      # - id: dotnet-format
-      #   name: .NET Format Check
-      #   entry: bash git-hooks/checks/dotnet/dotnet-format-check
-      #   language: system
-      #   files: \.(cs|csproj|sln)$
-      #   pass_filenames: false
+  # .NET specific checks
+  - id: dotnet-format
+    name: .NET Format Check
+    entry: bash git-hooks/checks/dotnet/dotnet-format-check
+    language: system
+    files: \.(cs|csproj|sln)$
+    pass_filenames: false
+    stages: [pre-commit]
 
-      # - id: one-type-per-file
-      #   name: One Type Per File Check
-      #   entry: bash git-hooks/checks/dotnet/one-type-per-file-check
-      #   language: system
-      #   files: \.cs$
-      #   pass_filenames: false
+  - id: roslynator-analyze
+    name: Roslynator Code Analysis
+    entry: bash git-hooks/checks/dotnet/roslynator-check
+    language: system
+    files: \.(cs|csproj|sln)$
+    pass_filenames: false
+    stages: [pre-commit]
+
+  - id: one-type-per-file
+    name: One Type Per File Check
+    entry: bash git-hooks/checks/dotnet/one-type-per-file-check
+    language: system
+    files: \.cs$
+    pass_filenames: false
+    stages: [pre-commit]
 
       # Python code quality (alternative to ruff repos above)
       # Uncomment to use git-hooks/python-check instead of individual tools

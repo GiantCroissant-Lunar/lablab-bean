@@ -93,3 +93,27 @@ tasks:
     desc: Quick status of documentation organization (no validation)
     cmds:
     - python git-hooks/checks/python/organize_docs.py --dry-run
+
+  dotnet:format:
+    desc: Format .NET code using dotnet format
+    dir: dotnet
+    cmds:
+    - dotnet format
+
+  dotnet:analyze:
+    desc: Analyze .NET code using Roslynator
+    dir: dotnet
+    cmds:
+    - dotnet roslynator analyze --severity-level info
+
+  dotnet:fix:
+    desc: Fix .NET code issues using Roslynator
+    dir: dotnet
+    cmds:
+    - dotnet roslynator fix
+
+  dotnet:check:
+    desc: Run both format check and Roslynator analysis
+    cmds:
+    - task: dotnet:format
+    - task: dotnet:analyze

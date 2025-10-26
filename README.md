@@ -386,6 +386,13 @@ task --list
 - `task validate-yaml` - Validate YAML files
 - `task validate-markdown` - Validate Markdown files
 
+### .NET Tasks
+
+- `task dotnet:format` - Format .NET code using dotnet format
+- `task dotnet:analyze` - Analyze .NET code using Roslynator
+- `task dotnet:fix` - Fix .NET code issues using Roslynator
+- `task dotnet:check` - Run both format and analysis
+
 ## Pre-commit Hooks
 
 The project uses pre-commit hooks to ensure code quality. The following hooks are configured:
@@ -393,6 +400,11 @@ The project uses pre-commit hooks to ensure code quality. The following hooks ar
 - **General Checks**: trailing whitespace, end-of-file fixer, YAML/JSON validation, large file detection, private key detection
 - **Markdown**: markdownlint with auto-fix
 - **YAML**: pretty-format-yaml with auto-fix
+- **Python**: Ruff (linting and formatting), mypy (type checking)
+- **.NET**: dotnet format, Roslynator code analysis, one-type-per-file validation
+- **Shell Scripts**: shellcheck (linting), shfmt (formatting)
+- **Web**: Prettier (JavaScript/TypeScript/CSS/Astro)
+- **Security**: Gitleaks secret detection
 
 To manually run all hooks:
 
