@@ -1,5 +1,6 @@
 using LablabBean.AI.Agents.Configuration;
 using LablabBean.Contracts.AI.Memory;
+using LablabBean.Contracts.Resilience.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.KernelMemory;
@@ -14,15 +15,19 @@ public class MemoryService : IMemoryService
     private readonly ILogger<MemoryService> _logger;
     private readonly IKernelMemory _memory;
     private readonly KernelMemoryOptions _options;
+    private readonly IService? _resilience;
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, System.Threading.SemaphoreSlim> _entityLocks = new(StringComparer.OrdinalIgnoreCase);
 
     public MemoryService(
         ILogger<MemoryService> logger,
         IKernelMemory memory,
-        IOptions<KernelMemoryOptions> options)
+        IOptions<KernelMemoryOptions> options,
+        IService? resilience = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _memory = memory ?? throw new ArgumentNullException(nameof(memory));
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        _resilience = resilience; // optional; if null, calls proceed without retries
     }
 
     public virtual async Task<string> StoreMemoryAsync(MemoryEntry memory, CancellationToken cancellationToken = default)
@@ -41,12 +46,20 @@ public class MemoryService : IMemoryService
             var tags = BuildTagCollection(memory);
 
             // Import memory as text document with embeddings
-            var documentId = await _memory.ImportTextAsync(
-                text: memory.Content,
-                documentId: memory.Id,
-                tags: tags,
-                index: _options.Storage.CollectionName ?? "memories",
-                cancellationToken: cancellationToken);
+            // Ensure per-entity write serialization
+            var (sem, acquired) = await AcquireEntityLockAsync(memory.EntityId, cancellationToken);
+            try
+            {
+                var operation = () => _memory.ImportTextAsync(
+                    text: memory.Content,
+                    documentId: memory.Id,
+                    tags: tags,
+                    index: _options.Storage.CollectionName ?? "memories",
+                    cancellationToken: cancellationToken);
+
+                var documentId = _resilience != null
+                    ? await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken)
+                    : await operation();
 
             var duration = DateTimeOffset.UtcNow - startTime;
             _logger.LogInformation(
@@ -56,6 +69,11 @@ public class MemoryService : IMemoryService
                 _options.Storage.CollectionName ?? "memories");
 
             return documentId;
+            }
+            finally
+            {
+                if (acquired) sem.Release();
+            }
         }
         catch (Exception ex)
         {
@@ -87,13 +105,17 @@ public class MemoryService : IMemoryService
             var filter = BuildMemoryFilter(options);
 
             // Perform semantic search
-            var searchResult = await _memory.SearchAsync(
+            var operation = () => _memory.SearchAsync(
                 query: queryText,
                 index: _options.Storage.CollectionName ?? "memories",
                 filter: filter,
                 minRelevance: options.MinRelevanceScore,
                 limit: options.Limit,
                 cancellationToken: cancellationToken);
+
+            var searchResult = _resilience != null
+                ? await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken)
+                : await operation();
 
             // Convert results to MemoryResult objects and filter by importance/time
             var results = new List<MemoryResult>();
@@ -191,10 +213,15 @@ public class MemoryService : IMemoryService
         {
             _logger.LogInformation("Deleting memory: {MemoryId}", memoryId);
 
-            await _memory.DeleteDocumentAsync(
+            var operation = () => _memory.DeleteDocumentAsync(
                 documentId: memoryId,
                 index: _options.Storage.CollectionName ?? "memories",
                 cancellationToken: cancellationToken);
+
+            if (_resilience != null)
+                await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken);
+            else
+                await operation();
 
             _logger.LogInformation("Successfully deleted memory: {MemoryId}", memoryId);
         }
@@ -211,10 +238,60 @@ public class MemoryService : IMemoryService
 
         _logger.LogInformation("Cleaning old memories for entity {EntityId} older than {Age}", entityId, olderThan);
 
-        // This would require listing all memories and filtering by timestamp
-        // Not efficiently supported by Kernel Memory's current API
-        _logger.LogWarning("CleanOldMemoriesAsync not fully implemented");
-        return await Task.FromResult(0);
+        var cutoff = DateTimeOffset.UtcNow - olderThan;
+
+        var (sem, acquired) = await AcquireEntityLockAsync(entityId, cancellationToken);
+        try
+        {
+            // Search broadly for this entity and filter by timestamp tag
+            var filter = new MemoryFilter();
+            filter.Add("entity_id", entityId);
+
+            var operation = () => _memory.SearchAsync(
+                query: entityId, // include entity id in query to bias hits
+                index: _options.Storage.CollectionName ?? "memories",
+                filter: filter,
+                minRelevance: 0.0,
+                limit: 1000,
+                cancellationToken: cancellationToken);
+
+            var search = _resilience != null
+                ? await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken)
+                : await operation();
+
+            var toDelete = new List<string>();
+            foreach (var c in search.Results)
+            {
+                var p = c.Partitions.FirstOrDefault();
+                if (p == null) continue;
+                var tsStr = p.Tags.ContainsKey("timestamp") && p.Tags["timestamp"].Count > 0 ? p.Tags["timestamp"][0] : null;
+                if (!string.IsNullOrWhiteSpace(tsStr) && DateTimeOffset.TryParse(tsStr, out var ts))
+                {
+                    if (ts <= cutoff)
+                    {
+                        toDelete.Add(c.DocumentId ?? c.Link ?? string.Empty);
+                    }
+                }
+            }
+
+            var deleted = 0;
+            foreach (var id in toDelete.Where(id => !string.IsNullOrWhiteSpace(id)))
+            {
+                var delOp = () => _memory.DeleteDocumentAsync(id, _options.Storage.CollectionName ?? "memories", cancellationToken);
+                if (_resilience != null)
+                    await _resilience.ExecuteWithRetryAsync(delOp, retryPolicy: null, cancellationToken);
+                else
+                    await delOp();
+                deleted++;
+            }
+
+            _logger.LogInformation("Deleted {Count} memories for entity {EntityId} older than cutoff {Cutoff}", deleted, entityId, cutoff);
+            return deleted;
+        }
+        finally
+        {
+            if (acquired) sem.Release();
+        }
     }
 
     public virtual async Task<bool> IsHealthyAsync()
@@ -226,10 +303,14 @@ public class MemoryService : IMemoryService
         try
         {
             // Try a simple search to verify the memory service is working
-            await _memory.SearchAsync(
+            var operation = () => _memory.SearchAsync(
                 query: "health_check",
                 index: _options.Storage.CollectionName ?? "memories",
                 limit: 1);
+            if (_resilience != null)
+                await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken: default);
+            else
+                await operation();
 
             var duration = DateTimeOffset.UtcNow - startTime;
             _logger.LogInformation("Memory service health check PASSED in {Duration}ms. Provider: {Provider}, Endpoint: {Endpoint}",
@@ -669,13 +750,17 @@ public class MemoryService : IMemoryService
             }
 
             // Perform semantic search
-            var searchResult = await _memory.SearchAsync(
+            var operation = () => _memory.SearchAsync(
                 query: $"{query} {entity1Id} {entity2Id}",
                 index: _options.Storage.CollectionName ?? "memories",
                 filter: filter,
-                minRelevance: 0.3, // Lower threshold for relationship context
-                limit: maxResults * 2, // Get more to filter bidirectionally
+                minRelevance: 0.3,
+                limit: maxResults * 2,
                 cancellationToken: cancellationToken);
+
+            var searchResult = _resilience != null
+                ? await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken)
+                : await operation();
 
             // Filter and convert results
             var results = new List<MemoryResult>();
@@ -749,4 +834,11 @@ public class MemoryService : IMemoryService
     }
 
     #endregion
+
+    private async Task<(System.Threading.SemaphoreSlim sem, bool acquired)> AcquireEntityLockAsync(string entityId, CancellationToken ct)
+    {
+        var sem = _entityLocks.GetOrAdd(entityId, _ => new System.Threading.SemaphoreSlim(1, 1));
+        await sem.WaitAsync(ct);
+        return (sem, true);
+    }
 }

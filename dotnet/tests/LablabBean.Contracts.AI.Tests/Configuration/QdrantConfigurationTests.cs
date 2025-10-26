@@ -1,5 +1,5 @@
 using FluentAssertions;
-using LablabBean.Contracts.AI.Configuration;
+using LablabBean.AI.Agents.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

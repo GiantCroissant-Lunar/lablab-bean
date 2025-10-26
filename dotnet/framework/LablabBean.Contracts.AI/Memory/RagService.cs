@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory;
+using LablabBean.Contracts.Resilience.Services;
 
 namespace LablabBean.Contracts.AI.Memory;
 
@@ -11,14 +12,17 @@ public class RagService : IRagService
 {
     private readonly IKernelMemory _memory;
     private readonly ILogger<RagService> _logger;
+    private readonly IService? _resilience;
     private const string KnowledgeBaseIndex = "knowledge-base";
 
     public RagService(
         IKernelMemory memory,
-        ILogger<RagService> logger)
+        ILogger<RagService> logger,
+        IService? resilience = null)
     {
         _memory = memory ?? throw new ArgumentNullException(nameof(memory));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _resilience = resilience;
     }
 
     public async Task IndexDocumentAsync(
@@ -43,12 +47,17 @@ public class RagService : IRagService
 
         try
         {
-            await _memory.ImportTextAsync(
+            var operation = () => _memory.ImportTextAsync(
                 text: document.Content,
                 documentId: document.DocumentId,
                 tags: tags,
                 index: KnowledgeBaseIndex,
                 cancellationToken: cancellationToken);
+
+            if (_resilience != null)
+                await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken);
+            else
+                await operation();
 
             _logger.LogInformation("Indexed knowledge doc {DocId}: {Title}", document.DocumentId, document.Title);
         }
@@ -81,12 +90,16 @@ public class RagService : IRagService
                 filter.Add("category", category);
             }
 
-            var answer = await _memory.SearchAsync(
+            var operation = () => _memory.SearchAsync(
                 query: query,
                 index: KnowledgeBaseIndex,
                 filter: filter,
                 limit: Math.Max(maxCitations, 5),
                 cancellationToken: cancellationToken);
+
+            var answer = _resilience != null
+                ? await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken)
+                : await operation();
 
             var citations = new List<Citation>();
             var sb = new System.Text.StringBuilder();
@@ -150,7 +163,11 @@ public class RagService : IRagService
     {
         try
         {
-            await _memory.SearchAsync("health_check", index: KnowledgeBaseIndex, limit: 1, cancellationToken: cancellationToken);
+            var operation = () => _memory.SearchAsync("health_check", index: KnowledgeBaseIndex, limit: 1, cancellationToken: cancellationToken);
+            if (_resilience != null)
+                await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken);
+            else
+                await operation();
             return true;
         }
         catch (Exception ex)
@@ -163,6 +180,10 @@ public class RagService : IRagService
     public async Task DeleteDocumentAsync(string documentId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(documentId);
-        await _memory.DeleteDocumentAsync(documentId, KnowledgeBaseIndex, cancellationToken);
+        var operation = () => _memory.DeleteDocumentAsync(documentId, KnowledgeBaseIndex, cancellationToken);
+        if (_resilience != null)
+            await _resilience.ExecuteWithRetryAsync(operation, retryPolicy: null, cancellationToken);
+        else
+            await operation();
     }
 }
