@@ -19,6 +19,7 @@ A multi-platform development toolkit featuring task automation, web terminal, an
 - 🌐 **Web Terminal**: Astro.js + xterm.js + node-pty
 - 💻 **Console App**: Terminal.Gui v2 TUI application
 - 🎮 **Windows App**: SadConsole ASCII graphics application
+- 🎬 **Media Player**: Terminal-based video/audio player with FFmpeg + Braille rendering
 - ⚛️ **Reactive**: ReactiveUI, System.Reactive, R3
 - 🏗️ **Modern .NET**: .NET 8 with Microsoft.Extensions.*
 - 🔌 **Event-Driven Plugins**: Loosely coupled plugin architecture with pub-sub messaging (1.1M+ events/sec)

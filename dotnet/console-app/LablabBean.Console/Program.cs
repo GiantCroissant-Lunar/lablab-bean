@@ -15,6 +15,9 @@ using LablabBean.Reporting.Analytics;
 using LablabBean.AI.Actors.Extensions;
 using LablabBean.AI.Actors.Systems;
 using LablabBean.AI.Agents.Extensions;
+using LablabBean.Plugins.MediaPlayer.Core;
+using LablabBean.Plugins.MediaPlayer.FFmpeg;
+using LablabBean.Plugins.MediaPlayer.Terminal.Braille;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -103,6 +106,32 @@ try
         return await rootCommand.InvokeAsync(args);
     }
 
+    // Media Player CLI
+    if (args.Length > 0 && (args[0] == "play" || args[0] == "playlist"))
+    {
+        var mediaHost = Host.CreateDefaultBuilder(args)
+            .UseLablabBeanInfrastructure()
+            .ConfigureServices((context, services) =>
+            {
+                services.AddLablabBeanInfrastructure(context.Configuration);
+                services.AddLablabBeanReactive();
+
+                // Register media player plugins
+                MediaPlayerPlugin.RegisterServices(services);
+                FFmpegPlaybackPlugin.RegisterServices(services);
+                BrailleRendererPlugin.RegisterServices(services);
+            })
+            .Build();
+
+        var serviceProvider = mediaHost.Services;
+
+        var rootCommand = new RootCommand("LablabBean Console - Media Player");
+        rootCommand.AddCommand(MediaPlayerCommand.Create(serviceProvider));
+        rootCommand.AddCommand(PlaylistCommand.Create(serviceProvider));
+
+        return await rootCommand.InvokeAsync(args);
+    }
+
     // Plugins CLI (discovery / listing without starting TUI)
     if (args.Length > 0 && args[0] == "plugins")
     {
@@ -123,6 +152,11 @@ try
 
             // Add plugin system
             services.AddPluginSystem(context.Configuration);
+
+            // Add media player plugins
+            MediaPlayerPlugin.RegisterServices(services);
+            FFmpegPlaybackPlugin.RegisterServices(services);
+            BrailleRendererPlugin.RegisterServices(services);
 
             // Add intelligent avatar system (Akka.NET + Semantic Kernel)
             services.AddAkkaActors(context.Configuration);

@@ -20,6 +20,9 @@
     <ProjectReference Include="..\..\framework\LablabBean.AI.Core\LablabBean.AI.Core.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.AI.Actors\LablabBean.AI.Actors.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.AI.Agents\LablabBean.AI.Agents.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.MediaPlayer.Core\LablabBean.Plugins.MediaPlayer.Core.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.MediaPlayer.FFmpeg\LablabBean.Plugins.MediaPlayer.FFmpeg.csproj" />
+    <ProjectReference Include="..\..\plugins\LablabBean.Plugins.MediaPlayer.Terminal.Braille\LablabBean.Plugins.MediaPlayer.Terminal.Braille.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +48,8 @@
     <Compile Remove="Services/TerminalGuiService.cs" />
     <Compile Remove="Services/DungeonCrawlerService.cs" />
     <Compile Remove="Views/SimpleWindow.cs" />
+    <Compile Remove="Views/Media/MediaControlsView.cs" />
+    <Compile Remove="Views/Media/MediaPlayerView.cs" />
   </ItemGroup>
 
 </Project>
