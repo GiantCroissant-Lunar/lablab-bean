@@ -166,11 +166,31 @@ Primary technical approach: Leverage existing plugin system (`LablabBean.Plugins
 - Will use `task` command if available (check Taskfile.yml)
 - New spec (not update) - this is a new major feature
 
-### Gate Evaluation
+### Gate Evaluation (Initial - Before Phase 0)
 
 **Status**: ✅ **PASSED** - All principles and rules compliant
 
 **No violations requiring justification**
+
+### Gate Re-Evaluation (After Phase 1 Design)
+
+**Status**: ✅ **PASSED** - Design maintains full compliance
+
+**Design Review**:
+
+✅ **P-1: Documentation-First** - Research.md, data-model.md, contracts/, quickstart.md all completed before implementation
+
+✅ **P-2: Clear Code** - Interface contracts are explicit and well-documented with usage examples
+
+✅ **P-3: Testing** - Test strategy defined in spec.md, all components designed for testability
+
+✅ **P-6: Separation of Concerns** - Clear boundaries between layers (contracts → services → ViewModels → Views)
+
+✅ **R-DOC-002: Inbox First** - Technical research document written to docs/_inbox/ as required
+
+✅ **All Other Rules**: No changes to compliance status
+
+**Conclusion**: Design is ready to proceed to Phase 2 (Task Generation via `/speckit.tasks`)
 
 ## Project Structure
 
@@ -313,79 +333,104 @@ All architecture decisions comply with project principles. The plugin-based appr
 
 ## Phase 0: Outline & Research
 
-*This section will be filled by creating research.md*
+**Status**: ✅ **COMPLETED** - 2025-10-26
 
-**Research Tasks Identified:**
+**Generated Artifact**: `research.md` (comprehensive technology research)
 
-1. **Terminal Capability Detection Methods**
-   - How to reliably detect SIXEL support
-   - How to detect Kitty Graphics Protocol support
-   - Environment variable patterns across terminals
-   - Device Attributes (DA1/DA2) query protocols
+**Research Completed:**
 
-2. **Braille Character Encoding**
-   - Unicode braille pattern block (U+2800-U+28FF) mapping
-   - Optimal pixel-to-dot threshold algorithms
-   - Color quantization for 16-color ANSI mode
+1. ✅ **Terminal Capability Detection Methods**
+   - Multi-method detection strategy (environment variables + DA1 queries)
+   - Environment variable patterns by terminal emulator
+   - C# implementation with timeout handling
+   - Terminal compatibility matrix (10+ terminals documented)
 
-3. **SIXEL Protocol Specification**
-   - Escape sequence format
-   - Palette optimization (max 256 colors)
-   - RLE compression for efficiency
-   - Terminal compatibility matrix
+2. ✅ **Braille Character Encoding**
+   - Unicode braille pattern block (U+2800-U+28FF) bit mapping
+   - 2×4 pixel grid encoding algorithm
+   - C# BrailleVideoEncoder implementation with color quantization
+   - Performance benchmarks (~500 FPS theoretical)
 
-4. **Kitty Graphics Protocol**
-   - OSC sequence structure
-   - Base64 encoding requirements
+3. ✅ **SIXEL Protocol Specification**
+   - DCS escape sequence format with parameters
+   - 6-pixel vertical encoding (0x3F-0x7E range)
+   - C# SixelEncoder with palette optimization and RLE compression
+   - Terminal compatibility matrix with version details
+
+4. ✅ **Kitty Graphics Protocol**
+   - OSC sequence structure with action keys (a, f, t, s, v, i, o)
+   - Base64 encoding with 4096-byte chunking
+   - C# KittyGraphicsEncoder with zlib compression
    - Frame caching and placement commands
-   - Compression options (zlib, png)
 
-5. **FFmpeg Integration via OpenCvSharp**
-   - VideoCapture API for frame decoding
-   - Audio stream extraction
-   - Seek implementation (frame-accurate vs. keyframe)
-   - Memory management for large files
+5. ✅ **FFmpeg Integration via OpenCvSharp**
+   - VideoCapture API usage for frame decoding
+   - C# FFmpegPlaybackEngine implementation
+   - Background decoding loop with frame rate pacing
+   - Seek implementation (keyframe-based)
 
-6. **ReactiveUI Integration with Terminal.Gui**
-   - Property binding patterns (no XAML - manual subscription)
-   - `Application.MainLoop.Invoke()` for thread-safe UI updates
-   - `WhenAnyValue` usage for reactive property changes
-   - Command binding to Terminal.Gui controls
+6. ✅ **ReactiveUI Integration with Terminal.Gui**
+   - Manual subscription pattern (no XAML bindings)
+   - Thread marshaling via `Application.MainLoop.Invoke()`
+   - `WhenAnyValue` for property observation
+   - ReactiveCommand integration with Terminal.Gui events
 
-7. **Audio Visualization Algorithms**
-   - FFT implementation for spectrum analysis
-   - Waveform sampling and downsampling
-   - Braille/block character rendering for bars
+7. ✅ **Audio Visualization Algorithms**
+   - FFT-based spectrum analyzer (1024-sample window)
+   - C# AudioVisualizerService outline
+   - Logarithmic frequency band grouping
+   - Braille/block character bar rendering
 
-**Next**: Create `research.md` with findings for each task
+**Key Decisions Documented:**
+
+- Braille as universal fallback (Priority 10)
+- SIXEL for mid-tier terminals (Priority 50)
+- Kitty Graphics for highest quality (Priority 100)
+- OpenCvSharp chosen over FFmpeg.AutoGen (managed API, simpler)
+- ReactiveUI with manual subscriptions (no XAML available)
 
 ---
 
 ## Phase 1: Design & Contracts
 
-*This section will be filled after research.md is complete*
+**Status**: ✅ **COMPLETED** - 2025-10-26
 
-**Planned Artifacts:**
+**Generated Artifacts:**
 
-1. **data-model.md**: Entity models, state machines, relationships
-   - `MediaInfo` entity (from spec.md Key Entities)
-   - `Playlist` entity
-   - `PlaybackState` state machine (FSM diagram)
-   - `TerminalInfo` capabilities model
-   - `Renderer` metadata model
+1. ✅ **data-model.md**: Entity models, state machines, relationships
+   - 8 core entities defined (MediaInfo, VideoInfo, AudioInfo, MediaFrame, Playlist, PlaybackState, TerminalInfo, Renderer)
+   - 5 enumerations (MediaFormat, FrameType, PlaybackStatus, RepeatMode, TerminalCapability, PixelFormat)
+   - 2 state machines (Playback FSM, Playlist Navigation FSM) with transition diagrams
+   - Validation rules and relationships documented
 
-2. **contracts/** directory: Interface definitions
-   - Extract contracts from spec.md to C# interface files
-   - Add XML documentation
-   - Include usage examples
+2. ✅ **contracts/** directory: C# Interface definitions
+   - `IMediaService.cs` - Core playback service (7 methods, 4 observables)
+   - `IMediaRenderer.cs` - Renderer plugin interface (6 methods)
+   - `IMediaPlaybackEngine.cs` - Decoder interface (6 methods + FrameStream)
+   - `ITerminalCapabilityDetector.cs` - Capability detection (3 methods + TerminalInfo record)
+   - All interfaces include comprehensive XML documentation with usage examples
 
-3. **quickstart.md**: Getting started guide
-   - Installation steps (NuGet packages)
-   - CLI usage examples
-   - Code examples (load, play, playlist)
-   - Terminal compatibility notes
+3. ✅ **quickstart.md**: Getting started guide
+   - Installation instructions (NuGet packages)
+   - Service configuration examples
+   - 3 usage scenarios (programmatic, Terminal.Gui, CLI)
+   - Terminal compatibility matrix
+   - Common tasks and troubleshooting
 
-**Next**: After research.md completion, generate these artifacts
+4. ✅ **Agent Context Updated**
+   - Added C# / .NET 8.0 to language context
+   - Added File-based storage (JSON) to database context
+   - Updated via `.specify/scripts/powershell/update-agent-context.ps1`
+
+**Design Highlights:**
+
+- **Clean Architecture**: Contracts → Services → ViewModels → Views
+- **Plugin-Based**: Renderers and decoders are hot-pluggable
+- **Reactive Patterns**: IObservable for state changes and frame streams
+- **Thread-Safe**: Background decoding, main-thread rendering
+- **Well-Documented**: Every interface method has XML docs + examples
+
+**Next**: Phase 2 - Task Generation via `/speckit.tasks`
 
 ---
 
