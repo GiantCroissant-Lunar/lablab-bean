@@ -1,0 +1,13 @@
+{
+  "capabilities": [
+    "ui",
+    "framework"
+  ],
+  "description": "Event-driven UI service for reactive updates.",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.ReactiveUI.dll,LablabBean.Plugins.ReactiveUI.ReactiveUIPlugin"
+  },
+  "id": "lablab-bean.reactive-ui",
+  "name": "Reactive UI Service",
+  "version": "1.0.0"
+}

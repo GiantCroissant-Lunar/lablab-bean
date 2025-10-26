@@ -6,9 +6,6 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <!-- Terminal.Gui for Console TUI (pin to available version) -->
-    <PackageVersion Include="Terminal.Gui" Version="2.0.0-pre.71" />
-
     <!-- CLI command support -->
     <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>

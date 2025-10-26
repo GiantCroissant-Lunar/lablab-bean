@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
@@ -8,6 +9,7 @@ public class TerminalGuiService : ITerminalGuiService
 {
     private readonly ILogger<TerminalGuiService> _logger;
     private readonly IServiceProvider _serviceProvider;
+    private bool _tuiInitFailed;
 
     public TerminalGuiService(
         ILogger<TerminalGuiService> logger,
@@ -20,7 +22,37 @@ public class TerminalGuiService : ITerminalGuiService
     public void Initialize()
     {
         _logger.LogInformation("Initializing Terminal.Gui");
-        Application.Init();
+        try
+        {
+            // Attempt to disable Terminal.Gui configuration assembly scanning to avoid
+            // ReflectionTypeLoadException from unrelated loaded plugin assemblies.
+            try
+            {
+                // If property exists in current Terminal.Gui version
+                // this will prevent scanning AppDomain assemblies.
+                Terminal.Gui.ConfigurationManager.Enabled = false;
+            }
+            catch
+            {
+                // Best effort; continue if not available
+            }
+            Application.Init();
+        }
+        catch (ReflectionTypeLoadException)
+        {
+            _tuiInitFailed = true;
+            _logger.LogWarning("Terminal.Gui initialization failed due to type loading issues. Falling back to non-interactive mode.");
+        }
+        catch (TypeLoadException)
+        {
+            _tuiInitFailed = true;
+            _logger.LogWarning("Terminal.Gui initialization failed due to missing types. Falling back to non-interactive mode.");
+        }
+        catch (Exception)
+        {
+            _tuiInitFailed = true;
+            _logger.LogWarning("Terminal.Gui initialization failed. Falling back to non-interactive mode.");
+        }
     }
 
     public void Run()
@@ -29,6 +61,11 @@ public class TerminalGuiService : ITerminalGuiService
 
         try
         {
+            if (_tuiInitFailed)
+            {
+                _logger.LogWarning("TUI not available. Use CLI commands instead (e.g., 'plugins list', 'report plugin', 'kb ...').");
+                return;
+            }
             // Get the dungeon crawler service
             var dungeonCrawlerService = _serviceProvider.GetRequiredService<DungeonCrawlerService>();
 
@@ -58,6 +95,13 @@ public class TerminalGuiService : ITerminalGuiService
     public void Shutdown()
     {
         _logger.LogInformation("Shutting down Terminal.Gui");
-        Application.Shutdown();
+        if (!_tuiInitFailed)
+        {
+            Application.Shutdown();
+        }
+        else
+        {
+            _logger.LogInformation("TUI was not initialized; nothing to shut down.");
+        }
     }
 }

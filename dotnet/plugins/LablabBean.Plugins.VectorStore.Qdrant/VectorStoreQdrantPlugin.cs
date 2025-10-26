@@ -25,9 +25,15 @@ public sealed class VectorStoreQdrantPlugin : IPlugin
         if (!int.TryParse(dimStr, out var dim)) dim = 1536;
 
         _store = new QdrantVectorStore(new Uri(baseUrl), apiKey, collection, dim);
-        await _store.EnsureCollectionAsync(collection, ct);
 
-        var priority = string.Equals(preferred, "qdrant", StringComparison.OrdinalIgnoreCase) ? 500 : 300;
+        // Only perform network initialization when Qdrant is the preferred provider
+        var isPreferred = string.Equals(preferred, "qdrant", StringComparison.OrdinalIgnoreCase);
+        if (isPreferred)
+        {
+            await _store.EnsureCollectionAsync(collection, ct);
+        }
+
+        var priority = isPreferred ? 500 : 300;
         context.Registry.Register<IVectorStore>(_store, new ServiceMetadata
         {
             Priority = priority,
@@ -35,7 +41,7 @@ public sealed class VectorStoreQdrantPlugin : IPlugin
             Version = Version
         });
 
-        context.Logger.LogInformation("Registered IVectorStore (Qdrant) at {BaseUrl} collection {Collection} with priority {Priority}", baseUrl, collection, priority);
+        context.Logger.LogInformation("Registered IVectorStore (Qdrant) at {BaseUrl} collection {Collection} with priority {Priority} (Preferred: {Preferred})", baseUrl, collection, priority, isPreferred);
     }
 
     public Task StartAsync(CancellationToken ct = default) => Task.CompletedTask;

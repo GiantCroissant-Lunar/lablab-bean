@@ -4,7 +4,6 @@ using LablabBean.Console.Services;
 using LablabBean.Game.Core.Services;
 using LablabBean.Game.Core.Systems;
 using LablabBean.Game.Core.Worlds;
-using LablabBean.Game.TerminalUI.Services;
 using LablabBean.Infrastructure.Extensions;
 using LablabBean.Plugins.Core;
 using LablabBean.Reactive.Extensions;
@@ -114,7 +113,7 @@ try
         return await rootCommand.InvokeAsync(args);
     }
 
-    // Otherwise, run interactive Terminal.Gui mode
+    // Otherwise, run interactive mode via UI plugin (no host-managed TUI)
     var host = Host.CreateDefaultBuilder(args)
         .UseLablabBeanInfrastructure()
         .ConfigureServices((context, services) =>
@@ -140,21 +139,9 @@ try
             services.AddSingleton<StatusEffectSystem>();
             services.AddSingleton<GameStateManager>();
 
-            // Add IntelligentAISystem (bridges ECS with Akka.NET actors)
+            // Optional intelligent AI services (used by gameplay plugins)
             services.AddSingleton<IntelligentAISystem>();
-
-            // Add test entity factory for creating intelligent NPCs
             services.AddSingleton<IntelligentEntityFactory>();
-
-            // Add Terminal.Gui rendering services
-            services.AddSingleton<HudService>();
-            services.AddSingleton<WorldViewService>();
-
-            // Add application services
-            services.AddSingleton<ITerminalGuiService, TerminalGuiService>();
-            services.AddSingleton<IMenuService, MenuService>();
-            services.AddSingleton<DungeonCrawlerService>();
-            services.AddHostedService<ConsoleHostedService>();
         })
         .Build();
 
