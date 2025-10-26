@@ -431,19 +431,19 @@ public class MemoryService : IMemoryService
     /// </summary>
     private static TagCollection BuildTagCollection(MemoryEntry memory)
     {
+        // Standardize on canonical keys: entity_id, memory_type
         var tags = new TagCollection
         {
-            // Core filtering tags
-            { "entity", memory.EntityId },
-            { "type", memory.MemoryType },
+            { "entity_id", memory.EntityId },
+            { "memory_type", memory.MemoryType },
             { "importance", memory.Importance.ToString("F2") },
-            { "timestamp", memory.Timestamp.ToString("O") } // ISO 8601 format
+            { "timestamp", memory.Timestamp.ToString("O") }
         };
 
-        // Add user-provided tags
+        // Add user-provided tags as-is (no custom_ prefix)
         foreach (var tag in memory.Tags)
         {
-            tags.Add($"custom_{tag.Key}", tag.Value);
+            tags.Add(tag.Key, tag.Value);
         }
 
         return tags;
@@ -460,7 +460,7 @@ public class MemoryService : IMemoryService
         // Entity filter
         if (!string.IsNullOrWhiteSpace(options.EntityId))
         {
-            filter.Add("entity", options.EntityId);
+            filter.Add("entity_id", options.EntityId);
             hasFilters = true;
         }
 
@@ -470,14 +470,14 @@ public class MemoryService : IMemoryService
             // Support comma-separated types
             var types = options.MemoryType.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             // For now, use only the first type. Multi-type OR filtering will be handled client-side
-            filter.Add("type", types[0]);
+            filter.Add("memory_type", types[0]);
             hasFilters = true;
         }
 
         // Custom tag filters
         foreach (var tag in options.Tags)
         {
-            filter.Add($"custom_{tag.Key}", tag.Value);
+            filter.Add(tag.Key, tag.Value);
             hasFilters = true;
         }
 
@@ -495,8 +495,13 @@ public class MemoryService : IMemoryService
                 return null;
 
             // Extract tags from partition - partition.Tags is Dictionary<string, List<string>>
-            var entityId = GetTagValue(partition.Tags, "entity") ?? "unknown";
-            var memoryType = GetTagValue(partition.Tags, "type") ?? "unknown";
+            // Backward compatibility: support both entity_id/memory_type and entity/type
+            var entityId = GetTagValue(partition.Tags, "entity_id")
+                           ?? GetTagValue(partition.Tags, "entity")
+                           ?? "unknown";
+            var memoryType = GetTagValue(partition.Tags, "memory_type")
+                             ?? GetTagValue(partition.Tags, "type")
+                             ?? "unknown";
 
             var importanceStr = GetTagValue(partition.Tags, "importance");
             var importance = double.TryParse(importanceStr, out var imp) ? imp : 0.5;
@@ -504,11 +509,15 @@ public class MemoryService : IMemoryService
             var timestampStr = GetTagValue(partition.Tags, "timestamp");
             var timestamp = DateTimeOffset.TryParse(timestampStr, out var ts) ? ts : DateTimeOffset.UtcNow;
 
-            // Extract custom tags
+            // Extract user tags: include all except canonical keys
+            var exclude = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "entity_id", "entity", "memory_type", "type", "importance", "timestamp"
+            };
             var customTags = partition.Tags
-                .Where(t => t.Key.StartsWith("custom_"))
+                .Where(t => !exclude.Contains(t.Key))
                 .ToDictionary(
-                    t => t.Key.Substring("custom_".Length),
+                    t => t.Key,
                     t => t.Value.FirstOrDefault() ?? string.Empty);
 
             var memoryEntry = new MemoryEntry
