@@ -5,10 +5,13 @@ using Microsoft.SemanticKernel;
 using LablabBean.AI.Agents.Configuration;
 using LablabBean.AI.Core.Interfaces;
 using LablabBean.Contracts.AI.Memory;
-using LablabBean.AI.Agents.Services;
 using LablabBean.AI.Agents.Services.KnowledgeBase;
+using Microsoft.KernelMemory;
+using Microsoft.KernelMemory.MemoryStorage;
+using Microsoft.KernelMemory.MemoryDb.Qdrant;
 
 #pragma warning disable SKEXP0010
+#pragma warning disable KMEXP03
 
 namespace LablabBean.AI.Agents.Extensions;
 
@@ -59,27 +62,74 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Bind configuration
+        // Bind and validate configuration
+        var memoryOptions = configuration.GetSection(KernelMemoryOptions.SectionName)
+            .Get<KernelMemoryOptions>() ?? new KernelMemoryOptions();
+
+        try
+        {
+            memoryOptions.Validate();
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Log validation error but continue with defaults
+            var logger = services.BuildServiceProvider()
+                .GetRequiredService<ILogger<Microsoft.KernelMemory.KernelMemoryBuilder>>();
+            logger.LogWarning(ex, "Invalid KernelMemory configuration. Using in-memory storage. Error: {Message}", ex.Message);
+            memoryOptions.Storage.Provider = "Volatile";
+        }
+
         services.Configure<KernelMemoryOptions>(
             configuration.GetSection(KernelMemoryOptions.SectionName));
 
         // Register IKernelMemory instance
-        services.AddSingleton<Microsoft.KernelMemory.IKernelMemory>(sp =>
+        services.AddSingleton<IKernelMemory>(sp =>
         {
-            var logger = sp.GetRequiredService<ILogger<Microsoft.KernelMemory.KernelMemoryBuilder>>();
+            var logger = sp.GetRequiredService<ILogger<KernelMemoryBuilder>>();
+            var builder = new KernelMemoryBuilder();
 
-            logger.LogInformation("Initializing Kernel Memory with volatile (in-memory) storage");
+            var provider = memoryOptions.Storage.Provider;
 
-            // Build Kernel Memory with simple in-memory storage
-            // Note: This uses SimpleVectorDb for development/testing
-            // In production (Phase 4), this will be replaced with Qdrant
-            var builder = new Microsoft.KernelMemory.KernelMemoryBuilder();
+            logger.LogInformation("Configuring Kernel Memory - Provider: {Provider}, Collection: {Collection}",
+                provider, memoryOptions.Storage.CollectionName ?? "memories");
 
-            return builder.Build<Microsoft.KernelMemory.MemoryServerless>();
+            if (provider.Equals("Qdrant", StringComparison.OrdinalIgnoreCase))
+            {
+                logger.LogInformation("Initializing Kernel Memory with Qdrant storage at {ConnectionString}",
+                    memoryOptions.Storage.ConnectionString);
+
+                try
+                {
+                    // Add Qdrant memory DB configuration
+                    builder.Services.AddSingleton(new QdrantConfig
+                    {
+                        Endpoint = memoryOptions.Storage.ConnectionString!,
+                        APIKey = string.Empty
+                    });
+                    builder.Services.AddSingleton<IMemoryDb, QdrantMemory>();
+
+                    logger.LogInformation("Successfully configured Qdrant at {Endpoint}. Persistent storage enabled.",
+                        memoryOptions.Storage.ConnectionString);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to configure Qdrant at {ConnectionString}. Falling back to in-memory storage. Error: {ErrorMessage}",
+                        memoryOptions.Storage.ConnectionString, ex.Message);
+                    // Fallback to in-memory - builder already defaults to SimpleVectorDb
+                }
+            }
+            else
+            {
+                logger.LogInformation("Initializing Kernel Memory with volatile (in-memory) storage. Memories will NOT persist across restarts.");
+            }
+
+            var memory = builder.Build<MemoryServerless>();
+            logger.LogInformation("Kernel Memory initialization complete. Provider: {Provider}", provider);
+            return memory;
         });
 
         // Register memory service
-        services.AddSingleton<IMemoryService, MemoryService>();
+        services.AddSingleton<IMemoryService, Services.MemoryService>();
 
         return services;
     }

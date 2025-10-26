@@ -24,6 +24,42 @@ public class KernelMemoryOptions
     /// Text generation provider configuration
     /// </summary>
     public TextGenerationOptions TextGeneration { get; set; } = new();
+
+    /// <summary>
+    /// Validates the configuration
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when configuration is invalid</exception>
+    public void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(Storage.Provider))
+        {
+            throw new InvalidOperationException("Storage provider must be specified");
+        }
+
+        if (Storage.Provider.Equals("Qdrant", StringComparison.OrdinalIgnoreCase))
+        {
+            if (string.IsNullOrWhiteSpace(Storage.ConnectionString))
+            {
+                throw new InvalidOperationException("Qdrant connection string is required when provider is 'Qdrant'");
+            }
+
+            if (!Uri.TryCreate(Storage.ConnectionString, UriKind.Absolute, out var uri) ||
+                (uri.Scheme != "http" && uri.Scheme != "https"))
+            {
+                throw new InvalidOperationException($"Invalid Qdrant connection string: '{Storage.ConnectionString}'. Must be a valid HTTP/HTTPS URL.");
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(Embedding.Provider))
+        {
+            throw new InvalidOperationException("Embedding provider must be specified");
+        }
+
+        if (Embedding.MaxTokens <= 0)
+        {
+            throw new InvalidOperationException("Embedding MaxTokens must be greater than 0");
+        }
+    }
 }
 
 /// <summary>

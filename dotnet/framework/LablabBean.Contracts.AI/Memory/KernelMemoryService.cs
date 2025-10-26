@@ -345,4 +345,247 @@ public class KernelMemoryService : IMemoryService
             return false;
         }
     }
+
+    public async Task<string> StoreTacticalObservationAsync(
+        string entityId,
+        TacticalObservation observation,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(entityId);
+        ArgumentNullException.ThrowIfNull(observation);
+
+        try
+        {
+            _logger.LogDebug(
+                "Storing tactical observation for entity {EntityId}: Player {PlayerId}, Behavior {BehaviorType}",
+                entityId, observation.PlayerId, observation.BehaviorType);
+
+            var content = System.Text.Json.JsonSerializer.Serialize(observation);
+
+            var memory = new MemoryEntry
+            {
+                Id = $"tactical_{entityId}_{observation.Timestamp.ToUnixTimeSeconds()}",
+                Content = content,
+                EntityId = entityId,
+                MemoryType = "tactical",
+                Importance = observation.Outcome == OutcomeType.Success ? 0.8 :
+                            observation.Outcome == OutcomeType.PartialSuccess ? 0.6 : 0.4,
+                Timestamp = observation.Timestamp,
+                Tags = new Dictionary<string, string>
+                {
+                    { "player", observation.PlayerId },
+                    { "behavior", observation.BehaviorType.ToString() },
+                    { "outcome", observation.Outcome.ToString() }
+                }
+            };
+
+            var memoryId = await StoreMemoryAsync(memory, cancellationToken);
+
+            _logger.LogInformation(
+                "Stored tactical observation {MemoryId} for entity {EntityId}. Behavior: {BehaviorType}, Outcome: {Outcome}",
+                memoryId, entityId, observation.BehaviorType, observation.Outcome);
+
+            return memoryId;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to store tactical observation for entity {EntityId}. Behavior: {BehaviorType}",
+                entityId, observation.BehaviorType);
+            throw;
+        }
+    }
+
+    public async Task<IReadOnlyList<MemoryResult>> RetrieveSimilarTacticsAsync(
+        string entityId,
+        LablabBean.AI.Core.Events.PlayerBehaviorType behaviorFilter,
+        int limit = 5,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(entityId);
+
+        try
+        {
+            _logger.LogDebug(
+                "Retrieving similar tactics for entity {EntityId}: Behavior {BehaviorType}, Limit {Limit}",
+                entityId, behaviorFilter, limit);
+
+            var queryText = $"Player behavior pattern: {behaviorFilter}. What tactics were effective?";
+
+            var options = new MemoryRetrievalOptions
+            {
+                EntityId = entityId,
+                MemoryType = "tactical",
+                Limit = limit,
+                MinRelevanceScore = 0.3,
+                Tags = new Dictionary<string, string>
+                {
+                    { "behavior", behaviorFilter.ToString() }
+                }
+            };
+
+            var results = await RetrieveRelevantMemoriesAsync(queryText, options, cancellationToken);
+
+            _logger.LogInformation(
+                "Retrieved {Count} similar tactics for entity {EntityId}. Behavior: {BehaviorType}",
+                results.Count, entityId, behaviorFilter);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to retrieve similar tactics for entity {EntityId}. Behavior: {BehaviorType}",
+                entityId, behaviorFilter);
+            throw;
+        }
+    }
+
+    public async Task<string> StoreRelationshipMemoryAsync(
+        RelationshipMemory relationshipMemory,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationshipMemory);
+
+        try
+        {
+            var memoryId = $"relationship_{Guid.NewGuid():N}";
+
+            var tags = new TagCollection
+            {
+                { "type", "relationship" },
+                { "entity1", relationshipMemory.Entity1Id },
+                { "entity2", relationshipMemory.Entity2Id },
+                { "relationship", $"{relationshipMemory.Entity1Id}_{relationshipMemory.Entity2Id}" },
+                { "relationship_reverse", $"{relationshipMemory.Entity2Id}_{relationshipMemory.Entity1Id}" },
+                { "interaction", relationshipMemory.InteractionType.ToString().ToLowerInvariant() },
+                { "sentiment", relationshipMemory.Sentiment.ToLowerInvariant() },
+                { "timestamp", relationshipMemory.Timestamp.ToUnixTimeSeconds().ToString() }
+            };
+
+            var description = $"{relationshipMemory.Entity1Id} and {relationshipMemory.Entity2Id} - " +
+                             $"{relationshipMemory.InteractionType}: {relationshipMemory.Description} " +
+                             $"(Sentiment: {relationshipMemory.Sentiment})";
+
+            var documentId = await _memory.ImportTextAsync(
+                text: description,
+                documentId: memoryId,
+                tags: tags,
+                index: DefaultCollection,
+                cancellationToken: cancellationToken);
+
+            _logger.LogInformation(
+                "Stored relationship memory between {Entity1} and {Entity2}: {InteractionType}",
+                relationshipMemory.Entity1Id, relationshipMemory.Entity2Id, relationshipMemory.InteractionType);
+
+            return documentId;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to store relationship memory between {Entity1} and {Entity2}",
+                relationshipMemory.Entity1Id, relationshipMemory.Entity2Id);
+            throw;
+        }
+    }
+
+    public async Task<IReadOnlyList<MemoryResult>> RetrieveRelevantRelationshipHistoryAsync(
+        string entity1Id,
+        string entity2Id,
+        string query,
+        int maxResults = 5,
+        string? sentiment = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity1Id);
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity2Id);
+        ArgumentException.ThrowIfNullOrWhiteSpace(query);
+
+        try
+        {
+            var filter = new MemoryFilter();
+            filter.ByTag("type", "relationship");
+            filter.ByTag("entity1", entity1Id).ByTag("entity2", entity2Id);
+
+            if (!string.IsNullOrWhiteSpace(sentiment))
+            {
+                filter.ByTag("sentiment", sentiment.ToLowerInvariant());
+            }
+
+            var searchResult = await _memory.SearchAsync(
+                query: $"{query} {entity1Id} {entity2Id}",
+                index: DefaultCollection,
+                filter: filter,
+                minRelevance: 0.3,
+                limit: maxResults * 2,
+                cancellationToken: cancellationToken);
+
+            var results = new List<MemoryResult>();
+            foreach (var result in searchResult.Results)
+            {
+                var partition = result.Partitions.FirstOrDefault();
+                if (partition == null)
+                    continue;
+
+                var entity1Tag = partition.Tags.ContainsKey("entity1") && partition.Tags["entity1"].Count > 0
+                    ? partition.Tags["entity1"][0]
+                    : null;
+                var entity2Tag = partition.Tags.ContainsKey("entity2") && partition.Tags["entity2"].Count > 0
+                    ? partition.Tags["entity2"][0]
+                    : null;
+
+                var isBetweenEntities =
+                    (entity1Tag == entity1Id && entity2Tag == entity2Id) ||
+                    (entity1Tag == entity2Id && entity2Tag == entity1Id);
+
+                if (!isBetweenEntities)
+                {
+                    continue;
+                }
+
+                var timestampStr = partition.Tags.ContainsKey("timestamp") && partition.Tags["timestamp"].Count > 0
+                    ? partition.Tags["timestamp"][0]
+                    : null;
+                var timestamp = long.TryParse(timestampStr, out var ts)
+                    ? DateTimeOffset.FromUnixTimeSeconds(ts)
+                    : DateTimeOffset.UtcNow;
+
+                var memory = new MemoryEntry
+                {
+                    Id = result.Link,
+                    Content = partition.Text,
+                    EntityId = $"{entity1Id}_{entity2Id}",
+                    MemoryType = "relationship",
+                    Importance = partition.Relevance,
+                    Timestamp = timestamp,
+                    Tags = partition.Tags.ToDictionary(kvp => kvp.Key, kvp => string.Join(", ", kvp.Value))
+                };
+
+                results.Add(new MemoryResult
+                {
+                    Memory = memory,
+                    RelevanceScore = partition.Relevance,
+                    Source = DefaultCollection
+                });
+
+                if (results.Count >= maxResults)
+                {
+                    break;
+                }
+            }
+
+            _logger.LogInformation(
+                "Retrieved {Count} relationship memories between {Entity1} and {Entity2}",
+                results.Count, entity1Id, entity2Id);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to retrieve relationship history between {Entity1} and {Entity2}",
+                entity1Id, entity2Id);
+            throw;
+        }
+    }
 }

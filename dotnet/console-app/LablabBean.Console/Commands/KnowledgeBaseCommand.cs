@@ -16,6 +16,7 @@ public static class KnowledgeBaseCommand
         kbCommand.AddCommand(CreateQueryCommand(serviceProvider));
         kbCommand.AddCommand(CreateDeleteCommand(serviceProvider));
         kbCommand.AddCommand(CreateListCommand(serviceProvider));
+        kbCommand.AddCommand(CreateStatsCommand(serviceProvider));
 
         return kbCommand;
     }
@@ -115,6 +116,18 @@ public static class KnowledgeBaseCommand
         {
             await HandleListAsync(serviceProvider, category);
         }, categoryOption);
+
+        return command;
+    }
+
+    private static Command CreateStatsCommand(IServiceProvider serviceProvider)
+    {
+        var command = new Command("stats", "Show knowledge base statistics");
+
+        command.SetHandler(async () =>
+        {
+            await HandleStatsAsync(serviceProvider);
+        });
 
         return command;
     }
@@ -334,6 +347,106 @@ public static class KnowledgeBaseCommand
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to list documents");
+            System.Console.WriteLine($"❌ Error: {ex.Message}");
+        }
+    }
+
+    private static async Task HandleStatsAsync(IServiceProvider serviceProvider)
+    {
+        var logger = serviceProvider.GetRequiredService<ILogger<IKnowledgeBaseService>>();
+        var kbService = serviceProvider.GetRequiredService<IKnowledgeBaseService>();
+
+        try
+        {
+            System.Console.WriteLine("📊 Knowledge Base Statistics\n");
+            System.Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+            // Get all documents
+            var allDocuments = await kbService.ListDocumentsAsync();
+
+            if (allDocuments.Count == 0)
+            {
+                System.Console.WriteLine("⚠️ Knowledge base is empty");
+                return;
+            }
+
+            // Overall stats
+            System.Console.WriteLine($"\n📚 Total Documents: {allDocuments.Count}");
+
+            var totalChars = allDocuments.Sum(d => d.Content.Length);
+            var avgChars = allDocuments.Average(d => d.Content.Length);
+            System.Console.WriteLine($"📝 Total Characters: {totalChars:N0}");
+            System.Console.WriteLine($"📏 Average Document Size: {avgChars:N0} characters");
+
+            // Category breakdown
+            var byCategory = allDocuments.GroupBy(d => d.Category)
+                .OrderByDescending(g => g.Count())
+                .ToList();
+
+            System.Console.WriteLine($"\n🏷️  Documents by Category:");
+            foreach (var group in byCategory)
+            {
+                var percentage = (group.Count() / (double)allDocuments.Count) * 100;
+                var bar = new string('█', (int)(percentage / 5)); // Scale bar
+                System.Console.WriteLine($"  {group.Key,-12} : {group.Count(),3} documents ({percentage,5:F1}%) {bar}");
+            }
+
+            // Tag analysis
+            var allTags = allDocuments
+                .Where(d => d.Tags != null && d.Tags.Count > 0)
+                .SelectMany(d => d.Tags)
+                .GroupBy(t => t)
+                .OrderByDescending(g => g.Count())
+                .Take(10)
+                .ToList();
+
+            if (allTags.Any())
+            {
+                System.Console.WriteLine($"\n🏷️  Top 10 Tags:");
+                foreach (var tag in allTags)
+                {
+                    System.Console.WriteLine($"  {tag.Key,-20} : {tag.Count()} documents");
+                }
+            }
+
+            // Source analysis
+            var bySources = allDocuments
+                .Where(d => !string.IsNullOrEmpty(d.Source))
+                .GroupBy(d => Path.GetExtension(d.Source))
+                .OrderByDescending(g => g.Count())
+                .ToList();
+
+            if (bySources.Any())
+            {
+                System.Console.WriteLine($"\n📂 Documents by File Type:");
+                foreach (var group in bySources)
+                {
+                    var ext = string.IsNullOrEmpty(group.Key) ? "(no extension)" : group.Key;
+                    System.Console.WriteLine($"  {ext,-10} : {group.Count()} documents");
+                }
+            }
+
+            // Recent additions
+            var recentDocs = allDocuments
+                .OrderByDescending(d => d.CreatedAt)
+                .Take(5)
+                .ToList();
+
+            System.Console.WriteLine($"\n🆕 Recently Added (Top 5):");
+            foreach (var doc in recentDocs)
+            {
+                var age = DateTime.UtcNow - doc.CreatedAt;
+                var ageStr = age.TotalDays < 1
+                    ? $"{age.Hours}h {age.Minutes}m ago"
+                    : $"{(int)age.TotalDays}d ago";
+                System.Console.WriteLine($"  {doc.Title,-30} ({ageStr})");
+            }
+
+            System.Console.WriteLine("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to get statistics");
             System.Console.WriteLine($"❌ Error: {ex.Message}");
         }
     }

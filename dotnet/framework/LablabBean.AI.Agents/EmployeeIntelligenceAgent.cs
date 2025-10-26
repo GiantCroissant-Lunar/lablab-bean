@@ -104,18 +104,46 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
         {
             _logger.LogDebug($"Generating dialogue for {context.ListenerId}");
 
+            // T077: Retrieve relationship history before generating dialogue
+            string? relationshipContext = null;
+            if (_memoryService != null && !string.IsNullOrEmpty(context.ListenerId))
+            {
+                try
+                {
+                    var relationshipHistory = await _memoryService.RetrieveRelevantRelationshipHistoryAsync(
+                        entity1Id: AgentId,
+                        entity2Id: context.ListenerId,
+                        query: context.ConversationTopic,
+                        maxResults: 3
+                    );
+
+                    if (relationshipHistory.Any())
+                    {
+                        relationshipContext = FormatRelationshipContext(relationshipHistory);
+                        _logger.LogInformation(
+                            "Retrieved {Count} relationship memories with {Listener}. Relevance scores: {Scores}",
+                            relationshipHistory.Count, context.ListenerId,
+                            string.Join(", ", relationshipHistory.Select(h => $"{h.RelevanceScore:F2}")));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to retrieve relationship history, continuing without context");
+                }
+            }
+
             // Check if this is a question that could benefit from knowledge base
             var useKnowledgeBase = ShouldUseKnowledgeBase(context);
 
-            // Build dialogue prompt (with or without RAG)
+            // Build dialogue prompt (with or without RAG and relationship context)
             string prompt;
             if (useKnowledgeBase && _promptAugmentation != null)
             {
-                prompt = await BuildDialoguePromptWithRagAsync(context);
+                prompt = await BuildDialoguePromptWithRagAsync(context, relationshipContext);
             }
             else
             {
-                prompt = BuildDialoguePrompt(context);
+                prompt = BuildDialoguePrompt(context, relationshipContext);
             }
 
             // Get AI response
@@ -295,7 +323,7 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
         return prompt;
     }
 
-    private string BuildDialoguePrompt(DialogueContext context)
+    private string BuildDialoguePrompt(DialogueContext context, string? relationshipContext = null)
     {
         var relationshipLevel = context.ContextVariables.GetValueOrDefault("relationship_level", 0.5f);
         var listenerRole = context.ContextVariables.GetValueOrDefault("listener_role", "unknown")?.ToString() ?? "unknown";
@@ -311,6 +339,12 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
         prompt += $"\n\nYour current state:";
         prompt += $"\n- Emotion: {context.SpeakerEmotionalState ?? "neutral"}";
         prompt += $"\n- Relationship: {relationshipLevel:F2}";
+
+        // T077: Add relationship history context if available
+        if (!string.IsNullOrEmpty(relationshipContext))
+        {
+            prompt += $"\n\nRelationship History:\n{relationshipContext}";
+        }
 
         // Add personality context for dialogue style
         prompt += $"\n\nDialogue style (0-1 scale):";
@@ -519,11 +553,11 @@ Respond warmly and professionally in 1-2 sentences.";
     /// <summary>
     /// Build dialogue prompt with RAG context from knowledge base
     /// </summary>
-    private async Task<string> BuildDialoguePromptWithRagAsync(DialogueContext context)
+    private async Task<string> BuildDialoguePromptWithRagAsync(DialogueContext context, string? relationshipContext = null)
     {
         if (_promptAugmentation == null)
         {
-            return BuildDialoguePrompt(context);
+            return BuildDialoguePrompt(context, relationshipContext);
         }
 
         try
@@ -539,7 +573,7 @@ Respond warmly and professionally in 1-2 sentences.";
             if (!ragContext.RetrievedDocuments.Any())
             {
                 _logger.LogDebug("No relevant knowledge base documents found, using standard prompt");
-                return BuildDialoguePrompt(context);
+                return BuildDialoguePrompt(context, relationshipContext);
             }
 
             // Build augmented prompt
@@ -547,7 +581,7 @@ Respond warmly and professionally in 1-2 sentences.";
                 "You have access to factual knowledge about the game world. " +
                 "Use this information to provide helpful, accurate responses.";
 
-            var userQuery = BuildDialoguePrompt(context);
+            var userQuery = BuildDialoguePrompt(context, relationshipContext);
 
             var augmentedPrompt = _promptAugmentation.BuildAugmentedPrompt(
                 systemPrompt,
@@ -606,5 +640,116 @@ Respond warmly and professionally in 1-2 sentences.";
             return "lore";
 
         return null; // Search all categories
+    }
+
+    /// <summary>
+    /// Format relationship history for inclusion in prompts (T077)
+    /// </summary>
+    private string FormatRelationshipContext(IReadOnlyList<MemoryResult> relationshipHistory)
+    {
+        var context = "Past interactions:\n";
+        foreach (var memory in relationshipHistory.Take(3))
+        {
+            var tags = memory.Memory.Tags;
+            var sentiment = tags.GetValueOrDefault("sentiment", "neutral");
+            var interaction = tags.GetValueOrDefault("interaction", "interaction");
+            var ageInDays = (DateTimeOffset.UtcNow - memory.Memory.Timestamp).TotalDays;
+
+            context += $"- {interaction} ({sentiment}, {ageInDays:F0} days ago): {memory.Memory.Content}\n";
+        }
+        return context;
+    }
+
+    /// <summary>
+    /// Store relationship memory after dialogue interaction (T076)
+    /// </summary>
+    public async Task StoreDialogueInteractionAsync(
+        string listenerId,
+        string conversationTopic,
+        string dialogueGenerated,
+        float relationshipLevel)
+    {
+        if (_memoryService == null || string.IsNullOrEmpty(listenerId))
+            return;
+
+        try
+        {
+            var interactionType = DetermineInteractionType(conversationTopic);
+            var sentiment = DetermineSentiment(relationshipLevel, conversationTopic);
+
+            var relationshipMemory = new RelationshipMemory
+            {
+                Entity1Id = AgentId,
+                Entity2Id = listenerId,
+                InteractionType = interactionType,
+                Sentiment = sentiment,
+                Description = $"Discussed '{conversationTopic}'. Employee said: \"{dialogueGenerated.Substring(0, Math.Min(100, dialogueGenerated.Length))}...\"",
+                Timestamp = DateTimeOffset.UtcNow
+            };
+
+            await _memoryService.StoreRelationshipMemoryAsync(relationshipMemory);
+
+            _logger.LogInformation(
+                "Stored relationship memory: {AgentId} ↔ {Listener}, Type={Type}, Sentiment={Sentiment}",
+                AgentId, listenerId, interactionType, sentiment);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to store relationship memory, continuing without storage");
+        }
+    }
+
+    /// <summary>
+    /// Determine interaction type from conversation topic
+    /// </summary>
+    private InteractionType DetermineInteractionType(string topic)
+    {
+        var lowerTopic = topic.ToLowerInvariant();
+
+        if (lowerTopic.Contains("trade") || lowerTopic.Contains("buy") || lowerTopic.Contains("sell"))
+            return InteractionType.Trade;
+
+        if (lowerTopic.Contains("fight") || lowerTopic.Contains("combat") || lowerTopic.Contains("attack"))
+            return InteractionType.Combat;
+
+        if (lowerTopic.Contains("help") || lowerTopic.Contains("work together") || lowerTopic.Contains("collaborate"))
+            return InteractionType.Collaboration;
+
+        if (lowerTopic.Contains("gift") || lowerTopic.Contains("present") || lowerTopic.Contains("give"))
+            return InteractionType.Gift;
+
+        if (lowerTopic.Contains("quest") || lowerTopic.Contains("mission") || lowerTopic.Contains("task"))
+            return InteractionType.Quest;
+
+        if (lowerTopic.Contains("betray") || lowerTopic.Contains("lie") || lowerTopic.Contains("deceive"))
+            return InteractionType.Betrayal;
+
+        return InteractionType.Conversation;
+    }
+
+    /// <summary>
+    /// Determine sentiment from relationship level and topic
+    /// </summary>
+    private string DetermineSentiment(float relationshipLevel, string topic)
+    {
+        var lowerTopic = topic.ToLowerInvariant();
+
+        // Negative keywords override relationship level
+        if (lowerTopic.Contains("angry") || lowerTopic.Contains("upset") ||
+            lowerTopic.Contains("fight") || lowerTopic.Contains("betray"))
+            return "negative";
+
+        // Positive keywords boost sentiment
+        if (lowerTopic.Contains("thank") || lowerTopic.Contains("appreciate") ||
+            lowerTopic.Contains("grateful") || lowerTopic.Contains("help"))
+            return "positive";
+
+        // Otherwise use relationship level
+        if (relationshipLevel >= 0.6f)
+            return "positive";
+        else if (relationshipLevel <= 0.4f)
+            return "negative";
+        else
+            return "neutral";
     }
 }

@@ -29,11 +29,13 @@ public class MemoryService : IMemoryService
     {
         ArgumentNullException.ThrowIfNull(memory);
 
+        var startTime = DateTimeOffset.UtcNow;
+
         try
         {
             _logger.LogDebug(
-                "Storing memory {MemoryId} for entity {EntityId} with type {MemoryType} and importance {Importance}",
-                memory.Id, memory.EntityId, memory.MemoryType, memory.Importance);
+                "Storing memory {MemoryId} for entity {EntityId} with type {MemoryType} and importance {Importance}. Storage: {Provider}",
+                memory.Id, memory.EntityId, memory.MemoryType, memory.Importance, _options.Storage.Provider);
 
             // Build tag collection for filtering and retrieval (T023)
             var tags = BuildTagCollection(memory);
@@ -46,17 +48,21 @@ public class MemoryService : IMemoryService
                 index: _options.Storage.CollectionName ?? "memories",
                 cancellationToken: cancellationToken);
 
+            var duration = DateTimeOffset.UtcNow - startTime;
             _logger.LogInformation(
-                "Successfully stored memory {MemoryId} for entity {EntityId}",
-                memory.Id, memory.EntityId);
+                "Successfully stored memory {MemoryId} for entity {EntityId} in {Duration}ms. Provider: {Provider}, Collection: {Collection}",
+                memory.Id, memory.EntityId, duration.TotalMilliseconds,
+                _options.Storage.Provider,
+                _options.Storage.CollectionName ?? "memories");
 
             return documentId;
         }
         catch (Exception ex)
         {
+            var duration = DateTimeOffset.UtcNow - startTime;
             _logger.LogError(ex,
-                "Failed to store memory {MemoryId} for entity {EntityId}",
-                memory.Id, memory.EntityId);
+                "Failed to store memory {MemoryId} for entity {EntityId} after {Duration}ms. Provider: {Provider}, Error: {ErrorMessage}",
+                memory.Id, memory.EntityId, duration.TotalMilliseconds, _options.Storage.Provider, ex.Message);
             throw;
         }
     }
@@ -69,11 +75,13 @@ public class MemoryService : IMemoryService
         ArgumentNullException.ThrowIfNull(options);
         ArgumentException.ThrowIfNullOrWhiteSpace(queryText);
 
+        var startTime = DateTimeOffset.UtcNow;
+
         try
         {
             _logger.LogDebug(
-                "Retrieving memories for query: {Query} with options: Entity={EntityId}, Type={MemoryType}, Limit={Limit}, MinRelevance={MinRelevance}",
-                queryText, options.EntityId, options.MemoryType, options.Limit, options.MinRelevanceScore);
+                "Retrieving memories for query: '{Query}' with options: Entity={EntityId}, Type={MemoryType}, Limit={Limit}, MinRelevance={MinRelevance}. Storage: {Provider}",
+                queryText, options.EntityId, options.MemoryType, options.Limit, options.MinRelevanceScore, _options.Storage.Provider);
 
             // Build filter from options (T023)
             var filter = BuildMemoryFilter(options);
@@ -121,26 +129,33 @@ public class MemoryService : IMemoryService
                 results.Add(memoryResult);
             }
 
-            _logger.LogInformation(
-                "Retrieved {Count} relevant memories for query '{Query}' (filtered from {TotalResults} results)",
-                results.Count, queryText, searchResult.Results.Count);
+            var duration = DateTimeOffset.UtcNow - startTime;
 
-            // Log relevance scores for analysis (T029)
+            _logger.LogInformation(
+                "Retrieved {Count} relevant memories for query '{Query}' in {Duration}ms (filtered from {TotalResults} results). Provider: {Provider}, Collection: {Collection}",
+                results.Count, queryText, duration.TotalMilliseconds, searchResult.Results.Count,
+                _options.Storage.Provider,
+                _options.Storage.CollectionName ?? "memories");
+
+            // Log relevance scores for analysis (T029 + T040)
             if (results.Any())
             {
                 _logger.LogDebug(
-                    "Top result relevance: {TopRelevance:F3}, Average relevance: {AvgRelevance:F3}",
+                    "Memory retrieval stats - Top relevance: {TopRelevance:F3}, Average: {AvgRelevance:F3}, Min: {MinRelevance:F3}, Max: {MaxRelevance:F3}",
                     results.First().RelevanceScore,
-                    results.Average(r => r.RelevanceScore));
+                    results.Average(r => r.RelevanceScore),
+                    results.Min(r => r.RelevanceScore),
+                    results.Max(r => r.RelevanceScore));
             }
 
             return results.AsReadOnly();
         }
         catch (Exception ex)
         {
+            var duration = DateTimeOffset.UtcNow - startTime;
             _logger.LogError(ex,
-                "Failed to retrieve memories for query: {Query}",
-                queryText);
+                "Failed to retrieve memories for query: '{Query}' after {Duration}ms. Provider: {Provider}, Error: {ErrorMessage}",
+                queryText, duration.TotalMilliseconds, _options.Storage.Provider, ex.Message);
             throw;
         }
     }
@@ -204,7 +219,9 @@ public class MemoryService : IMemoryService
 
     public virtual async Task<bool> IsHealthyAsync()
     {
-        _logger.LogDebug("Checking memory service health");
+        var startTime = DateTimeOffset.UtcNow;
+        _logger.LogDebug("Starting memory service health check for storage provider: {Provider}",
+            _options.Storage.Provider);
 
         try
         {
@@ -213,13 +230,197 @@ public class MemoryService : IMemoryService
                 query: "health_check",
                 index: _options.Storage.CollectionName ?? "memories",
                 limit: 1);
+
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogInformation("Memory service health check PASSED in {Duration}ms. Provider: {Provider}, Endpoint: {Endpoint}",
+                duration.TotalMilliseconds,
+                _options.Storage.Provider,
+                _options.Storage.ConnectionString ?? "in-memory");
+
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Memory service health check failed");
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogError(ex,
+                "Memory service health check FAILED after {Duration}ms. Provider: {Provider}, Endpoint: {Endpoint}. Error: {ErrorMessage}",
+                duration.TotalMilliseconds,
+                _options.Storage.Provider,
+                _options.Storage.ConnectionString ?? "in-memory",
+                ex.Message);
             return false;
         }
+    }
+
+    /// <summary>
+    /// Store a tactical observation for enemy learning (T060)
+    /// </summary>
+    public virtual async Task<string> StoreTacticalObservationAsync(
+        string entityId,
+        TacticalObservation observation,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(entityId);
+        ArgumentNullException.ThrowIfNull(observation);
+
+        var startTime = DateTimeOffset.UtcNow;
+
+        try
+        {
+            _logger.LogDebug(
+                "Storing tactical observation for entity {EntityId}: Player {PlayerId}, Behavior {BehaviorType}, Outcome {Outcome}",
+                entityId, observation.PlayerId, observation.BehaviorType, observation.Outcome);
+
+            // Serialize observation as content
+            var content = System.Text.Json.JsonSerializer.Serialize(observation);
+
+            // Build memory entry with tactical-specific tags
+            var memory = new MemoryEntry
+            {
+                Id = $"tactical_{entityId}_{observation.Timestamp.ToUnixTimeSeconds()}",
+                Content = content,
+                EntityId = entityId,
+                MemoryType = "tactical",
+                Importance = observation.Outcome == OutcomeType.Success ? 0.8 :
+                            observation.Outcome == OutcomeType.PartialSuccess ? 0.6 : 0.4,
+                Timestamp = observation.Timestamp,
+                Tags = new Dictionary<string, string>
+                {
+                    { "player", observation.PlayerId },
+                    { "behavior", observation.BehaviorType.ToString() },
+                    { "outcome", observation.Outcome.ToString() },
+                    { "encounter_context", observation.EncounterContext }
+                }
+            };
+
+            var memoryId = await StoreMemoryAsync(memory, cancellationToken);
+
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogInformation(
+                "Successfully stored tactical observation {MemoryId} for entity {EntityId} in {Duration}ms. Behavior: {BehaviorType}, Outcome: {Outcome}",
+                memoryId, entityId, duration.TotalMilliseconds,
+                observation.BehaviorType, observation.Outcome);
+
+            return memoryId;
+        }
+        catch (Exception ex)
+        {
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogError(ex,
+                "Failed to store tactical observation for entity {EntityId} after {Duration}ms. Behavior: {BehaviorType}, Error: {ErrorMessage}",
+                entityId, duration.TotalMilliseconds, observation.BehaviorType, ex.Message);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Retrieve similar tactical observations filtered by behavior type (T061)
+    /// </summary>
+    public virtual async Task<IReadOnlyList<MemoryResult>> RetrieveSimilarTacticsAsync(
+        string entityId,
+        LablabBean.AI.Core.Events.PlayerBehaviorType behaviorFilter,
+        int limit = 5,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(entityId);
+
+        var startTime = DateTimeOffset.UtcNow;
+
+        try
+        {
+            _logger.LogDebug(
+                "Retrieving similar tactics for entity {EntityId}: Behavior {BehaviorType}, Limit {Limit}",
+                entityId, behaviorFilter, limit);
+
+            // Build semantic query about the behavior
+            var queryText = $"Player behavior pattern: {behaviorFilter}. What tactics were effective?";
+
+            // Build filter for tactical memories with specific behavior
+            var options = new MemoryRetrievalOptions
+            {
+                EntityId = entityId,
+                MemoryType = "tactical",
+                Limit = limit,
+                MinRelevanceScore = 0.3,  // Lower threshold for tactical memories
+                Tags = new Dictionary<string, string>
+                {
+                    { "behavior", behaviorFilter.ToString() }
+                }
+            };
+
+            var results = await RetrieveRelevantMemoriesAsync(queryText, options, cancellationToken);
+
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogInformation(
+                "Retrieved {Count} similar tactics for entity {EntityId} in {Duration}ms. Behavior: {BehaviorType}",
+                results.Count, entityId, duration.TotalMilliseconds, behaviorFilter);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogError(ex,
+                "Failed to retrieve similar tactics for entity {EntityId} after {Duration}ms. Behavior: {BehaviorType}, Error: {ErrorMessage}",
+                entityId, duration.TotalMilliseconds, behaviorFilter, ex.Message);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Migrates legacy memories to Qdrant (T039)
+    /// </summary>
+    /// <param name="legacyMemories">Collection of legacy memories to migrate</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Number of successfully migrated memories</returns>
+    public virtual async Task<int> MigrateLegacyMemoriesAsync(
+        IEnumerable<MemoryEntry> legacyMemories,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(legacyMemories);
+
+        var migrationStart = DateTimeOffset.UtcNow;
+        var totalCount = legacyMemories.Count();
+        var successCount = 0;
+        var failureCount = 0;
+
+        _logger.LogInformation(
+            "Starting legacy memory migration. Total memories: {TotalCount}, Target: {Provider} ({Endpoint})",
+            totalCount,
+            _options.Storage.Provider,
+            _options.Storage.ConnectionString ?? "in-memory");
+
+        foreach (var memory in legacyMemories)
+        {
+            try
+            {
+                await StoreMemoryAsync(memory, cancellationToken);
+                successCount++;
+
+                if (successCount % 100 == 0)
+                {
+                    _logger.LogInformation("Migration progress: {Success}/{Total} memories migrated ({Percentage:F1}%)",
+                        successCount, totalCount, (successCount / (double)totalCount) * 100);
+                }
+            }
+            catch (Exception ex)
+            {
+                failureCount++;
+                _logger.LogWarning(ex,
+                    "Failed to migrate memory {MemoryId} for entity {EntityId}. Continuing with next memory.",
+                    memory.Id, memory.EntityId);
+            }
+        }
+
+        var duration = DateTimeOffset.UtcNow - migrationStart;
+        _logger.LogInformation(
+            "Legacy memory migration completed. Success: {Success}, Failures: {Failures}, Duration: {Duration}s, Rate: {Rate:F2} memories/sec",
+            successCount,
+            failureCount,
+            duration.TotalSeconds,
+            successCount / Math.Max(duration.TotalSeconds, 0.1));
+
+        return successCount;
     }
 
     #region Helper Methods
@@ -286,7 +487,7 @@ public class MemoryService : IMemoryService
     /// <summary>
     /// Parses MemoryEntry from Kernel Memory partition
     /// </summary>
-    private MemoryEntry? ParseMemoryEntryFromPartition(Citation.Partition partition, string documentId)
+    private MemoryEntry? ParseMemoryEntryFromPartition(Microsoft.KernelMemory.Citation.Partition partition, string documentId)
     {
         try
         {
@@ -348,6 +549,194 @@ public class MemoryService : IMemoryService
             }
         }
         return null;
+    }
+
+    #endregion
+
+    #region Relationship Memory (T074-T075)
+
+    public virtual async Task<string> StoreRelationshipMemoryAsync(
+        RelationshipMemory relationshipMemory,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationshipMemory);
+
+        var startTime = DateTimeOffset.UtcNow;
+
+        try
+        {
+            _logger.LogDebug(
+                "Storing relationship memory between {Entity1} and {Entity2}: Type={InteractionType}, Sentiment={Sentiment}",
+                relationshipMemory.Entity1Id, relationshipMemory.Entity2Id,
+                relationshipMemory.InteractionType, relationshipMemory.Sentiment);
+
+            var memoryId = $"relationship_{Guid.NewGuid():N}";
+
+            // Build comprehensive tags for relationship tracking
+            var tags = new TagCollection
+            {
+                { "type", "relationship" },
+                { "entity1", relationshipMemory.Entity1Id },
+                { "entity2", relationshipMemory.Entity2Id },
+                { "relationship", $"{relationshipMemory.Entity1Id}_{relationshipMemory.Entity2Id}" },
+                { "relationship_reverse", $"{relationshipMemory.Entity2Id}_{relationshipMemory.Entity1Id}" },
+                { "interaction", relationshipMemory.InteractionType.ToString().ToLowerInvariant() },
+                { "sentiment", relationshipMemory.Sentiment.ToLowerInvariant() },
+                { "timestamp", relationshipMemory.Timestamp.ToUnixTimeSeconds().ToString() }
+            };
+
+            // Build rich description for semantic search
+            var description = $"{relationshipMemory.Entity1Id} and {relationshipMemory.Entity2Id} - " +
+                             $"{relationshipMemory.InteractionType}: {relationshipMemory.Description} " +
+                             $"(Sentiment: {relationshipMemory.Sentiment})";
+
+            var documentId = await _memory.ImportTextAsync(
+                text: description,
+                documentId: memoryId,
+                tags: tags,
+                index: _options.Storage.CollectionName ?? "memories",
+                cancellationToken: cancellationToken);
+
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogInformation(
+                "Successfully stored relationship memory between {Entity1} and {Entity2} in {Duration}ms",
+                relationshipMemory.Entity1Id, relationshipMemory.Entity2Id, duration.TotalMilliseconds);
+
+            return documentId;
+        }
+        catch (Exception ex)
+        {
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogError(ex,
+                "Failed to store relationship memory between {Entity1} and {Entity2} after {Duration}ms: {ErrorMessage}",
+                relationshipMemory.Entity1Id, relationshipMemory.Entity2Id, duration.TotalMilliseconds, ex.Message);
+            throw;
+        }
+    }
+
+    public virtual async Task<IReadOnlyList<MemoryResult>> RetrieveRelevantRelationshipHistoryAsync(
+        string entity1Id,
+        string entity2Id,
+        string query,
+        int maxResults = 5,
+        string? sentiment = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity1Id);
+        ArgumentException.ThrowIfNullOrWhiteSpace(entity2Id);
+        ArgumentException.ThrowIfNullOrWhiteSpace(query);
+
+        var startTime = DateTimeOffset.UtcNow;
+
+        try
+        {
+            _logger.LogDebug(
+                "Retrieving relationship history between {Entity1} and {Entity2}: Query='{Query}', Sentiment={Sentiment}, Limit={Limit}",
+                entity1Id, entity2Id, query, sentiment ?? "any", maxResults);
+
+            // Build filter for bidirectional relationship
+            var filterBuilder = new List<MemoryFilter>();
+
+            // Match either direction of the relationship
+            var relationshipKey = $"{entity1Id}_{entity2Id}";
+            var reverseKey = $"{entity2Id}_{entity1Id}";
+
+            // Type must be relationship
+            filterBuilder.Add(MemoryFilters.ByTag("type", "relationship"));
+
+            // Create OR condition for bidirectional lookup
+            // Note: Kernel Memory filter syntax may vary - this is a simplified approach
+            // We'll check both relationship tags in post-processing if direct OR isn't supported
+            var filter = new MemoryFilter();
+            filter.ByTag("type", "relationship");
+
+            // Add entity filters (will match if either entity is in the relationship)
+            filter.ByTag("entity1", entity1Id).ByTag("entity2", entity2Id);
+
+            // Add sentiment filter if specified
+            if (!string.IsNullOrWhiteSpace(sentiment))
+            {
+                filter.ByTag("sentiment", sentiment.ToLowerInvariant());
+            }
+
+            // Perform semantic search
+            var searchResult = await _memory.SearchAsync(
+                query: $"{query} {entity1Id} {entity2Id}",
+                index: _options.Storage.CollectionName ?? "memories",
+                filter: filter,
+                minRelevance: 0.3, // Lower threshold for relationship context
+                limit: maxResults * 2, // Get more to filter bidirectionally
+                cancellationToken: cancellationToken);
+
+            // Filter and convert results
+            var results = new List<MemoryResult>();
+            foreach (var citation in searchResult.Results)
+            {
+                // Check if this memory involves both entities (bidirectional check)
+                var entity1Tag = GetTagValue(citation.Partitions.FirstOrDefault()?.Tags, "entity1");
+                var entity2Tag = GetTagValue(citation.Partitions.FirstOrDefault()?.Tags, "entity2");
+
+                var isBetweenEntities =
+                    (entity1Tag == entity1Id && entity2Tag == entity2Id) ||
+                    (entity1Tag == entity2Id && entity2Tag == entity1Id);
+
+                if (!isBetweenEntities)
+                {
+                    continue; // Skip memories not between these two entities
+                }
+
+                // Build MemoryEntry from partition
+                var partition = citation.Partitions.FirstOrDefault();
+                if (partition == null)
+                    continue;
+
+                var tags = partition.Tags;
+
+                // Parse timestamp
+                var timestampStr = GetTagValue(tags, "timestamp");
+                var timestamp = long.TryParse(timestampStr, out var ts)
+                    ? DateTimeOffset.FromUnixTimeSeconds(ts)
+                    : DateTimeOffset.UtcNow;
+
+                var memory = new MemoryEntry
+                {
+                    Id = citation.Link,
+                    Content = partition.Text,
+                    EntityId = $"{entity1Id}_{entity2Id}", // Composite entity ID
+                    MemoryType = "relationship",
+                    Importance = partition.Relevance,
+                    Timestamp = timestamp,
+                    Tags = tags.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.FirstOrDefault() ?? string.Empty)
+                };
+
+                results.Add(new MemoryResult
+                {
+                    Memory = memory,
+                    RelevanceScore = partition.Relevance,
+                    Source = _options.Storage.CollectionName ?? "memories"
+                });
+
+                if (results.Count >= maxResults)
+                {
+                    break; // Reached desired limit
+                }
+            }
+
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogInformation(
+                "Retrieved {Count} relationship memories between {Entity1} and {Entity2} in {Duration}ms",
+                results.Count, entity1Id, entity2Id, duration.TotalMilliseconds);
+
+            return results.AsReadOnly();
+        }
+        catch (Exception ex)
+        {
+            var duration = DateTimeOffset.UtcNow - startTime;
+            _logger.LogError(ex,
+                "Failed to retrieve relationship history between {Entity1} and {Entity2} after {Duration}ms: {ErrorMessage}",
+                entity1Id, entity2Id, duration.TotalMilliseconds, ex.Message);
+            throw;
+        }
     }
 
     #endregion

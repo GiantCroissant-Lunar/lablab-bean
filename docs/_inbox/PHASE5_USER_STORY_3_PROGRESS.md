@@ -7,10 +7,10 @@
 ## Progress Overview
 
 - **Total Tasks**: 15
-- **Completed**: 12
+- **Completed**: 13
 - **In Progress**: 0
-- **Remaining**: 3
-- **Progress**: 80%
+- **Remaining**: 2
+- **Progress**: 87%
 
 ---
 
@@ -76,9 +76,9 @@
   - Status: ✅ COMPLETE
   - Files: `docs/knowledge-base/world-history.md`, `docs/knowledge-base/locations.md`, `docs/knowledge-base/quests.md`
 
-- [ ] **5.14** Add unit tests for RAG pipeline
-  - Status: 🔵 Not Started
-  - Files: TBD
+- [x] **5.14** Add unit tests for RAG pipeline
+  - Status: ✅ COMPLETE
+  - Files: `DocumentChunkerTests.cs`, `DocumentLoaderTests.cs`, `PromptAugmentationServiceTests.cs`
 
 - [ ] **5.15** Integration test with sample queries
   - Status: 🔵 Not Started

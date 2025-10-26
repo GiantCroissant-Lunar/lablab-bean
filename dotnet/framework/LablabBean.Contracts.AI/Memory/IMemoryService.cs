@@ -62,4 +62,58 @@ public interface IMemoryService
     /// </summary>
     /// <returns>True if the service is healthy, false otherwise</returns>
     Task<bool> IsHealthyAsync();
+
+    /// <summary>
+    /// Store a tactical observation for enemy learning and adaptation
+    /// </summary>
+    /// <param name="entityId">Enemy entity ID storing the observation</param>
+    /// <param name="observation">The tactical observation to store</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The ID of the stored observation</returns>
+    Task<string> StoreTacticalObservationAsync(
+        string entityId,
+        TacticalObservation observation,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieve similar tactical observations filtered by player behavior type
+    /// </summary>
+    /// <param name="entityId">Enemy entity ID to retrieve observations for</param>
+    /// <param name="behaviorFilter">Filter by specific player behavior type</param>
+    /// <param name="limit">Maximum number of observations to retrieve</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of tactical observations ordered by relevance</returns>
+    Task<IReadOnlyList<MemoryResult>> RetrieveSimilarTacticsAsync(
+        string entityId,
+        LablabBean.AI.Core.Events.PlayerBehaviorType behaviorFilter,
+        int limit = 5,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Store a relationship memory tracking interaction between two entities
+    /// </summary>
+    /// <param name="relationshipMemory">The relationship memory to store</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The ID of the stored relationship memory</returns>
+    Task<string> StoreRelationshipMemoryAsync(
+        RelationshipMemory relationshipMemory,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieve relationship history between two entities with semantic search
+    /// </summary>
+    /// <param name="entity1Id">First entity in the relationship</param>
+    /// <param name="entity2Id">Second entity in the relationship</param>
+    /// <param name="query">Query text for semantic search (e.g., current context)</param>
+    /// <param name="maxResults">Maximum number of results to return</param>
+    /// <param name="sentiment">Optional sentiment filter ("positive", "negative", "neutral")</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of relevant relationship memories ordered by relevance and recency</returns>
+    Task<IReadOnlyList<MemoryResult>> RetrieveRelevantRelationshipHistoryAsync(
+        string entity1Id,
+        string entity2Id,
+        string query,
+        int maxResults = 5,
+        string? sentiment = null,
+        CancellationToken cancellationToken = default);
 }
