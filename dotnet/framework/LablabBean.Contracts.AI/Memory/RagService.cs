@@ -120,8 +120,8 @@ public class RagService : IRagService
                     citations.Add(new Citation
                     {
                         DocumentId = docId,
-                        DocumentTitle = title,
-                        Text = p.Text,
+                        DocumentTitle = title ?? string.Empty,
+                        Text = p.Text ?? string.Empty,
                         RelevanceScore = p.Relevance,
                         PartitionKey = p.PartitionNumber.ToString(),
                         Tags = p.Tags.ToDictionary(kvp => kvp.Key, kvp => string.Join(", ", kvp.Value))

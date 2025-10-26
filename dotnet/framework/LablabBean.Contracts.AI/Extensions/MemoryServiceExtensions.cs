@@ -1,5 +1,5 @@
 using LablabBean.Contracts.AI.Memory;
-using LablabBean.AI.Agents.Configuration;
+using LablabBean.Contracts.AI.Configuration;
 using LablabBean.Contracts.AI.Health;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -79,7 +79,7 @@ public static class MemoryServiceExtensions
         });
 
         // Unify on the Agents MemoryService implementation
-        services.AddSingleton<IMemoryService, LablabBean.AI.Agents.Services.MemoryService>();
+        services.AddSingleton<IMemoryService, KernelMemoryService>();
 
         // Register RAG query service for knowledge-base answers with citations
         services.AddSingleton<IRagService, RagService>();

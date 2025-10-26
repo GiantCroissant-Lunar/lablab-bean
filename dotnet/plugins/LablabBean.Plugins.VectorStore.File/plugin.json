@@ -1,0 +1,13 @@
+{
+  "capabilities": [
+    "persistence",
+    "framework"
+  ],
+  "description": "File-based vector store (JSON on disk) implementing IVectorStore.",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.VectorStore.File.dll,LablabBean.Plugins.VectorStore.File.VectorStoreFilePlugin"
+  },
+  "id": "vector-store-file",
+  "name": "Vector Store (File)",
+  "version": "1.0.0"
+}

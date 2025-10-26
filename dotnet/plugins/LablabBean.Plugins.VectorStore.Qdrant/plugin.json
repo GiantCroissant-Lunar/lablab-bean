@@ -1,0 +1,13 @@
+{
+  "capabilities": [
+    "persistence",
+    "framework"
+  ],
+  "description": "Qdrant-based vector store implementing IVectorStore via HTTP API.",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.VectorStore.Qdrant.dll,LablabBean.Plugins.VectorStore.Qdrant.VectorStoreQdrantPlugin"
+  },
+  "id": "vector-store-qdrant",
+  "name": "Vector Store (Qdrant)",
+  "version": "1.0.0"
+}
