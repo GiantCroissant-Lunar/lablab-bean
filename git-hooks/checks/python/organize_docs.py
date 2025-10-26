@@ -3,11 +3,12 @@
 """
 Documentation Organization Script
 
-Organizes root-level markdown files according to the R-DOC-001 rule: new docs
+Organizes root-level markdown and text files according to the R-DOC-001 rule: new docs
 should go to docs/_inbox/ first, then be properly categorized.
 
 SCOPE: This script ONLY processes:
 - Markdown files directly at the repository root level (*.md)
+- Text files directly at the repository root level (*.txt)
 - Files in docs/ directory that may need reorganization
 - NEVER touches .agent/, .kiro/, or other system directories
 
@@ -119,7 +120,7 @@ DOC_TYPE_DIRS = {
 
 
 class DocumentFile:
-    """Represents a markdown document with metadata."""
+    """Represents a markdown or text document with metadata."""
 
     def __init__(self, path: pathlib.Path):
         self.path = path
@@ -154,6 +155,10 @@ class DocumentFile:
 
     def _extract_frontmatter(self) -> Tuple[Optional[Dict], str]:
         """Extract YAML front-matter from content."""
+        # For .txt files, we don't expect YAML frontmatter, so return None
+        if self.path.suffix.lower() == ".txt":
+            return None, self.content
+
         match = re.match(r"^---\r?\n(.*?)\r?\n---\r?\n", self.content, re.S)
         if not match:
             return None, self.content
@@ -195,7 +200,13 @@ class DocumentFile:
             # No frontmatter or invalid - goes to inbox
             self.suggested_location = INBOX_DIR / self.path.name
             if not self.frontmatter:
-                self.issues.append("Missing YAML front-matter, moving to inbox")
+                # For .txt files, this is expected behavior
+                if self.path.suffix.lower() == ".txt":
+                    self.issues.append(
+                        "Text file without front-matter, moving to inbox"
+                    )
+                else:
+                    self.issues.append("Missing YAML front-matter, moving to inbox")
             else:
                 self.issues.append("Missing doc_type in front-matter, moving to inbox")
 
@@ -225,40 +236,44 @@ class DocumentOrganizer:
         self.moves_performed: List[Tuple[pathlib.Path, pathlib.Path]] = []
 
     def scan_repository(self) -> List[DocumentFile]:
-        """Scan repository for markdown files at root level only."""
-        print("Scanning root level for markdown files...")
+        """Scan repository for markdown and text files at root level only."""
+        print("Scanning root level for markdown and text files...")
 
         found_files = []
         excluded_count = 0
 
-        # Only scan root level files (*.md directly in ROOT)
-        for md_file in ROOT.glob("*.md"):
-            # Skip excluded files
-            if md_file.name in EXCLUDE_FILES:
-                excluded_count += 1
-                continue
+        # Scan root level files (*.md and *.txt directly in ROOT)
+        for pattern in ["*.md", "*.txt"]:
+            for doc_file in ROOT.glob(pattern):
+                # Skip excluded files
+                if doc_file.name in EXCLUDE_FILES:
+                    excluded_count += 1
+                    continue
 
-            # Skip agent system files (extra protection)
-            if md_file.name in {"AGENTS.md", "CLAUDE.md", "KIRO.md"}:
-                excluded_count += 1
-                continue
+                # Skip agent system files (extra protection)
+                if doc_file.name in {"AGENTS.md", "CLAUDE.md", "KIRO.md"}:
+                    excluded_count += 1
+                    continue
 
-            found_files.append(md_file)
+                found_files.append(doc_file)
 
         # Also check docs/ directory for files that might need reorganization
         if DOCS_DIR.exists():
-            for md_file in DOCS_DIR.rglob("*.md"):
-                # Skip files already in proper subdirectories unless they're misplaced
-                relative_to_docs = md_file.relative_to(DOCS_DIR)
+            for pattern in ["*.md", "*.txt"]:
+                for doc_file in DOCS_DIR.rglob(pattern):
+                    # Skip files already in proper subdirectories unless they're misplaced
+                    relative_to_docs = doc_file.relative_to(DOCS_DIR)
 
-                # If it's directly in docs/ (not in a subdirectory), it might need organizing
-                if len(relative_to_docs.parts) == 1:
-                    found_files.append(md_file)
-                # If it's in a subdirectory, check if it has proper frontmatter for that location
-                else:
-                    found_files.append(md_file)
+                    # If it's directly in docs/ (not in a subdirectory), it might need organizing
+                    if len(relative_to_docs.parts) == 1:
+                        found_files.append(doc_file)
+                    # If it's in a subdirectory, check if it has proper frontmatter for that location
+                    else:
+                        found_files.append(doc_file)
 
-        print(f"Found {len(found_files)} markdown files (excluded {excluded_count})")
+        print(
+            f"Found {len(found_files)} documentation files (excluded {excluded_count})"
+        )
 
         # Analyze each file
         self.documents = []
@@ -317,7 +332,7 @@ class DocumentOrganizer:
         print("=" * 60)
 
         print("\nOverall Statistics:")
-        print(f"  Total markdown files found: {summary['total_files']}")
+        print(f"  Total documentation files found: {summary['total_files']}")
         print(f"  Files already in docs/: {summary['files_in_docs']}")
         print(f"  Files with front-matter: {summary['files_with_frontmatter']}")
         print(f"  Files with issues: {summary['files_with_issues']}")
@@ -443,7 +458,7 @@ class DocumentOrganizer:
 
 ## Summary
 
-This report documents the automatic organization of scattered markdown files
+This report documents the automatic organization of scattered markdown and text files
 according to the R-DOC-001 rule.
 
 ### Files Moved ({len(self.moves_performed)})
@@ -482,7 +497,7 @@ according to the R-DOC-001 rule.
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Organize scattered documentation files according to R-DOC-001"
+        description="Organize scattered markdown and text documentation files according to R-DOC-001"
     )
     parser.add_argument(
         "--dry-run",
