@@ -1,47 +1,34 @@
 # Documentation Organization Report
 
-*Generated: 2025-10-25T04:14:17.951123+00:00*
+*Generated: 2025-10-26T01:30:27.950530+00:00*
 
 ## Summary
 
 This report documents the automatic organization of scattered markdown files
 according to the R-DOC-001 rule.
 
-### Files Moved (33)
+### Files Moved (20)
 
-- `NEXT_STEPS.md` → `docs\_inbox\NEXT_STEPS.md`
-- `PHASE10_COMPLETION_REPORT.md` → `docs\_inbox\PHASE10_COMPLETION_REPORT.md`
-- `SESSION_SUMMARY.md` → `docs\_inbox\SESSION_SUMMARY.md`
-- `TASK1_COMPLETE.md` → `docs\_inbox\TASK1_COMPLETE.md`
-- `TASK3_COMPLETE.md` → `docs\_inbox\TASK3_COMPLETE.md`
-- `TASK4_TESTING.md` → `docs\_inbox\TASK4_TESTING.md`
-- `TASKS_3_4_FINAL_SUMMARY.md` → `docs\_inbox\TASKS_3_4_FINAL_SUMMARY.md`
-- `docs\ARCHITECTURE.md` → `docs\guides\ARCHITECTURE.md`
-- `docs\CONTRIBUTING.md` → `docs\guides\CONTRIBUTING.md`
-- `docs\DOCUMENTATION-SCHEMA.md` → `docs\guides\DOCUMENTATION-SCHEMA.md`
-- `docs\ORGANIZATION.md` → `docs\guides\ORGANIZATION.md`
-- `docs\QUICK-REFERENCE.md` → `docs\guides\QUICK-REFERENCE.md`
-- `docs\QUICKSTART-DEV.md` → `docs\guides\QUICKSTART-DEV.md`
-- `docs\QUICKSTART.md` → `docs\guides\QUICKSTART.md`
-- `docs\README.md` → `docs\guides\README.md`
-- `docs\RELEASE.md` → `docs\guides\RELEASE.md`
-- `docs\guides\debugging.md` → `docs\findings\debugging.md`
-- `docs\specs\monster-template-example.md` → `docs\guides\monster-template-example.md`
-- `docs\specs\README.md` → `docs\guides\README.md`
-- `docs\_inbox\2025-10-20-documentation-system-setup--DOC-2025-00015.md` → `docs\findings\2025-10-20-documentation-system-setup--DOC-2025-00015.md`
-- `docs\_inbox\2025-10-20-ui-improvements--DOC-2025-00017.md` → `docs\specs\2025-10-20-ui-improvements--DOC-2025-00017.md`
-- `docs\_inbox\2025-10-21-bugfix-player-movement-after-inventory--DOC-2025-00037.md` → `docs\findings\2025-10-21-bugfix-player-movement-after-inventory--DOC-2025-00037.md`
-- `docs\_inbox\2025-10-21-build-verification-status-effects--DOC-2025-00038.md` → `docs\findings\2025-10-21-build-verification-status-effects--DOC-2025-00038.md`
-- `docs\_inbox\2025-10-21-doc-organization-summary--DOC-2025-00040.md` → `docs\findings\2025-10-21-doc-organization-summary--DOC-2025-00040.md`
-- `docs\_inbox\2025-10-21-implementation-summaries-index--DOC-2025-00039.md` → `docs\guides\2025-10-21-implementation-summaries-index--DOC-2025-00039.md`
-- `docs\_inbox\2025-10-21-plugin-contracts-api--DOC-2025-00038.md` → `docs\guides\2025-10-21-plugin-contracts-api--DOC-2025-00038.md`
-- `docs\_inbox\2025-10-21-plugin-development-quickstart--DOC-2025-00037.md` → `docs\guides\2025-10-21-plugin-development-quickstart--DOC-2025-00037.md`
-- `docs\_inbox\2025-10-21-plugin-manifest-schema--DOC-2025-00039.md` → `docs\guides\2025-10-21-plugin-manifest-schema--DOC-2025-00039.md`
-- `docs\_inbox\2025-10-21-plugin-system-overview--DOC-2025-00040.md` → `docs\guides\2025-10-21-plugin-system-overview--DOC-2025-00040.md`
-- `docs\_inbox\2025-10-21-windows-nul-file-prevention--DOC-2025-00041.md` → `docs\guides\2025-10-21-windows-nul-file-prevention--DOC-2025-00041.md`
-- `docs\_inbox\2025-10-22-dotnet-naming-architecture-adjustment--DOC-2025-00042.md` → `docs\specs\2025-10-22-dotnet-naming-architecture-adjustment--DOC-2025-00042.md`
-- `docs\_inbox\2025-10-24-akka-sk-ecs-intelligent-avatars--DOC-2025-00037.md` → `docs\adrs\2025-10-24-akka-sk-ecs-intelligent-avatars--DOC-2025-00037.md`
-- `docs\_inbox\2025-10-25-intelligent-avatar-implementation-review.md` → `docs\findings\2025-10-25-intelligent-avatar-implementation-review.md`
+- `PHASE6_COMPLETE.md` → `docs\_inbox\PHASE6_COMPLETE.md`
+- `PHASE6_INDEX.md` → `docs\_inbox\PHASE6_INDEX.md`
+- `PHASE6_KICKOFF.md` → `docs\_inbox\PHASE6_KICKOFF.md`
+- `PHASE6_QUICKSTART.md` → `docs\_inbox\PHASE6_QUICKSTART.md`
+- `PHASE6_STATUS.md` → `docs\_inbox\PHASE6_STATUS.md`
+- `PHASE6_US2_T030_T031_COMPLETE.md` → `docs\_inbox\PHASE6_US2_T030_T031_COMPLETE.md`
+- `PHASE6_US2_T032_T036_COMPLETE.md` → `docs\_inbox\PHASE6_US2_T032_T036_COMPLETE.md`
+- `PHASE6_US2_T037_T040_COMPLETE.md` → `docs\_inbox\PHASE6_US2_T037_T040_COMPLETE.md`
+- `PHASE6_US3_COMPLETE.md` → `docs\_inbox\PHASE6_US3_COMPLETE.md`
+- `PHASE6_US3_INDEX.md` → `docs\_inbox\PHASE6_US3_INDEX.md`
+- `PHASE6_US3_KICKOFF.md` → `docs\_inbox\PHASE6_US3_KICKOFF.md`
+- `PHASE6_US3_SESSION_SUMMARY.md` → `docs\_inbox\PHASE6_US3_SESSION_SUMMARY.md`
+- `PHASE6_US3_STATUS.md` → `docs\_inbox\PHASE6_US3_STATUS.md`
+- `PHASE6_US4_COMPLETE.md` → `docs\_inbox\PHASE6_US4_COMPLETE.md`
+- `PHASE6_US4_INDEX.md` → `docs\_inbox\PHASE6_US4_INDEX.md`
+- `PHASE6_US4_KICKOFF.md` → `docs\_inbox\PHASE6_US4_KICKOFF.md`
+- `PHASE6_US4_PROGRESS.md` → `docs\_inbox\PHASE6_US4_PROGRESS.md`
+- `PHASE6_US5_COMPLETE.md` → `docs\_inbox\PHASE6_US5_COMPLETE.md`
+- `PHASE6_US5_KICKOFF.md` → `docs\_inbox\PHASE6_US5_KICKOFF.md`
+- `PHASE6_US5_PROGRESS.md` → `docs\_inbox\PHASE6_US5_PROGRESS.md`
 
 ## Organization Rules Applied
 

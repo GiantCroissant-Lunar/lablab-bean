@@ -84,6 +84,26 @@ try
         }
     }
 
+    // Knowledge Base CLI
+    if (args.Length > 0 && args[0] == "kb")
+    {
+        var kbHost = Host.CreateDefaultBuilder(args)
+            .UseLablabBeanInfrastructure()
+            .ConfigureServices((context, services) =>
+            {
+                services.AddLablabBeanInfrastructure(context.Configuration);
+                services.AddSemanticKernelAgents(context.Configuration);
+            })
+            .Build();
+
+        var serviceProvider = kbHost.Services;
+
+        var rootCommand = new RootCommand("LablabBean Console - Knowledge Base Management");
+        rootCommand.AddCommand(KnowledgeBaseCommand.Create(serviceProvider));
+
+        return await rootCommand.InvokeAsync(args);
+    }
+
     // Plugins CLI (discovery / listing without starting TUI)
     if (args.Length > 0 && args[0] == "plugins")
     {

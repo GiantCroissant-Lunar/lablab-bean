@@ -1,0 +1,346 @@
+{
+  "abilities": [
+    {
+      "cooldown": 30.0,
+      "damage": 0,
+      "description": "Summons 3 goblin warriors to aid in battle",
+      "id": "goblin_rally",
+      "name": "Goblin Rally",
+      "parameters": {
+        "minionDamage": 15,
+        "minionHP": 100,
+        "summonCount": 3,
+        "summonType": "goblin_warrior"
+      },
+      "range": 0.0,
+      "statusEffects": [],
+      "type": "Summon"
+    },
+    {
+      "cooldown": 20.0,
+      "damage": 0,
+      "description": "Boosts attack of all goblins by 20%",
+      "id": "war_cry",
+      "name": "War Cry",
+      "parameters": {
+        "affectsAllies": true,
+        "damageBonus": 0.2,
+        "duration": 15.0
+      },
+      "range": 10.0,
+      "statusEffects": [
+        "attack_boost"
+      ],
+      "type": "Buff"
+    },
+    {
+      "cooldown": 10.0,
+      "damage": 30,
+      "description": "Powerful AoE melee attack",
+      "id": "cleave",
+      "name": "Cleave",
+      "parameters": {
+        "hitArc": 180
+      },
+      "range": 3.0,
+      "statusEffects": [],
+      "type": "AoE"
+    },
+    {
+      "cooldown": 15.0,
+      "damage": 10,
+      "description": "Entangles target in roots, preventing movement",
+      "id": "root_tangle",
+      "name": "Root Tangle",
+      "parameters": {
+        "canBeDispelled": true,
+        "duration": 2
+      },
+      "range": 5.0,
+      "statusEffects": [
+        "immobilized"
+      ],
+      "type": "Debuff"
+    },
+    {
+      "cooldown": 12.0,
+      "damage": 10,
+      "description": "Releases toxic spores that damage over time",
+      "id": "poison_spores",
+      "name": "Poison Spores",
+      "parameters": {
+        "damagePerTurn": 10,
+        "duration": 5,
+        "lingersInArea": true
+      },
+      "range": 4.0,
+      "statusEffects": [
+        "poison"
+      ],
+      "type": "AoE"
+    },
+    {
+      "cooldown": 18.0,
+      "damage": 50,
+      "description": "Channels nature's fury into a devastating attack",
+      "id": "natures_wrath",
+      "name": "Nature's Wrath",
+      "parameters": {
+        "knockbackDistance": 3,
+        "stunDuration": 1
+      },
+      "range": 6.0,
+      "statusEffects": [
+        "knockback"
+      ],
+      "type": "SingleTarget"
+    },
+    {
+      "cooldown": 25.0,
+      "damage": 0,
+      "description": "Rapidly heals wounds using nature magic",
+      "id": "regeneration",
+      "name": "Regeneration",
+      "parameters": {
+        "healAmount": 50,
+        "healOverTime": false
+      },
+      "range": 0.0,
+      "statusEffects": [
+        "regenerating"
+      ],
+      "type": "Heal"
+    },
+    {
+      "cooldown": 8.0,
+      "damage": 40,
+      "description": "Launches three fireballs in rapid succession",
+      "id": "fireball_barrage",
+      "name": "Fireball Barrage",
+      "parameters": {
+        "burnDamage": 5,
+        "burnDuration": 3,
+        "projectileCount": 3
+      },
+      "range": 8.0,
+      "statusEffects": [
+        "burn"
+      ],
+      "type": "SingleTarget"
+    },
+    {
+      "cooldown": 20.0,
+      "damage": 20,
+      "description": "Creates a wall of flames that damages anyone passing through",
+      "id": "flame_wall",
+      "name": "Flame Wall",
+      "parameters": {
+        "damagePerTick": 15,
+        "duration": 10.0,
+        "wallLength": 5
+      },
+      "range": 6.0,
+      "statusEffects": [
+        "burn"
+      ],
+      "type": "AoE"
+    },
+    {
+      "cooldown": 15.0,
+      "damage": 15,
+      "description": "Surrounds self with flames that burn nearby enemies",
+      "id": "immolation_aura",
+      "name": "Immolation Aura",
+      "parameters": {
+        "auraRadius": 3.0,
+        "damagePerTurn": 15,
+        "duration": 999
+      },
+      "range": 3.0,
+      "statusEffects": [
+        "burn"
+      ],
+      "type": "AoE"
+    },
+    {
+      "cooldown": 999.0,
+      "damage": 0,
+      "description": "Resurrects from near death with full health (once per battle)",
+      "id": "phoenix_form",
+      "name": "Phoenix Form",
+      "parameters": {
+        "healPercent": 1.0,
+        "triggersAtHP": 0.1,
+        "usesPerBattle": 1
+      },
+      "range": 0.0,
+      "statusEffects": [
+        "reborn"
+      ],
+      "type": "Heal"
+    },
+    {
+      "cooldown": 10.0,
+      "damage": 60,
+      "description": "Teleports behind target for a devastating backstab",
+      "id": "shadow_step",
+      "name": "Shadow Step",
+      "parameters": {
+        "critChance": 0.5,
+        "critMultiplier": 2.0,
+        "teleportBehind": true
+      },
+      "range": 8.0,
+      "statusEffects": [],
+      "type": "Teleport"
+    },
+    {
+      "cooldown": 18.0,
+      "damage": 0,
+      "description": "Becomes invisible and untargetable",
+      "id": "smoke_bomb",
+      "name": "Smoke Bomb",
+      "parameters": {
+        "dodgeBonus": 1.0,
+        "duration": 2
+      },
+      "range": 0.0,
+      "statusEffects": [
+        "invisible"
+      ],
+      "type": "Buff"
+    },
+    {
+      "cooldown": 6.0,
+      "damage": 30,
+      "description": "Strikes with a poisoned blade causing damage over time",
+      "id": "poison_blade",
+      "name": "Poison Blade",
+      "parameters": {
+        "damagePerTurn": 5,
+        "duration": 5,
+        "stackable": true
+      },
+      "range": 2.0,
+      "statusEffects": [
+        "poison"
+      ],
+      "type": "SingleTarget"
+    },
+    {
+      "cooldown": 30.0,
+      "damage": 0,
+      "description": "Creates shadow duplicates that confuse enemies",
+      "id": "clone",
+      "name": "Shadow Clone",
+      "parameters": {
+        "cloneCount": 2,
+        "cloneDamage": 0.5,
+        "cloneHP": 0.3,
+        "duration": 20
+      },
+      "range": 0.0,
+      "statusEffects": [],
+      "type": "Summon"
+    },
+    {
+      "cooldown": 12.0,
+      "damage": 100,
+      "description": "Unleashes a devastating cone of dragonfire",
+      "id": "dragon_breath",
+      "name": "Dragon's Breath",
+      "parameters": {
+        "burnDamage": 20,
+        "burnDuration": 5,
+        "coneAngle": 60
+      },
+      "range": 10.0,
+      "statusEffects": [
+        "burn"
+      ],
+      "type": "AoE"
+    },
+    {
+      "cooldown": 15.0,
+      "damage": 40,
+      "description": "Powerful wing beats knock back and damage all nearby enemies",
+      "id": "wing_buffet",
+      "name": "Wing Buffet",
+      "parameters": {
+        "knockbackDistance": 5,
+        "stunDuration": 1
+      },
+      "range": 5.0,
+      "statusEffects": [
+        "knockback"
+      ],
+      "type": "AoE"
+    },
+    {
+      "cooldown": 10.0,
+      "damage": 70,
+      "description": "Sweeps tail in a wide arc damaging all behind",
+      "id": "tail_swipe",
+      "name": "Tail Swipe",
+      "parameters": {
+        "behindOnly": true,
+        "hitArc": 180
+      },
+      "range": 4.0,
+      "statusEffects": [],
+      "type": "AoE"
+    },
+    {
+      "cooldown": 25.0,
+      "damage": 0,
+      "description": "Takes to the sky, becoming immune while airborne",
+      "id": "aerial_assault",
+      "name": "Aerial Assault",
+      "parameters": {
+        "diveBombAoE": 4.0,
+        "diveBombDamage": 80,
+        "duration": 1
+      },
+      "range": 0.0,
+      "statusEffects": [
+        "flying",
+        "immune"
+      ],
+      "type": "Buff"
+    },
+    {
+      "cooldown": 40.0,
+      "damage": 0,
+      "description": "Summons lesser dragons to aid in battle",
+      "id": "summon_drakes",
+      "name": "Summon Drakes",
+      "parameters": {
+        "minionDamage": 30,
+        "minionHP": 400,
+        "summonCount": 2,
+        "summonType": "drake"
+      },
+      "range": 0.0,
+      "statusEffects": [],
+      "type": "Summon"
+    },
+    {
+      "cooldown": 999.0,
+      "damage": 0,
+      "description": "Enters a berserker rage, massively increasing damage and speed",
+      "id": "enrage",
+      "name": "Enrage",
+      "parameters": {
+        "damageBonus": 0.5,
+        "damageReduction": -0.2,
+        "duration": 999,
+        "speedBonus": 0.3
+      },
+      "range": 0.0,
+      "statusEffects": [
+        "enraged"
+      ],
+      "type": "Buff"
+    }
+  ]
+}

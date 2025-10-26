@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.AI\LablabBean.Contracts.AI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,12 +19,17 @@
     <PackageReference Include="Arch.System" />
     <PackageReference Include="GoRogue" />
     <PackageReference Include="Microsoft.Extensions.AI" />
+    <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="plugin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Config\personality-templates.yaml" />
   </ItemGroup>
 
 </Project>

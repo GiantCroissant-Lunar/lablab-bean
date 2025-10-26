@@ -1,0 +1,285 @@
+{
+  "bosses": [
+    {
+      "abilities": [
+        "goblin_rally",
+        "war_cry",
+        "cleave"
+      ],
+      "baseDamage": 25,
+      "baseHP": 500,
+      "description": "A brutal goblin chieftain who rules through fear and violence.",
+      "id": "goblin_king",
+      "name": "Goblin King",
+      "phases": [
+        {
+          "damageModifier": 1.0,
+          "defenseModifier": 1.0,
+          "enabledAbilities": [
+            "war_cry",
+            "cleave"
+          ],
+          "healthThreshold": 1.0,
+          "phaseNumber": 1,
+          "phaseTransitionText": "The Goblin King roars in fury!"
+        },
+        {
+          "damageModifier": 1.2,
+          "defenseModifier": 0.9,
+          "enabledAbilities": [
+            "goblin_rally",
+            "war_cry",
+            "cleave"
+          ],
+          "healthThreshold": 0.5,
+          "phaseNumber": 2,
+          "phaseTransitionText": "The Goblin King calls for reinforcements!"
+        }
+      ],
+      "recommendedLevel": 5,
+      "spawnLocations": [
+        "dungeon_floor_5",
+        "goblin_fortress"
+      ],
+      "type": "Mini"
+    },
+    {
+      "abilities": [
+        "root_tangle",
+        "poison_spores",
+        "natures_wrath",
+        "regeneration"
+      ],
+      "baseDamage": 30,
+      "baseHP": 800,
+      "description": "An ancient tree corrupted by dark magic, now spreading poison.",
+      "id": "corrupted_treant",
+      "name": "Corrupted Treant",
+      "phases": [
+        {
+          "damageModifier": 1.0,
+          "defenseModifier": 1.2,
+          "enabledAbilities": [
+            "root_tangle",
+            "poison_spores"
+          ],
+          "healthThreshold": 1.0,
+          "phaseNumber": 1,
+          "phaseTransitionText": "The treant's bark begins to crack..."
+        },
+        {
+          "damageModifier": 1.1,
+          "defenseModifier": 1.0,
+          "enabledAbilities": [
+            "root_tangle",
+            "poison_spores",
+            "natures_wrath"
+          ],
+          "healthThreshold": 0.66,
+          "phaseNumber": 2,
+          "phaseTransitionText": "Toxic sap oozes from the treant's wounds!"
+        },
+        {
+          "damageModifier": 1.3,
+          "defenseModifier": 0.8,
+          "enabledAbilities": [
+            "poison_spores",
+            "natures_wrath",
+            "regeneration"
+          ],
+          "healAmount": 100,
+          "healOnTransition": true,
+          "healthThreshold": 0.33,
+          "phaseNumber": 3,
+          "phaseTransitionText": "The treant draws upon nature's power!"
+        }
+      ],
+      "recommendedLevel": 8,
+      "spawnLocations": [
+        "dark_forest",
+        "dungeon_floor_8"
+      ],
+      "type": "Standard"
+    },
+    {
+      "abilities": [
+        "fireball_barrage",
+        "flame_wall",
+        "immolation_aura",
+        "phoenix_form"
+      ],
+      "baseDamage": 40,
+      "baseHP": 1200,
+      "description": "Guardian of the fire temple, wielding devastating flame magic.",
+      "id": "flame_warden",
+      "name": "Flame Warden",
+      "phases": [
+        {
+          "damageModifier": 1.0,
+          "defenseModifier": 1.0,
+          "enabledAbilities": [
+            "fireball_barrage",
+            "flame_wall"
+          ],
+          "healthThreshold": 1.0,
+          "phaseNumber": 1,
+          "phaseTransitionText": "Flames dance around the Warden..."
+        },
+        {
+          "damageModifier": 1.2,
+          "defenseModifier": 1.0,
+          "enabledAbilities": [
+            "fireball_barrage",
+            "flame_wall",
+            "immolation_aura"
+          ],
+          "healthThreshold": 0.6,
+          "phaseNumber": 2,
+          "phaseTransitionText": "The Warden's flames intensify!"
+        },
+        {
+          "damageModifier": 1.5,
+          "defenseModifier": 0.7,
+          "enabledAbilities": [
+            "fireball_barrage",
+            "immolation_aura",
+            "phoenix_form"
+          ],
+          "healthThreshold": 0.3,
+          "phaseNumber": 3,
+          "phaseTransitionText": "The Warden erupts in a pillar of fire!"
+        }
+      ],
+      "recommendedLevel": 12,
+      "spawnLocations": [
+        "fire_temple",
+        "volcanic_chamber",
+        "dungeon_floor_12"
+      ],
+      "type": "Standard"
+    },
+    {
+      "abilities": [
+        "shadow_step",
+        "smoke_bomb",
+        "poison_blade",
+        "clone"
+      ],
+      "baseDamage": 50,
+      "baseHP": 1000,
+      "description": "Elite assassin who strikes from the shadows with deadly precision.",
+      "id": "shadow_assassin",
+      "name": "Shadow Assassin",
+      "phases": [
+        {
+          "damageModifier": 1.0,
+          "defenseModifier": 0.8,
+          "enabledAbilities": [
+            "shadow_step",
+            "smoke_bomb",
+            "poison_blade"
+          ],
+          "healthThreshold": 1.0,
+          "phaseNumber": 1,
+          "phaseTransitionText": "The assassin vanishes into the shadows..."
+        },
+        {
+          "damageModifier": 1.3,
+          "defenseModifier": 0.6,
+          "enabledAbilities": [
+            "shadow_step",
+            "smoke_bomb",
+            "poison_blade",
+            "clone"
+          ],
+          "healthThreshold": 0.4,
+          "phaseNumber": 2,
+          "phaseTransitionText": "Shadow clones emerge from the darkness!"
+        }
+      ],
+      "recommendedLevel": 15,
+      "spawnLocations": [
+        "shadow_realm",
+        "assassin_guild",
+        "dungeon_floor_15"
+      ],
+      "type": "Standard"
+    },
+    {
+      "abilities": [
+        "dragon_breath",
+        "wing_buffet",
+        "tail_swipe",
+        "aerial_assault",
+        "summon_drakes",
+        "enrage"
+      ],
+      "baseDamage": 70,
+      "baseHP": 3000,
+      "description": "The most powerful dragon in existence, with devastating abilities.",
+      "id": "ancient_dragon",
+      "name": "Ancient Dragon",
+      "phases": [
+        {
+          "damageModifier": 1.0,
+          "defenseModifier": 1.5,
+          "enabledAbilities": [
+            "dragon_breath",
+            "wing_buffet",
+            "tail_swipe"
+          ],
+          "healthThreshold": 1.0,
+          "phaseNumber": 1,
+          "phaseTransitionText": "The dragon awakens from its slumber..."
+        },
+        {
+          "damageModifier": 1.2,
+          "defenseModifier": 1.3,
+          "enabledAbilities": [
+            "dragon_breath",
+            "wing_buffet",
+            "tail_swipe",
+            "aerial_assault"
+          ],
+          "healthThreshold": 0.75,
+          "phaseNumber": 2,
+          "phaseTransitionText": "The dragon takes flight!"
+        },
+        {
+          "damageModifier": 1.4,
+          "defenseModifier": 1.0,
+          "enabledAbilities": [
+            "dragon_breath",
+            "aerial_assault",
+            "summon_drakes",
+            "tail_swipe"
+          ],
+          "healthThreshold": 0.5,
+          "phaseNumber": 3,
+          "phaseTransitionText": "The dragon summons its kin!"
+        },
+        {
+          "damageModifier": 1.8,
+          "defenseModifier": 0.8,
+          "enabledAbilities": [
+            "dragon_breath",
+            "wing_buffet",
+            "tail_swipe",
+            "aerial_assault",
+            "enrage"
+          ],
+          "healthThreshold": 0.25,
+          "phaseNumber": 4,
+          "phaseTransitionText": "The dragon enters a killing frenzy!"
+        }
+      ],
+      "recommendedLevel": 20,
+      "spawnLocations": [
+        "dragon_lair",
+        "mountain_peak",
+        "dungeon_floor_20"
+      ],
+      "type": "Epic"
+    }
+  ]
+}

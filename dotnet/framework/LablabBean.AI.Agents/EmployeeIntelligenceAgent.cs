@@ -3,6 +3,7 @@ using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.Extensions.Logging;
 using LablabBean.AI.Core.Interfaces;
 using LablabBean.AI.Core.Models;
+using LablabBean.Contracts.AI.Memory;
 
 namespace LablabBean.AI.Agents;
 
@@ -16,25 +17,32 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
     private readonly EmployeePersonality _personality;
     private readonly ILogger<EmployeeIntelligenceAgent> _logger;
     private readonly ChatHistory _chatHistory;
+    private readonly IMemoryService? _memoryService;
+    private readonly IPromptAugmentationService? _promptAugmentation;
 
     public string AgentId { get; }
     public string AgentType => "Employee";
+    public bool HasKnowledgeBase => _promptAugmentation != null;
 
     public EmployeeIntelligenceAgent(
         Kernel kernel,
         EmployeePersonalityLoader personalityLoader,
         ILogger<EmployeeIntelligenceAgent> logger,
-        string agentId)
+        string agentId,
+        IMemoryService? memoryService = null,
+        IPromptAugmentationService? promptAugmentation = null)
     {
         _kernel = kernel;
         _personality = personalityLoader.CreateDefault();
         _logger = logger;
         AgentId = agentId;
+        _memoryService = memoryService;
+        _promptAugmentation = promptAugmentation;
 
         _chatService = kernel.GetRequiredService<IChatCompletionService>();
         _chatHistory = new ChatHistory(_personality.Prompts.SystemPrompt);
 
-        _logger.LogInformation($"EmployeeIntelligenceAgent initialized: {agentId}");
+        _logger.LogInformation($"EmployeeIntelligenceAgent initialized: {agentId} (SemanticMemory: {_memoryService != null}, KnowledgeBase: {HasKnowledgeBase})");
     }
 
     public async Task InitializeAsync()
@@ -52,8 +60,8 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
         {
             _logger.LogDebug($"Making decision for context: {context.EntityId}");
 
-            // Build decision prompt
-            var prompt = BuildDecisionPrompt(context, state, memory);
+            // Build decision prompt with semantic memory retrieval (T024)
+            var prompt = await BuildDecisionPromptWithSemanticMemoryAsync(context, state, memory);
 
             // Get AI response
             _chatHistory.AddUserMessage(prompt);
@@ -96,8 +104,47 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
         {
             _logger.LogDebug($"Generating dialogue for {context.ListenerId}");
 
-            // Build dialogue prompt
-            var prompt = BuildDialoguePrompt(context);
+            // T077: Retrieve relationship history before generating dialogue
+            string? relationshipContext = null;
+            if (_memoryService != null && !string.IsNullOrEmpty(context.ListenerId))
+            {
+                try
+                {
+                    var relationshipHistory = await _memoryService.RetrieveRelevantRelationshipHistoryAsync(
+                        entity1Id: AgentId,
+                        entity2Id: context.ListenerId,
+                        query: context.ConversationTopic,
+                        maxResults: 3
+                    );
+
+                    if (relationshipHistory.Any())
+                    {
+                        relationshipContext = FormatRelationshipContext(relationshipHistory);
+                        _logger.LogInformation(
+                            "Retrieved {Count} relationship memories with {Listener}. Relevance scores: {Scores}",
+                            relationshipHistory.Count, context.ListenerId,
+                            string.Join(", ", relationshipHistory.Select(h => $"{h.RelevanceScore:F2}")));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to retrieve relationship history, continuing without context");
+                }
+            }
+
+            // Check if this is a question that could benefit from knowledge base
+            var useKnowledgeBase = ShouldUseKnowledgeBase(context);
+
+            // Build dialogue prompt (with or without RAG and relationship context)
+            string prompt;
+            if (useKnowledgeBase && _promptAugmentation != null)
+            {
+                prompt = await BuildDialoguePromptWithRagAsync(context, relationshipContext);
+            }
+            else
+            {
+                prompt = BuildDialoguePrompt(context, relationshipContext);
+            }
 
             // Get AI response
             _chatHistory.AddUserMessage(prompt);
@@ -114,7 +161,7 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
             // Trim history if too long
             TrimChatHistory();
 
-            _logger.LogInformation($"Dialogue generated: {dialogue[..Math.Min(50, dialogue.Length)]}...");
+            _logger.LogInformation($"Dialogue generated: {dialogue[..Math.Min(50, dialogue.Length)]}... (RAG: {useKnowledgeBase})");
 
             return dialogue;
         }
@@ -127,9 +174,43 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
 
     public async Task UpdateMemoryAsync(AvatarMemory memory)
     {
-        // Memory is managed by the actor, but we could use this for SK-specific operations
+        // T026: Dual-write to both legacy and new memory systems
         _logger.LogDebug($"Memory update received for {AgentId}");
-        await Task.CompletedTask;
+
+        if (_memoryService != null && memory.ShortTermMemory.Any())
+        {
+            try
+            {
+                // Store most recent memories to semantic memory
+                var recentMemories = memory.ShortTermMemory.Take(3);
+
+                foreach (var legacyMemory in recentMemories)
+                {
+                    // Convert legacy memory to semantic memory format
+                    var semanticMemory = new Contracts.AI.Memory.MemoryEntry
+                    {
+                        Id = $"{memory.EntityId}_{legacyMemory.Timestamp:yyyyMMddHHmmss}",
+                        Content = $"{legacyMemory.EventType}: {legacyMemory.Description}",
+                        EntityId = memory.EntityId,
+                        MemoryType = legacyMemory.EventType,
+                        Importance = legacyMemory.Importance,
+                        Timestamp = new DateTimeOffset(legacyMemory.Timestamp),
+                        Tags = new Dictionary<string, string>
+                        {
+                            { "agent_type", AgentType }
+                        }
+                    };
+
+                    await _memoryService.StoreMemoryAsync(semanticMemory);
+                    _logger.LogDebug($"Dual-wrote memory {semanticMemory.Id} to semantic memory");
+                }
+            }
+            catch (Exception ex)
+            {
+                // T028: Fallback - log error but don't fail
+                _logger.LogWarning(ex, "Failed to dual-write memory to semantic store, continuing with legacy memory only");
+            }
+        }
     }
 
     public async Task ProcessFeedbackAsync(string feedback, float sentiment)
@@ -154,11 +235,65 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
 
     // Private helper methods
 
-    private string BuildDecisionPrompt(AvatarContext context, AvatarState state, AvatarMemory memory)
+    private async Task<string> BuildDecisionPromptWithSemanticMemoryAsync(
+        AvatarContext context,
+        AvatarState state,
+        AvatarMemory memory)
     {
-        var recentMemories = string.Join("\n",
-            memory.ShortTermMemory.TakeLast(5).Select(m => $"- {m.Description}"));
+        string recentMemories;
 
+        // T024: Use semantic retrieval if available, fallback to legacy (T028)
+        if (_memoryService != null)
+        {
+            try
+            {
+                // Build query from current context
+                var query = $"{state.CurrentBehavior} {context.Name}";
+
+                var options = new MemoryRetrievalOptions
+                {
+                    EntityId = context.EntityId,
+                    Limit = 5,
+                    MinRelevanceScore = 0.7,
+                    MinImportance = 0.3
+                };
+
+                var semanticMemories = await _memoryService.RetrieveRelevantMemoriesAsync(query, options);
+
+                if (semanticMemories.Any())
+                {
+                    recentMemories = string.Join("\n",
+                        semanticMemories.Select(m => $"- {m.Memory.Content} (relevance: {m.RelevanceScore:F2})"));
+                    _logger.LogDebug($"Using {semanticMemories.Count} semantic memories for decision");
+                }
+                else
+                {
+                    // Fallback to legacy memory
+                    recentMemories = string.Join("\n",
+                        memory.ShortTermMemory.TakeLast(5).Select(m => $"- {m.Description}"));
+                    _logger.LogDebug("No semantic memories found, using legacy memory");
+                }
+            }
+            catch (Exception ex)
+            {
+                // T028: Fallback to legacy on error
+                _logger.LogWarning(ex, "Semantic memory retrieval failed, falling back to legacy memory");
+                recentMemories = string.Join("\n",
+                    memory.ShortTermMemory.TakeLast(5).Select(m => $"- {m.Description}"));
+            }
+        }
+        else
+        {
+            // No semantic memory service, use legacy
+            recentMemories = string.Join("\n",
+                memory.ShortTermMemory.TakeLast(5).Select(m => $"- {m.Description}"));
+        }
+
+        return BuildDecisionPrompt(context, state, recentMemories);
+    }
+
+    private string BuildDecisionPrompt(AvatarContext context, AvatarState state, string recentMemories)
+    {
         var emotionalState = state.EmotionalState ?? "neutral";
         var energy = state.Stats.GetValueOrDefault("energy", 1.0f);
         var stress = state.Stats.GetValueOrDefault("stress", 0.0f);
@@ -188,7 +323,7 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
         return prompt;
     }
 
-    private string BuildDialoguePrompt(DialogueContext context)
+    private string BuildDialoguePrompt(DialogueContext context, string? relationshipContext = null)
     {
         var relationshipLevel = context.ContextVariables.GetValueOrDefault("relationship_level", 0.5f);
         var listenerRole = context.ContextVariables.GetValueOrDefault("listener_role", "unknown")?.ToString() ?? "unknown";
@@ -204,6 +339,12 @@ public sealed class EmployeeIntelligenceAgent : IIntelligenceAgent
         prompt += $"\n\nYour current state:";
         prompt += $"\n- Emotion: {context.SpeakerEmotionalState ?? "neutral"}";
         prompt += $"\n- Relationship: {relationshipLevel:F2}";
+
+        // T077: Add relationship history context if available
+        if (!string.IsNullOrEmpty(relationshipContext))
+        {
+            prompt += $"\n\nRelationship History:\n{relationshipContext}";
+        }
 
         // Add personality context for dialogue style
         prompt += $"\n\nDialogue style (0-1 scale):";
@@ -407,5 +548,208 @@ Respond warmly and professionally in 1-2 sentences.";
             _logger.LogError(ex, "Error responding to customer");
             return "How can I help you today?";
         }
+    }
+
+    /// <summary>
+    /// Build dialogue prompt with RAG context from knowledge base
+    /// </summary>
+    private async Task<string> BuildDialoguePromptWithRagAsync(DialogueContext context, string? relationshipContext = null)
+    {
+        if (_promptAugmentation == null)
+        {
+            return BuildDialoguePrompt(context, relationshipContext);
+        }
+
+        try
+        {
+            _logger.LogDebug("Augmenting dialogue with knowledge base context");
+
+            // Get RAG context for the conversation topic
+            var ragContext = await _promptAugmentation.AugmentQueryAsync(
+                query: context.ConversationTopic,
+                topK: 3,
+                category: DetermineCategory(context.ConversationTopic));
+
+            if (!ragContext.RetrievedDocuments.Any())
+            {
+                _logger.LogDebug("No relevant knowledge base documents found, using standard prompt");
+                return BuildDialoguePrompt(context, relationshipContext);
+            }
+
+            // Build augmented prompt
+            var systemPrompt = _personality.Prompts.SystemPrompt + "\n\n" +
+                "You have access to factual knowledge about the game world. " +
+                "Use this information to provide helpful, accurate responses.";
+
+            var userQuery = BuildDialoguePrompt(context, relationshipContext);
+
+            var augmentedPrompt = _promptAugmentation.BuildAugmentedPrompt(
+                systemPrompt,
+                userQuery,
+                ragContext);
+
+            _logger.LogInformation($"Augmented prompt with {ragContext.RetrievedDocuments.Count} knowledge base documents");
+
+            return augmentedPrompt;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to augment prompt with knowledge base, falling back to standard prompt");
+            return BuildDialoguePrompt(context);
+        }
+    }
+
+    /// <summary>
+    /// Determine if the dialogue should use knowledge base
+    /// </summary>
+    private bool ShouldUseKnowledgeBase(DialogueContext context)
+    {
+        if (_promptAugmentation == null)
+            return false;
+
+        var topic = context.ConversationTopic.ToLowerInvariant();
+
+        // Question keywords that indicate the player is asking for information
+        var questionKeywords = new[]
+        {
+            "what", "where", "who", "when", "why", "how",
+            "tell me", "know about", "explain", "describe",
+            "quest", "location", "dragon", "kingdom", "city",
+            "history", "ancient", "legend", "help", "need"
+        };
+
+        return questionKeywords.Any(keyword => topic.Contains(keyword));
+    }
+
+    /// <summary>
+    /// Determine knowledge base category from conversation topic
+    /// </summary>
+    private string? DetermineCategory(string topic)
+    {
+        var lowerTopic = topic.ToLowerInvariant();
+
+        if (lowerTopic.Contains("quest") || lowerTopic.Contains("mission") || lowerTopic.Contains("contract"))
+            return "quest";
+
+        if (lowerTopic.Contains("city") || lowerTopic.Contains("location") || lowerTopic.Contains("place") ||
+            lowerTopic.Contains("where"))
+            return "location";
+
+        if (lowerTopic.Contains("history") || lowerTopic.Contains("ancient") || lowerTopic.Contains("dragon") ||
+            lowerTopic.Contains("legend") || lowerTopic.Contains("kingdom"))
+            return "lore";
+
+        return null; // Search all categories
+    }
+
+    /// <summary>
+    /// Format relationship history for inclusion in prompts (T077)
+    /// </summary>
+    private string FormatRelationshipContext(IReadOnlyList<MemoryResult> relationshipHistory)
+    {
+        var context = "Past interactions:\n";
+        foreach (var memory in relationshipHistory.Take(3))
+        {
+            var tags = memory.Memory.Tags;
+            var sentiment = tags.GetValueOrDefault("sentiment", "neutral");
+            var interaction = tags.GetValueOrDefault("interaction", "interaction");
+            var ageInDays = (DateTimeOffset.UtcNow - memory.Memory.Timestamp).TotalDays;
+
+            context += $"- {interaction} ({sentiment}, {ageInDays:F0} days ago): {memory.Memory.Content}\n";
+        }
+        return context;
+    }
+
+    /// <summary>
+    /// Store relationship memory after dialogue interaction (T076)
+    /// </summary>
+    public async Task StoreDialogueInteractionAsync(
+        string listenerId,
+        string conversationTopic,
+        string dialogueGenerated,
+        float relationshipLevel)
+    {
+        if (_memoryService == null || string.IsNullOrEmpty(listenerId))
+            return;
+
+        try
+        {
+            var interactionType = DetermineInteractionType(conversationTopic);
+            var sentiment = DetermineSentiment(relationshipLevel, conversationTopic);
+
+            var relationshipMemory = new RelationshipMemory
+            {
+                Entity1Id = AgentId,
+                Entity2Id = listenerId,
+                InteractionType = interactionType,
+                Sentiment = sentiment,
+                Description = $"Discussed '{conversationTopic}'. Employee said: \"{dialogueGenerated.Substring(0, Math.Min(100, dialogueGenerated.Length))}...\"",
+                Timestamp = DateTimeOffset.UtcNow
+            };
+
+            await _memoryService.StoreRelationshipMemoryAsync(relationshipMemory);
+
+            _logger.LogInformation(
+                "Stored relationship memory: {AgentId} ↔ {Listener}, Type={Type}, Sentiment={Sentiment}",
+                AgentId, listenerId, interactionType, sentiment);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to store relationship memory, continuing without storage");
+        }
+    }
+
+    /// <summary>
+    /// Determine interaction type from conversation topic
+    /// </summary>
+    private InteractionType DetermineInteractionType(string topic)
+    {
+        var lowerTopic = topic.ToLowerInvariant();
+
+        if (lowerTopic.Contains("trade") || lowerTopic.Contains("buy") || lowerTopic.Contains("sell"))
+            return InteractionType.Trade;
+
+        if (lowerTopic.Contains("fight") || lowerTopic.Contains("combat") || lowerTopic.Contains("attack"))
+            return InteractionType.Combat;
+
+        if (lowerTopic.Contains("help") || lowerTopic.Contains("work together") || lowerTopic.Contains("collaborate"))
+            return InteractionType.Collaboration;
+
+        if (lowerTopic.Contains("gift") || lowerTopic.Contains("present") || lowerTopic.Contains("give"))
+            return InteractionType.Gift;
+
+        if (lowerTopic.Contains("quest") || lowerTopic.Contains("mission") || lowerTopic.Contains("task"))
+            return InteractionType.Quest;
+
+        if (lowerTopic.Contains("betray") || lowerTopic.Contains("lie") || lowerTopic.Contains("deceive"))
+            return InteractionType.Betrayal;
+
+        return InteractionType.Conversation;
+    }
+
+    /// <summary>
+    /// Determine sentiment from relationship level and topic
+    /// </summary>
+    private string DetermineSentiment(float relationshipLevel, string topic)
+    {
+        var lowerTopic = topic.ToLowerInvariant();
+
+        // Negative keywords override relationship level
+        if (lowerTopic.Contains("angry") || lowerTopic.Contains("upset") ||
+            lowerTopic.Contains("fight") || lowerTopic.Contains("betray"))
+            return "negative";
+
+        // Positive keywords boost sentiment
+        if (lowerTopic.Contains("thank") || lowerTopic.Contains("appreciate") ||
+            lowerTopic.Contains("grateful") || lowerTopic.Contains("help"))
+            return "positive";
+
+        // Otherwise use relationship level
+        if (relationshipLevel >= 0.6f)
+            return "positive";
+        else if (relationshipLevel <= 0.4f)
+            return "negative";
+        else
+            return "neutral";
     }
 }
