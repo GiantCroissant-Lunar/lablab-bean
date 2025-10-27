@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Response from Qdrant API when retrieving a point",
+  "properties": {
+    "id": {
+      "description": "Point ID (string or number)",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "payload": {
+      "additionalProperties": true,
+      "description": "Point payload with dynamic properties",
+      "type": "object"
+    },
+    "vector": {
+      "oneOf": [
+        {
+          "description": "Vector as array of floats",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "description": "Named vectors",
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "title": "QdrantPointResponse",
+  "type": "object"
+}

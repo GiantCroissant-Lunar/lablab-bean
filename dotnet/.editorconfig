@@ -1,0 +1,56 @@
+############################################################
+# .editorconfig (dotnet/)
+#
+# Goals:
+# - Allman brace style
+# - One parameter per line (method declarations and invocations)
+# - Encourage CancellationToken best practices
+#
+# Notes:
+# - Allman is enforced via Roslyn formatting options below.
+# - Per-parameter wrapping is configured via ReSharper/Rider EditorConfig keys.
+#   Roslyn/VS currently do not expose parameter/argument wrapping style in .editorconfig.
+# - CancellationToken guidance uses built-in CA rules and Meziantou.Analyzer rules
+#   if that analyzer package is installed. The "default value" part is documented
+#   as a convention because there is no built-in analyzer to enforce it.
+############################################################
+
+[*.cs]
+
+# Allman brace style and new line preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
+
+# Parameter/argument wrapping (ReSharper/Rider)
+# Always place one parameter/argument per line
+resharper_csharp_wrap_parameters_style = chop_always
+resharper_csharp_max_formal_parameters_on_line = 1
+resharper_csharp_wrap_arguments_style = chop_always
+resharper_csharp_max_invocation_arguments_on_line = 1
+
+# Equivalent keys without the 'resharper_' prefix (supported by some JetBrains versions)
+csharp_wrap_parameters_style = chop_always
+csharp_max_formal_parameters_on_line = 1
+csharp_wrap_arguments_style = chop_always
+csharp_max_invocation_arguments_on_line = 1
+
+# Analyzer guidance: CancellationToken usage best practices
+# Built-in rules (included with the .NET SDK analyzers)
+dotnet_diagnostic.CA1068.severity = warning   # CancellationToken parameters must come last
+dotnet_diagnostic.CA2016.severity = error     # Forward the CancellationToken to methods that accept one
+
+# Meziantou.Analyzer rules (effective only if the package is installed)
+dotnet_diagnostic.MA0032.severity = suggestion  # Prefer overload that accepts CancellationToken
+dotnet_diagnostic.MA0040.severity = error       # Flow the CancellationToken when available
+dotnet_diagnostic.MA0079.severity = suggestion  # Use WithCancellation for await foreach
+dotnet_diagnostic.MA0080.severity = error       # Ensure cancellation is used in async streams
+
+# Convention (documented):
+# Public async methods should accept a CancellationToken with a default value.
+# Example: public async Task DoAsync(/* other params */, CancellationToken cancellationToken = default)
+# There is no built-in analyzer to enforce the default value; consider a custom analyzer if strict enforcement is required.

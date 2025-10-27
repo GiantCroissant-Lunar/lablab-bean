@@ -32,6 +32,10 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: 🧹 Verify formatting and analyzers
+      run: |
+        pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target FormatCheck --configuration Release
+
     - name: 📦 Restore dependencies
       run: dotnet restore dotnet/LablabBean.sln
 

@@ -39,6 +39,8 @@ class Build : NukeBuild, IBuildConfig
 
     AbsolutePath SourceDirectory => RootDirectory / (Config?.SourceDir ?? "dotnet");
     AbsolutePath WebsiteDirectory => RootDirectory / (Config?.WebsiteDir ?? "website");
+    AbsolutePath SchemasDirectory => RootDirectory / "schemas";
+    AbsolutePath GeneratedDirectory => SourceDirectory / "framework" / "LablabBean.Framework.Generated";
     AbsolutePath BuildArtifactsDirectory => RootDirectory / "build" / "_artifacts";
     AbsolutePath VersionedArtifactsDirectory => BuildArtifactsDirectory / Version;
     AbsolutePath PublishDirectory => VersionedArtifactsDirectory / "publish";
@@ -90,7 +92,96 @@ class Build : NukeBuild, IBuildConfig
             BuildArtifactsDirectory.CreateOrCleanDirectory();
         });
 
+    Target GenerateApiTypes => _ => _
+        .Executes(() =>
+        {
+            if (!System.IO.Directory.Exists(SchemasDirectory))
+            {
+                Serilog.Log.Warning("Schemas directory not found at {Path}, skipping API type generation", SchemasDirectory);
+                return;
+            }
+
+            var outputDir = GeneratedDirectory / "ExternalApis";
+
+            // Clean up stale generated files
+            if (System.IO.Directory.Exists(outputDir))
+            {
+                var existingFiles = outputDir.GlobFiles("*.g.cs");
+                foreach (var file in existingFiles)
+                {
+                    System.IO.File.Delete(file);
+                }
+                Serilog.Log.Information("Cleaned {Count} existing generated files", existingFiles.Count());
+            }
+
+            outputDir.CreateDirectory();
+
+            // Look for JSON Schema files (*.schema.json) in specs/023 contracts directory
+            var contractSchemas = (RootDirectory / "specs" / "023-quicktype-mapperly-adoption" / "contracts").GlobFiles("*.schema.json");
+
+            if (!contractSchemas.Any())
+            {
+                Serilog.Log.Information("No *.schema.json files found, skipping generation");
+                return;
+            }
+
+            try
+            {
+                // Validate all JSON schemas
+                foreach (var schemaFile in contractSchemas)
+                {
+                    var schemaContent = System.IO.File.ReadAllText(schemaFile);
+                    using (var jsonDoc = JsonDocument.Parse(schemaContent))
+                    {
+                        // Schema is valid JSON
+                    }
+                    Serilog.Log.Information("Validated schema: {Schema}", System.IO.Path.GetFileName(schemaFile));
+                }
+
+                // Generate all Qdrant models in a single file
+                var outputFile = outputDir / "QdrantModels.g.cs";
+                var schemaArgs = string.Join(" ", contractSchemas.Select(s => $"\"{s}\""));
+
+                Serilog.Log.Information("Generating Qdrant models from {Count} schemas", contractSchemas.Count());
+
+                var result = ProcessTasks.StartProcess(
+                    "npx",
+                    $"quicktype --src {schemaArgs} --src-lang schema --lang csharp --framework SystemTextJson --namespace LablabBean.Framework.Generated.Models.Qdrant --array-type list --out \"{outputFile}\"",
+                    RootDirectory,
+                    timeout: 120000
+                ).AssertWaitForExit();
+
+                if (result.ExitCode == 0)
+                {
+                    Serilog.Log.Information("✓ Successfully generated Qdrant models");
+                }
+                else
+                {
+                    throw new Exception($"quicktype failed with exit code {result.ExitCode}");
+                }
+            }
+            catch (JsonException ex)
+            {
+                Serilog.Log.Error("✗ Invalid JSON in schema: {Error}", ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error("✗ Failed to generate API types: {Error}", ex.Message);
+                throw;
+            }
+
+            Serilog.Log.Information("API type generation complete");
+        });
+
+    static string ConvertKebabToPascal(string kebab)
+    {
+        return string.Join("", kebab.Split('-').Select(word =>
+            char.ToUpper(word[0]) + word.Substring(1).ToLower()));
+    }
+
     Target Restore => _ => _
+        .DependsOn(GenerateApiTypes)
         .Executes(() =>
         {
             DotNetRestore(s => s
@@ -126,6 +217,81 @@ class Build : NukeBuild, IBuildConfig
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
                 .EnableNoBuild()
+                .EnableNoRestore());
+        });
+
+    // Formats code using dotnet-format and optionally JetBrains ReSharper Global Tools (jb)
+    Target Format => _ => _
+        .DependsOn(Restore)
+        .Executes(() =>
+        {
+            // dotnet-format (built into .NET SDK): applies whitespace, style, and analyzer code fixes when available
+            Serilog.Log.Information("Running dotnet format (whitespace, style, analyzers)...");
+            DotNet($"format \"{SourceDirectory / "LablabBean.sln"}\" --verbosity minimal", workingDirectory: RootDirectory);
+
+            // ReSharper Global Tools (optional): enforces EditorConfig wrapping like one-parameter-per-line
+            // Tries default installation path then PATH
+            try
+            {
+                var jbDefault = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    ".dotnet", "tools", "jb.exe");
+
+                bool ranReSharper = false;
+                if (System.IO.File.Exists(jbDefault))
+                {
+                    Serilog.Log.Information("Running ReSharper cleanupcode via {Path}...", jbDefault);
+                    var p1 = ProcessTasks.StartProcess(jbDefault, $"cleanupcode \"{SourceDirectory / "LablabBean.sln"}\"", RootDirectory);
+                    p1.AssertZeroExitCode();
+                    ranReSharper = true;
+                }
+                if (!ranReSharper)
+                {
+                    try
+                    {
+                        Serilog.Log.Information("Trying 'jb' from PATH for ReSharper cleanupcode...");
+                        var p2 = ProcessTasks.StartProcess("jb", $"cleanupcode \"{SourceDirectory / "LablabBean.sln"}\"", RootDirectory);
+                        p2.AssertZeroExitCode();
+                        ranReSharper = true;
+                    }
+                    catch { /* ignore if not installed */ }
+                }
+
+                if (!ranReSharper)
+                {
+                    Serilog.Log.Information("ReSharper Global Tools (jb) not found. To enable ReSharper-based formatting: dotnet tool install -g JetBrains.ReSharper.GlobalTools");
+                }
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning("ReSharper cleanup skipped: {Message}", ex.Message);
+            }
+        });
+
+    // Verifies formatting and analyzer diagnostics without changing files (CI-friendly)
+    Target FormatCheck => _ => _
+        .DependsOn(Restore)
+        .Executes(() =>
+        {
+            Serilog.Log.Information("Verifying formatting (no changes)...");
+            DotNet($"format \"{SourceDirectory / "LablabBean.sln"}\" --verify-no-changes --verbosity minimal", workingDirectory: RootDirectory);
+
+            Serilog.Log.Information("Verifying analyzer diagnostics (no changes)...");
+            DotNet($"format analyzers \"{SourceDirectory / "LablabBean.sln"}\" --verify-no-changes --verbosity minimal", workingDirectory: RootDirectory);
+        });
+
+    // Runs analyzer fixes (where possible) and builds to enforce analyzer severities
+    Target Analyze => _ => _
+        .DependsOn(Restore)
+        .Executes(() =>
+        {
+            Serilog.Log.Information("Running analyzer fixes where available (dotnet format analyzers)...");
+            DotNet($"format analyzers \"{SourceDirectory / "LablabBean.sln"}\" --verbosity minimal", workingDirectory: RootDirectory);
+
+            Serilog.Log.Information("Building solution with analyzers enabled...");
+            DotNetBuild(s => s
+                .SetProjectFile(Solution)
+                .SetConfiguration(Configuration)
                 .EnableNoRestore());
         });
 

@@ -1,0 +1,53 @@
+{
+  "$id": "https://lablab-bean.local/schemas/qdrant/scored-point.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "description": "Individual vector search result from Qdrant with score, ID, payload, and optional vector",
+  "properties": {
+    "id": {
+      "description": "Point identifier (can be string or integer in Qdrant API)",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "payload": {
+      "additionalProperties": true,
+      "description": "Dynamic payload data (omitted if with_payload=false)",
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "score": {
+      "description": "Similarity score (0.0 to 1.0, higher is more similar)",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "type": "number"
+    },
+    "vector": {
+      "description": "Vector embeddings (omitted if with_vector=false)",
+      "oneOf": [
+        {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "score"
+  ],
+  "title": "QdrantScoredPoint",
+  "type": "object"
+}
