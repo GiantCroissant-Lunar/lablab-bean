@@ -13,8 +13,8 @@
   - [x] IActivityLog moved from Contracts.UI
 
 - [ ] Phase 2 – Terminal Stack
-  - [ ] Rendering.Terminal plugin implemented
-  - [ ] LablabBean.Game.TerminalUI adapter (IUiService + IDungeonCrawlerUI)
+  - [x] Rendering.Terminal plugin implemented
+  - [ ] LablabBean.Game.TerminalUI adapter (IUiService + IDungeonCrawlerUI) - WIP
   - [ ] UI.Terminal plugin composes real UI and registers services
   - [ ] Console legacy TUI files removed/archived
 
