@@ -45,12 +45,7 @@ public class TerminalUiPlugin : IPlugin
                 return Task.CompletedTask;
             }
 
-            try
-            {
-                // Best-effort: prevent assembly scanning that may trip on unrelated loaded plugin assemblies
-                TGui.ConfigurationManager.Enabled = false;
-            }
-            catch { /* property not available on some versions */ }
+            // ConfigurationManager.Enabled removed in newer Terminal.Gui versions
 
             TGui.Application.Init();
 
@@ -75,39 +70,17 @@ public class TerminalUiPlugin : IPlugin
             // Handle quit
             window.KeyDown += (s, e) =>
             {
-                // Attempt to get a Key value in a version-tolerant way
-                TGui.Key key = default;
-                var hasKey = false;
-
-                var keyPropObj = e.GetType().GetProperty("Key")?.GetValue(e);
-                if (keyPropObj is TGui.Key k1)
-                {
-                    key = k1; hasKey = true;
-                }
-                else if (keyPropObj != null)
-                {
-                    try { key = (TGui.Key)System.Convert.ToInt32(keyPropObj); hasKey = true; } catch { }
-                }
-
-                if (!hasKey)
-                {
-                    var keyEventObj = e.GetType().GetProperty("KeyEvent")?.GetValue(e);
-                    var keyValueObj = keyEventObj?.GetType().GetProperty("KeyValue")?.GetValue(keyEventObj);
-                    if (keyValueObj is TGui.Key k2) { key = k2; hasKey = true; }
-                    else if (keyValueObj != null)
-                    {
-                        try { key = (TGui.Key)System.Convert.ToInt32(keyValueObj); hasKey = true; } catch { }
-                    }
-                }
-
-                if (hasKey && key == TGui.Key.Q)
+                if (e?.KeyCode == TGui.KeyCode.Q)
                 {
                     TGui.Application.RequestStop();
                     e.Handled = true;
                 }
             };
 
-            TGui.Application.Top.Add(window);
+            if (TGui.Application.Top != null)
+            {
+                TGui.Application.Top.Add(window);
+            }
 
             _running = true;
             TGui.Application.Run(window);
@@ -138,7 +111,7 @@ public class TerminalUiPlugin : IPlugin
     {
         if (_running)
         {
-            try { Application.RequestStop(); } catch { }
+            try { TGui.Application.RequestStop(); } catch { }
         }
         return Task.CompletedTask;
     }
