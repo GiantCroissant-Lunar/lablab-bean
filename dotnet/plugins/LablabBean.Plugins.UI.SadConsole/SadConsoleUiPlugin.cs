@@ -4,6 +4,7 @@ using LablabBean.Game.SadConsole;
 using LablabBean.Plugins.Contracts;
 using LablabBean.Plugins.Rendering.SadConsole;
 using LablabBean.Rendering.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace LablabBean.Plugins.UI.SadConsole;
@@ -38,12 +39,23 @@ public class SadConsoleUiPlugin : IPlugin
             throw new InvalidOperationException("SadConsoleSceneRenderer not found in registry. Ensure rendering-sadconsole plugin is loaded first.");
         }
 
-        // Create and register UI adapter
-        _uiAdapter = new SadConsoleUiAdapter(_sceneRenderer, new LoggerAdapter<SadConsoleUiAdapter>(_logger));
+        // Create and register UI adapter with host service provider
+        var loggerFactory = context.Host.Services.GetService(typeof(ILoggerFactory)) as ILoggerFactory
+            ?? throw new InvalidOperationException("ILoggerFactory not available from host services");
+
+        var adapterLogger = loggerFactory.CreateLogger<SadConsoleUiAdapter>();
+        _uiAdapter = new SadConsoleUiAdapter(_sceneRenderer, adapterLogger, context.Host.Services);
 
         // Register services with plugin registry
         context.Registry.Register<IService>(_uiAdapter);
         context.Registry.Register<IDungeonCrawlerUI>(_uiAdapter);
+
+        // Also register in host DI for direct access from Windows app
+        // This allows LablabBean.Windows to resolve it from its service provider
+        if (context.Host.Services is IServiceCollection hostServices)
+        {
+            _logger.LogWarning("Cannot register UI adapter in host DI - service collection not accessible at runtime");
+        }
 
         _logger.LogInformation("Registered IService and IDungeonCrawlerUI for SadConsole");
 

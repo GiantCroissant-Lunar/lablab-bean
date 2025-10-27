@@ -6,6 +6,7 @@ using LablabBean.Contracts.UI.Services;
 using LablabBean.Game.Core.Maps;
 using LablabBean.Game.SadConsole.Screens;
 using LablabBean.Rendering.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace LablabBean.Game.SadConsole;
@@ -18,15 +19,20 @@ public class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
 {
     private readonly ISceneRenderer _sceneRenderer;
     private readonly ILogger<SadConsoleUiAdapter> _logger;
+    private readonly IServiceProvider _serviceProvider;
     private GameScreen? _gameScreen;
     private World? _currentWorld;
     private DungeonMap? _currentMap;
     private bool _initialized;
 
-    public SadConsoleUiAdapter(ISceneRenderer sceneRenderer, ILogger<SadConsoleUiAdapter> logger)
+    public SadConsoleUiAdapter(
+        ISceneRenderer sceneRenderer,
+        ILogger<SadConsoleUiAdapter> logger,
+        IServiceProvider serviceProvider)
     {
         _sceneRenderer = sceneRenderer ?? throw new ArgumentNullException(nameof(sceneRenderer));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
     #region IService Implementation
@@ -84,12 +90,16 @@ public class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
 
         _logger.LogInformation("Creating SadConsole GameScreen");
 
-        // TODO: Create GameScreen with proper dependencies
-        // Note: This will need DI integration when wired into Windows host
-        // For now, this is a placeholder to establish the structure
+        // Create GameScreen with proper dependencies from DI
+        // Default dimensions - should match host configuration
+        const int width = 120;
+        const int height = 40;
+
+        _gameScreen = ActivatorUtilities.CreateInstance<GameScreen>(_serviceProvider, width, height);
+        _gameScreen.Initialize();
 
         _initialized = true;
-        _logger.LogInformation("SadConsole UI adapter initialized");
+        _logger.LogInformation("SadConsole UI adapter initialized with GameScreen ({Width}x{Height})", width, height);
     }
 
     public GameScreen? GetGameScreen()

@@ -1,6 +1,7 @@
 {
   "capabilities": [
-    "ui"
+    "ui",
+    "ui:terminal"
   ],
   "dependencies": [
     {
