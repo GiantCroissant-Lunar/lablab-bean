@@ -8,12 +8,20 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Contracts.Media\LablabBean.Contracts.Media.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reactive\LablabBean.Reactive.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
