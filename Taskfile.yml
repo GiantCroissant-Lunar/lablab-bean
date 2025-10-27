@@ -26,6 +26,11 @@ tasks:
     cmds:
     - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target PublishAll --configuration Debug
 
+  run:media-player:
+    desc: Run the media player from versioned artifact
+    cmds:
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File run-media-player.ps1 {{.CLI_ARGS}}
+
   release:
     desc: Full release packaging (includes website copy; may require website build)
     cmds:

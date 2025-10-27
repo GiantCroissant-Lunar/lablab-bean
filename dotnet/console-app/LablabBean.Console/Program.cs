@@ -15,9 +15,6 @@ using LablabBean.Reporting.Analytics;
 using LablabBean.AI.Actors.Extensions;
 using LablabBean.AI.Actors.Systems;
 using LablabBean.AI.Agents.Extensions;
-using LablabBean.Plugins.MediaPlayer.Core;
-using LablabBean.Plugins.MediaPlayer.FFmpeg;
-using LablabBean.Plugins.MediaPlayer.Terminal.Braille;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -116,10 +113,8 @@ try
                 services.AddLablabBeanInfrastructure(context.Configuration);
                 services.AddLablabBeanReactive();
 
-                // Register media player plugins
-                MediaPlayerPlugin.RegisterServices(services);
-                FFmpegPlaybackPlugin.RegisterServices(services);
-                BrailleRendererPlugin.RegisterServices(services);
+                // Note: Media player plugins are now loaded through the plugin system
+                // They implement IPlugin interface and are discovered automatically
             })
             .Build();
 
@@ -153,10 +148,8 @@ try
             // Add plugin system
             services.AddPluginSystem(context.Configuration);
 
-            // Add media player plugins
-            MediaPlayerPlugin.RegisterServices(services);
-            FFmpegPlaybackPlugin.RegisterServices(services);
-            BrailleRendererPlugin.RegisterServices(services);
+            // Note: Media player plugins are now loaded through the plugin system
+            // They implement IPlugin interface and are discovered automatically
 
             // Add intelligent avatar system (Akka.NET + Semantic Kernel)
             services.AddAkkaActors(context.Configuration);

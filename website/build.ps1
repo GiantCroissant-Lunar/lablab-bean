@@ -10,11 +10,11 @@ $ErrorActionPreference = "Stop"
 Write-Host "🌐 Building website..." -ForegroundColor Cyan
 
 # Get version from GitVersion
-$gitVersionPath = Join-Path $PSScriptRoot ".." "build" "_artifacts"
+$gitVersionPath = Join-Path -Path $PSScriptRoot -ChildPath ".." | Join-Path -ChildPath "build" | Join-Path -ChildPath "_artifacts"
 $versionInfo = $null
 
 try {
-    Push-Location (Join-Path $PSScriptRoot "..")
+    Push-Location (Join-Path -Path $PSScriptRoot -ChildPath "..")
     $gitVersionJson = & dotnet tool run gitversion /showvariable FullSemVer 2>$null
     if ($LASTEXITCODE -eq 0) {
         $version = $gitVersionJson.Trim()
