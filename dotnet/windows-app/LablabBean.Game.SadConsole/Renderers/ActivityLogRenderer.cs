@@ -2,6 +2,8 @@ using SadConsole;
 using SadConsole.UI;
 using SadConsole.UI.Controls;
 using SadRogue.Primitives;
+using LablabBean.Contracts.Game.UI.Models;
+using LablabBean.Contracts.Game.UI.Services;
 
 namespace LablabBean.Game.SadConsole.Renderers;
 
@@ -15,7 +17,7 @@ public class ActivityLogRenderer
     private long _lastSequence = -1;
     private int _maxLines = 100;
     private bool _showTimestamps = true;
-    private LablabBean.Contracts.UI.Services.IActivityLogService? _service;
+    private IActivityLog? _service;
 
     public ControlsConsole Console => _console;
 
@@ -41,7 +43,7 @@ public class ActivityLogRenderer
     public void SetMaxLines(int max) => _maxLines = Math.Max(10, max);
     public void ShowTimestamps(bool show) => _showTimestamps = show;
 
-    public void Bind(LablabBean.Contracts.UI.Services.IActivityLogService service)
+    public void Bind(IActivityLog service)
     {
         _service = service;
         _service.Changed += OnServiceChanged;
@@ -63,7 +65,7 @@ public class ActivityLogRenderer
         if (_listBox.Items.Count > 0) _listBox.SelectedIndex = _listBox.Items.Count - 1;
     }
 
-    private List<string> BuildItems(System.Collections.Generic.IReadOnlyList<LablabBean.Contracts.UI.Models.ActivityEntryDto> entries)
+    private List<string> BuildItems(System.Collections.Generic.IReadOnlyList<ActivityEntryDto> entries)
     {
         var count = entries.Count;
         var start = Math.Max(0, count - _maxLines);

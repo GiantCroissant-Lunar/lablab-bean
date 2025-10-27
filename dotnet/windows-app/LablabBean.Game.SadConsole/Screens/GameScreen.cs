@@ -38,6 +38,8 @@ public class GameScreen : ScreenObject
     private bool _showAchievements = false;
     private bool _showLeaderboard = false;
 
+    public ScreenSurface WorldSurface => _worldRenderer.Surface;
+
     public GameScreen(
         ILogger<GameScreen> logger,
         GameStateManager gameStateManager,

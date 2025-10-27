@@ -2,12 +2,14 @@ using Arch.Core;
 using LablabBean.Contracts.Game.Models;
 using LablabBean.Contracts.Game.UI;
 using LablabBean.Contracts.UI.Models;
-using LablabBean.Contracts.UI.Services;
+using LablabBean.Contracts.Game.UI.Services;
 using LablabBean.Game.Core.Maps;
+using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Systems;
 using LablabBean.Game.TerminalUI.Services;
 using LablabBean.Game.TerminalUI.Views;
 using LablabBean.Rendering.Contracts;
+using LablabBean.Game.TerminalUI.Styles;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
 
@@ -21,17 +23,20 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
 {
     private readonly ISceneRenderer _sceneRenderer;
     private readonly ILogger _logger;
+    private readonly TerminalRenderStyles _styles;
     private Window? _mainWindow;
     private HudService? _hudService;
     private WorldViewService? _worldViewService;
     private ActivityLogView? _activityLogView;
+    private IActivityLog? _activityLog;
     private World? _currentWorld;
     private DungeonMap? _currentMap;
 
-    public TerminalUiAdapter(ISceneRenderer sceneRenderer, ILogger logger)
+    public TerminalUiAdapter(ISceneRenderer sceneRenderer, ILogger logger, TerminalRenderStyles? styles = null)
     {
         _sceneRenderer = sceneRenderer;
         _logger = logger;
+        _styles = styles ?? TerminalRenderStyles.Default();
     }
 
     #region IService Implementation
@@ -50,8 +55,68 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
         // If we have a world and map, render them
         if (_currentWorld != null && _currentMap != null && _worldViewService != null && _hudService != null)
         {
-            _worldViewService.Render(_currentWorld, _currentMap);
             _hudService.Update(_currentWorld);
+
+            // Build a glyph buffer from WorldViewService and render via ISceneRenderer
+            try
+            {
+                if (_worldViewService.TryBuildGlyphArray(_currentWorld, _currentMap, out var glyphs))
+                {
+                    int height = glyphs.GetLength(0);
+                    int width = glyphs.GetLength(1);
+                    var tileBuffer = new TileBuffer(width, height, glyphMode: true);
+
+                    // Build per-cell entity color overrides within viewport (highest Z wins)
+                    uint[,] entFg = new uint[height, width];
+                    uint[,] entBg = new uint[height, width];
+                    int[,] entZ = new int[height, width];
+                    for (int yy = 0; yy < height; yy++) for (int xx = 0; xx < width; xx++) entZ[yy, xx] = int.MinValue;
+
+                    if (_worldViewService.TryComputeCamera(_currentWorld, _currentMap, out var camX, out var camY))
+                    {
+                        var query = new QueryDescription().WithAll<Position, Renderable, Visible>();
+                        _currentWorld.Query(in query, (Entity e, ref Position pos, ref Renderable renderable, ref Visible vis) =>
+                        {
+                            if (!vis.IsVisible) return;
+                            if (!_currentMap.IsInFOV(pos.Point)) return;
+                            int vx = pos.Point.X - camX;
+                            int vy = pos.Point.Y - camY;
+                            if (vx < 0 || vy < 0 || vx >= width || vy >= height) return;
+                            if (renderable.ZOrder <= entZ[vy, vx]) return;
+                            entZ[vy, vx] = renderable.ZOrder;
+                            entFg[vy, vx] = ToArgb(renderable.Foreground);
+                            entBg[vy, vx] = ToArgb(renderable.Background);
+                        });
+                    }
+
+                    if (tileBuffer.Glyphs != null)
+                    {
+                        for (int y = 0; y < height; y++)
+                        {
+                            for (int x = 0; x < width; x++)
+                            {
+                                var ch = glyphs[y, x];
+                                ColorRef fg;
+                                ColorRef bg;
+                                if (entZ[y, x] != int.MinValue)
+                                {
+                                    fg = new ColorRef(0, entFg[y, x]);
+                                    bg = new ColorRef(0, entBg[y, x]);
+                                }
+                                else
+                                {
+                                    var style = _styles.LookupForGlyph(ch);
+                                    fg = new ColorRef(0, style.ForegroundArgb);
+                                    bg = new ColorRef(0, style.BackgroundArgb);
+                                }
+                                tileBuffer.Glyphs[y, x] = new Glyph(ch, fg, bg);
+                            }
+                        }
+                    }
+                    _ = _sceneRenderer.RenderAsync(tileBuffer, CancellationToken.None);
+                }
+            }
+            catch { /* best effort */ }
         }
 
         return Task.CompletedTask;
@@ -103,12 +168,25 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
         _mainWindow.Add(_activityLogView);
 
         _logger.LogInformation("Terminal UI adapter initialized with full HUD, WorldView, and ActivityLog");
+
+        // Initialize scene renderer with a basic palette and set render target if supported
+        var paletteList = _styles.Palette ?? TerminalRenderStyles.Default().Palette!;
+        var defaultPalette = new Palette(paletteList);
+
+        try
+        {
+            _sceneRenderer.InitializeAsync(defaultPalette, CancellationToken.None).GetAwaiter().GetResult();
+        }
+        catch { /* best effort */ }
     }
 
     public Window GetMainWindow()
     {
         return _mainWindow ?? throw new InvalidOperationException("UI not initialized");
     }
+
+    public View? GetWorldView() => _worldViewService?.WorldView;
+    public View? GetWorldRenderView() => _worldViewService?.RenderViewControl;
 
     #endregion
 
@@ -173,7 +251,18 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
         _currentMap = map;
     }
 
+    public void BindActivityLog(IActivityLog activityLog)
+    {
+        _activityLog = activityLog ?? throw new ArgumentNullException(nameof(activityLog));
+        _activityLogView?.Bind(_activityLog);
+    }
+
     #endregion
+
+    private static uint ToArgb(SadRogue.Primitives.Color c)
+    {
+        return (0xFFu << 24) | ((uint)c.R << 16) | ((uint)c.G << 8) | c.B;
+    }
 }
 
 /// <summary>

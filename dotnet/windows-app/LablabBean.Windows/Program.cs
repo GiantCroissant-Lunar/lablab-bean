@@ -93,6 +93,10 @@ try
     services.AddSingleton<StatusEffectSystem>();
     services.AddSingleton<ActivityLogSystem>();
     services.AddSingleton<LablabBean.Contracts.UI.Services.IActivityLogService, LablabBean.Game.Core.Services.ActivityLogService>();
+    // Bridge old UI ActivityLogService to new game-specific IActivityLog via adapter
+    services.AddSingleton<LablabBean.Contracts.Game.UI.Services.IActivityLog>(sp =>
+        new LablabBean.Contracts.Game.UI.Services.Adapters.ActivityLogAdapter(
+            sp.GetRequiredService<LablabBean.Contracts.UI.Services.IActivityLogService>()));
     services.AddSingleton<LevelManager>();
     services.AddSingleton<GameStateManager>();
 

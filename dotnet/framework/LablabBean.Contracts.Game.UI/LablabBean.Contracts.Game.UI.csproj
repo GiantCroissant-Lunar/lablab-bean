@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LablabBean.Contracts.UI\LablabBean.Contracts.UI.csproj" />
+  </ItemGroup>
+
 </Project>

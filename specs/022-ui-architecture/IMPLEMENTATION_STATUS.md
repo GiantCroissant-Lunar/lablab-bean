@@ -16,7 +16,7 @@
   - [x] Rendering.Terminal plugin implemented
   - [x] LablabBean.Game.TerminalUI adapter (IUiService + IDungeonCrawlerUI)
   - [x] UI.Terminal plugin composes real UI and registers services
-  - [ ] Console legacy TUI files removed/archived
+  - [x] Console legacy TUI files removed/archived
 
 - [x] Phase 3 – Terminal.Gui v2 API Compatibility
   - [x] Updated HudService for Terminal.Gui v2
@@ -43,7 +43,7 @@
   - [x] Rendering.SadConsole plugin implemented
   - [x] LablabBean.Game.SadConsole adapter (IService + IDungeonCrawlerUI)
   - [x] UI.SadConsole plugin composes GameScreen/HUD and registers services
-  - [ ] Windows app loads plugins only
+  - [x] Windows app loads plugins and bridges IActivityLog via adapter
 
 - [x] Phase 6 – Selection + Validation
   - [x] Capability policy enforced (single UI + single renderer)

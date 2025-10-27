@@ -1,5 +1,5 @@
-using LablabBean.Contracts.UI.Models;
-using LablabBean.Contracts.UI.Services;
+using LablabBean.Contracts.Game.UI.Models;
+using LablabBean.Contracts.Game.UI.Services;
 using Terminal.Gui;
 
 namespace LablabBean.Game.TerminalUI.Views;
@@ -13,7 +13,7 @@ public class ActivityLogView : FrameView
     private long _lastSequence = -1;
     private int _maxLines = 100;
     private bool _showTimestamps = true;
-    private IActivityLogService? _service;
+    private IActivityLog? _service;
 
     public ActivityLogView(string title = "Activity") : base()
     {
@@ -40,7 +40,7 @@ public class ActivityLogView : FrameView
     public void SetMaxLines(int max) => _maxLines = Math.Max(10, max);
     public void ShowTimestamps(bool show) => _showTimestamps = show;
 
-    public void Bind(IActivityLogService service)
+    public void Bind(IActivityLog service)
     {
         _service = service;
         _service.Changed += OnServiceChanged;
@@ -64,7 +64,7 @@ public class ActivityLogView : FrameView
         }
     }
 
-    private List<string> BuildLines(System.Collections.Generic.IReadOnlyList<LablabBean.Contracts.UI.Models.ActivityEntryDto> entries)
+    private List<string> BuildLines(System.Collections.Generic.IReadOnlyList<ActivityEntryDto> entries)
     {
         var count = entries.Count;
         var start = Math.Max(0, count - _maxLines);
