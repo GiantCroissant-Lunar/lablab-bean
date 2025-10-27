@@ -1,0 +1,33 @@
+{
+  "$schema": "../../../framework/LablabBean.Plugins.Contracts/plugin.schema.json",
+  "id": "media-player-terminal-sixel",
+  "name": "Sixel Terminal Renderer",
+  "version": "1.0.0",
+  "author": "Lablab Bean Team",
+  "description": "Sixel graphics protocol renderer for high-quality terminal video playback",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.MediaPlayer.Terminal.Sixel.dll,LablabBean.Plugins.MediaPlayer.Terminal.Sixel.SixelRendererPlugin"
+  },
+  "capabilities": [
+    "video-rendering",
+    "sixel-graphics",
+    "terminal-renderer",
+    "high-quality-output"
+  ],
+  "dependencies": [
+    { "id": "media-player-core" }
+  ],
+  "permissions": {
+    "profile": "Standard"
+  },
+  "priority": 70,
+  "configuration": {
+    "enabled": true,
+    "autoStart": true,
+    "settings": {
+      "width": 800,
+      "height": 600,
+      "colors": 256
+    }
+  }
+}

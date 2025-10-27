@@ -1,0 +1,32 @@
+{
+  "$schema": "../../../framework/LablabBean.Plugins.Contracts/plugin.schema.json",
+  "id": "media-player-terminal-kitty",
+  "name": "Kitty Terminal Renderer",
+  "version": "1.0.0",
+  "author": "Lablab Bean Team",
+  "description": "Kitty graphics protocol renderer for modern terminal video playback",
+  "entryPoint": {
+    "dotnet.console": "LablabBean.Plugins.MediaPlayer.Terminal.Kitty.dll,LablabBean.Plugins.MediaPlayer.Terminal.Kitty.KittyRendererPlugin"
+  },
+  "capabilities": [
+    "video-rendering",
+    "kitty-graphics",
+    "terminal-renderer",
+    "modern-terminal"
+  ],
+  "dependencies": [
+    { "id": "media-player-core" }
+  ],
+  "permissions": {
+    "profile": "Standard"
+  },
+  "priority": 70,
+  "configuration": {
+    "enabled": true,
+    "autoStart": true,
+    "settings": {
+      "compression": "zlib",
+      "transmit": "direct"
+    }
+  }
+}
