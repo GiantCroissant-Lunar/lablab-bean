@@ -1,0 +1,17 @@
+{
+  "sourceDir": "dotnet",
+  "websiteDir": "website",
+  "frameworkDirs": ["framework"],
+  "pluginDirs": ["plugins"],
+  "packPlugins": true,
+  "packFramework": true,
+  "excludePluginNames": [
+    "LablabBean.Plugins.Merchant"
+  ],
+  "includePluginNames": [],
+  "syncLocalNugetFeed": true,
+  "localNugetFeedRoot": "D:\\lunar-snake\\packages\\nuget-repo",
+  "localNugetFeedFlatSubdir": "flat",
+  "localNugetFeedHierarchicalSubdir": "hierarchical",
+  "localNugetFeedBaseUrl": null
+}

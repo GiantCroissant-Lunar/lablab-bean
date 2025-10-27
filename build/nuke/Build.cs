@@ -12,9 +12,13 @@ using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.IO.PathConstruction;
+using System.IO.Compression;
+using System.Xml.Linq;
+using System.Security.Cryptography;
+using System.Text.Json;
 
 [ShutdownDotNetAfterServerBuild]
-class Build : NukeBuild
+class Build : NukeBuild, IBuildConfig
 {
     public static int Main() => Execute<Build>(x => x.Compile);
 
@@ -29,11 +33,16 @@ class Build : NukeBuild
 
     string Version => GitVersion?.SemVer ?? "0.1.0-dev";
 
-    AbsolutePath SourceDirectory => RootDirectory / "dotnet";
-    AbsolutePath WebsiteDirectory => RootDirectory / "website";
+    // Provide concrete accessors for configuration to avoid relying on default interface implementations
+    AbsolutePath BuildConfigPath => RootDirectory / "build" / "nuke" / "build.config.json";
+    BuildConfig Config => BuildConfig.Load(BuildConfigPath);
+
+    AbsolutePath SourceDirectory => RootDirectory / (Config?.SourceDir ?? "dotnet");
+    AbsolutePath WebsiteDirectory => RootDirectory / (Config?.WebsiteDir ?? "website");
     AbsolutePath BuildArtifactsDirectory => RootDirectory / "build" / "_artifacts";
     AbsolutePath VersionedArtifactsDirectory => BuildArtifactsDirectory / Version;
     AbsolutePath PublishDirectory => VersionedArtifactsDirectory / "publish";
+    AbsolutePath NugetDirectory => VersionedArtifactsDirectory / "nuget";
     AbsolutePath LogsDirectory => VersionedArtifactsDirectory / "logs";
     AbsolutePath TestResultsDirectory => VersionedArtifactsDirectory / "test-results";
     AbsolutePath TestReportsDirectory => VersionedArtifactsDirectory / "test-reports";
@@ -146,6 +155,101 @@ class Build : NukeBuild
             }
 
             Serilog.Log.Information("Test results saved to: {Path}", TestResultsDirectory);
+        });
+
+    // Builds NuGet packages for framework and plugin projects into versioned artifacts
+    Target Pack => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            NugetDirectory.CreateOrCleanDirectory();
+
+            var frameworkRoots = (Config?.FrameworkDirs ?? new System.Collections.Generic.List<string> { "framework" })
+                .Select(d => SourceDirectory / d);
+
+            var pluginRoots = (Config?.PluginDirs ?? new System.Collections.Generic.List<string> { "plugins" })
+                .Select(d => SourceDirectory / d);
+
+            var frameworkProjects = frameworkRoots
+                .SelectMany(r => r.GlobFiles("**/*.csproj"))
+                .Where(p => !p.ToString().EndsWith(".Tests.csproj", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var pluginProjects = pluginRoots
+                .SelectMany(r => r.GlobFiles("**/*.csproj"))
+                .Where(p => !p.ToString().Contains("/tests/", StringComparison.OrdinalIgnoreCase))
+                .Where(p => !p.ToString().EndsWith(".Tests.csproj", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            // Optional name-based filters for plugins from config
+            if (Config?.IncludePluginNames != null && Config.IncludePluginNames.Count > 0)
+            {
+                pluginProjects = pluginProjects
+                    .Where(p => Config.IncludePluginNames.Contains(System.IO.Path.GetFileNameWithoutExtension(p)))
+                    .ToList();
+            }
+            if (Config?.ExcludePluginNames != null && Config.ExcludePluginNames.Count > 0)
+            {
+                pluginProjects = pluginProjects
+                    .Where(p => !Config.ExcludePluginNames.Contains(System.IO.Path.GetFileNameWithoutExtension(p)))
+                    .ToList();
+            }
+
+            if ((Config?.PackFramework ?? true) && frameworkProjects.Count == 0)
+                Serilog.Log.Warning("No framework projects found to pack under: {Roots}", string.Join(", ", frameworkRoots));
+            if ((Config?.PackPlugins ?? true) && pluginProjects.Count == 0)
+                Serilog.Log.Warning("No plugin projects found to pack under: {Roots}", string.Join(", ", pluginRoots));
+
+            void PackProject(AbsolutePath csproj)
+            {
+                Serilog.Log.Information("Packing {Project} -> {OutDir}", csproj, NugetDirectory);
+                // Build first to ensure outputs exist (supports projects relying on GeneratePackageOnBuild)
+                DotNetBuild(s => s
+                    .SetProjectFile(csproj)
+                    .SetConfiguration(Configuration)
+                    .EnableNoRestore());
+
+                // Now run pack without building to place packages in the NuGet artifacts directory
+                DotNetPack(s => s
+                    .SetProject(csproj)
+                    .SetConfiguration(Configuration)
+                    .EnableNoRestore()
+                    .EnableNoBuild()
+                    .SetOutputDirectory(NugetDirectory)
+                    .SetVersion(Version)
+                    .SetIncludeSymbols(true)
+                    .SetSymbolPackageFormat(Nuke.Common.Tools.DotNet.DotNetSymbolPackageFormat.snupkg)
+                    .SetProperty("RepositoryBranch", GitVersion?.BranchName ?? "local")
+                    .SetProperty("RepositoryCommit", GitVersion?.Sha ?? "local"));
+
+                // Also copy any packages generated by build (GeneratePackageOnBuild)
+                try
+                {
+                    var binDir = csproj.Parent / "bin" / Configuration;
+                    if (System.IO.Directory.Exists(binDir))
+                    {
+                        var pkgs = System.IO.Directory.GetFiles(binDir, "*.nupkg", System.IO.SearchOption.AllDirectories)
+                            .Concat(System.IO.Directory.GetFiles(binDir, "*.snupkg", System.IO.SearchOption.AllDirectories))
+                            .ToArray();
+                        foreach (var pkg in pkgs)
+                        {
+                            var dest = NugetDirectory / System.IO.Path.GetFileName(pkg);
+                            System.IO.File.Copy(pkg, dest, true);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Warning("Failed to copy build-generated packages for {Project}: {Message}", csproj, ex.Message);
+                }
+            }
+
+            if (Config?.PackFramework ?? true)
+                frameworkProjects.ForEach(PackProject);
+            if (Config?.PackPlugins ?? true)
+                pluginProjects.ForEach(PackProject);
+
+            Serilog.Log.Information("NuGet packages created at: {Path}", NugetDirectory);
         });
 
     Target GenerateReports => _ => _
@@ -595,7 +699,7 @@ class Build : NukeBuild
         });
 
     Target Release => _ => _
-        .DependsOn(Clean, PrintVersion, PublishAll, BuildWebsite)
+        .DependsOn(Clean, PrintVersion, PublishAll, Pack, SyncNugetLocal, BuildWebsite)
         .Executes(() =>
         {
             Serilog.Log.Information("Release artifacts created at: {Path}", VersionedArtifactsDirectory);
@@ -622,10 +726,11 @@ class Build : NukeBuild
                 branch = GitVersion?.BranchName ?? "unknown",
                 commit = GitVersion?.Sha ?? "unknown",
                 buildDate = DateTime.UtcNow.ToString("o"),
-                components = new string[] { "console", "windows", "website" },
+                components = new string[] { "console", "windows", "website", "nuget" },
                 directories = new
                 {
                     publish = "publish/",
+                    nuget = "nuget/",
                     logs = "logs/",
                     testResults = "test-results/",
                     testReports = "test-reports/",
@@ -641,12 +746,204 @@ class Build : NukeBuild
             Serilog.Log.Information("Console App: {Path}", PublishDirectory / "console");
             Serilog.Log.Information("Windows App: {Path}", PublishDirectory / "windows");
             Serilog.Log.Information("Website: {Path}", PublishDirectory / "website");
+            Serilog.Log.Information("NuGet: {Path}", NugetDirectory);
             Serilog.Log.Information("Logs: {Path}", LogsDirectory);
             Serilog.Log.Information("Test Results: {Path}", TestResultsDirectory);
             Serilog.Log.Information("Test Reports: {Path}", TestReportsDirectory);
             Serilog.Log.Information("Session Reports: {Path}", SessionReportsDirectory);
             Serilog.Log.Information("========================\n");
         });
+
+    // Syncs produced NuGet packages to a configurable local feed in two layouts: flat and hierarchical (id/version)
+    Target SyncNugetLocal => _ => _
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            if (!(Config?.SyncLocalNugetFeed ?? false))
+            {
+                Serilog.Log.Information("Local NuGet feed sync is disabled by config.");
+                return;
+            }
+
+            var rootPath = Config?.LocalNugetFeedRoot;
+            if (string.IsNullOrWhiteSpace(rootPath))
+            {
+                Serilog.Log.Warning("LocalNugetFeedRoot not configured; skipping feed sync.");
+                return;
+            }
+
+            AbsolutePath feedRoot = (AbsolutePath)rootPath;
+            var flatDir = feedRoot / (Config?.LocalNugetFeedFlatSubdir ?? "flat");
+            var hierDir = feedRoot / (Config?.LocalNugetFeedHierarchicalSubdir ?? "hierarchical");
+
+            flatDir.CreateDirectory();
+            hierDir.CreateDirectory();
+
+            var packages = System.IO.Directory.GetFiles(NugetDirectory, "*.nupkg")
+                .Concat(System.IO.Directory.GetFiles(NugetDirectory, "*.snupkg"))
+                .ToArray();
+
+            var versionsById = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var pkg in packages)
+            {
+                var fileName = System.IO.Path.GetFileName(pkg);
+                var destFlat = flatDir / fileName;
+                System.IO.File.Copy(pkg, destFlat, true);
+
+                // Write SHA512 alongside (NuGet folder source convention)
+                WriteSha512(destFlat);
+
+                // Compute hierarchical path by reading nuspec id + version from the package
+                try
+                {
+                    var (id, version) = ReadIdVersionFromPackage(pkg);
+                    if (!string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(version))
+                    {
+                        var idLower = id.ToLowerInvariant();
+                        var versionLower = version.ToLowerInvariant();
+                        var destDir = hierDir / idLower / versionLower;
+                        destDir.CreateDirectory();
+                        var ext = System.IO.Path.GetExtension(fileName);
+                        var standardName = $"{idLower}.{versionLower}{ext}";
+                        var destHier = destDir / standardName;
+                        System.IO.File.Copy(pkg, destHier, true);
+
+                        // Write SHA512 alongside hierarchical package
+                        WriteSha512(destHier);
+
+                        // Optional: extract nuspec alongside
+                        try
+                        {
+                            var nuspecContent = ReadNuspecFromPackage(pkg);
+                            if (!string.IsNullOrEmpty(nuspecContent))
+                            {
+                                var nuspecPath = destDir / ($"{idLower}.nuspec");
+                                System.IO.File.WriteAllText(nuspecPath, nuspecContent);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Serilog.Log.Warning("Failed to extract nuspec for {Package}: {Message}", fileName, ex.Message);
+                        }
+
+                        // Track versions for index
+                        if (!versionsById.TryGetValue(idLower, out var set))
+                        {
+                            set = new System.Collections.Generic.SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+                            versionsById[idLower] = set;
+                        }
+                        set.Add(versionLower);
+                    }
+                    else
+                    {
+                        Serilog.Log.Warning("Could not determine id/version for package: {Package}", fileName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Warning("Failed hierarchical sync for {Package}: {Message}", fileName, ex.Message);
+                }
+            }
+
+            // Generate lightweight indices
+            try
+            {
+                GenerateLocalFeedIndexes(hierDir, versionsById);
+                // Optional: Create a minimal V3 service index if a base URL is configured
+                if (!string.IsNullOrWhiteSpace(Config?.LocalNugetFeedBaseUrl))
+                {
+                    var baseUrl = Config.LocalNugetFeedBaseUrl.TrimEnd('/') + "/";
+                    var serviceIndex = new
+                    {
+                        version = "3.0.0",
+                        resources = new object[]
+                        {
+                            new { @id = baseUrl, @type = "PackageBaseAddress/3.0.0", comment = "Static flat container" }
+                        }
+                    };
+                    var serviceIndexPath = hierDir / "index.json";
+                    System.IO.File.WriteAllText(serviceIndexPath, JsonSerializer.Serialize(serviceIndex, new JsonSerializerOptions { WriteIndented = true }));
+                }
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning("Failed to generate local feed indexes: {Message}", ex.Message);
+            }
+
+            Serilog.Log.Information("Local feed sync complete. Flat={Flat} Hierarchical={Hier}", flatDir, hierDir);
+        });
+
+    static (string id, string version) ReadIdVersionFromPackage(string packagePath)
+    {
+        using var archive = ZipFile.OpenRead(packagePath);
+        var nuspec = archive.Entries.FirstOrDefault(e => e.FullName.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase));
+        if (nuspec == null) return (null, null);
+        using var s = nuspec.Open();
+        var doc = XDocument.Load(s);
+        var root = doc.Root;
+        if (root == null) return (null, null);
+        var ns = root.Name.Namespace;
+        var md = root.Element(ns + "metadata") ?? root.Element("metadata");
+        var id = md?.Element(ns + "id")?.Value ?? md?.Element("id")?.Value;
+        var version = md?.Element(ns + "version")?.Value ?? md?.Element("version")?.Value;
+        return (id, version);
+    }
+
+    static string ReadNuspecFromPackage(string packagePath)
+    {
+        using var archive = ZipFile.OpenRead(packagePath);
+        var nuspec = archive.Entries.FirstOrDefault(e => e.FullName.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase));
+        if (nuspec == null) return null;
+        using var s = nuspec.Open();
+        using var sr = new System.IO.StreamReader(s);
+        return sr.ReadToEnd();
+    }
+
+    static void WriteSha512(AbsolutePath packagePath)
+    {
+        try
+        {
+            using var sha = SHA512.Create();
+            using var fs = System.IO.File.OpenRead(packagePath);
+            var hash = sha.ComputeHash(fs);
+            var b64 = Convert.ToBase64String(hash);
+            var shaPath = packagePath + ".sha512";
+            System.IO.File.WriteAllText(shaPath, b64);
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Warning("Failed to write sha512 for {Path}: {Message}", packagePath, ex.Message);
+        }
+    }
+
+    static void GenerateLocalFeedIndexes(AbsolutePath hierRoot, System.Collections.Generic.Dictionary<string, System.Collections.Generic.SortedSet<string>> versionsById)
+    {
+        // Root index: lists all package IDs and count of versions
+        var rootIndex = new
+        {
+            generated = DateTime.UtcNow.ToString("o"),
+            packages = versionsById.OrderBy(k => k.Key).Select(kv => new
+            {
+                id = kv.Key,
+                versions = kv.Value.OrderBy(v => v).ToArray(),
+                latest = kv.Value.OrderBy(v => v, StringComparer.OrdinalIgnoreCase).LastOrDefault()
+            }).ToArray()
+        };
+        var rootIndexPath = hierRoot / "packages-index.json";
+        System.IO.File.WriteAllText(rootIndexPath, JsonSerializer.Serialize(rootIndex, new JsonSerializerOptions { WriteIndented = true }));
+
+        // Per-package index similar to packageBaseAddress {id}/index.json
+        foreach (var kv in versionsById)
+        {
+            var pkgDir = hierRoot / kv.Key;
+            pkgDir.CreateDirectory();
+            var perIndex = new { versions = kv.Value.OrderBy(v => v).ToArray() };
+            var perIndexPath = pkgDir / "index.json";
+            System.IO.File.WriteAllText(perIndexPath, JsonSerializer.Serialize(perIndex, new JsonSerializerOptions { WriteIndented = true }));
+        }
+    }
+
 
     Target ReleaseConsole => _ => _
         .DependsOn(PrintVersion, PublishConsole, VerifyArtifact, GenerateReports)

@@ -21,7 +21,15 @@ if ! command -v dotnet &> /dev/null; then
 fi
 
 # Path to the OneTypePerFile tool
-TOOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/dotnet/OneTypePerFile/OneTypePerFile" && pwd)"
+BASE_DIR="$(dirname "${BASH_SOURCE[0]}")/dotnet/OneTypePerFile/OneTypePerFile"
+
+# If tool source is missing, skip (non-blocking)
+if [ ! -d "$BASE_DIR" ]; then
+    echo "OneTypePerFile tool not found; skipping check (non-blocking)."
+    exit 0
+fi
+
+TOOL_DIR="$(cd "$BASE_DIR" && pwd)"
 
 # Build the tool if not already built
 if [ ! -f "$TOOL_DIR/bin/Debug/net8.0/OneTypePerFile.dll" ]; then

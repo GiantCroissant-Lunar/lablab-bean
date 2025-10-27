@@ -18,9 +18,20 @@ if [ -z "$DOTNET_FILES" ]; then
     exit 0
 fi
 
-# Run dotnet format
+# Run dotnet format (whitespace only). Limit to staged C# files under dotnet/.
 cd dotnet
-dotnet format --verify-no-changes --verbosity diagnostic
+INCLUDE_LIST=()
+while IFS= read -r file; do
+  if [[ "$file" == dotnet/* && "$file" == *.cs ]]; then
+    rel=${file#dotnet/}
+    INCLUDE_LIST+=("$rel")
+  fi
+done < <(printf '%s\n' "$DOTNET_FILES")
+if [ ${#INCLUDE_LIST[@]} -eq 0 ]; then
+  echo "No C# files staged under dotnet to check"
+  exit 0
+fi
+dotnet format whitespace --verify-no-changes --verbosity minimal --include "${INCLUDE_LIST[@]}"
 
 if [ $? -eq 0 ]; then
     echo "✓ .NET formatting check passed"

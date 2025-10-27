@@ -26,6 +26,11 @@ tasks:
     cmds:
     - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target PublishAll --configuration Debug
 
+  nuget:pack:
+    desc: Build, pack and sync NuGet packages into versioned artifacts and local feed
+    cmds:
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target SyncNugetLocal --configuration Release
+
   run:media-player:
     desc: Run the media player from versioned artifact
     cmds:
