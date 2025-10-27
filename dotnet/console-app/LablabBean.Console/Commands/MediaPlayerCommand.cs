@@ -163,7 +163,7 @@ public static class MediaPlayerCommand
                 catch (TaskCanceledException)
                 {
                     System.Console.WriteLine("\n⏹️  Stopping playback...");
-                    await mediaService.StopAsync();
+                    await mediaService.StopAsync(cts.Token);
                 }
 
                 await keyTask.ConfigureAwait(false);

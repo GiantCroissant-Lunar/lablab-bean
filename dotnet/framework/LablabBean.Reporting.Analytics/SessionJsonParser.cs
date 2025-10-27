@@ -42,7 +42,7 @@ public class SessionJsonParser
 
             while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
             {
-                var line = await reader.ReadLineAsync();
+                var line = await reader.ReadLineAsync(cancellationToken);
                 lineNumber++;
 
                 if (string.IsNullOrWhiteSpace(line))

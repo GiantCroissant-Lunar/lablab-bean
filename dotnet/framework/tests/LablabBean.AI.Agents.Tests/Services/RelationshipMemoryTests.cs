@@ -11,14 +11,14 @@ namespace LablabBean.AI.Agents.Tests.Services;
 
 public class RelationshipMemoryTests : IAsyncLifetime
 {
-    private readonly ILogger<MemoryService> _logger;
+    private readonly ILogger<LablabBean.AI.Agents.Services.MemoryService> _logger;
     private readonly IOptions<KernelMemoryOptions> _options;
     private readonly IKernelMemory _kernelMemory;
-    private readonly MemoryService _memoryService;
+    private readonly LablabBean.AI.Agents.Services.MemoryService _memoryService;
 
     public RelationshipMemoryTests()
     {
-        _logger = Substitute.For<ILogger<MemoryService>>();
+        _logger = Substitute.For<ILogger<LablabBean.AI.Agents.Services.MemoryService>>();
         _kernelMemory = Substitute.For<IKernelMemory>();
 
         var memoryOptions = new KernelMemoryOptions
@@ -31,7 +31,7 @@ public class RelationshipMemoryTests : IAsyncLifetime
         };
 
         _options = Options.Create(memoryOptions);
-        _memoryService = new MemoryService(_logger, _kernelMemory, _options);
+        _memoryService = new LablabBean.AI.Agents.Services.MemoryService(_logger, _kernelMemory, _options);
     }
 
     public Task InitializeAsync() => Task.CompletedTask;

@@ -358,5 +358,46 @@ public class MemoryServiceTests
         {
             return Task.FromResult(true);
         }
+
+        public Task<string> StoreTacticalObservationAsync(
+            string entityId,
+            TacticalObservation observation,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(observation);
+            var memoryId = Guid.NewGuid().ToString();
+            return Task.FromResult(memoryId);
+        }
+
+        public Task<IReadOnlyList<MemoryResult>> RetrieveSimilarTacticsAsync(
+            string entityId,
+            LablabBean.AI.Core.Events.PlayerBehaviorType behaviorFilter,
+            int limit = 5,
+            CancellationToken cancellationToken = default)
+        {
+            var results = new List<MemoryResult>();
+            return Task.FromResult<IReadOnlyList<MemoryResult>>(results);
+        }
+
+        public Task<string> StoreRelationshipMemoryAsync(
+            RelationshipMemory relationshipMemory,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(relationshipMemory);
+            var memoryId = Guid.NewGuid().ToString();
+            return Task.FromResult(memoryId);
+        }
+
+        public Task<IReadOnlyList<MemoryResult>> RetrieveRelevantRelationshipHistoryAsync(
+            string entity1Id,
+            string entity2Id,
+            string query,
+            int maxResults = 5,
+            string? sentiment = null,
+            CancellationToken cancellationToken = default)
+        {
+            var results = new List<MemoryResult>();
+            return Task.FromResult<IReadOnlyList<MemoryResult>>(results);
+        }
     }
 }

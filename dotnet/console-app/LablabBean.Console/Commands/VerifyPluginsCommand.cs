@@ -23,12 +23,14 @@ public static class VerifyPluginsCommand
         var includeOption = new Option<string[]>(
             aliases: new[] { "--include" },
             description: "Only verify plugins with these IDs (comma or repeat)"
-        ) { Arity = ArgumentArity.ZeroOrMore };
+        )
+        { Arity = ArgumentArity.ZeroOrMore };
 
         var excludeOption = new Option<string[]>(
             aliases: new[] { "--exclude" },
             description: "Skip plugins with these IDs (comma or repeat)"
-        ) { Arity = ArgumentArity.ZeroOrMore };
+        )
+        { Arity = ArgumentArity.ZeroOrMore };
 
         var outputOption = new Option<FileInfo>(
             aliases: new[] { "--output", "-o" },
@@ -159,7 +161,7 @@ public static class VerifyPluginsCommand
             }
 
             // Discover and load only the selected plugin directories (supported by loader self-manifest check)
-            await loader.DiscoverAndLoadAsync(selectedDirs);
+            await loader.DiscoverAndLoadAsync(selectedDirs).ConfigureAwait(false);
 
             // Contract-specific probes (currently: IDiagnosticProvider)
             var diagProviders = registry.GetAll<IDiagnosticProvider>()?.ToList() ?? new List<IDiagnosticProvider>();
@@ -170,18 +172,18 @@ public static class VerifyPluginsCommand
                 try
                 {
                     // Providers should already be initialized/started by loader; still probe APIs
-                    _ = await p.CollectDataAsync(cts.Token);
-                    var health = await p.CheckHealthAsync(cts.Token);
+                    _ = await p.CollectDataAsync(cts.Token).ConfigureAwait(false);
+                    var health = await p.CheckHealthAsync(cts.Token).ConfigureAwait(false);
                     logger.LogInformation("Provider {Name} health: {Status}", p.Name, health.Health);
-                    await p.LogEventAsync(new LablabBean.Contracts.Diagnostic.DiagnosticEvent
+                    await p.LogEventAsync(new DiagnosticEvent
                     {
                         Timestamp = DateTime.UtcNow,
-                        Level = LablabBean.Contracts.Diagnostic.DiagnosticLevel.Information,
+                        Level = DiagnosticLevel.Information,
                         Category = "RuntimeVerify",
                         Message = "ProbeEvent",
                         Source = "VerifyPluginsCommand"
-                    }, cts.Token);
-                    _ = await p.ExportDataAsync(DiagnosticExportFormat.Json, cts.Token);
+                    }, cts.Token).ConfigureAwait(false);
+                    _ = await p.ExportDataAsync(DiagnosticExportFormat.Json, cts.Token).ConfigureAwait(false);
 
                     // Attribute this probe to a plugin via assembly name mapping
                     var asmName = Path.GetFileName(p.GetType().Assembly.Location);
@@ -212,7 +214,7 @@ public static class VerifyPluginsCommand
             }
 
             // Build snapshot from PluginAdminService + metrics
-            var status = await admin.GetSystemStatusAsync();
+            var status = await admin.GetSystemStatusAsync().ConfigureAwait(false);
             var snapshot = new
             {
                 plugins = status.Plugins.Select(p => new
@@ -239,7 +241,7 @@ public static class VerifyPluginsCommand
             // Write JSON
             var json = JsonSerializer.Serialize(snapshot, new JsonSerializerOptions { WriteIndented = true });
             Directory.CreateDirectory(Path.GetDirectoryName(output.FullName)!);
-            await File.WriteAllTextAsync(output.FullName, json);
+            await File.WriteAllTextAsync(output.FullName, json, cts.Token).ConfigureAwait(false);
 
             System.Console.ForegroundColor = ConsoleColor.Green;
             System.Console.WriteLine($"✓ Wrote plugin health snapshot: {output.FullName}");

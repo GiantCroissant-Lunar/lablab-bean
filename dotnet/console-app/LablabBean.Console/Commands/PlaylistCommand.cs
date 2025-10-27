@@ -249,7 +249,7 @@ public static class PlaylistCommand
                                 {
                                     shouldSkip = true;
                                     skipDirection = result.Action == KeyAction.Next ? 1 : -1;
-                                    await mediaService.StopAsync();
+                                    await mediaService.StopAsync(cts.Token);
                                     playbackComplete = true;
                                     return;
                                 }
