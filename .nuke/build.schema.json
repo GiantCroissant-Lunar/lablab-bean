@@ -64,9 +64,13 @@
           "description": "List of targets to be skipped. Empty list skips all dependencies",
           "items": {
             "enum": [
+              "Analyze",
               "BuildWebsite",
               "Clean",
               "Compile",
+              "Format",
+              "FormatCheck",
+              "GenerateApiTypes",
               "GenerateReports",
               "GenerateWindowsMetrics",
               "Pack",
@@ -95,9 +99,13 @@
           "description": "List of targets to be invoked. Default is '{default_target}'",
           "items": {
             "enum": [
+              "Analyze",
               "BuildWebsite",
               "Clean",
               "Compile",
+              "Format",
+              "FormatCheck",
+              "GenerateApiTypes",
               "GenerateReports",
               "GenerateWindowsMetrics",
               "Pack",

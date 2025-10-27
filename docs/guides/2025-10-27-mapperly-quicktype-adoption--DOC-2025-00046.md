@@ -1,20 +1,33 @@
 ---
 doc_id: DOC-2025-00046
-title: Mapperly and quicktype Adoption Guide
+title: Mapperly and quicktype Adoption Guide (Reference)
 doc_type: guide
-status: draft
+status: superseded
 canonical: false
 created: 2025-10-27
-tags: [code-generation, tooling, mapperly, quicktype, object-mapping, json-serialization, nuke-build]
-summary: Comprehensive guide for adopting Mapperly (object mapping) and quicktype (JSON type generation) to replace manual mapping and JSON parsing patterns in the codebase.
+updated: 2025-10-27
+tags: [code-generation, tooling, mapperly, quicktype, object-mapping, json-serialization, nuke-build, archived]
+summary: Original planning document for Mapperly and quicktype adoption. Implementation was completed by another agent. See DOC-2025-00047 for active usage guide.
+supersedes: []
+related: [DOC-2025-00047, DOC-2025-00048, DOC-2025-00049, DOC-2025-00050]
 source:
   author: agent
   agent: claude
   model: sonnet-4.5
-related: [DOC-2025-00018, DOC-2025-00029]
 ---
 
-# Mapperly and quicktype Adoption Guide
+# Mapperly and quicktype Adoption Guide (Reference)
+
+> **⚠️ NOTE**: This document was created as a planning guide but **implementation was already completed by another agent** on 2025-10-27.
+>
+> **For current usage**, see:
+>
+> - [Quick Start Guide](code-generation-quickstart.md) (DOC-2025-00047)
+> - [Workflow Guide](code-generation-workflow.md) (DOC-2025-00048)
+> - [Verification Checklist](code-generation-checklist.md) (DOC-2025-00049)
+> - [Implementation Summary](../archive/quicktype-mapperly-implementation-2025-10-27.md) (DOC-2025-00050)
+>
+> This document is kept for reference on decision rationale and architectural considerations.
 
 ## Executive Summary
 
@@ -23,7 +36,7 @@ This guide documents the decision and implementation plan for adopting two battl
 - **Mapperly**: Compile-time object mapper (replaces manual property mapping)
 - **quicktype**: JSON-to-strongly-typed-model generator (replaces manual JSON parsing)
 
-**Status**: Ready for implementation after SPEC-022 completion
+**Status**: ✅ **IMPLEMENTATION COMPLETE** (see DOC-2025-00050 for details)
 
 **Decision Rationale**: Use robust, well-maintained tools instead of reinventing the wheel with custom mapping and parsing code.
 

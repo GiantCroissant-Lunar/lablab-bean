@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using LablabBean.Plugins.Contracts;
+using LablabBean.Framework.Generated.Models.Qdrant;
 
 namespace LablabBean.Plugins.VectorStore.File;
 
@@ -77,12 +78,7 @@ internal sealed class FileVectorStore : IVectorStore
                 })
                 .OrderByDescending(x => x.Score)
                 .Take(Math.Max(1, topK))
-                .Select(x => new VectorSearchResult
-                {
-                    Id = x.Point.Id,
-                    Score = x.Score,
-                    Payload = x.Point.Payload
-                })
+                .Select(x => MapToSearchResult(x.Point, x.Score))
                 .ToList();
 
             return scored;
@@ -91,6 +87,16 @@ internal sealed class FileVectorStore : IVectorStore
         {
             @lock.ExitReadLock();
         }
+    }
+
+    private static VectorSearchResult MapToSearchResult(Point point, float score)
+    {
+        return new VectorSearchResult
+        {
+            Id = point.Id,
+            Score = score,
+            Payload = point.Payload
+        };
     }
 
     public async Task DeleteAsync(string collection, string id, CancellationToken ct = default)

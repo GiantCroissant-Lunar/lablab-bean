@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using LablabBean.Plugins.Contracts;
+using LablabBean.Framework.Generated.Models.Qdrant;
 
 namespace LablabBean.Plugins.VectorStore.Qdrant;
 
@@ -52,46 +54,54 @@ internal sealed class QdrantVectorStore : IVectorStore
 
     public async Task<IReadOnlyList<VectorSearchResult>> SearchAsync(string collection, float[] vector, int topK, CancellationToken ct = default)
     {
-        var body = new
+        var request = new QdrantSearchRequest
         {
-            vector,
-            limit = topK,
-            with_payload = true
+            Vector = vector.Select(v => (double)v).ToList(),
+            Limit = topK,
+            WithPayload = true
         };
-        using var resp = await _http.PostAsJsonAsync($"/collections/{collection}/points/search", body, ct).ConfigureAwait(false);
+
+        using var resp = await _http.PostAsJsonAsync($"/collections/{collection}/points/search", request, ct).ConfigureAwait(false);
         resp.EnsureSuccessStatusCode();
+
         using var stream = await resp.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct).ConfigureAwait(false);
-        var root = doc.RootElement;
-        if (!root.TryGetProperty("result", out var result) || result.ValueKind != JsonValueKind.Array)
+        var searchResponse = await JsonSerializer.DeserializeAsync<QdrantSearchResponse>(stream, cancellationToken: ct).ConfigureAwait(false);
+
+        if (searchResponse?.Result == null)
         {
             return Array.Empty<VectorSearchResult>();
         }
-        var list = new List<VectorSearchResult>();
-        foreach (var item in result.EnumerateArray())
+
+        return searchResponse.Result.Select(point => new VectorSearchResult
         {
-            string idStr = item.TryGetProperty("id", out var idEl)
-                ? idEl.ValueKind switch
-                {
-                    JsonValueKind.String => idEl.GetString()!,
-                    JsonValueKind.Number => idEl.GetRawText(),
-                    _ => Guid.NewGuid().ToString()
-                }
-                : Guid.NewGuid().ToString();
-            float score = item.TryGetProperty("score", out var scoreEl) && scoreEl.TryGetSingle(out var s) ? s : 0f;
-            IReadOnlyDictionary<string, string> payload = new Dictionary<string, string>();
-            if (item.TryGetProperty("payload", out var payloadEl) && payloadEl.ValueKind == JsonValueKind.Object)
-            {
-                var dict = new Dictionary<string, string>();
-                foreach (var prop in payloadEl.EnumerateObject())
-                {
-                    dict[prop.Name] = prop.Value.ValueKind == JsonValueKind.String ? prop.Value.GetString()! : prop.Value.GetRawText();
-                }
-                payload = dict;
-            }
-            list.Add(new VectorSearchResult { Id = idStr, Score = score, Payload = payload });
+            Id = point.Id.String ?? point.Id.Integer?.ToString() ?? Guid.NewGuid().ToString(),
+            Score = (float)point.Score,
+            Payload = ConvertPayload(point.Payload)
+        }).ToList();
+    }
+
+    private static IReadOnlyDictionary<string, string> ConvertPayload(Dictionary<string, object>? payload)
+    {
+        if (payload == null)
+        {
+            return new Dictionary<string, string>();
         }
-        return list;
+
+        var result = new Dictionary<string, string>();
+        foreach (var kvp in payload)
+        {
+            if (kvp.Value is JsonElement jsonElement)
+            {
+                result[kvp.Key] = jsonElement.ValueKind == JsonValueKind.String
+                    ? jsonElement.GetString()!
+                    : jsonElement.GetRawText();
+            }
+            else
+            {
+                result[kvp.Key] = kvp.Value?.ToString() ?? string.Empty;
+            }
+        }
+        return result;
     }
 
     public async Task DeleteAsync(string collection, string id, CancellationToken ct = default)

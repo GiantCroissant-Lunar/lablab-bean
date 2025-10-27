@@ -1,18 +1,15 @@
 # Documentation Organization Report
 
-*Generated: 2025-10-27T09:20:38.768938+00:00*
+*Generated: 2025-10-27T13:06:12.774671+00:00*
 
 ## Summary
 
 This report documents the automatic organization of scattered markdown and text files
 according to the R-DOC-001 rule.
 
-### Files Moved (4)
+### Files Moved (1)
 
-- `PHASE5_INTEGRATION_COMPLETE.md` → `docs\_inbox\PHASE5_INTEGRATION_COMPLETE.md`
-- `PHASE6_COMPLETE.md` → `docs\_inbox\PHASE6_COMPLETE.md`
-- `PHASE6_US2_COMPLETE.md` → `docs\_inbox\PHASE6_US2_COMPLETE.md`
-- `PHASE7_COMPLETE.md` → `docs\_inbox\PHASE7_COMPLETE.md`
+- `docs\archive\quicktype-mapperly-implementation-2025-10-27.md` → `docs\findings\quicktype-mapperly-implementation-2025-10-27.md`
 
 ## Organization Rules Applied
 

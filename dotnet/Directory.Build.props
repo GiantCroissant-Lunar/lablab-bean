@@ -18,4 +18,18 @@
     <Copyright>Copyright © 2025</Copyright>
     <Version>0.1.0</Version>
   </PropertyGroup>
+
+  <!-- Analyzer packages applied to all projects -->
+  <ItemGroup>
+    <!-- Version is centrally managed in Directory.Packages.props -->
+    <PackageReference Include="Meziantou.Analyzer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Configure Meziantou Analyzer defaults (optional) -->
+  <PropertyGroup>
+    <MeziantouAnalysisMode>Default</MeziantouAnalysisMode>
+  </PropertyGroup>
 </Project>

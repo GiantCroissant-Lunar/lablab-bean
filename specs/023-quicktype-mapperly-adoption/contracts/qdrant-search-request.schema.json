@@ -1,0 +1,62 @@
+{
+  "$id": "https://lablab-bean.local/schemas/qdrant/search-request.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "description": "Request structure for Qdrant vector similarity search API",
+  "properties": {
+    "filter": {
+      "description": "Filter conditions for search results",
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "limit": {
+      "description": "Maximum number of results to return (topK)",
+      "maximum": 1000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "offset": {
+      "description": "Pagination offset",
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "score_threshold": {
+      "description": "Minimum similarity score filter",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "vector": {
+      "description": "Query vector for similarity search",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "with_payload": {
+      "default": true,
+      "description": "Include payload in response",
+      "type": "boolean"
+    },
+    "with_vector": {
+      "default": false,
+      "description": "Include vectors in response",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "vector",
+    "limit"
+  ],
+  "title": "QdrantSearchRequest",
+  "type": "object"
+}

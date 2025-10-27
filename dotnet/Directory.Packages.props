@@ -9,6 +9,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
+    <!-- Analyzers -->
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.231" />
     <!-- Pin Extensions.AI to preview 9 to provide ChatCompletion type used by reflection during TUI init -->
     <PackageVersion Include="Microsoft.Extensions.AI" Version="9.0.0-preview.9.24556.5" />
     <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.0.0-preview.9.24556.5" />
@@ -57,6 +59,9 @@
     <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.7.0" />
     <PackageVersion Include="Sentry" Version="4.2.0" />
     <PackageVersion Include="FirebaseAdmin" Version="2.4.0" />
+    <!-- Code Generation -->
+    <PackageVersion Include="Riok.Mapperly" Version="4.1.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <!-- Resilience -->
     <PackageVersion Include="Polly" Version="8.5.0" />
     <PackageVersion Include="Polly.Extensions" Version="8.5.0" />

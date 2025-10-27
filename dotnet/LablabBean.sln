@@ -175,6 +175,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.MediaPla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.MediaPlayer.Terminal.Kitty", "plugins\LablabBean.Plugins.MediaPlayer.Terminal.Kitty\LablabBean.Plugins.MediaPlayer.Terminal.Kitty.csproj", "{3254DD99-0F55-4143-ABA9-E230B23EC0B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Framework.Generated", "framework\LablabBean.Framework.Generated\LablabBean.Framework.Generated.csproj", "{3687CE93-1754-4D3F-BB5F-83BA5A6F4584}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -493,6 +495,10 @@ Global
 		{3254DD99-0F55-4143-ABA9-E230B23EC0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3254DD99-0F55-4143-ABA9-E230B23EC0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3254DD99-0F55-4143-ABA9-E230B23EC0B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3687CE93-1754-4D3F-BB5F-83BA5A6F4584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3687CE93-1754-4D3F-BB5F-83BA5A6F4584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3687CE93-1754-4D3F-BB5F-83BA5A6F4584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3687CE93-1754-4D3F-BB5F-83BA5A6F4584}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{10000000-0000-0000-0000-000000000001} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
@@ -575,5 +581,6 @@ Global
 		{5D466449-CFA4-4560-8D6B-7D9AC6B532E7} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
 		{C28FB7BB-95D9-47B9-A8F9-2AC537E9BE55} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
 		{3254DD99-0F55-4143-ABA9-E230B23EC0B0} = {646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}
+		{3687CE93-1754-4D3F-BB5F-83BA5A6F4584} = {F1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}
 	EndGlobalSection
 EndGlobal

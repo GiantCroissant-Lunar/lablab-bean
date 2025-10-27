@@ -127,3 +127,18 @@ tasks:
     cmds:
     - task: dotnet:format
     - task: dotnet:analyze
+
+  format:
+    desc: Format code via NUKE (dotnet-format + optional ReSharper)
+    cmds:
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Format --configuration Debug
+
+  format:check:
+    desc: Verify formatting (no changes) via NUKE
+    cmds:
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target FormatCheck --configuration Debug
+
+  analyze:
+    desc: Run analyzer fixes and build via NUKE
+    cmds:
+    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Analyze --configuration Debug

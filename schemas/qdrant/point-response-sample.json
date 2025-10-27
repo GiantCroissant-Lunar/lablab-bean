@@ -1,0 +1,17 @@
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "payload": {
+    "metadata": {
+      "source": "example",
+      "timestamp": "2025-01-01T00:00:00Z"
+    },
+    "text": "Sample text content"
+  },
+  "vector": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5
+  ]
+}
