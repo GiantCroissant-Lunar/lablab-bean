@@ -98,6 +98,18 @@ Never commit secrets, credentials, or sensitive data. Use .gitignore appropriate
 
 ---
 
+## R-GIT-003: Pre-Commit Hooks Required
+
+Agents MUST NOT bypass pre-commit hooks when committing changes. Use `git commit` without `--no-verify` flag.
+
+**Rationale**: Pre-commit hooks enforce code quality, documentation organization (R-DOC-001, R-DOC-002), security checks, and formatting standards.
+
+**Exception**: Only bypass hooks in emergency situations and document the reason in commit message.
+
+**Reference**: `.pre-commit-config.yaml`
+
+---
+
 ## R-PRC-001: Document Architecture Decisions
 
 Significant architecture decisions should be documented as ADRs in `docs/adrs/`.
