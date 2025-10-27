@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\console-app\LablabBean.Game.TerminalUI\LablabBean.Game.TerminalUI.csproj" />
+    <ProjectReference Include="..\LablabBean.Plugins.Rendering.Terminal\LablabBean.Plugins.Rendering.Terminal.csproj" />
   </ItemGroup>
 
   <ItemGroup>

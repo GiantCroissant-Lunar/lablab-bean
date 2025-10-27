@@ -4,6 +4,10 @@
   ],
   "dependencies": [
     {
+      "id": "rendering-terminal",
+      "optional": false
+    },
+    {
       "id": "boss",
       "optional": false
     },

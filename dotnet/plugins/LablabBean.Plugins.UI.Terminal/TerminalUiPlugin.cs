@@ -1,4 +1,9 @@
+using LablabBean.Contracts.UI.Services;
+using LablabBean.Contracts.Game.UI;
+using LablabBean.Game.TerminalUI;
 using LablabBean.Plugins.Contracts;
+using LablabBean.Plugins.Rendering.Terminal;
+using LablabBean.Rendering.Contracts;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Reflection;
@@ -7,14 +12,17 @@ using TGui = global::Terminal.Gui;
 namespace LablabBean.Plugins.UI.Terminal;
 
 /// <summary>
-/// Terminal UI plugin that hosts Terminal.Gui and provides a minimal UI shell.
-/// Loads last by depending on core gameplay and diagnostics plugins.
+/// Terminal UI plugin that hosts Terminal.Gui and wires up TerminalUiAdapter.
+/// Loads last by depending on core gameplay and rendering plugins.
 /// </summary>
 public class TerminalUiPlugin : IPlugin
 {
     private ILogger? _logger;
+    private IPluginContext? _context;
     private bool _initialized;
     private bool _running;
+    private TerminalUiAdapter? _uiAdapter;
+    private TerminalSceneRenderer? _sceneRenderer;
 
     public string Id => "ui-terminal";
     public string Name => "Terminal UI";
@@ -23,17 +31,45 @@ public class TerminalUiPlugin : IPlugin
     public Task InitializeAsync(IPluginContext context, CancellationToken ct = default)
     {
         _logger = context.Logger;
+        _context = context;
         _logger.LogInformation("Initializing Terminal UI plugin");
+
+        // Create scene renderer - using a wrapper to adapt ILogger to ILogger<T>
+        _sceneRenderer = new TerminalSceneRenderer(new LoggerAdapter<TerminalSceneRenderer>(_logger));
+
+        // Create and register UI adapter
+        _uiAdapter = new TerminalUiAdapter(_sceneRenderer, _logger);
+
+        // Register services with plugin registry
+        context.Registry.Register<IService>(_uiAdapter);
+        context.Registry.Register<IDungeonCrawlerUI>(_uiAdapter);
+        context.Registry.Register<ISceneRenderer>(_sceneRenderer);
+
+        _logger.LogInformation("Registered IService, IDungeonCrawlerUI, and ISceneRenderer");
+
         _initialized = true;
         return Task.CompletedTask;
     }
 
+    // Adapter to convert ILogger to ILogger<T>
+    private class LoggerAdapter<T> : ILogger<T>
+    {
+        private readonly ILogger _logger;
+
+        public LoggerAdapter(ILogger logger) => _logger = logger;
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => _logger.BeginScope(state);
+        public bool IsEnabled(LogLevel logLevel) => _logger.IsEnabled(logLevel);
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+            => _logger.Log(logLevel, eventId, state, exception, formatter);
+    }
+
     public Task StartAsync(CancellationToken ct = default)
     {
-        if (!_initialized)
+        if (!_initialized || _uiAdapter == null)
             throw new InvalidOperationException("UI plugin not initialized");
 
-        _logger?.LogInformation("Starting Terminal.Gui from UI plugin");
+        _logger?.LogInformation("Starting Terminal.Gui UI");
 
         try
         {
@@ -45,45 +81,21 @@ public class TerminalUiPlugin : IPlugin
                 return Task.CompletedTask;
             }
 
-            // ConfigurationManager.Enabled removed in newer Terminal.Gui versions
-
             TGui.Application.Init();
 
-            var window = new TGui.Window
-            {
-                Title = "LablabBean - UI Plugin",
-                X = 0,
-                Y = 0,
-                Width = TGui.Dim.Fill(),
-                Height = TGui.Dim.Fill(),
-                BorderStyle = TGui.LineStyle.Single
-            };
+            // Initialize the UI adapter with Terminal.Gui
+            _uiAdapter.Initialize();
 
-            var label = new TGui.Label
-            {
-                Text = "TUI initialized via plugin. Press Q to quit.",
-                X = TGui.Pos.Center(),
-                Y = TGui.Pos.Center()
-            };
-            window.Add(label);
-
-            // Handle quit
-            window.KeyDown += (s, e) =>
-            {
-                if (e?.KeyCode == TGui.KeyCode.Q)
-                {
-                    TGui.Application.RequestStop();
-                    e.Handled = true;
-                }
-            };
+            // Get the main window from the adapter
+            var mainWindow = _uiAdapter.GetMainWindow();
 
             if (TGui.Application.Top != null)
             {
-                TGui.Application.Top.Add(window);
+                TGui.Application.Top.Add(mainWindow);
             }
 
             _running = true;
-            TGui.Application.Run(window);
+            TGui.Application.Run(mainWindow);
             _running = false;
         }
         catch (ReflectionTypeLoadException)

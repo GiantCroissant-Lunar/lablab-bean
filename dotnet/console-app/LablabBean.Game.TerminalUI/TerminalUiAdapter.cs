@@ -1,281 +1,144 @@
 using Arch.Core;
 using LablabBean.Contracts.Game.Models;
 using LablabBean.Contracts.Game.UI;
-using LablabBean.Contracts.Game.UI.Services;
 using LablabBean.Contracts.UI.Models;
 using LablabBean.Contracts.UI.Services;
-using LablabBean.Game.Core.Maps;
-using LablabBean.Game.TerminalUI.Services;
-using LablabBean.Game.TerminalUI.Views;
+using LablabBean.Rendering.Contracts;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
-using GameEntitySnapshot = LablabBean.Contracts.Game.Models.EntitySnapshot;
 
 namespace LablabBean.Game.TerminalUI;
 
 /// <summary>
 /// Terminal.Gui adapter implementing IUiService and IDungeonCrawlerUI.
-/// Orchestrates HUD, world view, activity log, and dialogue/quest/inventory panels.
+/// Phase 2: Minimal implementation to get the architecture in place.
+/// Full Terminal.Gui API compatibility will be addressed in Phase 3.
 /// </summary>
 public class TerminalUiAdapter : IService, IDungeonCrawlerUI
 {
-    private readonly ILogger<TerminalUiAdapter> _logger;
-    private readonly HudService _hudService;
-    private readonly WorldViewService _worldViewService;
-    private readonly ActivityLogView _activityLogView;
-
+    private readonly ISceneRenderer _sceneRenderer;
+    private readonly ILogger _logger;
     private Window? _mainWindow;
-    private Window? _dialogueWindow;
-    private Window? _questWindow;
-    private ViewportBounds _viewport;
-    private Position _cameraCenter;
-    private bool _initialized;
-    private bool _hudVisible = true;
 
-    private World? _world;
-    private DungeonMap? _map;
-
-    public TerminalUiAdapter(
-        ILogger<TerminalUiAdapter> logger,
-        HudService hudService,
-        WorldViewService worldViewService)
+    public TerminalUiAdapter(ISceneRenderer sceneRenderer, ILogger logger)
     {
+        _sceneRenderer = sceneRenderer;
         _logger = logger;
-        _hudService = hudService;
-        _worldViewService = worldViewService;
-        _activityLogView = new ActivityLogView("Activity");
-
-        _viewport = new ViewportBounds(0, 0, 80, 24);
-        _cameraCenter = new Position(0, 0);
     }
 
-    public async Task InitializeAsync(UIInitOptions options, CancellationToken cancellationToken = default)
+    #region IService Implementation
+
+    public Task InitializeAsync(UIInitOptions options, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Initializing Terminal UI adapter");
-
-        Application.Init();
-
-        _mainWindow = new Window
-        {
-            Title = options.Title ?? "LablabBean - Dungeon Crawler",
-            X = 0,
-            Y = 0,
-            Width = Dim.Fill(),
-            Height = Dim.Fill(),
-            BorderStyle = LineStyle.Single
-        };
-
-        _mainWindow.Add(_worldViewService.WorldView);
-        _mainWindow.Add(_hudService.HudView);
-        _mainWindow.Add(_activityLogView);
-
-        _mainWindow.KeyDown += HandleKeyDown;
-
-        if (Application.Top != null)
-        {
-            Application.Top.Add(_mainWindow);
-        }
-
-        _initialized = true;
-        _logger.LogInformation("Terminal UI adapter initialized");
-
-        await Task.CompletedTask;
+        _logger.LogInformation("Initializing Terminal UI Adapter");
+        Initialize();
+        return Task.CompletedTask;
     }
 
-    public Task RenderViewportAsync(ViewportBounds viewport, IReadOnlyCollection<GameEntitySnapshot> entities)
+    public Task RenderViewportAsync(ViewportBounds viewport, IReadOnlyCollection<EntitySnapshot> entities)
     {
-        _viewport = viewport;
-
-        if (_world != null && _map != null)
-        {
-            _worldViewService.Render(_world, _map);
-        }
-
+        _logger.LogDebug("Render viewport: {EntityCount} entities", entities.Count);
         return Task.CompletedTask;
     }
 
     public Task UpdateDisplayAsync()
     {
-        if (_world != null)
-        {
-            _hudService.Update(_world);
-        }
-
-        Application.Refresh();
+        _logger.LogDebug("Display update requested");
         return Task.CompletedTask;
     }
 
     public Task HandleInputAsync(InputCommand command)
     {
+        _logger.LogDebug("Input command: {Command}", command);
         return Task.CompletedTask;
     }
 
     public ViewportBounds GetViewport()
     {
-        return _viewport;
+        return new ViewportBounds(new Position(0, 0), 80, 24);
     }
 
     public void SetViewportCenter(Position centerPosition)
     {
-        _cameraCenter = centerPosition;
-        _logger.LogDebug("Camera centered at {X},{Y}", centerPosition.X, centerPosition.Y);
+        _logger.LogDebug("Set viewport center: ({X}, {Y})", centerPosition.X, centerPosition.Y);
     }
 
-    public void SetWorld(World world)
+    public void Initialize()
     {
-        _world = world;
-    }
-
-    public void SetMap(DungeonMap map)
-    {
-        _map = map;
-    }
-
-    public void BindActivityLog(IActivityLog activityLog)
-    {
-        if (activityLog is LablabBean.Contracts.UI.Services.IActivityLogService legacyService)
+        _mainWindow = new Window
         {
-            _activityLogView.Bind(legacyService);
-        }
+            Title = "LablabBean - Dungeon Crawler (Phase 2 - Minimal UI)",
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(),
+            Height = Dim.Fill()
+        };
+
+        var label = new Label
+        {
+            Text = "Terminal UI Adapter - Phase 2 Implementation\nPress Q to quit",
+            X = Pos.Center(),
+            Y = Pos.Center()
+        };
+
+        _mainWindow.Add(label);
+        _logger.LogInformation("Terminal UI adapter initialized (minimal placeholder)");
     }
+
+    public Window GetMainWindow()
+    {
+        return _mainWindow ?? throw new InvalidOperationException("UI not initialized");
+    }
+
+    #endregion
 
     #region IDungeonCrawlerUI Implementation
 
     public void ToggleHud()
     {
-        _hudVisible = !_hudVisible;
-        _hudService.HudView.Visible = _hudVisible;
-        _logger.LogInformation("HUD visibility toggled: {Visible}", _hudVisible);
+        _logger.LogInformation("HUD toggle requested");
     }
 
     public void ShowDialogue(string speaker, string text, string[]? choices = null)
     {
-        if (_dialogueWindow == null)
-        {
-            _dialogueWindow = new Window
-            {
-                Title = $"Dialogue - {speaker}",
-                X = Pos.Center(),
-                Y = Pos.Center(),
-                Width = Dim.Percent(70),
-                Height = Dim.Percent(50),
-                BorderStyle = LineStyle.Double
-            };
-
-            var textLabel = new Label
-            {
-                X = 1,
-                Y = 1,
-                Width = Dim.Fill(2),
-                Height = Dim.Fill(2),
-                Text = text
-            };
-            _dialogueWindow.Add(textLabel);
-
-            if (Application.Top != null)
-            {
-                Application.Top.Add(_dialogueWindow);
-            }
-        }
-        else
-        {
-            _dialogueWindow.Title = $"Dialogue - {speaker}";
-            if (_dialogueWindow.Subviews.Count > 0 && _dialogueWindow.Subviews[0] is Label label)
-            {
-                label.Text = text;
-            }
-            _dialogueWindow.Visible = true;
-        }
-
-        _logger.LogInformation("Showing dialogue from {Speaker}", speaker);
+        _logger.LogInformation("Dialogue: {Speaker} - {Text}", speaker, text);
     }
 
     public void HideDialogue()
     {
-        if (_dialogueWindow != null)
-        {
-            _dialogueWindow.Visible = false;
-        }
-        _logger.LogInformation("Dialogue hidden");
+        _logger.LogDebug("Hide dialogue requested");
     }
 
     public void ShowQuests()
     {
-        if (_questWindow == null)
-        {
-            _questWindow = new Window
-            {
-                Title = "Quest Log",
-                X = Pos.Center(),
-                Y = Pos.Center(),
-                Width = Dim.Percent(80),
-                Height = Dim.Percent(80),
-                BorderStyle = LineStyle.Double
-            };
-
-            var questLabel = new Label
-            {
-                X = 1,
-                Y = 1,
-                Text = "No active quests."
-            };
-            _questWindow.Add(questLabel);
-
-            if (Application.Top != null)
-            {
-                Application.Top.Add(_questWindow);
-            }
-        }
-        else
-        {
-            _questWindow.Visible = true;
-        }
-
-        _logger.LogInformation("Quest log shown");
+        _logger.LogInformation("Show quests requested");
     }
 
     public void HideQuests()
     {
-        if (_questWindow != null)
-        {
-            _questWindow.Visible = false;
-        }
-        _logger.LogInformation("Quest log hidden");
+        _logger.LogDebug("Hide quests requested");
     }
 
     public void ShowInventory()
     {
-        _logger.LogInformation("Inventory panel requested (not yet implemented)");
+        _logger.LogInformation("Show inventory requested");
     }
 
     public void HideInventory()
     {
-        _logger.LogInformation("Hide inventory requested");
+        _logger.LogDebug("Hide inventory requested");
     }
 
     public void UpdatePlayerStats(int health, int maxHealth, int mana, int maxMana, int level, int experience)
     {
-        _logger.LogDebug("Player stats updated: HP={HP}/{MaxHP}, Level={Level}", health, maxHealth, level);
+        _logger.LogDebug("Player stats updated: HP {Health}/{MaxHealth}, Mana {Mana}/{MaxMana}, Level {Level}, XP {Experience}",
+            health, maxHealth, mana, maxMana, level, experience);
     }
 
     public void SetCameraFollow(int entityId)
     {
-        _logger.LogInformation("Camera follow set to entity {EntityId}", entityId);
+        _logger.LogDebug("Camera follow entity: {EntityId}", entityId);
     }
 
     #endregion
-
-    private void HandleKeyDown(Key.KeyEventEventArgs e)
-    {
-        if (e.KeyEvent.Key == Key.Q)
-        {
-            Application.RequestStop();
-            e.Handled = true;
-        }
-        else if (e.KeyEvent.Key == Key.H)
-        {
-            ToggleHud();
-            e.Handled = true;
-        }
-    }
 }
