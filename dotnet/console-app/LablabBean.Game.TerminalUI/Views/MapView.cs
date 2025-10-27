@@ -25,7 +25,7 @@ public class MapView : View
         _buffer = buffer;
         _bufferHeight = buffer.GetLength(0);
         _bufferWidth = buffer.GetLength(1);
-        SetNeedsDisplay();
+        SetNeedsDraw();
     }
 
     /// <summary>
@@ -37,8 +37,8 @@ public class MapView : View
             return;
 
         // Ensure we don't draw outside view bounds
-        int maxRows = Math.Min(_bufferHeight, Bounds.Height);
-        int maxCols = Math.Min(_bufferWidth, Bounds.Width);
+        int maxRows = Math.Min(_bufferHeight, Frame.Height);
+        int maxCols = Math.Min(_bufferWidth, Frame.Width);
 
         // Draw character by character using AddRune
         for (int row = 0; row < maxRows; row++)

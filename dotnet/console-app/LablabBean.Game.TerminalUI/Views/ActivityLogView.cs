@@ -24,7 +24,7 @@ public class ActivityLogView : FrameView
         Height = 10;
         CanFocus = false;
 
-        _listView = new ListView(new List<string>())
+        _listView = new ListView()
         {
             X = 0,
             Y = 0,
@@ -57,7 +57,7 @@ public class ActivityLogView : FrameView
         if (_service == null) return;
         var entries = _service.GetRecentEntries(_maxLines);
         var lines = BuildLines(entries);
-        _listView.SetSource(lines);
+        _listView.SetSource(new System.Collections.ObjectModel.ObservableCollection<string>(lines));
         if (lines.Count > 0)
         {
             _listView.SelectedItem = lines.Count - 1;

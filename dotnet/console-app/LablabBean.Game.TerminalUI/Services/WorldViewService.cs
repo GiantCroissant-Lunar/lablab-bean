@@ -32,8 +32,9 @@ public class WorldViewService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         // Create the main world frame (left side, leave space for debug log at bottom)
-        _worldFrame = new FrameView("Dungeon")
+        _worldFrame = new FrameView()
         {
+            Title = "Dungeon",
             X = 0,
             Y = 0,
             Width = Dim.Fill(30), // Leave space for HUD
@@ -50,13 +51,6 @@ public class WorldViewService
         };
 
         _worldFrame.Add(_renderView);
-
-        // Subscribe to layout changes to update view dimensions
-        _renderView.LayoutComplete += (sender, args) =>
-        {
-            _viewWidth = _renderView.Bounds.Width;
-            _viewHeight = _renderView.Bounds.Height;
-        };
     }
 
     /// <summary>
@@ -64,9 +58,9 @@ public class WorldViewService
     /// </summary>
     public void Render(World world, DungeonMap map)
     {
-        // Update dimensions from current view bounds
-        _viewWidth = _renderView.Bounds.Width;
-        _viewHeight = _renderView.Bounds.Height;
+        // Update dimensions from current view frame
+        _viewWidth = _renderView.Frame.Width;
+        _viewHeight = _renderView.Frame.Height;
 
         _logger.LogInformation("Render called: viewWidth={Width}, viewHeight={Height}", _viewWidth, _viewHeight);
 
@@ -192,7 +186,7 @@ public class WorldViewService
         if (color == SadColor.DarkGray)
             return TGuiColor.DarkGray;
         if (color == SadColor.Brown)
-            return TGuiColor.Brown;
+            return TGuiColor.DarkGray;  // Brown not available in Terminal.Gui v2
 
         // Default to gray
         return TGuiColor.Gray;

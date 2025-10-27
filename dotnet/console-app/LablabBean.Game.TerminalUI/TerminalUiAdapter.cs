@@ -3,6 +3,10 @@ using LablabBean.Contracts.Game.Models;
 using LablabBean.Contracts.Game.UI;
 using LablabBean.Contracts.UI.Models;
 using LablabBean.Contracts.UI.Services;
+using LablabBean.Game.Core.Maps;
+using LablabBean.Game.Core.Systems;
+using LablabBean.Game.TerminalUI.Services;
+using LablabBean.Game.TerminalUI.Views;
 using LablabBean.Rendering.Contracts;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
@@ -11,14 +15,18 @@ namespace LablabBean.Game.TerminalUI;
 
 /// <summary>
 /// Terminal.Gui adapter implementing IUiService and IDungeonCrawlerUI.
-/// Phase 2: Minimal implementation to get the architecture in place.
-/// Full Terminal.Gui API compatibility will be addressed in Phase 3.
+/// Phase 3: Full Terminal.Gui v2 API implementation with HUD, WorldView, and ActivityLog.
 /// </summary>
 public class TerminalUiAdapter : IService, IDungeonCrawlerUI
 {
     private readonly ISceneRenderer _sceneRenderer;
     private readonly ILogger _logger;
     private Window? _mainWindow;
+    private HudService? _hudService;
+    private WorldViewService? _worldViewService;
+    private ActivityLogView? _activityLogView;
+    private World? _currentWorld;
+    private DungeonMap? _currentMap;
 
     public TerminalUiAdapter(ISceneRenderer sceneRenderer, ILogger logger)
     {
@@ -35,9 +43,17 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
         return Task.CompletedTask;
     }
 
-    public Task RenderViewportAsync(ViewportBounds viewport, IReadOnlyCollection<EntitySnapshot> entities)
+    public Task RenderViewportAsync(ViewportBounds viewport, IReadOnlyCollection<Contracts.Game.Models.EntitySnapshot> entities)
     {
         _logger.LogDebug("Render viewport: {EntityCount} entities", entities.Count);
+
+        // If we have a world and map, render them
+        if (_currentWorld != null && _currentMap != null && _worldViewService != null && _hudService != null)
+        {
+            _worldViewService.Render(_currentWorld, _currentMap);
+            _hudService.Update(_currentWorld);
+        }
+
         return Task.CompletedTask;
     }
 
@@ -67,22 +83,26 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
     {
         _mainWindow = new Window
         {
-            Title = "LablabBean - Dungeon Crawler (Phase 2 - Minimal UI)",
+            Title = "LablabBean - Dungeon Crawler",
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
             Height = Dim.Fill()
         };
 
-        var label = new Label
-        {
-            Text = "Terminal UI Adapter - Phase 2 Implementation\nPress Q to quit",
-            X = Pos.Center(),
-            Y = Pos.Center()
-        };
+        // Initialize services (placeholder - need proper DI)
+        // For now, create with temporary logger adapters
+        var inventorySystem = new InventorySystem(new LoggerAdapter<InventorySystem>(_logger));
+        _hudService = new HudService(new LoggerAdapter<HudService>(_logger), inventorySystem);
+        _worldViewService = new WorldViewService(new LoggerAdapter<WorldViewService>(_logger));
+        _activityLogView = new ActivityLogView("Activity Log");
 
-        _mainWindow.Add(label);
-        _logger.LogInformation("Terminal UI adapter initialized (minimal placeholder)");
+        // Add views to main window
+        _mainWindow.Add(_worldViewService.WorldView);
+        _mainWindow.Add(_hudService.HudView);
+        _mainWindow.Add(_activityLogView);
+
+        _logger.LogInformation("Terminal UI adapter initialized with full HUD, WorldView, and ActivityLog");
     }
 
     public Window GetMainWindow()
@@ -133,6 +153,12 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
     {
         _logger.LogDebug("Player stats updated: HP {Health}/{MaxHealth}, Mana {Mana}/{MaxMana}, Level {Level}, XP {Experience}",
             health, maxHealth, mana, maxMana, level, experience);
+
+        // Update HUD if available
+        if (_hudService != null && _currentWorld != null)
+        {
+            _hudService.Update(_currentWorld);
+        }
     }
 
     public void SetCameraFollow(int entityId)
@@ -140,5 +166,34 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
         _logger.LogDebug("Camera follow entity: {EntityId}", entityId);
     }
 
+    // Helper method to set current world and map for rendering
+    public void SetWorldContext(World world, DungeonMap map)
+    {
+        _currentWorld = world;
+        _currentMap = map;
+    }
+
     #endregion
+}
+
+/// <summary>
+/// Helper class to adapt ILogger to ILogger<T>
+/// </summary>
+internal class LoggerAdapter<T> : ILogger<T>
+{
+    private readonly ILogger _logger;
+
+    public LoggerAdapter(ILogger logger)
+    {
+        _logger = logger;
+    }
+
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+        => _logger.BeginScope(state);
+
+    public bool IsEnabled(LogLevel logLevel)
+        => _logger.IsEnabled(logLevel);
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        => _logger.Log(logLevel, eventId, state, exception, formatter);
 }
