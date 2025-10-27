@@ -5,6 +5,7 @@
 ### ✅ What's Working
 
 **Core Services (10/10 tasks)**
+
 - MediaService orchestrates playback
 - Reactive observables for all state
 - Thread-safe concurrent playback
@@ -12,6 +13,7 @@
 - Full error handling
 
 **FFmpeg Engine (7/7 tasks)**
+
 - Supports all video/audio formats
 - Frame decoding at 30 FPS
 - Duration/metadata extraction
@@ -19,6 +21,7 @@
 - Observable frame stream
 
 **Braille Renderer (8/8 tasks)**
+
 - Universal terminal fallback
 - Unicode braille encoding (2×4 pixels)
 - ANSI 16-color quantization
@@ -26,12 +29,14 @@
 - Automatic viewport scaling
 
 **Terminal Detection (NEW - Bonus!)**
+
 - Auto-detects terminal capabilities
 - Caches results
 - Logs detected features
 - Supports all major terminals
 
 **ViewModel (8/8 tasks)**
+
 - ReactiveUI integration
 - Command can-execute logic
 - Throttled volume updates
@@ -39,12 +44,14 @@
 - Progress tracking
 
 **Views (8/8 tasks)**
+
 - Created (temporarily excluded)
 - Keyboard shortcuts
 - Reactive bindings
 - Thread-safe updates
 
 **Plugin System (3/3 tasks)**
+
 - MediaPlayerPlugin
 - FFmpegPlaybackPlugin
 - BrailleRendererPlugin
@@ -52,15 +59,18 @@
 ### 🎯 MVP Status: 82% Complete
 
 **Remaining**:
+
 - T075: Plugin loader integration (5 mins)
 - T076-T079: CLI commands (30 mins)
 
 **Blockers**:
+
 - Terminal.Gui v2 / .NET 9 compatibility
 
 ### 🚀 Next Action
 
 Add to Program.cs:
+
 ```csharp
 MediaPlayerPlugin.RegisterServices(services);
 FFmpegPlaybackPlugin.RegisterServices(services);
@@ -68,6 +78,7 @@ BrailleRendererPlugin.RegisterServices(services);
 ```
 
 Then add CLI command:
+
 ```csharp
 var playCommand = new Command(\"play\", \"Play media file\")
 {

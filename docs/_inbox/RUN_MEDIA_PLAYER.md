@@ -6,8 +6,8 @@
 
 ## 📦 Current Build Version
 
-**Build**: `0.0.4-021-unified-media-player.1`  
-**Location**: `build\_artifacts\0.0.4-021-unified-media-player.1\publish\console\`  
+**Build**: `0.0.4-021-unified-media-player.1`
+**Location**: `build\_artifacts\0.0.4-021-unified-media-player.1\publish\console\`
 **Status**: ✅ Ready for Testing
 
 ---
@@ -90,6 +90,7 @@ build\_artifacts\0.0.4-021-unified-media-player.1\publish\console\
 ## 🎯 Testing Media Player Features
 
 ### **Test User Story 1: Basic Playback**
+
 ```powershell
 # Using task command
 task run:media-player -- play --file "test-video.mp4" --renderer braille
@@ -100,6 +101,7 @@ cd build\_artifacts\0.0.4-021-unified-media-player.1\publish\console
 ```
 
 ### **Test User Story 2: Interactive Controls**
+
 ```powershell
 # Once playing, test controls:
 # - SPACE: Play/Pause
@@ -108,6 +110,7 @@ cd build\_artifacts\0.0.4-021-unified-media-player.1\publish\console
 ```
 
 ### **Test User Story 3: Multiple Renderers**
+
 ```powershell
 # Test Braille renderer
 task run:media-player -- play --file "video.mp4" --renderer braille
@@ -120,6 +123,7 @@ task run:media-player -- play --file "video.mp4" --renderer kitty
 ```
 
 ### **Test User Story 4: Plugin System**
+
 ```powershell
 # Verify media player plugins loaded
 task run:media-player -- plugins list
@@ -134,6 +138,7 @@ task run:media-player -- plugins info MediaPlayer.FFmpeg
 ## 🔍 Verification Commands
 
 ### **Check All Plugins Loaded**
+
 ```powershell
 # Using task command
 task run:media-player -- plugins list
@@ -144,6 +149,7 @@ cd build\_artifacts\0.0.4-021-unified-media-player.1\publish\console
 ```
 
 **Expected Output** (should include):
+
 ```
 ✅ LablabBean.Plugins.MediaPlayer.Core
 ✅ LablabBean.Plugins.MediaPlayer.FFmpeg
@@ -153,6 +159,7 @@ cd build\_artifacts\0.0.4-021-unified-media-player.1\publish\console
 ```
 
 ### **Verify Media Player Plugin Info**
+
 ```powershell
 # Using task command
 task run:media-player -- plugins info MediaPlayer.Core
@@ -171,6 +178,7 @@ cd build\_artifacts\0.0.4-021-unified-media-player.1\publish\console
 The `run-media-player.ps1` script is now integrated with the task command.
 
 **Usage via Task Command (Recommended)**:
+
 ```powershell
 # Basic usage
 task run:media-player
@@ -182,6 +190,7 @@ task run:media-player -- --help
 ```
 
 **Direct Script Usage** (if needed):
+
 ```powershell
 .\run-media-player.ps1
 .\run-media-player.ps1 plugins list
@@ -193,12 +202,14 @@ task run:media-player -- --help
 ## 🛠️ Troubleshooting
 
 ### **If executable not found:**
+
 ```powershell
 # Rebuild and publish
 task publish
 ```
 
 ### **If plugins not loading:**
+
 ```powershell
 # Check plugins directory exists
 Test-Path "build\_artifacts\0.0.4-021-unified-media-player.1\publish\console\plugins"
@@ -208,6 +219,7 @@ Get-ChildItem "build\_artifacts\0.0.4-021-unified-media-player.1\publish\console
 ```
 
 ### **If FFmpeg errors:**
+
 - Ensure FFmpeg is installed and in PATH
 - Check FFmpeg version: `ffmpeg -version`
 - Install if needed: `choco install ffmpeg` or download from ffmpeg.org
@@ -242,6 +254,6 @@ Get-ChildItem "build\_artifacts\0.0.4-021-unified-media-player.1\publish\console
 
 ---
 
-**Generated**: 2025-10-26  
-**Build Version**: 0.0.4-021-unified-media-player.1  
+**Generated**: 2025-10-26
+**Build Version**: 0.0.4-021-unified-media-player.1
 **Status**: ✅ Ready for Manual Testing
