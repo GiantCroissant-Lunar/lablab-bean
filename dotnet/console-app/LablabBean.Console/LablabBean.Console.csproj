@@ -42,14 +42,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Views/MainWindow.cs" />
-    <Compile Remove="Views/InteractiveWindow.cs" />
-    <Compile Remove="Services/TerminalGuiService.cs" />
-    <Compile Remove="Services/DungeonCrawlerService.cs" />
-    <Compile Remove="Views/SimpleWindow.cs" />
-    <Compile Remove="Views/Media/MediaControlsView.cs" />
-    <Compile Remove="Views/Media/MediaPlayerView.cs" />
-  </ItemGroup>
+  <!-- Legacy TUI files removed; compile-excludes cleaned up -->
 
 </Project>

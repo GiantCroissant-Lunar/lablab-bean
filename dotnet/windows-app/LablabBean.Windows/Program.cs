@@ -1,5 +1,6 @@
 using LablabBean.Infrastructure.Extensions;
 using LablabBean.Plugins.Core;
+using LablabBean.Plugins.Contracts;
 using LablabBean.Reactive.Extensions;
 using LablabBean.Game.Core.Services;
 using LablabBean.Game.Core.Systems;
@@ -8,6 +9,7 @@ using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Maps;
 using LablabBean.Game.SadConsole.Screens;
 using LablabBean.Game.SadConsole.Services;
+using LablabBean.Game.SadConsole;
 using LablabBean.Windows;
 using LablabBean.Reporting.Analytics;
 using LablabBean.Reporting.Contracts;
@@ -91,15 +93,27 @@ try
     services.AddSingleton<StatusEffectSystem>();
     services.AddSingleton<ActivityLogSystem>();
     services.AddSingleton<LablabBean.Contracts.UI.Services.IActivityLogService, LablabBean.Game.Core.Services.ActivityLogService>();
+    // Bridge old UI ActivityLogService to new game-specific IActivityLog via adapter
+    services.AddSingleton<LablabBean.Contracts.Game.UI.Services.IActivityLog>(sp =>
+        new LablabBean.Contracts.Game.UI.Services.Adapters.ActivityLogAdapter(
+            sp.GetRequiredService<LablabBean.Contracts.UI.Services.IActivityLogService>()));
     services.AddSingleton<LevelManager>();
     services.AddSingleton<GameStateManager>();
 
     var serviceProvider = services.BuildServiceProvider();
 
-    // TODO: Start plugin system manually when needed
-    // var pluginService = serviceProvider.GetServices<IHostedService>()
-    //     .FirstOrDefault(s => s.GetType().Name.Contains("PluginLoader"));
-    // if (pluginService != null) await pluginService.StartAsync(CancellationToken.None);
+    // Start plugin system to load SadConsole plugins
+    var pluginService = serviceProvider.GetServices<IHostedService>()
+        .FirstOrDefault(s => s.GetType().Name.Contains("PluginLoader"));
+    if (pluginService != null)
+    {
+        Log.Information("Starting plugin system");
+        await pluginService.StartAsync(CancellationToken.None);
+    }
+    else
+    {
+        Log.Warning("Plugin loader service not found - plugins will not be loaded");
+    }
 
     // Configure SadConsole
     var width = GameSettings.GAME_WIDTH;
@@ -212,10 +226,48 @@ try
     // SadConsole is now initialized, safe to create screens
     Game.Instance.Started += (sender, args) =>
     {
-        // Create and set the starting screen using DI
-        var gameScreen = ActivatorUtilities.CreateInstance<GameScreen>(serviceProvider, width, height);
-        gameScreen.Initialize();
-        Game.Instance.Screen = gameScreen;
+        // Try to get UI adapter from plugin system registry
+        var pluginRegistry = serviceProvider.GetService<IPluginRegistry>();
+        var serviceRegistry = serviceProvider.GetService<IRegistry>();
+        SadConsoleUiAdapter? uiAdapter = null;
+
+        if (serviceRegistry != null)
+        {
+            var uiServices = serviceRegistry.GetAll<SadConsoleUiAdapter>();
+            uiAdapter = uiServices.FirstOrDefault();
+
+            if (uiAdapter != null)
+            {
+                Log.Information("Using plugin-provided SadConsole UI adapter");
+            }
+        }
+
+        if (uiAdapter != null)
+        {
+            // Get GameScreen from adapter and set it as the main screen
+            var gameScreen = uiAdapter.GetGameScreen();
+            if (gameScreen != null)
+            {
+                Game.Instance.Screen = gameScreen;
+            }
+            else
+            {
+                Log.Warning("UI adapter did not provide GameScreen, creating fallback");
+                CreateFallbackGameScreen();
+            }
+        }
+        else
+        {
+            Log.Warning("SadConsole UI plugin not loaded, creating fallback GameScreen");
+            CreateFallbackGameScreen();
+        }
+
+        void CreateFallbackGameScreen()
+        {
+            var gameScreen = ActivatorUtilities.CreateInstance<GameScreen>(serviceProvider, width, height);
+            gameScreen.Initialize();
+            Game.Instance.Screen = gameScreen;
+        }
 
         // Hook combat events for metrics collection
         var metricsCollector = serviceProvider.GetRequiredService<SessionMetricsCollector>();

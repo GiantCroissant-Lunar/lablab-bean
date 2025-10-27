@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\framework\LablabBean.Infrastructure\LablabBean.Infrastructure.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Reactive\LablabBean.Reactive.csproj" />
     <ProjectReference Include="..\..\framework\LablabBean.Plugins.Core\LablabBean.Plugins.Core.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
     <ProjectReference Include="..\LablabBean.Game.SadConsole\LablabBean.Game.SadConsole.csproj" />
 
     <!-- Reporting framework -->

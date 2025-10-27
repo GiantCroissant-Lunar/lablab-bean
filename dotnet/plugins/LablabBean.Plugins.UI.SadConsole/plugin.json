@@ -1,0 +1,19 @@
+{
+  "capabilities": [
+    "ui",
+    "ui:windows"
+  ],
+  "dependencies": [
+    {
+      "id": "rendering-sadconsole",
+      "optional": false
+    }
+  ],
+  "description": "SadConsole-based UI host for Windows.",
+  "entryPoint": {
+    "dotnet.windows": "LablabBean.Plugins.UI.SadConsole.dll,LablabBean.Plugins.UI.SadConsole.SadConsoleUiPlugin"
+  },
+  "id": "ui-sadconsole",
+  "name": "SadConsole UI",
+  "version": "1.0.0"
+}

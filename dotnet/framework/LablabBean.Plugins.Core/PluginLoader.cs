@@ -24,6 +24,7 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
     private readonly PluginRegistry _pluginRegistry;
     private readonly ServiceRegistry _serviceRegistry;
     private readonly DependencyResolver _dependencyResolver;
+    private readonly CapabilityValidator _capabilityValidator;
     private readonly Dictionary<string, LoadedPlugin> _loadedPlugins = new();
     private readonly bool _enableHotReload;
     private readonly string _profile;
@@ -51,6 +52,7 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
         _profile = profile;
         _metrics = metrics;
         _dependencyResolver = new DependencyResolver(_logger);
+        _capabilityValidator = new CapabilityValidator(_logger, _configuration);
     }
 
     public IPluginRegistry PluginRegistry => _pluginRegistry;
@@ -147,7 +149,28 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
             return 0;
         }
 
-        var result = _dependencyResolver.Resolve(manifests.Select(m => m.manifest).ToList());
+        // Step 1: Validate capabilities (single UI + single renderer)
+        var allManifests = manifests.Select(m => m.manifest).ToList();
+        var capabilityResult = _capabilityValidator.Validate(allManifests);
+
+        // Register capability-excluded plugins
+        foreach (var (excludedId, reason) in capabilityResult.ExcludedPlugins)
+        {
+            var excluded = manifests.First(m => m.manifest.Id == excludedId);
+            var descriptor = new PluginDescriptor
+            {
+                Id = excluded.manifest.Id,
+                Name = excluded.manifest.Name,
+                Version = excluded.manifest.Version,
+                State = PluginState.Failed,
+                Manifest = excluded.manifest,
+                FailureReason = reason
+            };
+            _pluginRegistry.Add(descriptor);
+        }
+
+        // Step 2: Resolve dependencies on capability-validated plugins
+        var result = _dependencyResolver.Resolve(capabilityResult.ManifestsToLoad);
 
         foreach (var excludedId in result.ExcludedPlugins)
         {

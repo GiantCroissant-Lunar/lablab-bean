@@ -25,22 +25,20 @@ public class MapView : View
         _buffer = buffer;
         _bufferHeight = buffer.GetLength(0);
         _bufferWidth = buffer.GetLength(1);
-        SetNeedsDisplay();
+        SetNeedsDraw();
     }
 
     /// <summary>
-    /// Renders the buffer to screen - called by Terminal.Gui rendering system
+    /// Renders the buffer to screen
     /// </summary>
-    public override void OnDrawContent(Rect viewport)
+    public void RenderBuffer()
     {
-        base.OnDrawContent(viewport);
-
         if (_buffer == null)
             return;
 
-        // Ensure we don't draw outside viewport bounds
-        int maxRows = Math.Min(_bufferHeight, viewport.Height);
-        int maxCols = Math.Min(_bufferWidth, viewport.Width);
+        // Ensure we don't draw outside view bounds
+        int maxRows = Math.Min(_bufferHeight, Frame.Height);
+        int maxCols = Math.Min(_bufferWidth, Frame.Width);
 
         // Draw character by character using AddRune
         for (int row = 0; row < maxRows; row++)

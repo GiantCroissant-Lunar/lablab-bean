@@ -1,0 +1,14 @@
+{
+  "capabilities": [
+    "renderer",
+    "renderer:sadconsole"
+  ],
+  "dependencies": [],
+  "description": "SadConsole-based scene renderer for Windows.",
+  "entryPoint": {
+    "dotnet.windows": "LablabBean.Plugins.Rendering.SadConsole.dll,LablabBean.Plugins.Rendering.SadConsole.SadConsoleRenderingPlugin"
+  },
+  "id": "rendering-sadconsole",
+  "name": "SadConsole Rendering",
+  "version": "1.0.0"
+}

@@ -1,43 +1,48 @@
 {
   "capabilities": [
-    "ui"
+    "ui",
+    "ui:terminal"
   ],
   "dependencies": [
     {
-      "id": "boss",
+      "id": "rendering-terminal",
       "optional": false
+    },
+    {
+      "id": "boss",
+      "optional": true
     },
     {
       "id": "inventory",
-      "optional": false
+      "optional": true
     },
     {
       "id": "npc",
-      "optional": false
+      "optional": true
     },
     {
       "id": "progression",
-      "optional": false
+      "optional": true
     },
     {
       "id": "quest",
-      "optional": false
+      "optional": true
     },
     {
       "id": "spells",
-      "optional": false
+      "optional": true
     },
     {
       "id": "status-effects",
-      "optional": false
+      "optional": true
     },
     {
       "id": "hazards",
-      "optional": false
+      "optional": true
     },
     {
       "id": "vector-store-file",
-      "optional": false
+      "optional": true
     },
     {
       "id": "vector-store-qdrant",

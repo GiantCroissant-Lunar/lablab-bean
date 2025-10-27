@@ -26,14 +26,16 @@ public class WorldViewService
     private int _viewHeight;
 
     public View WorldView => _worldFrame;
+    public View RenderViewControl => _renderView;
 
     public WorldViewService(ILogger<WorldViewService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         // Create the main world frame (left side, leave space for debug log at bottom)
-        _worldFrame = new FrameView("Dungeon")
+        _worldFrame = new FrameView()
         {
+            Title = "Dungeon",
             X = 0,
             Y = 0,
             Width = Dim.Fill(30), // Leave space for HUD
@@ -50,13 +52,6 @@ public class WorldViewService
         };
 
         _worldFrame.Add(_renderView);
-
-        // Subscribe to layout changes to update view dimensions
-        _renderView.LayoutComplete += (sender, args) =>
-        {
-            _viewWidth = _renderView.Bounds.Width;
-            _viewHeight = _renderView.Bounds.Height;
-        };
     }
 
     /// <summary>
@@ -64,16 +59,34 @@ public class WorldViewService
     /// </summary>
     public void Render(World world, DungeonMap map)
     {
-        // Update dimensions from current view bounds
-        _viewWidth = _renderView.Bounds.Width;
-        _viewHeight = _renderView.Bounds.Height;
+        // Update dimensions from current view frame
+        _viewWidth = _renderView.Frame.Width;
+        _viewHeight = _renderView.Frame.Height;
+
+        if (!TryBuildGlyphArray(world, map, out var buffer))
+        {
+            return;
+        }
+
+        _renderView.UpdateBuffer(buffer);
+    }
+
+    /// <summary>
+    /// Builds a glyph array for the current viewport; returns false if dimensions/position invalid.
+    /// </summary>
+    public bool TryBuildGlyphArray(World world, DungeonMap map, out char[,] buffer)
+    {
+        buffer = default!;
+        // Ensure dimensions are up to date from current render view
+        _viewWidth = _renderView.Frame.Width;
+        _viewHeight = _renderView.Frame.Height;
 
         _logger.LogInformation("Render called: viewWidth={Width}, viewHeight={Height}", _viewWidth, _viewHeight);
 
         if (_viewWidth <= 0 || _viewHeight <= 0)
         {
             _logger.LogWarning("Render aborted: view dimensions invalid");
-            return;
+            return false;
         }
 
         // Get player position for camera centering
@@ -81,7 +94,7 @@ public class WorldViewService
         if (playerPos == null)
         {
             _logger.LogWarning("Render aborted: no player position");
-            return;
+            return false;
         }
 
         _logger.LogInformation("Rendering with player at {X},{Y}", playerPos.Value.X, playerPos.Value.Y);
@@ -95,7 +108,7 @@ public class WorldViewService
         cameraY = Math.Max(0, Math.Min(cameraY, map.Height - _viewHeight));
 
         // Build the buffer
-        var buffer = new char[_viewHeight, _viewWidth];
+        buffer = new char[_viewHeight, _viewWidth];
 
         for (int y = 0; y < _viewHeight && y + cameraY < map.Height; y++)
         {
@@ -140,8 +153,44 @@ public class WorldViewService
             }
         }
 
-        _logger.LogInformation("Buffer created: {Width}x{Height}, updating view", _viewWidth, _viewHeight);
-        _renderView.UpdateBuffer(buffer);
+        _logger.LogInformation("Buffer created: {Width}x{Height}", _viewWidth, _viewHeight);
+        return true;
+    }
+
+    /// <summary>
+    /// Compute camera top-left based on player-centric viewport.
+    /// Returns false if dimensions or player position are invalid.
+    /// </summary>
+    public bool TryComputeCamera(World world, DungeonMap map, out int cameraX, out int cameraY)
+    {
+        _viewWidth = _renderView.Frame.Width;
+        _viewHeight = _renderView.Frame.Height;
+        cameraX = 0; cameraY = 0;
+
+        if (_viewWidth <= 0 || _viewHeight <= 0)
+        {
+            return false;
+        }
+
+        var playerPos = GetPlayerPosition(world);
+        if (playerPos == null)
+        {
+            return false;
+        }
+
+        cameraX = playerPos.Value.X - _viewWidth / 2;
+        cameraY = playerPos.Value.Y - _viewHeight / 2;
+        cameraX = Math.Max(0, Math.Min(cameraX, map.Width - _viewWidth));
+        cameraY = Math.Max(0, Math.Min(cameraY, map.Height - _viewHeight));
+        return true;
+    }
+
+    /// <summary>
+    /// Get current viewport dimensions from the render view.
+    /// </summary>
+    public (int width, int height) GetViewportSize()
+    {
+        return (_renderView.Frame.Width, _renderView.Frame.Height);
     }
 
     /// <summary>
@@ -192,7 +241,7 @@ public class WorldViewService
         if (color == SadColor.DarkGray)
             return TGuiColor.DarkGray;
         if (color == SadColor.Brown)
-            return TGuiColor.Brown;
+            return TGuiColor.DarkGray;  // Brown not available in Terminal.Gui v2
 
         // Default to gray
         return TGuiColor.Gray;

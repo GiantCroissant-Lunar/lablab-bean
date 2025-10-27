@@ -30,8 +30,9 @@ public class HudService
         _inventorySystem = inventorySystem ?? throw new ArgumentNullException(nameof(inventorySystem));
 
         // Create the main HUD frame (on the right side)
-        _hudFrame = new FrameView("HUD")
+        _hudFrame = new FrameView()
         {
+            Title = "HUD",
             X = Pos.AnchorEnd(30),
             Y = 0,
             Width = 30,
@@ -70,8 +71,9 @@ public class HudService
         };
 
         // Inventory display
-        _inventoryFrame = new FrameView("Inventory (0/20)")
+        _inventoryFrame = new FrameView()
         {
+            Title = "Inventory (0/20)",
             X = 1,
             Y = 13,
             Width = Dim.Fill(2),

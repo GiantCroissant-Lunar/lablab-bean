@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.UI\LablabBean.Contracts.UI.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.Game.UI\LablabBean.Contracts.Game.UI.csproj" />
+    <ProjectReference Include="..\..\windows-app\LablabBean.Game.SadConsole\LablabBean.Game.SadConsole.csproj" />
+    <ProjectReference Include="..\LablabBean.Plugins.Rendering.SadConsole\LablabBean.Plugins.Rendering.SadConsole.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <!-- Copy plugin.json to output directory -->
+  <ItemGroup>
+    <None Include="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
