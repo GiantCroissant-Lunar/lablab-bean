@@ -39,10 +39,10 @@
   - [ ] Test player movement and camera following
   - [ ] Test HUD updates with changing game state
 
-- [ ] Phase 5 – Windows/SadConsole Stack
-  - [ ] Rendering.SadConsole plugin implemented
-  - [ ] LablabBean.Game.SadConsole adapter (IUiService + IDungeonCrawlerUI)
-  - [ ] UI.SadConsole plugin composes GameScreen/HUD and registers services
+- [x] Phase 5 – Windows/SadConsole Stack
+  - [x] Rendering.SadConsole plugin implemented
+  - [x] LablabBean.Game.SadConsole adapter (IService + IDungeonCrawlerUI)
+  - [x] UI.SadConsole plugin composes GameScreen/HUD and registers services
   - [ ] Windows app loads plugins only
 
 - [ ] Phase 6 – Selection + Validation
