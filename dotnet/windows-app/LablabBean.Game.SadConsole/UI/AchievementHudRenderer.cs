@@ -182,7 +182,7 @@ public class AchievementProgressHud
             foreach (var unlock in recentUnlocks)
             {
                 var achievement = _achievementSystem.AllAchievements
-                    .FirstOrDefault(a => a.Id == unlock.AchievementId);
+                    .FirstOrDefault(a => string.Equals(a.Id, unlock.AchievementId, StringComparison.Ordinal));
 
                 if (achievement != null && y < _console.Height - 2)
                 {
@@ -206,7 +206,7 @@ public class AchievementProgressHud
             if (y >= _console.Height - 2) break;
 
             var achievement = _achievementSystem.AllAchievements
-                .FirstOrDefault(a => a.Id == p.AchievementId);
+                .FirstOrDefault(a => string.Equals(a.Id, p.AchievementId, StringComparison.Ordinal));
 
             if (achievement != null)
             {

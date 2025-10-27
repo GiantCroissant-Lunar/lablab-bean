@@ -1,6 +1,7 @@
 using Arch.Core;
 using Arch.Core.Extensions;
 using LablabBean.Game.Core.Components;
+using LablabBean.Game.Core.Systems;
 using SadConsole;
 using SadConsole.UI;
 using SadConsole.UI.Controls;
@@ -19,7 +20,7 @@ public class HudRenderer
     private readonly Label _statsLabel;
     private readonly ListBox _messageList;
     private readonly List<string> _messages;
-    private LablabBean.Game.Core.Systems.CombatSystem? _combatSystem;
+    private CombatSystem? _combatSystem;
 
     public ControlsConsole Console => _console;
 
@@ -69,7 +70,7 @@ public class HudRenderer
     /// <summary>
     /// Sets the combat system for calculating modified stats
     /// </summary>
-    public void SetCombatSystem(LablabBean.Game.Core.Systems.CombatSystem combatSystem)
+    public void SetCombatSystem(CombatSystem combatSystem)
     {
         _combatSystem = combatSystem;
     }

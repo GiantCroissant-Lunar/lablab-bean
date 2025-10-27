@@ -131,7 +131,7 @@ public class LeaderboardRenderer
             var entry = entries[i];
             int rowY = y + i + 2;
 
-            var isPlayer = entry.PlayerName == playerName;
+            var isPlayer = string.Equals(entry.PlayerName, playerName, StringComparison.Ordinal);
             var rankColor = GetRankColor(entry.Rank);
             var textColor = isPlayer ? Color.Cyan : Color.White;
 

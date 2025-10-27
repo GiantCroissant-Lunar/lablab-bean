@@ -50,6 +50,9 @@ try
     // Build DI container
     var services = new ServiceCollection();
 
+    // Add configuration to DI container
+    services.AddSingleton<IConfiguration>(configuration);
+
     // Add logging services
     services.AddLogging(builder =>
     {

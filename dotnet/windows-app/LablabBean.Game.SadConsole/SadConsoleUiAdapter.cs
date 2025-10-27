@@ -7,11 +7,13 @@ using LablabBean.Game.Core.Maps;
 using LablabBean.Game.SadConsole.Screens;
 using LablabBean.Rendering.Contracts;
 using LablabBean.Game.Core.Components;
-using LablabBean.Game.SadConsole.Styles;
+using CorePosition = LablabBean.Game.Core.Components.Position;
+using ContractPosition = LablabBean.Contracts.Game.Models.Position;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using SadConsole;
+using System.Runtime.InteropServices;
 
 namespace LablabBean.Game.SadConsole;
 
@@ -19,7 +21,7 @@ namespace LablabBean.Game.SadConsole;
 /// SadConsole adapter implementing IService and IDungeonCrawlerUI.
 /// Wraps GameScreen and provides interface compliance for the plugin system.
 /// </summary>
-public class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
+public partial class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
 {
     private readonly ISceneRenderer _sceneRenderer;
     private readonly ILogger<SadConsoleUiAdapter> _logger;
@@ -60,8 +62,8 @@ public class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
         {
             if (_currentWorld != null && _currentMap != null && _gameScreen != null)
             {
-                var width = _gameScreen.Width;
-                var height = _gameScreen.Height;
+                var width = _gameScreen.WorldSurface.Width;
+                var height = _gameScreen.WorldSurface.Height;
                 if (TryBuildGlyphArray(_currentWorld, _currentMap, width, height, out var glyphs, out var camX, out var camY))
                 {
                     var buffer = new TileBuffer(width, height, glyphMode: true);
@@ -72,8 +74,8 @@ public class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
                     int[,] entZ = new int[height, width];
                     for (int yy = 0; yy < height; yy++) for (int xx = 0; xx < width; xx++) entZ[yy, xx] = int.MinValue;
 
-                    var query = new QueryDescription().WithAll<Position, Renderable, Visible>();
-                    _currentWorld.Query(in query, (Entity e, ref Position pos, ref Renderable renderable, ref Visible vis) =>
+                    var query = new QueryDescription().WithAll<CorePosition, Renderable, Visible>();
+                    _currentWorld.Query(in query, (Entity e, ref CorePosition pos, ref Renderable renderable, ref Visible vis) =>
                     {
                         if (!vis.IsVisible) return;
                         if (!_currentMap.IsInFOV(pos.Point)) return;
@@ -135,10 +137,10 @@ public class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
     public ViewportBounds GetViewport()
     {
         // TODO: Get actual viewport from GameScreen
-        return new ViewportBounds(new Position(0, 0), 80, 50);
+        return new ViewportBounds(new ContractPosition(0, 0), 80, 50);
     }
 
-    public void SetViewportCenter(Position centerPosition)
+    public void SetViewportCenter(ContractPosition centerPosition)
     {
         _logger.LogDebug("Set viewport center: ({X}, {Y})", centerPosition.X, centerPosition.Y);
         // TODO: Update GameScreen camera
@@ -257,49 +259,48 @@ public class SadConsoleUiAdapter : IService, IDungeonCrawlerUI
         => (0xFFu << 24) | ((uint)c.R << 16) | ((uint)c.G << 8) | c.B;
 }
 
-namespace LablabBean.Game.SadConsole.Styles
+// SadConsoleRenderStyles - moved to file-scoped namespace
+public sealed class SadConsoleRenderStyles
 {
-    public sealed class SadConsoleRenderStyles
+    public List<uint>? Palette { get; set; }
+    public Style Floor { get; set; } = new Style('.', 0xFFC0C0C0, 0xFF000000);
+    public Style Wall { get; set; } = new Style('#', 0xFF808080, 0xFF000000);
+    public Style FloorExplored { get; set; } = new Style('·', 0xFF404040, 0xFF000000);
+    public Style WallExplored { get; set; } = new Style('▒', 0xFF606060, 0xFF000000);
+    public Style EntityDefault { get; set; } = new Style('@', 0xFFFFFFFF, 0xFF000000);
+
+    public static SadConsoleRenderStyles Default()
     {
-        public List<uint>? Palette { get; set; }
-        public Style Floor { get; set; } = new Style('.', 0xFFC0C0C0, 0xFF000000);
-        public Style Wall { get; set; } = new Style('#', 0xFF808080, 0xFF000000);
-        public Style FloorExplored { get; set; } = new Style('·', 0xFF404040, 0xFF000000);
-        public Style WallExplored { get; set; } = new Style('▒', 0xFF606060, 0xFF000000);
-        public Style EntityDefault { get; set; } = new Style('@', 0xFFFFFFFF, 0xFF000000);
-
-        public static SadConsoleRenderStyles Default()
+        return new SadConsoleRenderStyles
         {
-            return new SadConsoleRenderStyles
+            Palette = new List<uint>
             {
-                Palette = new List<uint>
-                {
-                    0xFF000000, 0xFFFF0000, 0xFF00FF00, 0xFFFFFF00,
-                    0xFF0000FF, 0xFFFF00FF, 0xFF00FFFF, 0xFFB0B0B0,
-                    0xFF505050, 0xFFFF8080, 0xFF80FF80, 0xFFFFFF80,
-                    0xFF8080FF, 0xFFFF80FF, 0xFF80FFFF, 0xFFFFFFFF
-                }
-            };
-        }
+                0xFF000000, 0xFFFF0000, 0xFF00FF00, 0xFFFFFF00,
+                0xFF0000FF, 0xFFFF00FF, 0xFF00FFFF, 0xFFB0B0B0,
+                0xFF505050, 0xFFFF8080, 0xFF80FF80, 0xFFFFFF80,
+                0xFF8080FF, 0xFFFF80FF, 0xFF80FFFF, 0xFFFFFFFF
+            }
+        };
+    }
 
-        public readonly record struct Style(char Glyph, uint ForegroundArgb, uint BackgroundArgb)
-        {
-            public char Glyph { get; init; } = Glyph;
-            public uint ForegroundArgb { get; init; } = ForegroundArgb;
-            public uint BackgroundArgb { get; init; } = BackgroundArgb;
-        }
+    [StructLayout(LayoutKind.Auto)]
+    public readonly record struct Style(char Glyph, uint ForegroundArgb, uint BackgroundArgb)
+    {
+        public char Glyph { get; init; } = Glyph;
+        public uint ForegroundArgb { get; init; } = ForegroundArgb;
+        public uint BackgroundArgb { get; init; } = BackgroundArgb;
+    }
 
-        public Style LookupForGlyph(char glyph)
+    public Style LookupForGlyph(char glyph)
+    {
+        return glyph switch
         {
-            return glyph switch
-            {
-                '.' => Floor,
-                '#' => Wall,
-                '·' => FloorExplored,
-                '▒' => WallExplored,
-                _ => EntityDefault
-            };
-        }
+            '.' => Floor,
+            '#' => Wall,
+            '·' => FloorExplored,
+            '▒' => WallExplored,
+            _ => EntityDefault
+        };
     }
 }
 
@@ -312,8 +313,8 @@ partial class SadConsoleUiAdapter
 
         // Find player position
         SadRogue.Primitives.Point? player = null;
-        var q = new QueryDescription().WithAll<Player, Position>();
-        world.Query(in q, (Entity e, ref Player p, ref Position pos) => { player = pos.Point; });
+        var q = new QueryDescription().WithAll<Player, CorePosition>();
+        world.Query(in q, (Entity e, ref Player p, ref CorePosition pos) => { player = pos.Point; });
         if (player == null) return false;
 
         camX = player.Value.X - viewWidth / 2;

@@ -53,7 +53,7 @@ public class ReportExportService
             var fileName = $"windows-session-{timestamp}.{extension}";
             var reportPath = Path.Combine(_baseReportDirectory, fileName);
 
-            await _metricsCollector.ExportSessionReportAsync(reportPath, format);
+            await _metricsCollector.ExportSessionReportAsync(reportPath, format).ConfigureAwait(false);
 
             _logger.LogInformation("Session report exported to {Path}", reportPath);
             return reportPath ?? "";  // Return empty string instead of null for consistency
@@ -77,7 +77,7 @@ public class ReportExportService
 
         foreach (var format in formats)
         {
-            var path = await ExportSessionReportAsync(format);
+            var path = await ExportSessionReportAsync(format).ConfigureAwait(false);
             if (!string.IsNullOrEmpty(path))
             {
                 results[format] = path;

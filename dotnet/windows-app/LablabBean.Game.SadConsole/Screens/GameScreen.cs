@@ -218,6 +218,7 @@ public class GameScreen : ScreenObject
                 var timeAnalytics = _metricsCollector.AdvancedAnalytics.GetTimeAnalytics();
 
                 var metrics = new Dictionary<string, double>
+(StringComparer.Ordinal)
                 {
                     ["TotalKills"] = _metricsCollector.TotalKills,
                     ["TotalDeaths"] = _metricsCollector.TotalDeaths,
@@ -387,7 +388,7 @@ public class GameScreen : ScreenObject
             _logger.LogInformation("Exporting report: {Stats}", stats);
 
             // Export all formats
-            var results = await _reportExportService.ExportAllFormatsAsync();
+            var results = await _reportExportService.ExportAllFormatsAsync().ConfigureAwait(false);
 
             var successCount = results.Values.Count(p => p != null);
             if (successCount > 0)
