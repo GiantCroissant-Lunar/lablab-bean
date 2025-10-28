@@ -16,7 +16,7 @@
     <Company>Lablab Bean</Company>
     <Product>Lablab Bean</Product>
     <Copyright>Copyright © 2025</Copyright>
-    <Version>0.1.0</Version>
+    <Version>0.0.3</Version>
   </PropertyGroup>
 
   <!-- Analyzer packages applied to all projects -->
