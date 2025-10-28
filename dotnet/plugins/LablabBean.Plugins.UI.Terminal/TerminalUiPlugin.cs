@@ -246,11 +246,11 @@ partial class TerminalUiPlugin
             style = new TerminalRenderStyles.Style(glyph, newFg, newBg);
         }
 
-        var floor = styles.Floor; Apply("Floor", ref floor); styles = styles with { Floor = floor };
-        var wall = styles.Wall; Apply("Wall", ref wall); styles = styles with { Wall = wall };
-        var floorExp = styles.FloorExplored; Apply("FloorExplored", ref floorExp); styles = styles with { FloorExplored = floorExp };
-        var wallExp = styles.WallExplored; Apply("WallExplored", ref wallExp); styles = styles with { WallExplored = wallExp };
-        var entity = styles.EntityDefault; Apply("EntityDefault", ref entity); styles = styles with { EntityDefault = entity };
+        var floor = styles.Floor; Apply("Floor", ref floor); styles.Floor = floor;
+        var wall = styles.Wall; Apply("Wall", ref wall); styles.Wall = wall;
+        var floorExp = styles.FloorExplored; Apply("FloorExplored", ref floorExp); styles.FloorExplored = floorExp;
+        var wallExp = styles.WallExplored; Apply("WallExplored", ref wallExp); styles.WallExplored = wallExp;
+        var entity = styles.EntityDefault; Apply("EntityDefault", ref entity); styles.EntityDefault = entity;
 
         // Palette override (comma-separated color values)
         var paletteCsv = config["Rendering:Terminal:Palette"];
