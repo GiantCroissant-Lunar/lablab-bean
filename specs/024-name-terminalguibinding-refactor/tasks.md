@@ -25,9 +25,9 @@ description: "Tasks for Terminal.Gui v2 Binding + Aspire/WezTerm Stabilization"
 
 ## Phase 2: Capability Selection (FR-004, FR-008)
 
-- [ ] T010 [US2] CapabilityValidator: read `Plugins:PreferredUI`, `PreferredRenderer`, `Skip`, `Only`
-- [ ] T011 [US2] CapabilityValidator: log one-line summary of selected UI/renderer and exclusions
-- [ ] T012 [US2] appsettings: document default `PreferredUI=ui-terminal`, `PreferredRenderer=rendering-terminal`
+- [X] T010 [US2] CapabilityValidator: read `Plugins:PreferredUI`, `PreferredRenderer`, `Skip`, `Only`
+- [X] T011 [US2] CapabilityValidator: log one-line summary of selected UI/renderer and exclusions
+- [X] T012 [US2] appsettings: document default `PreferredUI=ui-terminal`, `PreferredRenderer=rendering-terminal`
 
 ## Phase 3: Registry Wiring Cleanup (FR-005)
 

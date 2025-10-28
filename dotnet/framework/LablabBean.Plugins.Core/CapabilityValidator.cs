@@ -29,19 +29,44 @@ public sealed class CapabilityValidator
     {
         var result = new ValidationResult();
 
-        // Group plugins by capability type
-        var uiPlugins = manifests
-            .Where(m => m.Capabilities.Any(c => c.StartsWith("ui")))
-            .ToList();
-
-        var rendererPlugins = manifests
-            .Where(m => m.Capabilities.Any(c => c.StartsWith("renderer")))
-            .ToList();
-
         // Get configuration preferences
         var preferredUi = _configuration["Plugins:PreferredUI"];
         var preferredRenderer = _configuration["Plugins:PreferredRenderer"];
         var strictMode = _configuration.GetValue("Plugins:StrictCapabilityMode", true);
+        var skipList = _configuration.GetSection("Plugins:Skip").Get<string[]>() ?? Array.Empty<string>();
+        var onlyList = _configuration.GetSection("Plugins:Only").Get<string[]>() ?? Array.Empty<string>();
+
+        // Apply Skip filter first
+        var afterSkip = manifests.ToList();
+        foreach (var skipId in skipList)
+        {
+            var skipped = afterSkip.FirstOrDefault(m => m.Id == skipId);
+            if (skipped != null)
+            {
+                result.ExcludedPlugins[skipId] = $"Excluded via Plugins:Skip configuration";
+                afterSkip.Remove(skipped);
+            }
+        }
+
+        // Apply Only filter if specified
+        if (onlyList.Length > 0)
+        {
+            var toExclude = afterSkip.Where(m => !onlyList.Contains(m.Id)).ToList();
+            foreach (var excluded in toExclude)
+            {
+                result.ExcludedPlugins[excluded.Id] = $"Not in Plugins:Only list";
+                afterSkip.Remove(excluded);
+            }
+        }
+
+        // Group plugins by capability type
+        var uiPlugins = afterSkip
+            .Where(m => m.Capabilities.Any(c => c.StartsWith("ui")))
+            .ToList();
+
+        var rendererPlugins = afterSkip
+            .Where(m => m.Capabilities.Any(c => c.StartsWith("renderer")))
+            .ToList();
 
         // Validate and select UI plugin
         var selectedUi = SelectSinglePlugin(
@@ -60,11 +85,16 @@ public sealed class CapabilityValidator
             result);
 
         // Build final list of plugins to load
-        var toLoad = manifests
+        var toLoad = afterSkip
             .Where(m => !result.ExcludedPlugins.ContainsKey(m.Id))
             .ToList();
 
         result.ManifestsToLoad = toLoad;
+        result.SelectedUi = selectedUi?.Id;
+        result.SelectedRenderer = selectedRenderer?.Id;
+
+        // Log selection summary once
+        LogSelectionSummary(result);
 
         return result;
     }
@@ -155,6 +185,32 @@ public sealed class CapabilityValidator
         return selected;
     }
 
+    private void LogSelectionSummary(ValidationResult result)
+    {
+        var summary = "Plugin capability selection: ";
+        var parts = new List<string>();
+
+        if (!string.IsNullOrEmpty(result.SelectedUi))
+        {
+            parts.Add($"UI={result.SelectedUi}");
+        }
+
+        if (!string.IsNullOrEmpty(result.SelectedRenderer))
+        {
+            parts.Add($"Renderer={result.SelectedRenderer}");
+        }
+
+        summary += string.Join(", ", parts);
+
+        if (result.ExcludedPlugins.Count > 0)
+        {
+            var excluded = string.Join(", ", result.ExcludedPlugins.Keys);
+            summary += $"; Excluded: {excluded}";
+        }
+
+        _logger.LogInformation(summary);
+    }
+
     public sealed class ValidationResult
     {
         /// <summary>
@@ -167,5 +223,15 @@ public sealed class CapabilityValidator
         /// Key: plugin ID, Value: exclusion reason.
         /// </summary>
         public Dictionary<string, string> ExcludedPlugins { get; } = new();
+
+        /// <summary>
+        /// ID of the selected UI plugin, if any.
+        /// </summary>
+        public string? SelectedUi { get; set; }
+
+        /// <summary>
+        /// ID of the selected Renderer plugin, if any.
+        /// </summary>
+        public string? SelectedRenderer { get; set; }
     }
 }
