@@ -115,6 +115,16 @@ repos:
     - prettier-plugin-astro@^0.12.2
     stages: [pre-commit]
 
+  # Biome - Fast linter and formatter for JS/TS (website/)
+- repo: https://github.com/biomejs/pre-commit
+  rev: v0.6.0
+  hooks:
+  - id: biome-check
+    files: ^website/.*\.(js|jsx|ts|tsx|json|jsonc)$
+    additional_dependencies: ['@biomejs/biome']
+    args: [--write]
+    stages: [pre-commit]
+
   # Custom hooks (organized in git-hooks/ directory)
 - repo: local
   hooks:
