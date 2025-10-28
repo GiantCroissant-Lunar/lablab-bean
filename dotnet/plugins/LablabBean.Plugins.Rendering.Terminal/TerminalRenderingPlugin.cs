@@ -24,7 +24,12 @@ public class TerminalRenderingPlugin : IPlugin
         var loggerFactory = Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory.Instance;
         var renderer = new TerminalSceneRenderer(loggerFactory.CreateLogger<TerminalSceneRenderer>());
 
-        context.Registry.Register<ISceneRenderer>(renderer);
+        context.Registry.Register<ISceneRenderer>(renderer, new ServiceMetadata
+        {
+            Priority = 100,
+            Name = "TerminalSceneRenderer",
+            Version = "1.0.0"
+        });
         _logger.LogInformation("Registered ISceneRenderer for Terminal.Gui");
 
         _initialized = true;

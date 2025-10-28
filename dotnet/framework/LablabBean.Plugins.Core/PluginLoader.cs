@@ -3,12 +3,14 @@ namespace LablabBean.Plugins.Core;
 using LablabBean.Plugins.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,6 +55,25 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
         _metrics = metrics;
         _dependencyResolver = new DependencyResolver(_logger);
         _capabilityValidator = new CapabilityValidator(_logger, _configuration);
+
+        // Ensure core framework services are present in the registry before any plugin InitializeAsync runs.
+        try
+        {
+            var eventBus = services.GetService<IEventBus>();
+            if (eventBus != null && !_serviceRegistry.IsRegistered<IEventBus>())
+            {
+                _serviceRegistry.Register<IEventBus>(eventBus, new ServiceMetadata
+                {
+                    Priority = 1000,
+                    Name = "EventBus",
+                    Version = "1.0.0"
+                });
+            }
+        }
+        catch
+        {
+            // Non-fatal: plugins that require EventBus will error if unavailable; leave as is.
+        }
     }
 
     public IPluginRegistry PluginRegistry => _pluginRegistry;
@@ -63,6 +84,9 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
     /// </summary>
     public async Task<int> DiscoverAndLoadAsync(IEnumerable<string> pluginPaths, CancellationToken ct = default)
     {
+        // Phase 0: Preload contract assemblies into Default ALC
+        PreloadContractAssemblies();
+
         var manifests = new List<(string path, PluginManifest manifest)>();
 
         foreach (var pluginPath in pluginPaths)
@@ -273,7 +297,22 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
 
         if (!File.Exists(assemblyPath))
         {
-            throw new FileNotFoundException($"Plugin assembly not found: {assemblyPath}");
+            // Fallback: in published console artifacts, plugin.json is copied under
+            // publish/console/plugins/<Plugin>/, but the assembly DLLs are placed in
+            // the main publish directory (AppContext.BaseDirectory). Try there.
+            var baseDir = AppContext.BaseDirectory;
+            var altPath = Path.Combine(baseDir, Path.GetFileName(assemblyPath));
+            if (File.Exists(altPath))
+            {
+                _logger.LogInformation(
+                    "Plugin assembly not found beside manifest, using base directory: {AltPath}",
+                    altPath);
+                assemblyPath = altPath;
+            }
+            else
+            {
+                throw new FileNotFoundException($"Plugin assembly not found: {assemblyPath}");
+            }
         }
 
         var loadContext = new PluginLoadContext(assemblyPath, _enableHotReload);
@@ -405,6 +444,64 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
     private string DetermineProfile()
     {
         return _profile;
+    }
+
+    /// <summary>
+    /// Preload contract assemblies into Default ALC before plugin loading.
+    /// This ensures all plugins reference the same type definitions.
+    /// </summary>
+    private void PreloadContractAssemblies()
+    {
+        var baseDir = AppContext.BaseDirectory;
+
+        if (!Directory.Exists(baseDir))
+        {
+            _logger.LogWarning("Base directory does not exist: {BaseDir}", baseDir);
+            return;
+        }
+
+        // Discover all contract DLLs in the base directory
+        var contractPattern = "*.Contracts.dll";
+        var contractFiles = Directory.GetFiles(baseDir, contractPattern, SearchOption.TopDirectoryOnly);
+
+        // Also preload shared UI libs to ensure type identity across ALCs
+        var sharedLibs = new[] { "Terminal.Gui.dll" };
+        foreach (var lib in sharedLibs)
+        {
+            var p = Path.Combine(baseDir, lib);
+            if (File.Exists(p))
+            {
+                contractFiles = contractFiles.Append(p).ToArray();
+            }
+        }
+
+        _logger.LogInformation("Preloading {Count} contract assemblies from {BaseDir}", contractFiles.Length, baseDir);
+
+        foreach (var contractPath in contractFiles)
+        {
+            try
+            {
+                var contractName = Path.GetFileNameWithoutExtension(contractPath);
+
+                // Check if already loaded
+                var alreadyLoaded = AssemblyLoadContext.Default.Assemblies
+                    .Any(a => string.Equals(a.GetName().Name, contractName, StringComparison.OrdinalIgnoreCase));
+
+                if (alreadyLoaded)
+                {
+                    _logger.LogDebug("Contract assembly already loaded: {ContractName}", contractName);
+                    continue;
+                }
+
+                // Load into Default ALC
+                AssemblyLoadContext.Default.LoadFromAssemblyPath(contractPath);
+                _logger.LogInformation("Preloaded contract assembly: {ContractName}", contractName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to preload contract assembly: {ContractPath}", contractPath);
+            }
+        }
     }
 
     public void Dispose()

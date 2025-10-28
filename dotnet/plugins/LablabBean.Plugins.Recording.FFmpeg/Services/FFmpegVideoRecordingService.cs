@@ -245,11 +245,10 @@ public class FFmpegVideoRecordingService : IRecordingService, LablabBean.Contrac
             {
                 try
                 {
-                    // Try to send 'q' command to FFmpeg stdin for graceful shutdown
                     if (process.StandardInput != null && process.StandardInput.BaseStream.CanWrite)
                     {
-                        await process.StandardInput.WriteLineAsync("q");
-                        await process.StandardInput.FlushAsync();
+                        await process.StandardInput.WriteLineAsync("q", ct).ConfigureAwait(false);
+                        await process.StandardInput.FlushAsync(ct).ConfigureAwait(false);
                     }
 
                     // Wait a bit for graceful shutdown
@@ -265,7 +264,7 @@ public class FFmpegVideoRecordingService : IRecordingService, LablabBean.Contrac
                     process.Kill(entireProcessTree: true);
                 }
 
-                await process.WaitForExitAsync(ct);
+                await process.WaitForExitAsync(ct).ConfigureAwait(false);
             }
 
             _activeSessions.TryRemove(sessionId, out _);

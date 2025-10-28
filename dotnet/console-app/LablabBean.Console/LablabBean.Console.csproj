@@ -44,4 +44,16 @@
 
   <!-- Legacy TUI files removed; compile-excludes cleaned up -->
 
+  <!-- TEMP: Exclude media TUI views (need API updates for Terminal.Gui 2.x) -->
+  <ItemGroup>
+    <Compile Remove="Views\Media\MediaPlayerView.cs" />
+    <Compile Remove="Views\Media\MediaControlsView.cs" />
+  </ItemGroup>
+
+  <!-- Ensure Terminal UI + renderer plugins are included in publish so their plugin.json files land under publish/console/plugins -->
+  <ItemGroup>
+    <ProjectReference Include="..\\..\\plugins\\LablabBean.Plugins.Rendering.Terminal\\LablabBean.Plugins.Rendering.Terminal.csproj" />
+    <ProjectReference Include="..\\..\\plugins\\LablabBean.Plugins.UI.Terminal\\LablabBean.Plugins.UI.Terminal.csproj" />
+  </ItemGroup>
+
 </Project>

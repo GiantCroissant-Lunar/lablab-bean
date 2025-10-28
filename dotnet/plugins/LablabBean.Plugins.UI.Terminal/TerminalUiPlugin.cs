@@ -36,10 +36,23 @@ public partial class TerminalUiPlugin : IPlugin
         _logger.LogInformation("Initializing Terminal UI plugin");
 
         // Resolve scene renderer from registry (must be provided by rendering-terminal plugin)
-        var renderers = context.Registry.GetAll<ISceneRenderer>();
-        _sceneRenderer = renderers.FirstOrDefault();
+        try
+        {
+            _sceneRenderer = context.Registry.Get<ISceneRenderer>();
+            _logger.LogInformation("Found ISceneRenderer via Get<T>()");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning($"Get<ISceneRenderer>() failed: {ex.Message}");
+            // Fallback to GetAll if Get doesn't work
+            var renderers = context.Registry.GetAll<ISceneRenderer>();
+            _logger.LogInformation($"GetAll<ISceneRenderer>() returned {renderers.Count()} renderer(s)");
+            _sceneRenderer = renderers.FirstOrDefault();
+        }
+
         if (_sceneRenderer == null)
         {
+            _logger.LogError("Registry instance: " + context.Registry.GetType().FullName);
             throw new InvalidOperationException("No ISceneRenderer found. Ensure 'rendering-terminal' plugin is loaded first.");
         }
 
@@ -105,13 +118,12 @@ public partial class TerminalUiPlugin : IPlugin
             _uiAdapter.Initialize();
 
             // If the renderer supports Terminal render target, set it to the world view
-            if (_sceneRenderer is LablabBean.Plugins.Rendering.Terminal.TerminalSceneRenderer terminalRenderer)
+            var renderView = _uiAdapter.GetWorldRenderView();
+            if (renderView != null && _sceneRenderer != null)
             {
-                var renderView = _uiAdapter.GetWorldRenderView();
-                if (renderView != null)
-                {
-                    terminalRenderer.SetRenderTarget(renderView);
-                }
+                // Avoid hard reference to Rendering.Terminal; invoke SetRenderTarget via reflection if available
+                var setMethod = _sceneRenderer.GetType().GetMethod("SetRenderTarget", BindingFlags.Public | BindingFlags.Instance);
+                setMethod?.Invoke(_sceneRenderer, new object[] { renderView });
             }
 
             // Get the main window from the adapter
@@ -124,11 +136,6 @@ public partial class TerminalUiPlugin : IPlugin
 
             // Rebind renderer target initially and on layout changes
             RebindRendererTarget();
-            mainWindow.LayoutComplete += (s, e) =>
-            {
-                // Layout changes may alter sizes; ensure renderer is bound to the right view
-                RebindRendererTarget();
-            };
 
             _running = true;
             TGui.Application.Run(mainWindow);
@@ -169,12 +176,13 @@ public partial class TerminalUiPlugin
 {
     private void RebindRendererTarget()
     {
-        if (_sceneRenderer is LablabBean.Plugins.Rendering.Terminal.TerminalSceneRenderer terminalRenderer && _uiAdapter != null)
+        if (_sceneRenderer != null && _uiAdapter != null)
         {
             var renderView = _uiAdapter.GetWorldRenderView();
             if (renderView != null)
             {
-                terminalRenderer.SetRenderTarget(renderView);
+                var setMethod = _sceneRenderer.GetType().GetMethod("SetRenderTarget", BindingFlags.Public | BindingFlags.Instance);
+                setMethod?.Invoke(_sceneRenderer, new object[] { renderView });
                 _logger?.LogDebug("Terminal renderer target rebound to world render view");
             }
         }

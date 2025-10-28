@@ -1,6 +1,5 @@
 {
   "capabilities": [
-    "ui",
     "framework"
   ],
   "description": "Event-driven UI service for reactive updates.",

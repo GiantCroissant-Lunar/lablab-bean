@@ -99,5 +99,8 @@
     <PackageVersion Include="Moq" Version="4.20.70" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
+    <!-- Aspire AppHost -->
+    <PackageVersion Include="Aspire.Hosting" Version="9.5.2" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.2" />
   </ItemGroup>
 </Project>

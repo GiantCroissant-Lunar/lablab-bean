@@ -16,6 +16,12 @@ if ($null -eq $verDir) {
 $pubConsole = Join-Path $verDir.FullName 'publish\console'
 Write-Host "Publishing console app to: $pubConsole"
 
+# Clean stale publish directory to avoid leftover plugin.json from previous builds
+if (Test-Path $pubConsole) {
+    Write-Host "Cleaning previous publish output..."
+    Remove-Item -Recurse -Force $pubConsole
+}
+
 # Build console only (no plugins) to avoid plugin publish blockers
 # Route plugin manifests to subfolders to avoid file collisions
 & dotnet publish 'dotnet/console-app/LablabBean.Console/LablabBean.Console.csproj' -c Debug -o $pubConsole -r win-x64 --self-contained true /p:PluginJsonTargetSubfolder=true

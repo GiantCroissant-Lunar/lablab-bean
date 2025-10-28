@@ -1,0 +1,11 @@
+D:\lunar-snake\personal-work\yokan-projects\lablab-bean\dotnet\console-app\LablabBean.Console\LablabBean.Console.csproj : warning NU1608: 在相依性條件約束之外偵測到套件版本: Terminal.Gui 2.0.0 需要 System.Text.Json (>= 8.0.5 && < 9.0.0)，但解析出版本 System.Text.Json 9.0.4。
+D:\lunar-snake\personal-work\yokan-projects\lablab-bean\dotnet\console-app\LablabBean.Console\LablabBean.Console.csproj : warning NU1608: 在相依性條件約束之外偵測到套件版本: Terminal.Gui 2.0.0 需要 System.Text.Json (>= 8.0.5 && < 9.0.0)，但解析出版本 System.Text.Json 9.0.4。
+info: plugins[0]
+      Scanning plugin paths: plugins
+info: LablabBean.Plugins.Core.PluginLoader[0]
+      Preloading 2 contract assemblies from D:\lunar-snake\personal-work\yokan-projects\lablab-bean\dotnet\console-app\LablabBean.Console\bin\Debug\net8.0\
+warn: LablabBean.Plugins.Core.PluginLoader[0]
+      Plugin path does not exist: D:\lunar-snake\personal-work\yokan-projects\lablab-bean\plugins
+warn: LablabBean.Plugins.Core.PluginLoader[0]
+      No plugins discovered
+Total: 0, Loaded: 0, Failed: 0, Health: Unknown
