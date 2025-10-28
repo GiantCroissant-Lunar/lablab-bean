@@ -130,7 +130,7 @@ tasks:
     desc: Start dev orchestration via .NET Aspire (web + pty)
     env:
       NUKE_TARGET: '{{ .NUKE_TARGET | default "Compile" }}'
-      ASPIRE_LAUNCH_WEZTERM: '0'
+      ASPIRE_LAUNCH_WEZTERM: '1'
       ASPIRE_DASHBOARD_ENABLED: '1'
       DOTNET_ASPIRE_DASHBOARD_ENABLED: '1'
     cmds:
@@ -146,6 +146,7 @@ tasks:
       NUKE_TARGET: '{{ .NUKE_TARGET | default "PublishAll" }}'
       LABLAB_WEZTERM_PATH: '{{ .WEZTERM_PATH }}'
       LABLAB_ARTIFACT_DIR: '{{ .ART_DIR }}'
+      ASPIRE_LAUNCH_WEZTERM: '1'
       ASPIRE_DASHBOARD_ENABLED: '1'
       DOTNET_ASPIRE_DASHBOARD_ENABLED: '1'
     cmds:
@@ -154,7 +155,7 @@ tasks:
         # Prefer repo tools\wezterm if LABLAB_WEZTERM_PATH not explicitly provided
         if (-not $env:LABLAB_WEZTERM_PATH) {
           $toolsWez = Join-Path 'tools' 'wezterm\wezterm.exe';
-          if (Test-Path $toolsWez) { $env:LABLAB_WEZTERM_PATH = (Resolve-Path $toolsWez).Path; Write-Host ('Using WezTerm (tools): ' + $env:LABLAB_WEZTERM_PATH) }
+          if (Test-Path $toolsWez) { $resolved = (Resolve-Path $toolsWez).Path; $env:LABLAB_WEZTERM_PATH = $resolved; Write-Host (\"Using WezTerm (tools): $resolved\") }
         }
         $asp = Join-Path $env:USERPROFILE '.dotnet\tools\aspire.exe';
         if (Test-Path $asp) { & $asp run --project dotnet/apphost/LablabBean.AppHost } else { aspire run --project dotnet/apphost/LablabBean.AppHost }
@@ -173,10 +174,10 @@ tasks:
         # Prefer repo tools\wezterm if exists; else detect portable WezTerm under artifacts
         $toolsWez = Join-Path 'tools' 'wezterm\wezterm.exe';
         if (Test-Path $toolsWez) {
-          $env:LABLAB_WEZTERM_PATH = (Resolve-Path $toolsWez).Path; Write-Host ('Using WezTerm (tools): ' + $env:LABLAB_WEZTERM_PATH);
+          $resolved = (Resolve-Path $toolsWez).Path; $env:LABLAB_WEZTERM_PATH = $resolved; Write-Host (\"Using WezTerm (tools): $resolved\");
         } else {
           $wez = Get-ChildItem -Path 'build\_artifacts' -Recurse -Filter 'wezterm.exe' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1;
-          if (-not $wez) { Write-Host 'wezterm.exe not found under build\_artifacts'; } else { Write-Host ('Using WezTerm (artifacts): ' + $wez.FullName); $env:LABLAB_WEZTERM_PATH = $wez.FullName };
+          if (-not $wez) { Write-Host 'wezterm.exe not found under build\_artifacts'; } else { $env:LABLAB_WEZTERM_PATH = $wez.FullName; Write-Host (\"Using WezTerm (artifacts): $($wez.FullName)\") };
         }
         # Detect latest artifact version directory
         $artRoot = Join-Path -Path 'build' -ChildPath '_artifacts';
@@ -186,4 +187,260 @@ tasks:
         }
         $asp = Join-Path $env:USERPROFILE '.dotnet\tools\aspire.exe';
         if (Test-Path $asp) { & $asp run --project dotnet/apphost/LablabBean.AppHost } else { aspire run --project dotnet/apphost/LablabBean.AppHost }
+      "
+
+  # ============================================================================
+  # Spec-Kit Integration (Multi-Agent Support)
+  # ============================================================================
+  # For AI agents without slash command support (Windsurf, Cursor, Codex, etc.)
+  # See: .agent/integrations/spec-kit.md for complete documentation
+  # Claude Code & GitHub Copilot should use /speckit.* slash commands instead
+
+  speckit:constitution:
+    desc: '[Spec-Kit] Create/update project constitution (.specify/memory/constitution.md)'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Constitution Setup';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Establish project governance principles';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Read .agent/base/10-principles.md (core principles)';
+        Write-Host '   2. Read .agent/base/20-rules.md (normative rules)';
+        Write-Host '   3. Create .specify/memory/constitution.md that extends these rules';
+        Write-Host '   4. Add game-specific principles for this dungeon crawler project';
+        Write-Host '';
+        Write-Host '📚 Full Guidance: .agent/integrations/spec-kit.md (lines 94-113)';
+        Write-Host '';
+        Write-Host '✅ Output: .specify/memory/constitution.md';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:specify:
+    desc: '[Spec-Kit] Create feature specification (WHAT & WHY) in specs/NNN-feature-name/'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Create Specification';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Define feature requirements (WHAT and WHY)';
+        Write-Host '';
+        Write-Host '⚠️  Focus on WHAT and WHY, NOT HOW';
+        Write-Host '    - Describe user needs, not implementation';
+        Write-Host '    - Be explicit about requirements';
+        Write-Host '    - Avoid technical details (save for /plan)';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Run: .specify/scripts/powershell/check-prerequisites.ps1 -Json';
+        Write-Host '   2. Run: .specify/scripts/powershell/create-new-feature.ps1';
+        Write-Host '   3. Create spec.md following template in .specify/templates/';
+        Write-Host '   4. Include YAML front-matter per docs/DOCUMENTATION-SCHEMA.md';
+        Write-Host '';
+        Write-Host '📚 Full Guidance: .agent/integrations/spec-kit.md (lines 117-144)';
+        Write-Host '';
+        Write-Host '✅ Output: specs/NNN-feature-name/spec.md';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:clarify:
+    desc: '[Spec-Kit] Ask structured clarifying questions about spec (optional enhancement)'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Clarify Requirements';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Ask structured questions to de-risk ambiguities';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Read current spec.md';
+        Write-Host '   2. Identify underspecified areas';
+        Write-Host '   3. Ask up to 5 targeted clarification questions';
+        Write-Host '   4. Update spec.md with answers';
+        Write-Host '';
+        Write-Host '📚 Full Guidance: .agent/integrations/spec-kit.md (lines 205-217)';
+        Write-Host '';
+        Write-Host '✅ Output: Updated spec.md with clarifications';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:plan:
+    desc: '[Spec-Kit] Create technical implementation plan (HOW) in specs/NNN-feature-name/'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Create Implementation Plan';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Create technical implementation plan (HOW)';
+        Write-Host '';
+        Write-Host '💡 Now specify tech stack and architecture';
+        Write-Host '    - Reference constitution principles';
+        Write-Host '    - Consider existing codebase';
+        Write-Host '    - Define data models, APIs, file structure';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Run: .specify/scripts/powershell/check-prerequisites.ps1 -Json';
+        Write-Host '   2. Run: .specify/scripts/powershell/setup-plan.ps1';
+        Write-Host '   3. Read spec.md to understand requirements';
+        Write-Host '   4. Create plan.md, data-model.md, contracts/';
+        Write-Host '   5. Follow template in .specify/templates/';
+        Write-Host '';
+        Write-Host '📚 Full Guidance: .agent/integrations/spec-kit.md (lines 147-177)';
+        Write-Host '';
+        Write-Host '✅ Output: plan.md, data-model.md, contracts/';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:tasks:
+    desc: '[Spec-Kit] Generate actionable task breakdown in tasks.md'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Generate Task Breakdown';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Generate dependency-ordered task breakdown';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Read spec.md (requirements)';
+        Write-Host '   2. Read plan.md (architecture)';
+        Write-Host '   3. Read data-model.md (entities)';
+        Write-Host '   4. Read contracts/ (API specifications)';
+        Write-Host '   5. Generate tasks.md with phases:';
+        Write-Host '      - Setup (project structure, dependencies)';
+        Write-Host '      - Tests (test contracts and scenarios)';
+        Write-Host '      - Core (models, services, CLI)';
+        Write-Host '      - Integration (database, middleware)';
+        Write-Host '      - Polish (validation, docs)';
+        Write-Host '   6. Mark parallel tasks with [P]';
+        Write-Host '';
+        Write-Host '📚 Full Guidance: .agent/integrations/spec-kit.md (lines 179-186)';
+        Write-Host '';
+        Write-Host '✅ Output: tasks.md with complete task breakdown';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:analyze:
+    desc: '[Spec-Kit] Cross-artifact consistency analysis (optional quality check)'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Analyze Consistency';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Validate alignment between spec, plan, and tasks';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Read spec.md, plan.md, tasks.md';
+        Write-Host '   2. Check that all requirements have corresponding tasks';
+        Write-Host '   3. Verify task dependencies are logical';
+        Write-Host '   4. Identify gaps or inconsistencies';
+        Write-Host '   5. Report findings';
+        Write-Host '';
+        Write-Host '📚 Full Guidance: .agent/integrations/spec-kit.md (lines 221-227)';
+        Write-Host '';
+        Write-Host '✅ Output: Analysis report with recommendations';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:checklist:
+    desc: '[Spec-Kit] Generate quality validation checklists (optional)'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Generate Checklists';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Create quality validation checklists';
+        Write-Host '';
+        Write-Host '💡 Creates \"unit tests for English\" - validates completeness';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Read spec.md and plan.md';
+        Write-Host '   2. Generate checklists based on user requirements';
+        Write-Host '   3. Create checklists/ directory';
+        Write-Host '   4. Common checklists: ux.md, security.md, test.md, perf.md';
+        Write-Host '';
+        Write-Host '📚 Full Guidance: .agent/integrations/spec-kit.md (lines 229-238)';
+        Write-Host '';
+        Write-Host '✅ Output: checklists/ with validation checklists';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:implement:
+    desc: '[Spec-Kit] Execute implementation from tasks.md (main execution phase)'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Execute Implementation';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Purpose: Execute implementation from tasks.md';
+        Write-Host '';
+        Write-Host '⚠️  AI will run local commands (dotnet, npm, git)';
+        Write-Host '    - Review generated code';
+        Write-Host '    - Test incrementally';
+        Write-Host '    - Commit progress regularly';
+        Write-Host '';
+        Write-Host '📖 For AI Agents:';
+        Write-Host '   1. Run: .specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks';
+        Write-Host '   2. Check checklists/ status (if exists)';
+        Write-Host '   3. Read tasks.md, plan.md, data-model.md, contracts/';
+        Write-Host '   4. Create/verify ignore files (.gitignore, .dockerignore, etc.)';
+        Write-Host '   5. Execute tasks phase-by-phase:';
+        Write-Host '      - Setup → Tests → Core → Integration → Polish';
+        Write-Host '   6. Mark completed tasks with [X] in tasks.md';
+        Write-Host '   7. Validate each phase before proceeding';
+        Write-Host '';
+        Write-Host '📚 Full Guidance:';
+        Write-Host '   - .agent/integrations/spec-kit.md (lines 188-201)';
+        Write-Host '   - .claude/commands/speckit.implement.md (complete workflow)';
+        Write-Host '';
+        Write-Host '✅ Output: Implemented feature + updated tasks.md';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+      "
+
+  speckit:help:
+    desc: '[Spec-Kit] Show Spec-Kit workflow overview and agent-specific guidance'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host ' Spec-Kit: Specification-Driven Development';
+        Write-Host '═══════════════════════════════════════════════════════════════';
+        Write-Host '';
+        Write-Host '📋 Workflow:';
+        Write-Host '   1. task speckit:constitution  → Create project principles (one-time)';
+        Write-Host '   2. task speckit:specify       → Define WHAT & WHY (requirements)';
+        Write-Host '   3. task speckit:clarify       → Ask questions (optional)';
+        Write-Host '   4. task speckit:plan          → Define HOW (architecture)';
+        Write-Host '   5. task speckit:checklist     → Generate QA checklists (optional)';
+        Write-Host '   6. task speckit:tasks         → Generate task breakdown';
+        Write-Host '   7. task speckit:analyze       → Validate consistency (optional)';
+        Write-Host '   8. task speckit:implement     → Execute implementation';
+        Write-Host '';
+        Write-Host '📚 Documentation:';
+        Write-Host '   - Complete Guide: .agent/integrations/spec-kit.md';
+        Write-Host '   - Implementation Details: .claude/commands/speckit.implement.md';
+        Write-Host '   - Base Principles: .agent/base/10-principles.md';
+        Write-Host '   - Base Rules: .agent/base/20-rules.md';
+        Write-Host '';
+        Write-Host '🤖 For AI Agents:';
+        Write-Host '   - Claude Code & GitHub Copilot: Use /speckit.* slash commands';
+        Write-Host '   - Windsurf/Cursor/Codex/Others: Use task speckit:* commands';
+        Write-Host '';
+        Write-Host '✅ Multi-Agent Support: All AI coding assistants supported';
+        Write-Host '═══════════════════════════════════════════════════════════════';
       "

@@ -67,34 +67,54 @@ This project **REQUIRES** use of **GitHub Spec-Kit** for feature development.
 When implementing new features, you MUST follow the Spec-Kit workflow:
 
 ```
-/speckit.specify → /speckit.plan → /speckit.tasks → /speckit.implement
+specify → [clarify] → plan → [checklist] → tasks → [analyze] → implement
 ```
 
-### Available Commands
+### How to Use Spec-Kit Commands
 
-**For Gemini (Google AI Studio/API):**
+**For Gemini: Use Task Runner Commands** (Primary Method)
 
-- `/speckit.constitution` - Establish project principles (one-time setup)
-- `/speckit.specify` - Define features (WHAT & WHY)
-- `/speckit.clarify` - Ask up to 5 clarification questions
-- `/speckit.plan` - Create technical plans (HOW)
-- `/speckit.analyze` - Cross-artifact consistency validation
-- `/speckit.tasks` - Generate task breakdowns
-- `/speckit.checklist` - Generate quality validation checklists
-- `/speckit.implement` - Execute implementations
-
-### Task Runner Alternative
-
-If your Gemini interface doesn't support slash commands, use task runner:
+Use the task runner to access Spec-Kit workflow:
 
 ```bash
-task speckit:specify
-task speckit:plan
-task speckit:tasks
-task speckit:implement
+task speckit:help          # Show workflow overview
+task speckit:constitution  # Establish project principles (one-time)
+task speckit:specify       # Define features (WHAT & WHY)
+task speckit:clarify       # Ask clarification questions (optional)
+task speckit:plan          # Create technical plans (HOW)
+task speckit:checklist     # Generate QA checklists (optional)
+task speckit:tasks         # Generate task breakdowns
+task speckit:analyze       # Validate consistency (optional)
+task speckit:implement     # Execute implementation
 ```
 
-**Full Documentation:** See `.agent/integrations/spec-kit.md`
+**What These Commands Do:**
+
+Each command displays formatted guidance with:
+
+- Clear purpose and steps
+- References to `.agent/integrations/spec-kit.md` for details
+- Expected output file locations
+- PowerShell helper script references where applicable
+
+**Example Usage:**
+
+```bash
+# Start new feature workflow
+task speckit:specify
+# Follow displayed guidance to create specs/NNN-feature-name/spec.md
+
+task speckit:plan
+# Follow guidance to create plan.md, data-model.md, contracts/
+
+task speckit:tasks
+# Follow guidance to create tasks.md
+
+task speckit:implement
+# Follow guidance to implement feature phase-by-phase
+```
+
+**Full Documentation:** See `.agent/integrations/spec-kit.md` (537 lines)
 
 **Important:** Spec-Kit commands must follow `.agent/base/` rules (R-DOC, R-CODE, R-TST, etc.)
 
