@@ -5,6 +5,7 @@ using LablabBean.Game.TerminalUI;
 using LablabBean.Game.TerminalUI.Styles;
 using LablabBean.Plugins.Contracts;
 using LablabBean.Rendering.Contracts;
+using LablabBean.Rendering.Terminal.Contracts;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Reflection;
@@ -24,6 +25,7 @@ public partial class TerminalUiPlugin : IPlugin
     private bool _running;
     private TerminalUiAdapter? _uiAdapter;
     private ISceneRenderer? _sceneRenderer;
+    private ITerminalRenderBinding? _renderBinding;
 
     public string Id => "ui-terminal";
     public string Name => "Terminal UI";
@@ -54,6 +56,24 @@ public partial class TerminalUiPlugin : IPlugin
         {
             _logger.LogError("Registry instance: " + context.Registry.GetType().FullName);
             throw new InvalidOperationException("No ISceneRenderer found. Ensure 'rendering-terminal' plugin is loaded first.");
+        }
+
+        // Resolve terminal render binding from registry
+        try
+        {
+            _renderBinding = context.Registry.Get<ITerminalRenderBinding>();
+            _logger.LogInformation("Found ITerminalRenderBinding via Get<T>()");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning($"Get<ITerminalRenderBinding>() failed: {ex.Message}");
+            var bindings = context.Registry.GetAll<ITerminalRenderBinding>();
+            _renderBinding = bindings.FirstOrDefault();
+        }
+
+        if (_renderBinding == null)
+        {
+            throw new InvalidOperationException("No ITerminalRenderBinding found. Ensure 'rendering-terminal' plugin is loaded first.");
         }
 
         // Create styles from configuration (optional overrides)
@@ -117,13 +137,12 @@ public partial class TerminalUiPlugin : IPlugin
             // Initialize the UI adapter with Terminal.Gui
             _uiAdapter.Initialize();
 
-            // If the renderer supports Terminal render target, set it to the world view
+            // Set render target using the binding interface
             var renderView = _uiAdapter.GetWorldRenderView();
-            if (renderView != null && _sceneRenderer != null)
+            if (renderView != null && _renderBinding != null)
             {
-                // Avoid hard reference to Rendering.Terminal; invoke SetRenderTarget via reflection if available
-                var setMethod = _sceneRenderer.GetType().GetMethod("SetRenderTarget", BindingFlags.Public | BindingFlags.Instance);
-                setMethod?.Invoke(_sceneRenderer, new object[] { renderView });
+                _renderBinding.SetRenderTarget(renderView);
+                _logger?.LogInformation("Terminal render target set via ITerminalRenderBinding");
             }
 
             // Get the main window from the adapter
@@ -176,13 +195,12 @@ public partial class TerminalUiPlugin
 {
     private void RebindRendererTarget()
     {
-        if (_sceneRenderer != null && _uiAdapter != null)
+        if (_renderBinding != null && _uiAdapter != null)
         {
             var renderView = _uiAdapter.GetWorldRenderView();
             if (renderView != null)
             {
-                var setMethod = _sceneRenderer.GetType().GetMethod("SetRenderTarget", BindingFlags.Public | BindingFlags.Instance);
-                setMethod?.Invoke(_sceneRenderer, new object[] { renderView });
+                _renderBinding.SetRenderTarget(renderView);
                 _logger?.LogDebug("Terminal renderer target rebound to world render view");
             }
         }
