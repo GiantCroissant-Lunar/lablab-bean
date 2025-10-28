@@ -36,23 +36,23 @@ description: "Tasks for Terminal.Gui v2 Binding + Aspire/WezTerm Stabilization"
 
 ## Phase 4: ALC + Preload Hardening (FR-003)
 
-- [ ] T030 [P] [US1] Verify Terminal.Gui preload + Default ALC binding remains intact post-refactor
-- [ ] T031 [P] [US1] Add loader test for Terminal.Gui type identity across UI/renderer
+- [X] T030 [P] [US1] Verify Terminal.Gui preload + Default ALC binding remains intact post-refactor
+- [X] T031 [P] [US1] Add loader test for Terminal.Gui type identity across UI/renderer
 
 ## Phase 5: AppHost Defaults (FR-007)
 
-- [ ] T040 [US2] AppHost Program.cs: finalize dashboard env handling (default off; LABLAB_ENABLE_DASHBOARD=1 enables; safe OTLP/URL defaults)
+- [X] T040 [US2] AppHost Program.cs: finalize dashboard env handling (default off; LABLAB_ENABLE_DASHBOARD=1 enables; safe OTLP/URL defaults)
 
 ## Phase 6: Publish Hygiene Verification (FR-006)
 
-- [ ] T050 [P] [US1] scripts/publish-console-artifact.ps1: keep clean publish + add post-publish checklist log for plugin manifests
-- [ ] T051 [US1] Validate artifact layout: `plugins/ui-terminal/plugin.json`, `plugins/rendering-terminal/plugin.json` present
+- [X] T050 [P] [US1] scripts/publish-console-artifact.ps1: keep clean publish + add post-publish checklist log for plugin manifests
+- [X] T051 [US1] Validate artifact layout: `plugins/ui-terminal/plugin.json`, `plugins/rendering-terminal/plugin.json` present
 
 ## Validation & Tests
 
-- [ ] T060 [US1] Verify WezTerm run shows Terminal.Gui UI and logs initialization strings
-- [ ] T061 [US2] `plugins list` shows deterministic selection per preferences; exclusions summarized once
-- [ ] T062 [US3] Zero `IEventBus` missing errors over 10 runs
+- [X] T060 [US1] Verify WezTerm run shows Terminal.Gui UI and logs initialization strings
+- [X] T061 [US2] `plugins list` shows deterministic selection per preferences; exclusions summarized once
+- [X] T062 [US3] Zero `IEventBus` missing errors over 10 runs
 
 ## Documentation
 

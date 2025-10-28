@@ -28,3 +28,34 @@ if (Test-Path $pubConsole) {
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
 
 Write-Host "Console artifact created at: $pubConsole"
+
+# Post-publish validation checklist
+Write-Host "`n=== Post-Publish Validation Checklist ==="
+Write-Host "Verifying plugin manifest layout..."
+
+$pluginsDir = Join-Path $pubConsole 'plugins'
+if (Test-Path $pluginsDir) {
+    $pluginDirs = Get-ChildItem $pluginsDir -Directory
+    Write-Host "Found $($pluginDirs.Count) plugin directories:"
+    
+    $missingManifests = @()
+    foreach ($dir in $pluginDirs) {
+        $manifestPath = Join-Path $dir.FullName 'plugin.json'
+        if (Test-Path $manifestPath) {
+            Write-Host "  ✓ $($dir.Name)/plugin.json"
+        } else {
+            Write-Host "  ✗ $($dir.Name)/plugin.json - MISSING"
+            $missingManifests += $dir.Name
+        }
+    }
+    
+    if ($missingManifests.Count -gt 0) {
+        Write-Warning "Missing plugin.json in: $($missingManifests -join ', ')"
+    } else {
+        Write-Host "`n✅ All plugin manifests present"
+    }
+} else {
+    Write-Warning "Plugins directory not found: $pluginsDir"
+}
+
+Write-Host "=========================================`n"
