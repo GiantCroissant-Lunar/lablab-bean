@@ -72,4 +72,13 @@ tools/
 # ignore local temp files
 /temp_*
 
-appsettings.Development.json
+# Development configuration (moved to config/)
+config/appsettings.Development.json
+
+# Test reports (keep structure but ignore content)
+test-reports/*/
+!test-reports/README.md
+
+# Security scan results
+security-scan-results.json
+trufflehog-results.*

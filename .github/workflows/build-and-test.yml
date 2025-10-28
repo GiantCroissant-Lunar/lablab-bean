@@ -36,6 +36,15 @@ jobs:
       run: |
         pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target FormatCheck --configuration Release
 
+    - name: 🔍 Quick security scan (PR only)
+      if: github.event_name == 'pull_request'
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: ${{ github.event.pull_request.base.sha }}
+        head: ${{ github.event.pull_request.head.sha }}
+        extra_args: --only-verified --fail
+
     - name: 📦 Restore dependencies
       run: dotnet restore dotnet/LablabBean.sln
 

@@ -1,8 +1,9 @@
 using Arch.Core;
 using LablabBean.Contracts.Game.Models;
 using LablabBean.Contracts.Game.UI;
-using LablabBean.Contracts.UI.Models;
 using LablabBean.Contracts.Game.UI.Services;
+using LablabBean.Contracts.UI.Models;
+using LablabBean.Contracts.UI.Services;
 using LablabBean.Game.Core.Maps;
 using LablabBean.Game.Core.Components;
 using LablabBean.Game.Core.Systems;
@@ -12,6 +13,8 @@ using LablabBean.Rendering.Contracts;
 using LablabBean.Game.TerminalUI.Styles;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
+using ContractsPosition = LablabBean.Contracts.Game.Models.Position;
+using CorePosition = LablabBean.Game.Core.Components.Position;
 
 namespace LablabBean.Game.TerminalUI;
 
@@ -74,8 +77,8 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
 
                     if (_worldViewService.TryComputeCamera(_currentWorld, _currentMap, out var camX, out var camY))
                     {
-                        var query = new QueryDescription().WithAll<Position, Renderable, Visible>();
-                        _currentWorld.Query(in query, (Entity e, ref Position pos, ref Renderable renderable, ref Visible vis) =>
+                        var query = new QueryDescription().WithAll<CorePosition, Renderable, Visible>();
+                        _currentWorld.Query(in query, (Entity e, ref CorePosition pos, ref Renderable renderable, ref Visible vis) =>
                         {
                             if (!vis.IsVisible) return;
                             if (!_currentMap.IsInFOV(pos.Point)) return;
@@ -136,10 +139,10 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
 
     public ViewportBounds GetViewport()
     {
-        return new ViewportBounds(new Position(0, 0), 80, 24);
+        return new ViewportBounds(new ContractsPosition(0, 0), 80, 24);
     }
 
-    public void SetViewportCenter(Position centerPosition)
+    public void SetViewportCenter(ContractsPosition centerPosition)
     {
         _logger.LogDebug("Set viewport center: ({X}, {Y})", centerPosition.X, centerPosition.Y);
     }

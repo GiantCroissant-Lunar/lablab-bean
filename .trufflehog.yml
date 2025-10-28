@@ -1,0 +1,37 @@
+# TruffleHog configuration for LablabBean project
+# See: https://github.com/trufflesecurity/trufflehog#configuration-file
+
+# Only scan verified secrets (reduces false positives)
+only-verified: true
+
+# Exclude patterns to reduce noise
+exclude-paths:
+- '**/*.log'
+- '**/logs/**'
+- '**/test-reports/**'
+- '**/bin/**'
+- '**/obj/**'
+- '**/.git/**'
+- '**/node_modules/**'
+- '**/*.min.js'
+- '**/*.min.css'
+
+# Exclude specific detectors that commonly cause false positives
+exclude-detectors:
+- Generic      # Too many false positives
+- URI          # URLs often trigger false positives
+
+# Allow certain patterns that are safe in this project
+allow-verification-overlap: true
+
+# Custom regex patterns to ignore (if needed)
+# exclude-entropy-patterns:
+#   - "example-pattern-to-ignore"
+
+# Scan configuration
+concurrency: 10
+timeout: 30m
+
+# Output configuration
+output-format: json
+include-detectors: []  # Empty means all detectors except excluded ones

@@ -98,7 +98,6 @@ tasks:
     cmds:
     - task: docs:organize
     - task: docs:validate
-
   docs:status:
     desc: Quick status of documentation organization (no validation)
     cmds:
@@ -109,36 +108,82 @@ tasks:
     dir: dotnet
     cmds:
     - dotnet format
-
   dotnet:analyze:
     desc: Analyze .NET code using Roslynator
     dir: dotnet
     cmds:
     - dotnet roslynator analyze --severity-level info
-
-  dotnet:fix:
-    desc: Fix .NET code issues using Roslynator
-    dir: dotnet
-    cmds:
-    - dotnet roslynator fix
-
   dotnet:check:
-    desc: Run both format check and Roslynator analysis
     cmds:
     - task: dotnet:format
     - task: dotnet:analyze
 
   format:
-    desc: Format code via NUKE (dotnet-format + optional ReSharper)
-    cmds:
-    - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Format --configuration Debug
-
-  format:check:
-    desc: Verify formatting (no changes) via NUKE
+    desc: Verify formatting and analyzers via NUKE
     cmds:
     - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target FormatCheck --configuration Debug
-
   analyze:
     desc: Run analyzer fixes and build via NUKE
     cmds:
     - pwsh -NoProfile -ExecutionPolicy Bypass -File build/nuke/build.ps1 --target Analyze --configuration Debug
+  dev:
+    desc: Start dev orchestration via .NET Aspire (web + pty)
+    env:
+      NUKE_TARGET: '{{ .NUKE_TARGET | default "Compile" }}'
+      ASPIRE_LAUNCH_WEZTERM: '0'
+      ASPIRE_DASHBOARD_ENABLED: '1'
+      DOTNET_ASPIRE_DASHBOARD_ENABLED: '1'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        $asp = Join-Path $env:USERPROFILE '.dotnet\tools\aspire.exe';
+        if (Test-Path $asp) { & $asp run --project dotnet/apphost/LablabBean.AppHost } else { aspire run --project dotnet/apphost/LablabBean.AppHost }
+      "
+
+  aspire:wezterm:
+    desc: Start AppHost and allow WezTerm launcher (set ASPIRE_LAUNCH_WEZTERM=1). Optional WEZTERM_PATH to set portable path.
+    env:
+      NUKE_TARGET: '{{ .NUKE_TARGET | default "PublishAll" }}'
+      LABLAB_WEZTERM_PATH: '{{ .WEZTERM_PATH }}'
+      LABLAB_ARTIFACT_DIR: '{{ .ART_DIR }}'
+      ASPIRE_DASHBOARD_ENABLED: '1'
+      DOTNET_ASPIRE_DASHBOARD_ENABLED: '1'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        # Prefer repo tools\wezterm if LABLAB_WEZTERM_PATH not explicitly provided
+        if (-not $env:LABLAB_WEZTERM_PATH) {
+          $toolsWez = Join-Path 'tools' 'wezterm\wezterm.exe';
+          if (Test-Path $toolsWez) { $env:LABLAB_WEZTERM_PATH = (Resolve-Path $toolsWez).Path; Write-Host ('Using WezTerm (tools): ' + $env:LABLAB_WEZTERM_PATH) }
+        }
+        $asp = Join-Path $env:USERPROFILE '.dotnet\tools\aspire.exe';
+        if (Test-Path $asp) { & $asp run --project dotnet/apphost/LablabBean.AppHost } else { aspire run --project dotnet/apphost/LablabBean.AppHost }
+      "
+
+  aspire:wezterm:auto:
+    desc: Start AppHost with WezTerm launcher, auto-detect portable wezterm.exe under build/_artifacts
+    env:
+      NUKE_TARGET: '{{ .NUKE_TARGET | default "PublishAll" }}'
+      ASPIRE_LAUNCH_WEZTERM: '1'
+      ASPIRE_DASHBOARD_ENABLED: '1'
+      DOTNET_ASPIRE_DASHBOARD_ENABLED: '1'
+    cmds:
+    - |
+      pwsh -NoProfile -Command "
+        # Prefer repo tools\wezterm if exists; else detect portable WezTerm under artifacts
+        $toolsWez = Join-Path 'tools' 'wezterm\wezterm.exe';
+        if (Test-Path $toolsWez) {
+          $env:LABLAB_WEZTERM_PATH = (Resolve-Path $toolsWez).Path; Write-Host ('Using WezTerm (tools): ' + $env:LABLAB_WEZTERM_PATH);
+        } else {
+          $wez = Get-ChildItem -Path 'build\_artifacts' -Recurse -Filter 'wezterm.exe' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1;
+          if (-not $wez) { Write-Host 'wezterm.exe not found under build\_artifacts'; } else { Write-Host ('Using WezTerm (artifacts): ' + $wez.FullName); $env:LABLAB_WEZTERM_PATH = $wez.FullName };
+        }
+        # Detect latest artifact version directory
+        $artRoot = Join-Path -Path 'build' -ChildPath '_artifacts';
+        if (Test-Path $artRoot) {
+          $verDir = Get-ChildItem $artRoot -Directory | Sort-Object LastWriteTime -Descending | Select-Object -First 1;
+          if ($null -ne $verDir) { $env:LABLAB_ARTIFACT_DIR = $verDir.FullName; Write-Host ('Using Artifact Dir: ' + $env:LABLAB_ARTIFACT_DIR) }
+        }
+        $asp = Join-Path $env:USERPROFILE '.dotnet\tools\aspire.exe';
+        if (Test-Path $asp) { & $asp run --project dotnet/apphost/LablabBean.AppHost } else { aspire run --project dotnet/apphost/LablabBean.AppHost }
+      "

@@ -184,8 +184,24 @@ class Build : NukeBuild, IBuildConfig
         .DependsOn(GenerateApiTypes)
         .Executes(() =>
         {
-            DotNetRestore(s => s
-                .SetProjectFile(SourceDirectory / "LablabBean.sln"));
+            try
+            {
+                DotNetRestore(s => s
+                    .SetProjectFile(SourceDirectory / "LablabBean.sln"));
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning("Solution restore failed: {Message}. Falling back to per-project restore for console and windows apps.", ex.Message);
+
+                var consoleProjectPath = SourceDirectory / "console-app" / "LablabBean.Console" / "LablabBean.Console.csproj";
+                var windowsProjectPath = SourceDirectory / "windows-app" / "LablabBean.Windows" / "LablabBean.Windows.csproj";
+
+                DotNetRestore(s => s
+                    .SetProjectFile(consoleProjectPath));
+
+                DotNetRestore(s => s
+                    .SetProjectFile(windowsProjectPath));
+            }
         });
 
     Target Compile => _ => _
@@ -214,7 +230,8 @@ class Build : NukeBuild, IBuildConfig
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Solution)
+                // Use explicit solution path to avoid null Solution injection in some environments
+                .SetProjectFile(SourceDirectory / "LablabBean.sln")
                 .SetConfiguration(Configuration)
                 .EnableNoBuild()
                 .EnableNoRestore());
