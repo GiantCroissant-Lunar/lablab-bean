@@ -55,25 +55,6 @@ public sealed class PluginLoader : IPluginLoader, IDisposable
         _metrics = metrics;
         _dependencyResolver = new DependencyResolver(_logger);
         _capabilityValidator = new CapabilityValidator(_logger, _configuration);
-
-        // Ensure core framework services are present in the registry before any plugin InitializeAsync runs.
-        try
-        {
-            var eventBus = services.GetService<IEventBus>();
-            if (eventBus != null && !_serviceRegistry.IsRegistered<IEventBus>())
-            {
-                _serviceRegistry.Register<IEventBus>(eventBus, new ServiceMetadata
-                {
-                    Priority = 1000,
-                    Name = "EventBus",
-                    Version = "1.0.0"
-                });
-            }
-        }
-        catch
-        {
-            // Non-fatal: plugins that require EventBus will error if unavailable; leave as is.
-        }
     }
 
     public IPluginRegistry PluginRegistry => _pluginRegistry;

@@ -31,8 +31,8 @@ description: "Tasks for Terminal.Gui v2 Binding + Aspire/WezTerm Stabilization"
 
 ## Phase 3: Registry Wiring Cleanup (FR-005)
 
-- [ ] T020 [US3] ServiceCollectionExtensions: register EventBus into ServiceRegistry immediately after creation
-- [ ] T021 [US3] PluginLoader: remove EventBus fallback registration added as a safety net
+- [X] T020 [US3] ServiceCollectionExtensions: register EventBus into ServiceRegistry immediately after creation
+- [X] T021 [US3] PluginLoader: remove EventBus fallback registration added as a safety net
 
 ## Phase 4: ALC + Preload Hardening (FR-003)
 
