@@ -1,10 +1,12 @@
 ---
+doc_id: DOC-2025-00066
 title: Contract Architecture Gap Analysis - Lablab-Bean vs Cross-Milo
+doc_type: finding
 status: draft
-type: analysis
+canonical: true
 created: 2025-10-21
 tags: [architecture, contracts, gaps, cross-milo-comparison]
-related_specs: [007-tiered-contract-architecture]
+summary: Analysis of gaps between lablab-bean's current contract implementation and cross-milo reference architecture
 ---
 
 # Contract Architecture Gap Analysis

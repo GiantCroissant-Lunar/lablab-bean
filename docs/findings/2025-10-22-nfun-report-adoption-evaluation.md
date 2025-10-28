@@ -1,15 +1,13 @@
 ---
+doc_id: DOC-2025-00064
 title: "NFun-Report Framework Adoption Evaluation"
-date: 2025-10-22
-type: findings
-status: revised
+doc_type: finding
+status: active
+canonical: true
+created: 2025-10-22
 tags: [reporting, architecture, evaluation, nfun-report, observability, fastreport]
-related:
-  - docs/findings/2025-10-22-fastreport-reevaluation.md
-  - docs/findings/2025-10-22-plugin-manoi-adoption-evaluation.md
-  - docs/findings/2025-10-22-application-verification.md
-author: Claude Code
-revision_notes: "See docs/findings/2025-10-22-fastreport-reevaluation.md for updated FastReport assessment"
+summary: Evaluation of NFun-Report framework for reporting capabilities with reference to revised FastReport assessment
+related: [DOC-2025-00063, DOC-2025-00065]
 ---
 
 > **⚠️ REVISION NOTICE**: This document's FastReport assessment has been revised. See [FastReport Re-evaluation](2025-10-22-fastreport-reevaluation.md) for the updated recommendation to **ADOPT FastReport.OpenSource as a reporting plugin**.

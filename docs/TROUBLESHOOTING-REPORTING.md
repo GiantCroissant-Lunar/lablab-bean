@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00059
 title: Reporting System Troubleshooting
-category: Support
+doc_type: guide
+status: active
+canonical: true
+created: 2025-10-22
 tags: [troubleshooting, debugging, faq, reporting]
-date: 2025-10-22
-author: LablabBean Team
-version: 1.0.0
-status: production-ready
+summary: Common issues and solutions for the LablabBean reporting system
 ---
 
 # Reporting System Troubleshooting Guide

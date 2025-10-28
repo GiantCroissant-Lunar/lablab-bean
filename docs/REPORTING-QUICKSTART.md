@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00058
 title: Reporting System Quickstart
-category: Getting Started
+doc_type: guide
+status: active
+canonical: true
+created: 2025-10-22
 tags: [quickstart, reporting, cli, tutorial]
-date: 2025-10-22
-author: LablabBean Team
-version: 1.0.0
-status: production-ready
+summary: Get up and running with LablabBean's reporting system in 5 minutes
 ---
 
 # Reporting System Quickstart

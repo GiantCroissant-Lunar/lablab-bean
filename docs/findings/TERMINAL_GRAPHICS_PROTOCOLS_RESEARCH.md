@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00070
 title: Terminal Graphics Protocols and Capability Detection - Comprehensive Research
-category: research
+doc_type: finding
 status: draft
-tags: [terminal, graphics, sixel, kitty-protocol, braille, video-rendering, capability-detection]
+canonical: true
 created: 2025-10-26
-related:
-  - Phase 6 User Story 4 (Unified Media Player)
+tags: [terminal, graphics, sixel, kitty-protocol, braille, video-rendering, capability-detection]
+summary: Comprehensive technical research on terminal graphics protocols and capability detection for unified media player implementation
 ---
 
 ## Executive Summary

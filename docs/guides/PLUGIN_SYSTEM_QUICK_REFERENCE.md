@@ -1,9 +1,12 @@
 ---
+doc_id: DOC-2025-00075
 title: "Plugin System Quick Reference"
-type: reference
+doc_type: reference
 status: draft
+canonical: true
 created: 2025-10-21
 tags: [plugins, reference, quickstart]
+summary: One-page reference for the Lablab Bean plugin system for quick lookup
 ---
 
 # Plugin System Quick Reference

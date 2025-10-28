@@ -1,7 +1,7 @@
 ---
 doc_id: DOC-2025-00035
 title: Adopting Real Spec-Kit Methodology
-doc_type: proposal
+doc_type: plan
 status: draft
 canonical: false
 created: 2025-10-21

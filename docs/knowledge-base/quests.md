@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00079
 title: Available Quests and Contracts
-category: quest
-tags:
-  - quests
-  - contracts
-  - missions
-weight: 1.0
+doc_type: glossary
+status: active
+canonical: true
+created: 2025-10-21
+tags: [quests, contracts, missions, gameplay]
+summary: Catalog of available quests and contracts in the game world
 ---
 
 # Available Quests and Contracts

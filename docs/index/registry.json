@@ -1,184 +1,1101 @@
 {
   "by_status": {
-    "active": 20
+    "active": 43,
+    "archived": 1,
+    "draft": 24,
+    "superseded": 1
   },
   "by_type": {
-    "finding": 2,
-    "guide": 13,
-    "reference": 3,
-    "spec": 2
+    "adr": 1,
+    "finding": 20,
+    "glossary": 4,
+    "guide": 27,
+    "plan": 4,
+    "reference": 9,
+    "spec": 4
   },
   "docs": [
     {
       "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00018",
-      "doc_type": "reference",
-      "path": "docs/ARCHITECTURE.md",
+      "created": "2025-10-28",
+      "doc_id": "DOC-2025-00077",
+      "doc_type": "guide",
+      "path": "docs/guides/2025-10-28-handover-build-publish-aspire.md",
       "related": [],
-      "sha256": "bccacd35056208ab1883c1f56a24718845e985b75038927beb4e8b5738fa6624",
-      "simhash": "14576372975366030268",
+      "sha256": "1a2cdd89aff84d66cd3fbe63251fa546aeea91aa14c8f82a02dc03465a10c716",
+      "simhash": "14485369630788710583",
       "status": "active",
-      "summary": "Multi-platform development toolkit architecture including task automation, web terminal, .NET console/windows apps, and shared framework.",
+      "summary": "Summary of changes, current status, and next steps for the .NET build/publish pipeline and Aspire AppHost orchestration",
+      "supersedes": [],
+      "tags": [
+        "build",
+        "publish",
+        "aspire",
+        "apphost",
+        "pipeline"
+      ],
+      "title": "Handover \u2014 Build/Publish pipeline and Aspire AppHost"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-28",
+      "doc_id": "DOC-2025-00056",
+      "doc_type": "guide",
+      "path": "docs/guides/2025-10-28-version-management-guide--DOC-2025-00056.md",
+      "related": [],
+      "sha256": "dcab83ec71b4534d0ee85455d4efe4fb90019ddcb0f7deb73e41ae2206b55e12",
+      "simhash": "12343327466445901046",
+      "status": "active",
+      "summary": "Comprehensive guide to version management in the Lablab-Bean project using GitVersion for automatic semantic versioning. Covers current setup, release workflow, and best practices.\n",
+      "supersedes": [],
+      "tags": [
+        "versioning",
+        "gitversion",
+        "build",
+        "release",
+        "semantic-versioning",
+        "git",
+        "nuke"
+      ],
+      "title": "Version Management Guide"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-27",
+      "doc_id": "DOC-2025-00050",
+      "doc_type": "finding",
+      "path": "docs/findings/quicktype-mapperly-implementation-2025-10-27.md",
+      "related": [
+        "DOC-2025-00047",
+        "DOC-2025-00048",
+        "DOC-2025-00049"
+      ],
+      "sha256": "25850222fbde7b602b81edde51d759d8e2c821c7d7ba07b844602fc3ad1b1069",
+      "simhash": "2327057630595255956",
+      "status": "archived",
+      "summary": "Implementation summary and completion report for quicktype and Mapperly integration completed on 2025-10-27.",
+      "supersedes": [],
+      "tags": [
+        "code-generation",
+        "quicktype",
+        "mapperly",
+        "implementation",
+        "completion-report"
+      ],
+      "title": "Code Generation Implementation Summary (2025-10-27)"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-27",
+      "doc_id": "DOC-2025-00046",
+      "doc_type": "guide",
+      "path": "docs/guides/2025-10-27-mapperly-quicktype-adoption--DOC-2025-00046.md",
+      "related": [
+        "DOC-2025-00047",
+        "DOC-2025-00048",
+        "DOC-2025-00049",
+        "DOC-2025-00050"
+      ],
+      "sha256": "724a275cdf3b18a5e7d945ae4b1c82b650abda5b84088b0a3363898c5bb3e4cf",
+      "simhash": "2546872411704200735",
+      "status": "superseded",
+      "summary": "Original planning document for Mapperly and quicktype adoption. Implementation was completed by another agent. See DOC-2025-00047 for active usage guide.",
+      "supersedes": [],
+      "tags": [
+        "code-generation",
+        "tooling",
+        "mapperly",
+        "quicktype",
+        "object-mapping",
+        "json-serialization",
+        "nuke-build",
+        "archived"
+      ],
+      "title": "Mapperly and quicktype Adoption Guide (Reference)"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-27",
+      "doc_id": "DOC-2025-00049",
+      "doc_type": "guide",
+      "path": "docs/guides/code-generation-checklist.md",
+      "related": [
+        "DOC-2025-00047",
+        "DOC-2025-00048",
+        "DOC-2025-00029"
+      ],
+      "sha256": "bf90b8ff8a154b38899c3efdb8bcd0ce91aecf5d91c83880cab8a995f36859b3",
+      "simhash": "2956982281163378223",
+      "status": "active",
+      "summary": "Verification checklist for confirming quicktype and Mapperly integration is properly configured and working.",
+      "supersedes": [],
+      "tags": [
+        "code-generation",
+        "quicktype",
+        "mapperly",
+        "checklist",
+        "verification"
+      ],
+      "title": "Code Generation Setup Verification Checklist"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-27",
+      "doc_id": "DOC-2025-00047",
+      "doc_type": "guide",
+      "path": "docs/guides/code-generation-quickstart.md",
+      "related": [
+        "DOC-2025-00046",
+        "DOC-2025-00048",
+        "DOC-2025-00029"
+      ],
+      "sha256": "a791a56c7a999747bcff3c8b4031f3df8b6ae1358d9ef8f590b30b80e13ed9a3",
+      "simhash": "11622470205038268207",
+      "status": "active",
+      "summary": "Quick start guide for using quicktype and Mapperly to eliminate boilerplate in object mapping and JSON deserialization.",
+      "supersedes": [],
+      "tags": [
+        "code-generation",
+        "quicktype",
+        "mapperly",
+        "quickstart",
+        "tooling"
+      ],
+      "title": "Code Generation Quick Start (quicktype & Mapperly)"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-27",
+      "doc_id": "DOC-2025-00048",
+      "doc_type": "guide",
+      "path": "docs/guides/code-generation-workflow.md",
+      "related": [
+        "DOC-2025-00047",
+        "DOC-2025-00046",
+        "DOC-2025-00029"
+      ],
+      "sha256": "d241438c37ac9e51df4326afcb25fc0cb907c3bfe98f46a6aadf05c4d6f78bf1",
+      "simhash": "1427672688060402207",
+      "status": "active",
+      "summary": "Complete workflow diagrams and patterns for using quicktype and Mapperly in the development process.",
+      "supersedes": [],
+      "tags": [
+        "code-generation",
+        "quicktype",
+        "mapperly",
+        "workflow",
+        "patterns"
+      ],
+      "title": "Code Generation Workflow (quicktype & Mapperly)"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-26",
+      "doc_id": "DOC-2025-00068",
+      "doc_type": "finding",
+      "path": "docs/findings/media-player-integration.md",
+      "related": [],
+      "sha256": "0fc7e00b249d28dcc426a5e716580e13707eb2dec4839f39678208effbaab9d7",
+      "simhash": "9682571922531685053",
+      "status": "active",
+      "summary": "Complete guide for integrating the LablabBean media player into applications with FFmpeg and Terminal.Gui support",
+      "supersedes": [],
+      "tags": [
+        "media",
+        "video",
+        "audio",
+        "playback",
+        "integration"
+      ],
+      "title": "Media Player Integration Guide"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-26",
+      "doc_id": "DOC-2025-00070",
+      "doc_type": "finding",
+      "path": "docs/findings/TERMINAL_GRAPHICS_PROTOCOLS_RESEARCH.md",
+      "related": [],
+      "sha256": "881ecb65ebc0ad6c40d01fe54195893253457e152470060c370791c062a861d8",
+      "simhash": "14631626663943557767",
+      "status": "draft",
+      "summary": "Comprehensive technical research on terminal graphics protocols and capability detection for unified media player implementation",
+      "supersedes": [],
+      "tags": [
+        "terminal",
+        "graphics",
+        "sixel",
+        "kitty-protocol",
+        "braille",
+        "video-rendering",
+        "capability-detection"
+      ],
+      "title": "Terminal Graphics Protocols and Capability Detection - Comprehensive Research"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-26",
+      "doc_id": "DOC-2025-00071",
+      "doc_type": "finding",
+      "path": "docs/findings/UNIFIED_MEDIA_PLAYER_RESEARCH.md",
+      "related": [],
+      "sha256": "b2454b0df3b5863d41cedddfb9b06a86b874179acf03fe73f96a636211e45fcc",
+      "simhash": "14073608059313788588",
+      "status": "active",
+      "summary": "Technical research report on unified media player implementation with FFmpeg, ReactiveUI, and Terminal.Gui integration",
+      "supersedes": [],
+      "tags": [
+        "media-player",
+        "ffmpeg",
+        "reactiveui",
+        "terminal-gui",
+        "audio-visualization",
+        "research"
+      ],
+      "title": "Unified Media Player - Technical Research Report"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-26",
+      "doc_id": "DOC-2025-00083",
+      "doc_type": "plan",
+      "path": "docs/plans/UNIFIED_MEDIA_PLAYER_PLAN.md",
+      "related": [],
+      "sha256": "d79509218d88d5ba453d67e1b299b6516cfbb9353e05dd20ef14a4c03f050cd7",
+      "simhash": "5394327176994558607",
+      "status": "draft",
+      "summary": "Technical design and implementation plan for unified media player with Terminal.Gui and plugin architecture",
+      "supersedes": [],
+      "tags": [
+        "media-player",
+        "video",
+        "audio",
+        "terminal-gui",
+        "plugins",
+        "mvvm",
+        "reactiveui"
+      ],
+      "title": "Unified Media Player - Architecture and Implementation Plan"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-25",
+      "doc_id": "DOC-2025-00038",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-25-intelligent-avatar-implementation-review.md",
+      "related": [
+        "DOC-2025-00037"
+      ],
+      "sha256": "ac5ee89c5438652421272e20958ec008014f08d865594e0f8639c5ea92ff7e53",
+      "simhash": "9497087710941090460",
+      "status": "draft",
+      "summary": "Code review of the intelligent avatar system implementation covering the three-layer architecture (ECS + Akka.NET + Semantic Kernel), identifying strengths, issues, and recommendations for completion.\n",
+      "supersedes": [],
+      "tags": [
+        "review",
+        "code-review",
+        "akka",
+        "semantic-kernel",
+        "ecs",
+        "implementation",
+        "intelligent-avatars"
+      ],
+      "title": "Intelligent Avatar System Implementation Review"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-25",
+      "doc_id": "DOC-2025-00073",
+      "doc_type": "reference",
+      "path": "docs/guides/GAMEPLAY_SYSTEMS_QUICK_REFERENCE.md",
+      "related": [],
+      "sha256": "eccdde6066417003981b33d406c2682185acf9957bdc5f7b56a5a75624dbabba",
+      "simhash": "10258325764573126169",
+      "status": "active",
+      "summary": "Fast reference guide for developers using the 7 gameplay systems in Lablab Bean framework",
+      "supersedes": [],
+      "tags": [
+        "gameplay",
+        "api",
+        "quick-reference",
+        "developers"
+      ],
+      "title": "Gameplay Systems Quick Reference"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-24",
+      "doc_id": "DOC-2025-00037",
+      "doc_type": "adr",
+      "path": "docs/adrs/2025-10-24-akka-sk-ecs-intelligent-avatars--DOC-2025-00037.md",
+      "related": [
+        "DOC-2025-00018",
+        "DOC-2025-00033"
+      ],
+      "sha256": "efb3d263f2d9f4c96b07e78471ff8fd0259a0c154278c97acd99a4e83b13fbd0",
+      "simhash": "10307666143755584147",
+      "status": "draft",
+      "summary": "Architecture Decision Record for integrating three-layer intelligent avatar system combining Arch ECS (entity data), Akka.NET (actor lifecycle), and Semantic Kernel (AI reasoning) to create complete, intelligent NPCs and enemies in the dungeon crawler game.\n",
       "supersedes": [],
       "tags": [
         "architecture",
-        "overview",
-        "structure"
+        "akka",
+        "semantic-kernel",
+        "ecs",
+        "ai",
+        "agents",
+        "avatars",
+        "adr"
       ],
-      "title": "Lablab Bean Architecture"
+      "title": "Akka.NET + Semantic Kernel + ECS: Intelligent Avatar Architecture"
     },
     {
       "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00019",
-      "doc_type": "guide",
-      "path": "docs/CONTRIBUTING.md",
+      "created": "2025-10-23",
+      "doc_id": "DOC-2025-00069",
+      "doc_type": "finding",
+      "path": "docs/findings/resilience-tiered-architecture.md",
       "related": [],
-      "sha256": "fe36655d8118b6e3ffd4d4317104c754d57c229958f48cfc2d1be702cbb6a03d",
-      "simhash": "10024992973143302719",
+      "sha256": "11050ed6010206728fc0db75bb31f733599367ceba02e4e09cda14699502c4eb",
+      "simhash": "13912935316481578649",
       "status": "active",
-      "summary": "Guidelines and instructions for contributing to Lablab Bean including setup, workflow, and coding standards.",
+      "summary": "Documentation of resilience implementation following tiered service pattern for plugin-based extensibility",
       "supersedes": [],
       "tags": [
-        "contributing",
+        "resilience",
+        "architecture",
+        "plugins",
+        "tiered-pattern"
+      ],
+      "title": "Resilience Tiered Architecture"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-23",
+      "doc_id": "DOC-2025-00072",
+      "doc_type": "guide",
+      "path": "docs/guides/ACTIVITY_LOG_RENDERER_GUIDE.md",
+      "related": [],
+      "sha256": "b99776dcd2ae20b23a92feeaaa8dcff5162e422d19a81c7e5de1b3d6b93a9427",
+      "simhash": "9422742047141331641",
+      "status": "draft",
+      "summary": "Guide explaining how to create new renderers for the activity log system with complete separation between logging and UI rendering",
+      "supersedes": [],
+      "tags": [
+        "activity-log",
+        "rendering",
+        "ui",
+        "architecture",
+        "guide"
+      ],
+      "title": "Activity Log Renderer Implementation Guide"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-23",
+      "doc_id": "DOC-2025-00076",
+      "doc_type": "guide",
+      "path": "docs/guides/source-generated-di-extensions.md",
+      "related": [],
+      "sha256": "4d13f3283d00e6ca24539a19ac3a88fb9a19757914a3d048a0a68c156a6d3629",
+      "simhash": "4872172416341412533",
+      "status": "active",
+      "summary": "Documentation of DIExtensionsGenerator that automatically creates DI registration extension methods for proxy services",
+      "supersedes": [],
+      "tags": [
+        "source-generation",
+        "di",
+        "proxy",
+        "resilience"
+      ],
+      "title": "Source-Generated DI Extensions for Proxy Services"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-23",
+      "doc_id": "DOC-2025-00082",
+      "doc_type": "plan",
+      "path": "docs/plans/2025-10-23-documentation-organization-plan--DOC-2025-00043.md",
+      "related": [],
+      "sha256": "667af9e453a4981995fc4370379f7f162412387f5fd40abe85d0e1ec0270e638",
+      "simhash": "14059374908578666500",
+      "status": "draft",
+      "summary": "Plan for organizing and restructuring project documentation files",
+      "supersedes": [],
+      "tags": [
+        "documentation",
+        "organization",
+        "planning"
+      ],
+      "title": "Documentation Organization Plan"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00057",
+      "doc_type": "guide",
+      "path": "docs/CI-CD-INTEGRATION.md",
+      "related": [],
+      "sha256": "2a69a1809d07bb1c68465c10df8315c83aca5638147cb7e1816259ea9c04d99f",
+      "simhash": "11699626887362441918",
+      "status": "active",
+      "summary": "Complete guide for integrating the LablabBean reporting system into CI/CD pipelines",
+      "supersedes": [],
+      "tags": [
+        "ci-cd",
+        "github-actions",
+        "nuke",
+        "automation",
+        "reporting"
+      ],
+      "title": "CI/CD Integration Guide"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00058",
+      "doc_type": "guide",
+      "path": "docs/REPORTING-QUICKSTART.md",
+      "related": [],
+      "sha256": "ba77c5ab839ad72401fc16af320038a8465532095b79b2325253a45bfed2c79a",
+      "simhash": "17463952990583410318",
+      "status": "active",
+      "summary": "Get up and running with LablabBean's reporting system in 5 minutes",
+      "supersedes": [],
+      "tags": [
+        "quickstart",
+        "reporting",
+        "cli",
+        "tutorial"
+      ],
+      "title": "Reporting System Quickstart"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00059",
+      "doc_type": "guide",
+      "path": "docs/TROUBLESHOOTING-REPORTING.md",
+      "related": [],
+      "sha256": "350ec2340cca140897404c3d85c63f32b649572996968ac69a49571e1b93f3db",
+      "simhash": "5917532808013303487",
+      "status": "active",
+      "summary": "Common issues and solutions for the LablabBean reporting system",
+      "supersedes": [],
+      "tags": [
+        "troubleshooting",
+        "debugging",
+        "faq",
+        "reporting"
+      ],
+      "title": "Reporting System Troubleshooting"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00063",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-22-fastreport-reevaluation.md",
+      "related": [
+        "DOC-2025-00064",
+        "DOC-2025-00065"
+      ],
+      "sha256": "f9eb02f8f6b97be68f7ce766c7e38bedb032ce8a62b62153501b6c2d9a96725c",
+      "simhash": "12059932510002118053",
+      "status": "active",
+      "summary": "Revised evaluation of FastReport.OpenSource with recommendation to adopt as a reporting plugin",
+      "supersedes": [],
+      "tags": [
+        "reporting",
+        "fastreport",
+        "architecture",
+        "nfun-report",
+        "plugins"
+      ],
+      "title": "FastReport Integration Re-evaluation for Lablab-bean"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00064",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-22-nfun-report-adoption-evaluation.md",
+      "related": [
+        "DOC-2025-00063",
+        "DOC-2025-00065"
+      ],
+      "sha256": "a1d33a59e27a4a154e25d2b2bf995444d931362683ec932dcbbcc6660ea1a07e",
+      "simhash": "4853800398586007173",
+      "status": "active",
+      "summary": "Evaluation of NFun-Report framework for reporting capabilities with reference to revised FastReport assessment",
+      "supersedes": [],
+      "tags": [
+        "reporting",
+        "architecture",
+        "evaluation",
+        "nfun-report",
+        "observability",
+        "fastreport"
+      ],
+      "title": "NFun-Report Framework Adoption Evaluation"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00065",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-22-plugin-manoi-adoption-evaluation.md",
+      "related": [],
+      "sha256": "9534304547e1979c35a58ecf32a2d0c65f5ca5db031eed46ad9ea6bd91d4f11d",
+      "simhash": "11764718302845032085",
+      "status": "active",
+      "summary": "Evaluation of Plugin Manoi framework components with recommendation not to adopt due to existing advanced implementation",
+      "supersedes": [],
+      "tags": [
+        "plugin-system",
+        "architecture",
+        "evaluation",
+        "plugin-manoi"
+      ],
+      "title": "Plugin Manoi Framework Adoption Evaluation"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00060",
+      "doc_type": "finding",
+      "path": "docs/findings/ffmpeg-adoption-evaluation.md",
+      "related": [],
+      "sha256": "ffc2ece3445d458ac3468447c90d77d3aec19a31caeb2f19ef7589ba07b94e87",
+      "simhash": "10041985920854332061",
+      "status": "active",
+      "summary": "Evaluation of FFmpeg for gameplay recording with recommendation to adopt for development and debugging benefits",
+      "supersedes": [],
+      "tags": [
+        "ffmpeg",
+        "recording",
+        "gameplay",
+        "evaluation"
+      ],
+      "title": "FFmpeg Adoption Evaluation for Gameplay Recording"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00061",
+      "doc_type": "finding",
+      "path": "docs/findings/goap-adoption-evaluation.md",
+      "related": [],
+      "sha256": "c8c65c60ec1d95208aee415c18fb6650577de8ead4f573d5b7ebc68c94354848",
+      "simhash": "796124483096103485",
+      "status": "active",
+      "summary": "Evaluation of Goal-Oriented Action Planning for advanced AI behaviors with recommendation to adopt for enhanced gameplay depth",
+      "supersedes": [],
+      "tags": [
+        "goap",
+        "ai",
+        "gameplay",
+        "evaluation",
+        "planning"
+      ],
+      "title": "GOAP Adoption Evaluation for Gameplay AI"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00062",
+      "doc_type": "finding",
+      "path": "docs/findings/modern-satsuma-adoption-evaluation.md",
+      "related": [],
+      "sha256": "c553ed70cea0b7f6ae06e941df97aeca1707761d3b239ce3d62f66c4f8af2d87",
+      "simhash": "11187202057234370593",
+      "status": "active",
+      "summary": "Evaluation of Modern Satsuma graph library with recommendation not to adopt due to build issues and limited value over existing solution",
+      "supersedes": [],
+      "tags": [
+        "graph",
+        "algorithms",
+        "pathfinding",
+        "evaluation",
+        "satsuma"
+      ],
+      "title": "Modern Satsuma Graph Library Adoption Evaluation"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-22",
+      "doc_id": "DOC-2025-00042",
+      "doc_type": "spec",
+      "path": "docs/specs/2025-10-22-dotnet-naming-architecture-adjustment--DOC-2025-00042.md",
+      "related": [
+        "DOC-2025-00018"
+      ],
+      "sha256": "56c16f7b9d167dfe310d51f3e5f64b2812c7f2e8e990a8f970248dacb3a231ec",
+      "simhash": "217518545454371509",
+      "status": "draft",
+      "summary": "Comprehensive specification for standardizing .NET project naming conventions, implementing proxy service pattern in Contract projects, converting reporting renderers to plugins, and establishing platform-agnostic plugin architecture.\n",
+      "supersedes": [],
+      "tags": [
+        "architecture",
+        "naming",
+        "refactoring",
+        "plugins",
+        "contracts",
+        "source-generators"
+      ],
+      "title": ".NET Project Naming and Architecture Adjustment Specification"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00037",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-21-bugfix-player-movement-after-inventory--DOC-2025-00037.md",
+      "related": [],
+      "sha256": "4be33c0a499583ed3e08fb7a6dfad9f6ba32d5dc27502b81dd76101c8e780a87",
+      "simhash": "9804077419261203132",
+      "status": "draft",
+      "summary": "Fixed issue where player could not move after picking up items due to energy system not processing NPC turns automatically.\n",
+      "supersedes": [],
+      "tags": [
+        "bugfix",
+        "turn-system",
+        "energy",
+        "inventory",
+        "gameplay"
+      ],
+      "title": "Bug Fix - Player Cannot Move After Adding Item to Inventory"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00038",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-21-build-verification-status-effects--DOC-2025-00038.md",
+      "related": [
+        "specs/002-status-effects-system"
+      ],
+      "sha256": "676023d204efedc6c76b6bcc23f6441fc22716db4c1126b8e71c2ff64eaf9e01",
+      "simhash": "13999526165425889204",
+      "status": "draft",
+      "summary": "Full stack integration verification for Status Effects system (Phases 1-6) confirming all components build and integrate without breaking changes.\n",
+      "supersedes": [],
+      "tags": [
+        "verification",
+        "status-effects",
+        "build",
+        "integration-test",
+        "spec-002"
+      ],
+      "title": "Build Verification Report - Status Effects Implementation"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00040",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-21-doc-organization-summary--DOC-2025-00040.md",
+      "related": [],
+      "sha256": "6d62e7ede814d83c944ed45e22995e88e348c4c820c51b5bd25237e55b2eb405",
+      "simhash": "5407814897389474308",
+      "status": "draft",
+      "summary": "Summary of documentation organization effort that moved 11 files from project root to proper locations in docs/ with appropriate categorization.\n",
+      "supersedes": [],
+      "tags": [
+        "documentation",
+        "organization",
+        "cleanup",
+        "maintenance"
+      ],
+      "title": "Documentation Organization - October 2025 Cleanup"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00066",
+      "doc_type": "finding",
+      "path": "docs/findings/contract-gap-analysis.md",
+      "related": [],
+      "sha256": "2d6265bf9cf64ebbc568882ebe0848e25ad65c94bc1e2fe61e260d1d9fdaf430",
+      "simhash": "7715865415252906649",
+      "status": "draft",
+      "summary": "Analysis of gaps between lablab-bean's current contract implementation and cross-milo reference architecture",
+      "supersedes": [],
+      "tags": [
+        "architecture",
+        "contracts",
+        "gaps",
+        "cross-milo-comparison"
+      ],
+      "title": "Contract Architecture Gap Analysis - Lablab-Bean vs Cross-Milo"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00067",
+      "doc_type": "finding",
+      "path": "docs/findings/cross-milo-contract-adoption-analysis.md",
+      "related": [],
+      "sha256": "d2c1a331bfdf9b98875a99d3b71889922cde6701fce0397ad84f5ae8b332fc25",
+      "simhash": "4833567417061806737",
+      "status": "draft",
+      "summary": "Analysis of cross-milo's tier 1 and tier 2 contract design patterns with recommendations for lablab-bean adoption",
+      "supersedes": [],
+      "tags": [
+        "architecture",
+        "plugins",
+        "contracts",
+        "tier-design"
+      ],
+      "title": "Cross-Milo Contract Design Adoption Analysis"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00039",
+      "doc_type": "reference",
+      "path": "docs/guides/2025-10-21-implementation-summaries-index--DOC-2025-00039.md",
+      "related": [],
+      "sha256": "8f25cff0216d7de50bb6eaa5bd08814e182859e8800a2cc9bbc128902790be82",
+      "simhash": "5407814890945450644",
+      "status": "draft",
+      "summary": "Index of implementation summary documents moved from root to docs/archive for better organization.\n",
+      "supersedes": [],
+      "tags": [
+        "implementation",
+        "summaries",
+        "spec-002",
+        "spec-003",
+        "spec-004"
+      ],
+      "title": "Implementation Summaries Index"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00038",
+      "doc_type": "reference",
+      "path": "docs/guides/2025-10-21-plugin-contracts-api--DOC-2025-00038.md",
+      "related": [],
+      "sha256": "ff7236795033c3472e5fe37d4f41406c6dbf9fc967d50331b3553d4595e7fef8",
+      "simhash": "798807249011941008",
+      "status": "draft",
+      "summary": "Complete API reference for plugin contract interfaces (IPlugin, IPluginContext, IRegistry, IPluginHost)\n",
+      "supersedes": [],
+      "tags": [
+        "plugins",
+        "api",
+        "contracts",
+        "interfaces",
+        "reference"
+      ],
+      "title": "Plugin Contracts API Reference"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00037",
+      "doc_type": "guide",
+      "path": "docs/guides/2025-10-21-plugin-development-quickstart--DOC-2025-00037.md",
+      "related": [],
+      "sha256": "604ccd35e7abb60a0538e37a8c40ce4d3cd8db63149e44659f7f04d676c88199",
+      "simhash": "9405142087323884053",
+      "status": "draft",
+      "summary": "5-minute guide to creating a new plugin for Lablab Bean using the plugin system\n",
+      "supersedes": [],
+      "tags": [
+        "plugins",
         "development",
-        "workflow"
+        "quickstart",
+        "tutorial"
       ],
-      "title": "Contributing to Lablab Bean"
+      "title": "Plugin Development Quick-Start Guide"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00039",
+      "doc_type": "reference",
+      "path": "docs/guides/2025-10-21-plugin-manifest-schema--DOC-2025-00039.md",
+      "related": [],
+      "sha256": "2d73a75f3e357bfcbdab98d4cdb950d0367c50cb85e560a9e6b38174ef711d14",
+      "simhash": "16268388088879082132",
+      "status": "draft",
+      "summary": "Complete reference for plugin.json manifest format including all fields, validation rules, and examples\n",
+      "supersedes": [],
+      "tags": [
+        "plugins",
+        "manifest",
+        "schema",
+        "configuration",
+        "json"
+      ],
+      "title": "Plugin Manifest Schema Reference"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00040",
+      "doc_type": "reference",
+      "path": "docs/guides/2025-10-21-plugin-system-overview--DOC-2025-00040.md",
+      "related": [
+        "DOC-2025-00037",
+        "DOC-2025-00038",
+        "DOC-2025-00039"
+      ],
+      "sha256": "07ad0f90bb12b847e8bd844da188b25d829fbbb37e4d8013e299583d2a4902e7",
+      "simhash": "9499471466753514132",
+      "status": "draft",
+      "summary": "Comprehensive overview of the Lablab Bean plugin system architecture including design, implementation phases, and current capabilities\n",
+      "supersedes": [],
+      "tags": [
+        "plugins",
+        "architecture",
+        "overview",
+        "system-design"
+      ],
+      "title": "Plugin System Architecture Overview"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00041",
+      "doc_type": "guide",
+      "path": "docs/guides/2025-10-21-windows-nul-file-prevention--DOC-2025-00041.md",
+      "related": [],
+      "sha256": "85319cd3f5159103d39b5ab4a9b1e27f4d56c83b1ffec45d470e6a7fbbb3810e",
+      "simhash": "383226999467542189",
+      "status": "draft",
+      "summary": "Solution for preventing Windows 'nul' file creation from command redirections being committed to git.\n",
+      "supersedes": [],
+      "tags": [
+        "windows",
+        "git",
+        "pre-commit",
+        "troubleshooting",
+        "best-practices"
+      ],
+      "title": "Windows 'nul' File Prevention"
     },
     {
       "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00001",
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00074",
       "doc_type": "guide",
-      "path": "docs/DOCUMENTATION-SCHEMA.md",
+      "path": "docs/guides/PLUGIN_DEVELOPMENT_QUICKSTART.md",
       "related": [],
-      "sha256": "5da67da05a49c4e3d35c997255c2df56f1d8b125317245c82467512fa8061dc9",
-      "simhash": "10019465408784828932",
-      "status": "active",
-      "summary": "Mandatory front-matter schema for all documentation files",
+      "sha256": "0c80b4032caf95347eb3e68d36e99d77c7fd4d50b5c405f2d00671d7f6e3b6c2",
+      "simhash": "10057925517014882966",
+      "status": "draft",
+      "summary": "Quick guide to creating plugins for Lablab Bean with step-by-step instructions",
       "supersedes": [],
       "tags": [
-        "docs",
-        "schema",
+        "plugins",
+        "guide",
+        "quickstart",
+        "development"
+      ],
+      "title": "Plugin Development Quickstart"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00075",
+      "doc_type": "reference",
+      "path": "docs/guides/PLUGIN_SYSTEM_QUICK_REFERENCE.md",
+      "related": [],
+      "sha256": "2b60880d7af79e5a2d5df0ce91a759049f5b98df28c8faf5260bad5cdb6b7e6d",
+      "simhash": "16921823498489043773",
+      "status": "draft",
+      "summary": "One-page reference for the Lablab Bean plugin system for quick lookup",
+      "supersedes": [],
+      "tags": [
+        "plugins",
+        "reference",
+        "quickstart"
+      ],
+      "title": "Plugin System Quick Reference"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00078",
+      "doc_type": "glossary",
+      "path": "docs/knowledge-base/locations.md",
+      "related": [],
+      "sha256": "9a4c1f2501d079f9345ecf4e94ac40c269c08bb0dbb8c1686abcab5ebe27a8ed",
+      "simhash": "5699808843443934885",
+      "status": "active",
+      "summary": "Reference guide to major cities and landmarks in the Eternal Realm game world",
+      "supersedes": [],
+      "tags": [
+        "geography",
+        "cities",
+        "landmarks",
+        "locations"
+      ],
+      "title": "Notable Locations in the Eternal Realm"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00079",
+      "doc_type": "glossary",
+      "path": "docs/knowledge-base/quests.md",
+      "related": [],
+      "sha256": "50c8bd7712110842602b43e0b7cd35594b48eec4e7350a716189ba68d7d82eb9",
+      "simhash": "10045637379368055501",
+      "status": "active",
+      "summary": "Catalog of available quests and contracts in the game world",
+      "supersedes": [],
+      "tags": [
+        "quests",
+        "contracts",
+        "missions",
+        "gameplay"
+      ],
+      "title": "Available Quests and Contracts"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00080",
+      "doc_type": "glossary",
+      "path": "docs/knowledge-base/test-dragon.md",
+      "related": [],
+      "sha256": "601243b9b15cdcbe1734f34eb0a3d385ac54d1a314ac03fc2c79c72398c91bc0",
+      "simhash": "9461737996660858867",
+      "status": "active",
+      "summary": "Test lore document for knowledge base system verification with the Test Dragon",
+      "supersedes": [],
+      "tags": [
+        "test",
+        "example",
+        "dragon",
+        "lore"
+      ],
+      "title": "Test Lore Document"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00081",
+      "doc_type": "glossary",
+      "path": "docs/knowledge-base/world-history.md",
+      "related": [],
+      "sha256": "9d199d8b25f5ecd238da66e329030f0049fe4b8f205dceb7c44eba08846aa920",
+      "simhash": "16668035217893586541",
+      "status": "active",
+      "summary": "Historical chronicle of the Eternal Realm from the Age of Dragons through the Age of Mortals",
+      "supersedes": [],
+      "tags": [
+        "history",
+        "ancient",
+        "dragons",
+        "lore"
+      ],
+      "title": "The History of the Eternal Realm"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00035",
+      "doc_type": "plan",
+      "path": "docs/plans/adopt-real-spec-kit.md",
+      "related": [],
+      "sha256": "60c6c0fea896a79650d4fee61e522d8865295b758ec14104a9b94b30619aff9f",
+      "simhash": "11169167864552566445",
+      "status": "draft",
+      "summary": "Proposal to adopt GitHub's Spec-Kit methodology for AI-driven development based on Specification-Driven Development (SDD).",
+      "supersedes": [],
+      "tags": [
+        "spec-kit",
+        "sdd",
+        "ai-development",
+        "methodology"
+      ],
+      "title": "Adopting Real Spec-Kit Methodology"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00034",
+      "doc_type": "plan",
+      "path": "docs/plans/data-driven-monster-approach.md",
+      "related": [],
+      "sha256": "41c0ba8a424dadc42700f954e892cd3cfdeb3adff4e6b97090f614d7e427b94c",
+      "simhash": "218859941184235197",
+      "status": "draft",
+      "summary": "Proposal for data-driven monster system using JSON/YAML instead of generated C# classes. More flexible, maintainable, and modern.",
+      "supersedes": [],
+      "tags": [
+        "architecture",
+        "data-driven",
+        "monsters",
+        "ecs",
+        "design-patterns"
+      ],
+      "title": "Data-Driven Monster System (Better Alternative to Code Generation)"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-21",
+      "doc_id": "DOC-2025-00084",
+      "doc_type": "guide",
+      "path": "docs/plugins/SPEC005_INVENTORY_PLUGIN_MIGRATION.md",
+      "related": [],
+      "sha256": "07ea864f94a1f9d4f0a20038f4c8ab1fd302bfb07be7c70e691da16dd404131d",
+      "simhash": "4709754724614484631",
+      "status": "active",
+      "summary": "Complete migration guide for inventory system into self-contained plugin using tiered plugin architecture",
+      "supersedes": [],
+      "tags": [
+        "plugin-system",
+        "inventory",
+        "spec-005",
+        "migration"
+      ],
+      "title": "Inventory Plugin Migration - Spec 005"
+    },
+    {
+      "canonical": false,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00015",
+      "doc_type": "finding",
+      "path": "docs/findings/2025-10-20-documentation-system-setup--DOC-2025-00015.md",
+      "related": [],
+      "sha256": "0b991e4524f07857abc4b1996febb9d4ea2c34e2b1d1cbf1e1e7fdc4c41ea082",
+      "simhash": "14631085772185213460",
+      "status": "draft",
+      "summary": "Summary of the documentation management system setup inspired by sango-card",
+      "supersedes": [],
+      "tags": [
+        "documentation",
+        "setup",
         "meta"
       ],
-      "title": "Documentation Front-Matter Schema"
+      "title": "Documentation System Setup"
     },
     {
       "canonical": true,
       "created": "2025-10-20",
-      "doc_id": "DOC-2025-00020",
-      "doc_type": "reference",
-      "path": "docs/ORGANIZATION.md",
+      "doc_id": "DOC-2025-00025",
+      "doc_type": "finding",
+      "path": "docs/findings/debugging.md",
       "related": [],
-      "sha256": "db625b61d6baf8b5ea1e9afeba162d56c733a95c5bf6cc3f49ddacd3f4afc7c3",
-      "simhash": "1877102604862332567",
+      "sha256": "e2e80f716bc448e3c310a37043b8bd48c76ebc35447826d3b913bc364026c747",
+      "simhash": "5282439710895993524",
       "status": "active",
-      "summary": "File organization and directory structure of the Lablab Bean project.",
+      "summary": "Debugging notes and solutions for stack testing issues including node-pty compilation and Serilog configuration.",
       "supersedes": [],
       "tags": [
-        "organization",
-        "structure",
-        "file-layout"
+        "debugging",
+        "testing",
+        "troubleshooting",
+        "node-pty",
+        "terminal-gui"
       ],
-      "title": "Project Organization"
-    },
-    {
-      "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00016",
-      "doc_type": "guide",
-      "path": "docs/QUICK-REFERENCE.md",
-      "related": [],
-      "sha256": "32b0c0aebfd003c4e4b793d6aea73b35cc0724b334ff52acaa65249dc965d506",
-      "simhash": "14635647607408379408",
-      "status": "active",
-      "summary": "Quick reference for the documentation system",
-      "supersedes": [],
-      "tags": [
-        "reference",
-        "quickstart",
-        "cheatsheet"
-      ],
-      "title": "Documentation Quick Reference"
-    },
-    {
-      "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00021",
-      "doc_type": "guide",
-      "path": "docs/QUICKSTART-DEV.md",
-      "related": [],
-      "sha256": "04b35b5159f1dfc2968ade779930c6ac3ef2bd8b4366fa8c8439b82fac6ce977",
-      "simhash": "10006898147794177854",
-      "status": "active",
-      "summary": "Get up and running with hot reload in development mode.",
-      "supersedes": [],
-      "tags": [
-        "quickstart",
-        "development",
-        "hot-reload"
-      ],
-      "title": "Quick Start - Development Mode"
-    },
-    {
-      "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00022",
-      "doc_type": "guide",
-      "path": "docs/QUICKSTART.md",
-      "related": [],
-      "sha256": "5bc1b64f1b6d8f0e2b58750a250308f8daa107e590f0c14a6c59e4a648ea9e3f",
-      "simhash": "9834892765972851303",
-      "status": "active",
-      "summary": "Get started with Lablab Bean in 3 steps: build, start, and access.",
-      "supersedes": [],
-      "tags": [
-        "quickstart",
-        "getting-started",
-        "release"
-      ],
-      "title": "Quick Start Guide"
-    },
-    {
-      "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00002",
-      "doc_type": "guide",
-      "path": "docs/README.md",
-      "related": [],
-      "sha256": "2cb366969d6a7a662b023dfcbcd62cbecc5e961f7dabe7a7aec7a2b28bd62794",
-      "simhash": "10163655652470888596",
-      "status": "active",
-      "summary": "Central navigation and overview of lablab-bean documentation",
-      "supersedes": [],
-      "tags": [
-        "readme",
-        "navigation"
-      ],
-      "title": "Documentation Index"
-    },
-    {
-      "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00023",
-      "doc_type": "guide",
-      "path": "docs/RELEASE.md",
-      "related": [],
-      "sha256": "fa4e33d98454bab2552e0bab0cff400f2531d87cece109e32b867d8eebafea2c",
-      "simhash": "12271366693319010959",
-      "status": "active",
-      "summary": "Build and run the Lablab Bean stack using versioned artifacts.",
-      "supersedes": [],
-      "tags": [
-        "release",
-        "deployment",
-        "versioning",
-        "artifacts"
-      ],
-      "title": "Release & Deployment Guide"
+      "title": "Debugging Notes - Stack Testing"
     },
     {
       "canonical": true,
@@ -187,7 +1104,7 @@
       "doc_type": "finding",
       "path": "docs/findings/terminal-gui-pm2-fixes.md",
       "related": [],
-      "sha256": "3bcb0a1130882b8000d8a0f0395f64a6019912ac2e454cf4f0472535bd001fc0",
+      "sha256": "5f924959ff8d47fde5971dcfc3e73dfa00b455b30a047d28da4b1eb1d8e8f0e4",
       "simhash": "752035839165535924",
       "status": "active",
       "summary": "Fixed two critical issues: FOV/visibility rendering and player input control in Terminal.Gui v2 running under PM2.",
@@ -205,23 +1122,40 @@
     {
       "canonical": true,
       "created": "2025-10-20",
-      "doc_id": "DOC-2025-00025",
-      "doc_type": "finding",
-      "path": "docs/guides/debugging.md",
+      "doc_id": "DOC-2025-00018",
+      "doc_type": "reference",
+      "path": "docs/guides/ARCHITECTURE.md",
       "related": [],
-      "sha256": "b9caab391d5ae948edf674b8b454db0e0e4372a0938f2a8088fab5f5049b0067",
-      "simhash": "5282439710895993524",
+      "sha256": "648118ebfe5e4be04113cef4b1a146dc79c3177363885b39f1d378b4c0bb02c7",
+      "simhash": "14576372975366030268",
       "status": "active",
-      "summary": "Debugging notes and solutions for stack testing issues including node-pty compilation and Serilog configuration.",
+      "summary": "Multi-platform development toolkit architecture including task automation, web terminal, .NET console/windows apps, and shared framework.",
       "supersedes": [],
       "tags": [
-        "debugging",
-        "testing",
-        "troubleshooting",
-        "node-pty",
-        "terminal-gui"
+        "architecture",
+        "overview",
+        "structure"
       ],
-      "title": "Debugging Notes - Stack Testing"
+      "title": "Lablab Bean Architecture"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00019",
+      "doc_type": "guide",
+      "path": "docs/guides/CONTRIBUTING.md",
+      "related": [],
+      "sha256": "5831109ebb3ec22813f15dce53bf82db65f35937944f268f93ba35a3a9caf04e",
+      "simhash": "10024992973143302719",
+      "status": "active",
+      "summary": "Guidelines and instructions for contributing to Lablab Bean including setup, workflow, and coding standards.",
+      "supersedes": [],
+      "tags": [
+        "contributing",
+        "development",
+        "workflow"
+      ],
+      "title": "Contributing to Lablab Bean"
     },
     {
       "canonical": true,
@@ -230,7 +1164,7 @@
       "doc_type": "guide",
       "path": "docs/guides/development.md",
       "related": [],
-      "sha256": "3eeb434655f1f22cf9998609a6599775bf2e053019da075b1093dd8387d14553",
+      "sha256": "5de54a1642951ba7d006ae6be674c2758898ca87e7efdfa84db4eac8221ba88f",
       "simhash": "11123511735072212670",
       "status": "active",
       "summary": "Development workflow including hot reload setup, PM2 orchestration, and best practices for fast iteration.",
@@ -246,11 +1180,30 @@
     {
       "canonical": true,
       "created": "2025-10-20",
+      "doc_id": "DOC-2025-00001",
+      "doc_type": "guide",
+      "path": "docs/guides/DOCUMENTATION-SCHEMA.md",
+      "related": [],
+      "sha256": "5da67da05a49c4e3d35c997255c2df56f1d8b125317245c82467512fa8061dc9",
+      "simhash": "10019465408784828932",
+      "status": "active",
+      "summary": "Mandatory front-matter schema for all documentation files",
+      "supersedes": [],
+      "tags": [
+        "docs",
+        "schema",
+        "meta"
+      ],
+      "title": "Documentation Front-Matter Schema"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
       "doc_id": "DOC-2025-00027",
       "doc_type": "guide",
       "path": "docs/guides/file-organization-migration.md",
       "related": [],
-      "sha256": "5a7d284272ff3401b54c839fd0689a86551f7306d1525a661e5f5b055e7bf31b",
+      "sha256": "a5aa0e0c41207df70e6c2c7a137465a4fbd9bb5b04655b4ce8143a7e32a290e8",
       "simhash": "796642343409359526",
       "status": "active",
       "summary": "Guide for migrating to the new file organization and testing structure with Playwright and versioned artifacts.",
@@ -266,11 +1219,50 @@
     {
       "canonical": true,
       "created": "2025-10-20",
+      "doc_id": "DOC-2025-00035",
+      "doc_type": "guide",
+      "path": "docs/guides/monster-template-example.md",
+      "related": [],
+      "sha256": "7a4caa06da9e5907d5ff1cf2c218cc8cf3d10bdb0c2bcf301581245443335bbb",
+      "simhash": "6295025945977775805",
+      "status": "active",
+      "summary": "Example guide for using monster template to generate new monster types with spec-kit.",
+      "supersedes": [],
+      "tags": [
+        "templates",
+        "monsters",
+        "entities",
+        "code-generation"
+      ],
+      "title": "Monster Template Example"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00020",
+      "doc_type": "reference",
+      "path": "docs/guides/ORGANIZATION.md",
+      "related": [],
+      "sha256": "66ad99947db9332cef82b4868165a4b3706aaadc62307095fd83742243d0d8e2",
+      "simhash": "1877102604862332567",
+      "status": "active",
+      "summary": "File organization and directory structure of the Lablab Bean project.",
+      "supersedes": [],
+      "tags": [
+        "organization",
+        "structure",
+        "file-layout"
+      ],
+      "title": "Project Organization"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
       "doc_id": "DOC-2025-00028",
       "doc_type": "guide",
       "path": "docs/guides/pm2-hot-reload-migration.md",
       "related": [],
-      "sha256": "bac255b5da3f96f99ed499dff8aa7f77c664a33c1dd6bdcda96ee17cc4ed79b8",
+      "sha256": "519f12fa20ad21b833f8bae417604b8b1bb26495b0e671207505864eb675a3d3",
       "simhash": "11045682529550702239",
       "status": "active",
       "summary": "Changes made to support local PM2 and hot reload development workflow.",
@@ -290,7 +1282,7 @@
       "doc_type": "guide",
       "path": "docs/guides/project-setup.md",
       "related": [],
-      "sha256": "41dd4bcec45ef4a8dd676f93c1bcb592da401610094269e6e7d2c0a215dab2e9",
+      "sha256": "1fd4ba8d23637acac52fd54ffc745e7a22a5005039502db8aee41093ea20de4e",
       "simhash": "14599824463129162389",
       "status": "active",
       "summary": "Overview of Lablab Bean project setup including all integrated tools and configurations.",
@@ -306,11 +1298,108 @@
     {
       "canonical": true,
       "created": "2025-10-20",
+      "doc_id": "DOC-2025-00016",
+      "doc_type": "guide",
+      "path": "docs/guides/QUICK-REFERENCE.md",
+      "related": [],
+      "sha256": "49fde91fd6b643f4b9eb8e6f2a7aa316465aa52680f33b2413b9cdd0b0b09ddb",
+      "simhash": "14635647607408379408",
+      "status": "active",
+      "summary": "Quick reference for the documentation system",
+      "supersedes": [],
+      "tags": [
+        "reference",
+        "quickstart",
+        "cheatsheet"
+      ],
+      "title": "Documentation Quick Reference"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00021",
+      "doc_type": "guide",
+      "path": "docs/guides/QUICKSTART-DEV.md",
+      "related": [],
+      "sha256": "fa08d759678f09ed2144132a711e12b9457d386707f46359eb49436ac43bf319",
+      "simhash": "10006898147794177854",
+      "status": "active",
+      "summary": "Get up and running with hot reload in development mode.",
+      "supersedes": [],
+      "tags": [
+        "quickstart",
+        "development",
+        "hot-reload"
+      ],
+      "title": "Quick Start - Development Mode"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00022",
+      "doc_type": "guide",
+      "path": "docs/guides/QUICKSTART.md",
+      "related": [],
+      "sha256": "651c220f1731aab56d07afacc653b894521d57508f6aac9642b9542c31d023dd",
+      "simhash": "9834892765972851303",
+      "status": "active",
+      "summary": "Get started with Lablab Bean in 3 steps: build, start, and access.",
+      "supersedes": [],
+      "tags": [
+        "quickstart",
+        "getting-started",
+        "release"
+      ],
+      "title": "Quick Start Guide"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00036",
+      "doc_type": "reference",
+      "path": "docs/guides/README.md",
+      "related": [],
+      "sha256": "a88ea4e4238f0907180a3d2b81e198c9bc26f71590cd6cf47d71c3cbc8dd42bf",
+      "simhash": "10343868655156006430",
+      "status": "active",
+      "summary": "Index and overview of all formal specifications for major systems and features in the Lablab Bean project.",
+      "supersedes": [],
+      "tags": [
+        "specifications",
+        "index",
+        "reference",
+        "spec-kit"
+      ],
+      "title": "Project Specifications Index"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00023",
+      "doc_type": "guide",
+      "path": "docs/guides/RELEASE.md",
+      "related": [],
+      "sha256": "cf2c07969fe076640e905b3aeedc4e2b3ffcb4711d032b8a1a074aa6475f25c1",
+      "simhash": "12271366693319010959",
+      "status": "active",
+      "summary": "Build and run the Lablab Bean stack using versioned artifacts.",
+      "supersedes": [],
+      "tags": [
+        "release",
+        "deployment",
+        "versioning",
+        "artifacts"
+      ],
+      "title": "Release & Deployment Guide"
+    },
+    {
+      "canonical": true,
+      "created": "2025-10-20",
       "doc_id": "DOC-2025-00032",
       "doc_type": "guide",
       "path": "docs/guides/testing.md",
       "related": [],
-      "sha256": "3223d666fa4367a9c14ed67cf5be3093026d487f75820cb8c80a0725331eb3cd",
+      "sha256": "480c94dac44766ca5d60c62dc08c161a5bac9f331e6d70898c9118d4efcd5a24",
       "simhash": "16888023286106964670",
       "status": "active",
       "summary": "Complete guide for end-to-end testing with Playwright for the web terminal interface.",
@@ -324,13 +1413,34 @@
       "title": "Testing Guide"
     },
     {
+      "canonical": false,
+      "created": "2025-10-20",
+      "doc_id": "DOC-2025-00017",
+      "doc_type": "spec",
+      "path": "docs/specs/2025-10-20-ui-improvements--DOC-2025-00017.md",
+      "related": [],
+      "sha256": "172af240793a769fb84359006d7ee35f6f944bccd2b8aee3e414f7a6bc61dfb4",
+      "simhash": "2723970722905440959",
+      "status": "draft",
+      "summary": "Specification for UI improvements including duplicate message removal, rendering artifact fixes, monster AI aggro range, and activity log system.\n",
+      "supersedes": [],
+      "tags": [
+        "ui",
+        "terminal-gui",
+        "activity-log",
+        "monster-ai",
+        "rendering"
+      ],
+      "title": "UI Improvements Specification"
+    },
+    {
       "canonical": true,
       "created": "2025-10-20",
       "doc_id": "DOC-2025-00033",
       "doc_type": "spec",
       "path": "docs/specs/dungeon-crawler-features.md",
       "related": [],
-      "sha256": "4763dd05af300c7355519c59e7f67cc9bf3f7a8047f2955efa78da7f104c3485",
+      "sha256": "8650df3ed0fcd1137bc3bda557195f0d2c59f53c85e5d2df7048afd9912c2246",
       "simhash": "12109562571852076692",
       "status": "active",
       "summary": "Fully functional ASCII roguelike dungeon crawler with procedural generation, enemy AI, fog of war, line of sight, and audio support.",
@@ -350,7 +1460,7 @@
       "doc_type": "spec",
       "path": "docs/specs/dungeon-generation-system.md",
       "related": [],
-      "sha256": "cc91f21cbfd9317504dae3fc0e352c8c8e2bf5c636057b7e51cba873aac26379",
+      "sha256": "142b3a4effbf24e0b736cec63d5de37234f3d84a8bc0d919ebc2a31be9f77c13",
       "simhash": "7929940641211733237",
       "status": "active",
       "summary": "Procedurally generated dungeons with rooms connected by L-shaped corridors, fog of war mechanics, and field of view calculations.",
@@ -363,48 +1473,8 @@
         "rooms"
       ],
       "title": "Dungeon Generation System Specification"
-    },
-    {
-      "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00035",
-      "doc_type": "guide",
-      "path": "docs/specs/monster-template-example.md",
-      "related": [],
-      "sha256": "c8f59f84621d8bd74f3b7ab92f9752b70ea1449dc8683e5c4776ef0ba338f9bf",
-      "simhash": "6295025945977775805",
-      "status": "active",
-      "summary": "Example guide for using monster template to generate new monster types with spec-kit.",
-      "supersedes": [],
-      "tags": [
-        "templates",
-        "monsters",
-        "entities",
-        "code-generation"
-      ],
-      "title": "Monster Template Example"
-    },
-    {
-      "canonical": true,
-      "created": "2025-10-20",
-      "doc_id": "DOC-2025-00036",
-      "doc_type": "reference",
-      "path": "docs/specs/README.md",
-      "related": [],
-      "sha256": "c0bece2969ceb33d5e83aff689154ecdce7ae6471d3ea0db55d82b9c8f77b8d7",
-      "simhash": "10343727917667651102",
-      "status": "active",
-      "summary": "Index and overview of all formal specifications for major systems and features in the Lablab Bean project.",
-      "supersedes": [],
-      "tags": [
-        "specifications",
-        "index",
-        "reference",
-        "spec-kit"
-      ],
-      "title": "Project Specifications Index"
     }
   ],
-  "generated_at": "2025-10-21T01:02:13.748712Z",
-  "total_docs": 20
+  "generated_at": "2025-10-28T08:28:09.032298Z",
+  "total_docs": 69
 }

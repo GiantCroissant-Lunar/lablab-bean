@@ -1,10 +1,12 @@
 ---
+doc_id: DOC-2025-00060
 title: "FFmpeg Adoption Evaluation for Gameplay Recording"
-date: "2025-10-22"
-category: "findings"
-tags: ["ffmpeg", "recording", "gameplay", "evaluation"]
-status: "complete"
-author: "Kiro AI Assistant"
+doc_type: finding
+status: active
+canonical: true
+created: 2025-10-22
+tags: [ffmpeg, recording, gameplay, evaluation]
+summary: Evaluation of FFmpeg for gameplay recording with recommendation to adopt for development and debugging benefits
 ---
 
 # FFmpeg Adoption Evaluation for Gameplay Recording

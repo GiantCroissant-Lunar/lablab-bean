@@ -1,22 +1,12 @@
 ---
+doc_id: DOC-2025-00071
 title: Unified Media Player - Technical Research Report
-type: research
-status: complete
+doc_type: finding
+status: active
+canonical: true
 created: 2025-10-26
-updated: 2025-10-26
-author: Claude
-tags:
-  - media-player
-  - ffmpeg
-  - reactiveui
-  - terminal-gui
-  - audio-visualization
-  - research
-related:
-  - UNIFIED_MEDIA_PLAYER_PLAN.md
-  - LablabBean.Plugins.MediaPlayer.Core
-  - LablabBean.Reactive
-priority: high
+tags: [media-player, ffmpeg, reactiveui, terminal-gui, audio-visualization, research]
+summary: Technical research report on unified media player implementation with FFmpeg, ReactiveUI, and Terminal.Gui integration
 ---
 
 ## Unified Media Player - Technical Research Report

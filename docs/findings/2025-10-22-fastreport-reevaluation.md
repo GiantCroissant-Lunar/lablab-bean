@@ -1,13 +1,13 @@
 ---
+doc_id: DOC-2025-00063
 title: "FastReport Integration Re-evaluation for Lablab-bean"
-date: 2025-10-22
-type: findings
-status: final
+doc_type: finding
+status: active
+canonical: true
+created: 2025-10-22
 tags: [reporting, fastreport, architecture, nfun-report, plugins]
-related:
-  - docs/findings/2025-10-22-nfun-report-adoption-evaluation.md
-  - docs/findings/2025-10-22-plugin-manoi-adoption-evaluation.md
-author: Claude Code
+summary: Revised evaluation of FastReport.OpenSource with recommendation to adopt as a reporting plugin
+related: [DOC-2025-00064, DOC-2025-00065]
 ---
 
 # FastReport Integration Re-evaluation for Lablab-bean

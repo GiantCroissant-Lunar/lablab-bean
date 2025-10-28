@@ -1,15 +1,12 @@
 ---
+doc_id: DOC-2025-00084
 title: "Inventory Plugin Migration - Spec 005"
-type: implementation-summary
-category: plugins
-tags: [plugin-system, inventory, spec-005, migration]
-status: complete
+doc_type: guide
+status: active
+canonical: true
 created: 2025-10-21
-updated: 2025-10-21
-related:
-  - PLUGIN_SYSTEM_PHASE4_OBSERVABILITY.md
-  - PLUGIN_SYSTEM_PHASE5_SECURITY.md
-  - ../specs/005-inventory-plugin-migration/
+tags: [plugin-system, inventory, spec-005, migration]
+summary: Complete migration guide for inventory system into self-contained plugin using tiered plugin architecture
 ---
 
 # Inventory Plugin Migration - Spec 005

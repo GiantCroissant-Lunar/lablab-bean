@@ -23,9 +23,11 @@ The activity log system was reviewed and enhanced to ensure complete decoupling 
 ### 1. ✅ Fixed Code Quality Issues
 
 #### Removed Duplicate Using Statement
+
 **File:** `dotnet/framework/LablabBean.Game.Core/Services/ActivityLogService.cs`
 
 **Before:**
+
 ```csharp
 using LablabBean.Contracts.UI.Models;
 using LablabBean.Contracts.UI.Services;
@@ -33,6 +35,7 @@ using LablabBean.Contracts.UI.Models; // Duplicate!
 ```
 
 **After:**
+
 ```csharp
 using LablabBean.Contracts.UI.Models;
 using LablabBean.Contracts.UI.Services;
@@ -47,16 +50,19 @@ using LablabBean.Contracts.UI.Services;
 #### Removed Direct ECS Access from UI Renderers
 
 **Problem:** Both renderers had dual update methods:
+
 - Service-based: `Bind(IActivityLogService)`
 - Direct ECS: `Update(World)` or `Render(World)`
 
 This violated the separation of concerns by allowing UI to directly query the ECS World.
 
 **Files Modified:**
+
 - `dotnet/console-app/LablabBean.Game.TerminalUI/Views/ActivityLogView.cs`
 - `dotnet/windows-app/LablabBean.Game.SadConsole/Renderers/ActivityLogRenderer.cs`
 
 **Before (ActivityLogView.cs):**
+
 ```csharp
 public void Update(World world)
 {
@@ -67,12 +73,14 @@ public void Update(World world)
 ```
 
 **After:**
+
 ```csharp
 // Method removed entirely
 // Only service-based Bind() method remains
 ```
 
 **Also removed unnecessary imports:**
+
 ```csharp
 // Removed:
 using Arch.Core;
@@ -81,6 +89,7 @@ using LablabBean.Game.Core.Components;
 ```
 
 **Impact:**
+
 - UI renderers can NO LONGER directly access ECS
 - Enforces use of `IActivityLogService` interface
 - Cleaner dependencies
@@ -96,6 +105,7 @@ using LablabBean.Game.Core.Components;
 **Problem:** Both renderers duplicated severity-to-icon mapping logic:
 
 **Before (duplicated in both renderers):**
+
 ```csharp
 var icon = e.Severity switch
 {
@@ -112,6 +122,7 @@ var icon = e.Severity switch
 **Solution:**
 
 **1. Extended `ActivityEntryDto`** (`LablabBean.Contracts.UI/Models/ActivityLogModels.cs`):
+
 ```csharp
 public sealed class ActivityEntryDto
 {
@@ -130,6 +141,7 @@ public sealed class ActivityEntryDto
 ```
 
 **2. Implemented centralized mapping in `ActivityLogService`**:
+
 ```csharp
 private static ActivityEntryDto Map(ActivityEntry entry)
     => new ActivityEntryDto
@@ -169,12 +181,14 @@ private static string GetColorForSeverity(ActivitySeverity severity)
 **3. Simplified renderers to use pre-computed values:**
 
 **Terminal.Gui (Before):**
+
 ```csharp
 var icon = e.Severity switch { /* 7 lines of mapping */ };
 lines.Add($"{ts}{icon} {e.Message}");
 ```
 
 **Terminal.Gui (After):**
+
 ```csharp
 lines.Add($"{ts}{e.Icon} {e.Message}"); // Direct use!
 ```
@@ -182,6 +196,7 @@ lines.Add($"{ts}{e.Icon} {e.Message}"); // Direct use!
 **Same simplification applied to SadConsole renderer.**
 
 **Impact:**
+
 - ✅ Single source of truth for icon/color mapping
 - ✅ Consistent icons across all renderers
 - ✅ Easier to customize (change once, applies everywhere)
@@ -234,6 +249,7 @@ public sealed class ActivityLogOptions
 #### Updated `ActivityLogService` to Use Options
 
 **Constructor updated:**
+
 ```csharp
 public ActivityLogService(
     ILogger<ActivityLogService> logger,
@@ -249,6 +265,7 @@ public ActivityLogService(
 ```
 
 **Applied severity filtering:**
+
 ```csharp
 public void Append(string message, ActivitySeverity severity, ...)
 {
@@ -270,6 +287,7 @@ public void Append(string message, ActivitySeverity severity, ...)
 ```
 
 **Configuration in DI:**
+
 ```csharp
 // In Program.cs
 services.AddSingleton<IActivityLogService, ActivityLogService>();
@@ -284,6 +302,7 @@ services.Configure<ActivityLogOptions>(options =>
 ```
 
 **Impact:**
+
 - ✅ Configurable buffer size per environment
 - ✅ Toggle timestamp display
 - ✅ Enable/disable logger mirroring
@@ -300,6 +319,7 @@ services.Configure<ActivityLogOptions>(options =>
 **File Modified:** `dotnet/framework/LablabBean.Contracts.UI/Services/IActivityLogService.cs`
 
 **New methods added:**
+
 ```csharp
 /// <summary>
 /// Get recent entries filtered by category
@@ -368,6 +388,7 @@ public IReadOnlyList<ActivityEntryDto> Search(string searchTerm, int maxCount = 
 ```
 
 **Usage examples:**
+
 ```csharp
 // Show only combat logs
 var combatLogs = activityLog.GetByCategory(ActivityCategory.Combat, 50);
@@ -380,6 +401,7 @@ var damageEvents = activityLog.Search("damage", 30);
 ```
 
 **Impact:**
+
 - ✅ Advanced UI can filter logs by category
 - ✅ Debug view can show only errors/warnings
 - ✅ Search functionality for finding specific events
@@ -418,6 +440,7 @@ var damageEvents = activityLog.Search("damage", 30);
    - All expected ActivitySeverity values
 
 **Example Test:**
+
 ```csharp
 [Fact]
 public void ActivityLogOptions_ShouldHaveDefaultValues()
@@ -436,11 +459,13 @@ public void ActivityLogOptions_ShouldHaveDefaultValues()
 ```
 
 **Run tests:**
+
 ```bash
 dotnet test dotnet/framework/tests/LablabBean.Contracts.UI.Tests/
 ```
 
 **Impact:**
+
 - ✅ Documented expected behavior
 - ✅ Prevents regression
 - ✅ Validates interface stability
@@ -455,6 +480,7 @@ dotnet test dotnet/framework/tests/LablabBean.Contracts.UI.Tests/
 **File Created:** `docs/_inbox/ACTIVITY_LOG_RENDERER_GUIDE.md`
 
 **Contents:**
+
 - Architecture overview
 - Step-by-step implementation guide
 - Reference implementations (Terminal.Gui, SadConsole, Web)
@@ -476,6 +502,7 @@ dotnet test dotnet/framework/tests/LablabBean.Contracts.UI.Tests/
 7. **Troubleshooting** - Common issues and solutions
 
 **Example from guide:**
+
 ```csharp
 public void Bind(IActivityLogService service)
 {
@@ -499,6 +526,7 @@ private void RefreshDisplay()
 ```
 
 **Impact:**
+
 - ✅ New developers can implement renderers easily
 - ✅ Consistent patterns across all renderers
 - ✅ Reduces onboarding time
@@ -517,6 +545,7 @@ UI Renderers
 ```
 
 **Problems:**
+
 - Inconsistent usage
 - UI could bypass service abstraction
 - Harder to test
@@ -536,6 +565,7 @@ UI Renderers
 ```
 
 **Benefits:**
+
 - ✅ Enforced abstraction
 - ✅ Cannot bypass service layer
 - ✅ Easy to mock for testing
@@ -546,19 +576,23 @@ UI Renderers
 ## Files Modified
 
 ### Core Framework
+
 1. `dotnet/framework/LablabBean.Contracts.UI/Models/ActivityLogModels.cs` - Added Icon/Color properties
 2. `dotnet/framework/LablabBean.Contracts.UI/Models/ActivityLogOptions.cs` - **NEW** Configuration class
 3. `dotnet/framework/LablabBean.Contracts.UI/Services/IActivityLogService.cs` - Added filtering methods
 4. `dotnet/framework/LablabBean.Game.Core/Services/ActivityLogService.cs` - Multiple enhancements
 
 ### UI Renderers
+
 5. `dotnet/console-app/LablabBean.Game.TerminalUI/Views/ActivityLogView.cs` - Removed ECS access, simplified
 6. `dotnet/windows-app/LablabBean.Game.SadConsole/Renderers/ActivityLogRenderer.cs` - Removed ECS access, simplified
 
 ### Tests
+
 7. `dotnet/framework/tests/LablabBean.Contracts.UI.Tests/ActivityLogServiceTests.cs` - **NEW** Comprehensive tests
 
 ### Documentation
+
 8. `docs/_inbox/ACTIVITY_LOG_RENDERER_GUIDE.md` - **NEW** Implementation guide
 9. `docs/_inbox/ACTIVITY_LOG_IMPROVEMENTS_SUMMARY.md` - **NEW** This document
 
@@ -571,16 +605,19 @@ UI Renderers
 If any code currently uses `Update(World)` or `Render(World)` methods on renderers:
 
 **Before:**
+
 ```csharp
 activityLogView.Update(world); // Won't compile anymore
 ```
 
 **After:**
+
 ```csharp
 activityLogView.Bind(activityLogService); // Use service instead
 ```
 
 **Migration:**
+
 1. Inject `IActivityLogService` instead of `World`
 2. Call `Bind(service)` instead of `Update(world)`
 3. Remove any direct ECS queries from UI code
@@ -590,11 +627,13 @@ activityLogView.Bind(activityLogService); // Use service instead
 If constructing `ActivityLogService` directly (not via DI):
 
 **Before:**
+
 ```csharp
 var service = new ActivityLogService(logger, worldManager, logSystem);
 ```
 
 **After:**
+
 ```csharp
 var options = Options.Create(new ActivityLogOptions());
 var service = new ActivityLogService(logger, worldManager, logSystem, options);
@@ -623,6 +662,7 @@ npm run windows
 ```
 
 **Expected behavior:**
+
 - Combat messages show with ⚔ icon in red
 - Loot messages show with $ icon in gold
 - Success messages show with + icon in green
@@ -634,6 +674,7 @@ npm run windows
 ## Future Enhancements (Optional)
 
 ### 1. Per-Entry Sequence Numbers
+
 Currently uses aggregate sequence. Per-entry sequences would enable precise delta queries.
 
 ```csharp
@@ -645,6 +686,7 @@ public readonly struct ActivityEntry
 ```
 
 ### 2. Log Persistence
+
 Save logs to file for session replay:
 
 ```csharp
@@ -656,6 +698,7 @@ public interface IActivityLogService
 ```
 
 ### 3. Log Categories Filter in Options
+
 Enable/disable specific categories:
 
 ```csharp
@@ -672,6 +715,7 @@ var options = new ActivityLogOptions
 ```
 
 ### 4. Custom Icon/Color Providers
+
 Allow games to override default icon/color mappings:
 
 ```csharp

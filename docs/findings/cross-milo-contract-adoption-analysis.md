@@ -1,9 +1,12 @@
 ---
+doc_id: DOC-2025-00067
 title: Cross-Milo Contract Design Adoption Analysis
+doc_type: finding
 status: draft
-type: analysis
+canonical: true
 created: 2025-10-21
 tags: [architecture, plugins, contracts, tier-design]
+summary: Analysis of cross-milo's tier 1 and tier 2 contract design patterns with recommendations for lablab-bean adoption
 ---
 
 # Cross-Milo Contract Design Adoption for Lablab-Bean

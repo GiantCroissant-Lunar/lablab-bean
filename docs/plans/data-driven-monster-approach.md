@@ -1,7 +1,7 @@
 ---
 doc_id: DOC-2025-00034
 title: Data-Driven Monster System (Better Alternative to Code Generation)
-doc_type: proposal
+doc_type: plan
 status: draft
 canonical: false
 created: 2025-10-21

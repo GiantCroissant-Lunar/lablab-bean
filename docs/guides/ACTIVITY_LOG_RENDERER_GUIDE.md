@@ -1,13 +1,12 @@
 ---
-id: activity-log-renderer-guide
+doc_id: DOC-2025-00072
 title: Activity Log Renderer Implementation Guide
-version: 1.0.0
+doc_type: guide
 status: draft
-category: development
-tags: [activity-log, rendering, ui, architecture, guide]
+canonical: true
 created: 2025-10-23
-updated: 2025-10-23
-author: Claude
+tags: [activity-log, rendering, ui, architecture, guide]
+summary: Guide explaining how to create new renderers for the activity log system with complete separation between logging and UI rendering
 ---
 
 # Activity Log Renderer Implementation Guide
@@ -249,6 +248,7 @@ public class ActivityLogView : FrameView
 ```
 
 **Key Points:**
+
 - Uses Terminal.Gui `ListView` for display
 - Subscribes to `Changed` event
 - Auto-scrolls to bottom on updates
@@ -308,6 +308,7 @@ public class ActivityLogRenderer
 ```
 
 **Key Points:**
+
 - Uses SadConsole `ListBox` for display
 - Draws a styled border
 - Same subscription pattern as Terminal.Gui
@@ -352,6 +353,7 @@ public class WebTerminalActivityLogRenderer
 ```
 
 **Key Points:**
+
 - Uses `IObservable<ActivityEntryDto>` for real-time streaming
 - Sends to browser via SignalR
 - No polling required - reactive push notifications
@@ -421,11 +423,13 @@ logService.Info("Test info message");
 ### 1. Always Use the Service Interface
 
 ✅ **DO:**
+
 ```csharp
 public void Bind(IActivityLogService service) { ... }
 ```
 
 ❌ **DON'T:**
+
 ```csharp
 public void Update(World world) { ... } // Direct ECS access
 ```
@@ -462,11 +466,13 @@ Don't re-implement severity-to-icon mapping in your renderer.
 ### 4. Choose the Right Notification Pattern
 
 **Event-based (simpler):**
+
 ```csharp
 _service.Changed += sequence => RefreshDisplay();
 ```
 
 **Observable-based (reactive):**
+
 ```csharp
 _subscription = _service.OnLogAdded
     .Throttle(TimeSpan.FromMilliseconds(100))
@@ -475,6 +481,7 @@ _subscription = _service.OnLogAdded
 ```
 
 Use observables when you need:
+
 - Throttling/debouncing
 - Thread marshalling
 - Complex reactive chains
@@ -676,6 +683,7 @@ private void OnActivityLogChanged(long sequence)
 **Cause:** Not subscribed to events or observable.
 
 **Solution:** Ensure `Bind()` is called and subscriptions are set up:
+
 ```csharp
 _service.Changed += OnActivityLogChanged; // Event
 // OR
@@ -687,6 +695,7 @@ _subscription = _service.OnLogAdded.Subscribe(...); // Observable
 **Cause:** Appending instead of replacing on refresh.
 
 **Solution:** Clear display before re-rendering:
+
 ```csharp
 private void RefreshDisplay()
 {
@@ -704,6 +713,7 @@ private void RefreshDisplay()
 **Cause:** UI updates on non-UI thread.
 
 **Solution:** Marshal to UI thread:
+
 ```csharp
 _service.Changed += sequence =>
 {
@@ -720,6 +730,7 @@ _service.Changed += sequence =>
 **Cause:** Font doesn't support Unicode glyphs.
 
 **Solution:** Use fallback ASCII icons or load a font with Unicode support:
+
 ```csharp
 private string GetIcon(ActivityEntryDto entry)
 {

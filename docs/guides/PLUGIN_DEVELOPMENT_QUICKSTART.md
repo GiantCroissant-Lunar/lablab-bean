@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00074
 title: "Plugin Development Quickstart"
-type: guide
+doc_type: guide
 status: draft
+canonical: true
 created: 2025-10-21
 tags: [plugins, guide, quickstart, development]
-related:
-  - "PLUGIN_SYSTEM_PHASE5_COMPLETE.md"
+summary: Quick guide to creating plugins for Lablab Bean with step-by-step instructions
 ---
 
 # Plugin Development Quickstart

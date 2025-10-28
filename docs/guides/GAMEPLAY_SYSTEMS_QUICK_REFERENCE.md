@@ -1,9 +1,12 @@
 ---
+doc_id: DOC-2025-00073
 title: Gameplay Systems Quick Reference
-date: 2025-10-25
-status: Complete
-type: quick-reference
+doc_type: reference
+status: active
+canonical: true
+created: 2025-10-25
 tags: [gameplay, api, quick-reference, developers]
+summary: Fast reference guide for developers using the 7 gameplay systems in Lablab Bean framework
 ---
 
 # Gameplay Systems Quick Reference Guide

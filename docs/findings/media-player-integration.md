@@ -1,10 +1,12 @@
 ---
+doc_id: DOC-2025-00068
 title: Media Player Integration Guide
-category: features
-tags: [media, video, audio, playback, integration]
+doc_type: finding
 status: active
+canonical: true
 created: 2025-10-26
-updated: 2025-10-26
+tags: [media, video, audio, playback, integration]
+summary: Complete guide for integrating the LablabBean media player into applications with FFmpeg and Terminal.Gui support
 ---
 
 # Media Player Integration Guide

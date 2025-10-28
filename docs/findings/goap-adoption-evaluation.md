@@ -1,10 +1,12 @@
 ---
+doc_id: DOC-2025-00061
 title: "GOAP Adoption Evaluation for Gameplay AI"
-date: "2025-10-22"
-category: "findings"
-tags: ["goap", "ai", "gameplay", "evaluation", "planning"]
-status: "complete"
-author: "Kiro AI Assistant"
+doc_type: finding
+status: active
+canonical: true
+created: 2025-10-22
+tags: [goap, ai, gameplay, evaluation, planning]
+summary: Evaluation of Goal-Oriented Action Planning for advanced AI behaviors with recommendation to adopt for enhanced gameplay depth
 ---
 
 # GOAP Adoption Evaluation for Gameplay AI

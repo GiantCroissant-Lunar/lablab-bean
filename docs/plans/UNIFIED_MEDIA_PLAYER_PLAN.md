@@ -1,23 +1,12 @@
 ---
+doc_id: DOC-2025-00083
 title: Unified Media Player - Architecture and Implementation Plan
-type: technical-design
+doc_type: plan
 status: draft
+canonical: true
 created: 2025-10-26
-updated: 2025-10-26
-author: Claude
-tags:
-  - media-player
-  - video
-  - audio
-  - terminal-gui
-  - plugins
-  - mvvm
-  - reactiveui
-related:
-  - LablabBean.Plugins.Core
-  - LablabBean.Reactive
-  - Terminal.Gui
-priority: high
+tags: [media-player, video, audio, terminal-gui, plugins, mvvm, reactiveui]
+summary: Technical design and implementation plan for unified media player with Terminal.Gui and plugin architecture
 ---
 
 ## Unified Media Player - Architecture and Implementation Plan

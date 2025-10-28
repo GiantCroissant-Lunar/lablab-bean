@@ -1,10 +1,12 @@
 ---
+doc_id: DOC-2025-00062
 title: "Modern Satsuma Graph Library Adoption Evaluation"
-date: "2025-10-22"
-category: "findings"
-tags: ["graph", "algorithms", "pathfinding", "evaluation", "satsuma"]
-status: "complete"
-author: "Kiro AI Assistant"
+doc_type: finding
+status: active
+canonical: true
+created: 2025-10-22
+tags: [graph, algorithms, pathfinding, evaluation, satsuma]
+summary: Evaluation of Modern Satsuma graph library with recommendation not to adopt due to build issues and limited value over existing solution
 ---
 
 # Modern Satsuma Graph Library Adoption Evaluation

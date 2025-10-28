@@ -1,10 +1,12 @@
 ---
+doc_id: DOC-2025-00080
 title: "Test Lore Document"
-category: "lore"
-tags:
-  - test
-  - example
-  - dragon
+doc_type: glossary
+status: active
+canonical: true
+created: 2025-10-21
+tags: [test, example, dragon, lore]
+summary: Test lore document for knowledge base system verification with the Test Dragon
 ---
 
 # The Test Dragon

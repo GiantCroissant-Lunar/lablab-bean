@@ -1,9 +1,12 @@
 ---
+doc_id: DOC-2025-00069
 title: Resilience Tiered Architecture
-type: architecture-documentation
+doc_type: finding
 status: active
+canonical: true
 created: 2025-10-23
 tags: [resilience, architecture, plugins, tiered-pattern]
+summary: Documentation of resilience implementation following tiered service pattern for plugin-based extensibility
 ---
 
 # Resilience Tiered Architecture

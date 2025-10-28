@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00057
 title: CI/CD Integration Guide
-category: DevOps
+doc_type: guide
+status: active
+canonical: true
+created: 2025-10-22
 tags: [ci-cd, github-actions, nuke, automation, reporting]
-date: 2025-10-22
-author: LablabBean Team
-version: 1.0.0
-status: production-ready
+summary: Complete guide for integrating the LablabBean reporting system into CI/CD pipelines
 ---
 
 # CI/CD Integration Guide

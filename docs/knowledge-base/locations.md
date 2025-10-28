@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00078
 title: Notable Locations in the Eternal Realm
-category: location
-tags:
-  - geography
-  - cities
-  - landmarks
-weight: 0.9
+doc_type: glossary
+status: active
+canonical: true
+created: 2025-10-21
+tags: [geography, cities, landmarks, locations]
+summary: Reference guide to major cities and landmarks in the Eternal Realm game world
 ---
 
 # Notable Locations in the Eternal Realm

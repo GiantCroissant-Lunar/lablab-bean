@@ -1,9 +1,12 @@
 ---
+doc_id: DOC-2025-00076
 title: Source-Generated DI Extensions for Proxy Services
-category: Architecture
-status: Active
+doc_type: guide
+status: active
+canonical: true
 created: 2025-10-23
 tags: [source-generation, di, proxy, resilience]
+summary: Documentation of DIExtensionsGenerator that automatically creates DI registration extension methods for proxy services
 ---
 
 # Source-Generated DI Extensions for Proxy Services

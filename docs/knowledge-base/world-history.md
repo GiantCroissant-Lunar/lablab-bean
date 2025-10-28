@@ -1,11 +1,12 @@
 ---
+doc_id: DOC-2025-00081
 title: The History of the Eternal Realm
-category: lore
-tags:
-  - history
-  - ancient
-  - dragons
-weight: 1.0
+doc_type: glossary
+status: active
+canonical: true
+created: 2025-10-21
+tags: [history, ancient, dragons, lore]
+summary: Historical chronicle of the Eternal Realm from the Age of Dragons through the Age of Mortals
 ---
 
 # The History of the Eternal Realm
