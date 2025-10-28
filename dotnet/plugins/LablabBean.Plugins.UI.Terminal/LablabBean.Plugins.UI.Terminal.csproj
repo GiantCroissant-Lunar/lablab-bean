@@ -12,6 +12,7 @@
       <Private>false</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\console-app\LablabBean.Game.TerminalUI\LablabBean.Game.TerminalUI.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Rendering.Terminal.Contracts\LablabBean.Rendering.Terminal.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

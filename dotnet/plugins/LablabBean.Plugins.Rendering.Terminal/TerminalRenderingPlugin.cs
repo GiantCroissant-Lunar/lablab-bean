@@ -1,5 +1,6 @@
 using LablabBean.Plugins.Contracts;
 using LablabBean.Rendering.Contracts;
+using LablabBean.Rendering.Terminal.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace LablabBean.Plugins.Rendering.Terminal;
@@ -31,6 +32,15 @@ public class TerminalRenderingPlugin : IPlugin
             Version = "1.0.0"
         });
         _logger.LogInformation("Registered ISceneRenderer for Terminal.Gui");
+
+        var binding = new TerminalSceneRendererBinding(renderer, loggerFactory.CreateLogger<TerminalSceneRendererBinding>());
+        context.Registry.Register<ITerminalRenderBinding>(binding, new ServiceMetadata
+        {
+            Priority = 100,
+            Name = "TerminalRenderBinding",
+            Version = "1.0.0"
+        });
+        _logger.LogInformation("Registered ITerminalRenderBinding for Terminal.Gui");
 
         _initialized = true;
         return Task.CompletedTask;
