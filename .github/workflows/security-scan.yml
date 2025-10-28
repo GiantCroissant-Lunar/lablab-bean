@@ -1,0 +1,105 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop, feature/**]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+  schedule:
+    # Run weekly security scan on Sundays at 2 AM UTC
+  - cron: 0 2 * * 0
+
+jobs:
+  trufflehog-scan:
+    name: 🔍 TruffleHog Secret Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🔽 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for comprehensive scan
+
+    - name: 🔍 Run TruffleHog scan
+      uses: trufflesecurity/trufflehog@main
+      with:
+        # Scan the entire repository
+        path: ./
+        # Use base branch for PR scans, full repo for push/schedule
+        base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
+        head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'HEAD' }}
+        # Output format
+        extra_args: --debug --only-verified
+
+    - name: 📊 Upload scan results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: trufflehog-results
+        path: |
+          trufflehog-results.json
+          trufflehog-results.sarif
+        retention-days: 30
+
+  dependency-scan:
+    name: 🔒 Dependency Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🔽 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: 📦 Restore dependencies
+      run: dotnet restore dotnet/LablabBean.sln
+
+    - name: 🔍 Run security audit
+      run: dotnet list dotnet/LablabBean.sln package --vulnerable --include-transitive
+      continue-on-error: true
+
+    - name: 📊 Generate dependency report
+      run: |
+        echo "## 🔒 Dependency Security Report" > dependency-report.md
+        echo "" >> dependency-report.md
+        echo "### Vulnerable Packages" >> dependency-report.md
+        dotnet list dotnet/LablabBean.sln package --vulnerable --include-transitive >> dependency-report.md || echo "No vulnerable packages found" >> dependency-report.md
+        echo "" >> dependency-report.md
+        echo "### All Dependencies" >> dependency-report.md
+        dotnet list dotnet/LablabBean.sln package --include-transitive >> dependency-report.md
+
+    - name: 📊 Upload dependency report
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-security-report
+        path: dependency-report.md
+        retention-days: 30
+
+  security-summary:
+    name: 📋 Security Summary
+    runs-on: ubuntu-latest
+    needs: [trufflehog-scan, dependency-scan]
+    if: always()
+
+    steps:
+    - name: 📝 Create security summary
+      run: |
+        echo "## 🔒 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Scans Performed" >> $GITHUB_STEP_SUMMARY
+        echo "- **TruffleHog**: Secret detection scan" >> $GITHUB_STEP_SUMMARY
+        echo "- **Dependency Audit**: Vulnerable package detection" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Results" >> $GITHUB_STEP_SUMMARY
+        echo "- TruffleHog: ${{ needs.trufflehog-scan.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Dependency Scan: ${{ needs.dependency-scan.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- TruffleHog scan results" >> $GITHUB_STEP_SUMMARY
+        echo "- Dependency security report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "*Security scans help protect against leaked secrets and vulnerable dependencies.*"
