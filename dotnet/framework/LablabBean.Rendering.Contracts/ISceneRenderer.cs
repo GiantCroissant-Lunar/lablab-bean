@@ -7,6 +7,11 @@ namespace LablabBean.Rendering.Contracts;
 public interface ISceneRenderer
 {
     /// <summary>
+    /// Indicates whether this renderer supports high-quality image mode rendering (e.g., Kitty graphics).
+    /// </summary>
+    bool SupportsImageMode { get; }
+
+    /// <summary>
     /// Called once to configure target, palette, etc.
     /// </summary>
     Task InitializeAsync(Palette palette, CancellationToken ct = default);
