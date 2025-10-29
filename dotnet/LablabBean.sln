@@ -1,10 +1,8 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "windows-app", "windows-app", "{A1A1A1A1-1A1A-1A1A-1A1A-1A1A1A1A1A1A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Core", "framework\LablabBean.Core\LablabBean.Core.csproj", "{10000000-0000-0000-0000-000000000001}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Infrastructure", "framework\LablabBean.Infrastructure\LablabBean.Infrastructure.csproj", "{10000000-0000-0000-0000-000000000002}"
@@ -13,31 +11,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Reactive", "fram
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Game.Core", "framework\LablabBean.Game.Core\LablabBean.Game.Core.csproj", "{10000000-0000-0000-0000-000000000004}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Game.TerminalUI", "console-app\LablabBean.Game.TerminalUI\LablabBean.Game.TerminalUI.csproj", "{10000000-0000-0000-0000-000000000005}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Game.SadConsole", "windows-app\LablabBean.Game.SadConsole\LablabBean.Game.SadConsole.csproj", "{10000000-0000-0000-0000-000000000006}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Console", "console-app\LablabBean.Console\LablabBean.Console.csproj", "{20000000-0000-0000-0000-000000000001}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Windows", "windows-app\LablabBean.Windows\LablabBean.Windows.csproj", "{30000000-0000-0000-0000-000000000001}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Contracts", "framework\LablabBean.Plugins.Contracts\LablabBean.Plugins.Contracts.csproj", "{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Core", "framework\LablabBean.Plugins.Core\LablabBean.Plugins.Core.csproj", "{8991F22A-E659-4CE9-97A8-78AA7C288D3D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{0C3AFD75-0FA0-44E6-B8CA-FF4E37D6C2DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugin.Demo", "examples\LablabBean.Plugin.Demo\LablabBean.Plugin.Demo.csproj", "{AA98F38E-3612-4B1E-8A4B-4E362CF74F39}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginTestHarness", "examples\PluginTestHarness\PluginTestHarness.csproj", "{537E4EE9-B51D-4E04-AB2E-B05A12A22C2D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{646A8FB6-4A4C-4BFD-B205-CF090AB44AF4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Inventory", "plugins\LablabBean.Plugins.Inventory\LablabBean.Plugins.Inventory.csproj", "{767D5044-2F32-403F-9D6F-0087177B6B37}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryPluginDemo", "examples\InventoryPluginDemo\InventoryPluginDemo.csproj", "{4D75AB69-E45F-4800-B2EA-B1B6EFF18D74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordingPluginDemo", "examples\RecordingPluginDemo\RecordingPluginDemo.csproj", "{REC00000-0000-0000-0000-000000000003}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordingPluginDemo", "examples\RecordingPluginDemo\RecordingPluginDemo.csproj", "{A317A820-FE32-76D8-134D-DCF1487BCFAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.StatusEffects", "plugins\LablabBean.Plugins.StatusEffects\LablabBean.Plugins.StatusEffects.csproj", "{C9D42C3E-ADB2-4F41-AFBD-C9A36638B6F2}"
 EndProject
@@ -48,8 +34,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Config", "framework\LablabBean.Contracts.Config\LablabBean.Contracts.Config.csproj", "{7F22D0C8-66AC-4CC1-9F47-353738484294}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Resource", "framework\LablabBean.Contracts.Resource\LablabBean.Contracts.Resource.csproj", "{C4180F6C-BD98-4A0E-8767-C67C1D69F855}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{83F45A0E-898B-450E-B071-7804E854933A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Input.Tests", "framework\tests\LablabBean.Contracts.Input.Tests\LablabBean.Contracts.Input.Tests.csproj", "{E8E18A04-50E3-4FA7-A2B4-280E122B28BA}"
 EndProject
@@ -121,9 +105,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.ObjectPo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.PersistentStorage.Json", "plugins\LablabBean.Plugins.PersistentStorage.Json\LablabBean.Plugins.PersistentStorage.Json.csproj", "{8882CADD-3659-4561-B18D-C4EDCA6D9832}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Recording", "framework\LablabBean.Contracts.Recording\LablabBean.Contracts.Recording.csproj", "{REC00000-0000-0000-0000-000000000001}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Contracts.Recording", "framework\LablabBean.Contracts.Recording\LablabBean.Contracts.Recording.csproj", "{F2248BE8-A21D-AC17-63BC-EB5B476E7DBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Recording.Asciinema", "plugins\LablabBean.Plugins.Recording.Asciinema\LablabBean.Plugins.Recording.Asciinema.csproj", "{REC00000-0000-0000-0000-000000000002}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Recording.Asciinema", "plugins\LablabBean.Plugins.Recording.Asciinema\LablabBean.Plugins.Recording.Asciinema.csproj", "{3710D5CC-6803-837D-8921-8D3FA42365FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LablabBean.Plugins.Diagnostic.OpenTelemetry", "plugins\LablabBean.Plugins.Diagnostic.OpenTelemetry\LablabBean.Plugins.Diagnostic.OpenTelemetry.csproj", "{077BDFAD-80B6-4D91-9D50-3D944517A107}"
 EndProject
@@ -197,22 +181,6 @@ Global
 		{10000000-0000-0000-0000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10000000-0000-0000-0000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10000000-0000-0000-0000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10000000-0000-0000-0000-000000000005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10000000-0000-0000-0000-000000000005}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10000000-0000-0000-0000-000000000005}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10000000-0000-0000-0000-000000000005}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10000000-0000-0000-0000-000000000006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10000000-0000-0000-0000-000000000006}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10000000-0000-0000-0000-000000000006}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10000000-0000-0000-0000-000000000006}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20000000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30000000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED2C41D4-3177-43A0-BDB4-B9D7315900D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -237,10 +205,6 @@ Global
 		{4D75AB69-E45F-4800-B2EA-B1B6EFF18D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D75AB69-E45F-4800-B2EA-B1B6EFF18D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D75AB69-E45F-4800-B2EA-B1B6EFF18D74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{REC00000-0000-0000-0000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{REC00000-0000-0000-0000-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{REC00000-0000-0000-0000-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{REC00000-0000-0000-0000-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9D42C3E-ADB2-4F41-AFBD-C9A36638B6F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9D42C3E-ADB2-4F41-AFBD-C9A36638B6F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9D42C3E-ADB2-4F41-AFBD-C9A36638B6F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -317,6 +281,18 @@ Global
 		{01B0110F-42C0-45D3-8700-D9F610B82673}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01B0110F-42C0-45D3-8700-D9F610B82673}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01B0110F-42C0-45D3-8700-D9F610B82673}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1000000-0000-0000-0000-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCB51309-55F6-43F8-832A-17CBB6F3C690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCB51309-55F6-43F8-832A-17CBB6F3C690}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCB51309-55F6-43F8-832A-17CBB6F3C690}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -389,26 +365,6 @@ Global
 		{8882CADD-3659-4561-B18D-C4EDCA6D9832}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8882CADD-3659-4561-B18D-C4EDCA6D9832}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8882CADD-3659-4561-B18D-C4EDCA6D9832}.Release|Any CPU.Build.0 = Release|Any CPU
-		{REC00000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{REC00000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{REC00000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{REC00000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
-		{REC00000-0000-0000-0000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{REC00000-0000-0000-0000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{REC00000-0000-0000-0000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{REC00000-0000-0000-0000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1000000-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1000000-0000-0000-0000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1000000-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1000000-0000-0000-0000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1000000-0000-0000-0000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1000000-0000-0000-0000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1000000-0000-0000-0000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1000000-0000-0000-0000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1000000-0000-0000-0000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1000000-0000-0000-0000-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1000000-0000-0000-0000-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1000000-0000-0000-0000-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
 		{077BDFAD-80B6-4D91-9D50-3D944517A107}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{077BDFAD-80B6-4D91-9D50-3D944517A107}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{077BDFAD-80B6-4D91-9D50-3D944517A107}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -505,5 +461,8 @@ Global
 		{0EAA7586-F458-448F-9E06-64A1A7B9DB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EAA7586-F458-448F-9E06-64A1A7B9DB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EAA7586-F458-448F-9E06-64A1A7B9DB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
