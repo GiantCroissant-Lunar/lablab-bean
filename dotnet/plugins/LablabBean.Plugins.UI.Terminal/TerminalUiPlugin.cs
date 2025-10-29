@@ -79,8 +79,20 @@ public partial class TerminalUiPlugin : IPlugin
         // Create styles from configuration (optional overrides)
         var styles = BuildStylesFromConfig(context.Configuration);
 
+        // Resolve ILoggerFactory for tileset/rasterizer initialization
+        ILoggerFactory? loggerFactory = null;
+        try
+        {
+            loggerFactory = context.Registry.Get<ILoggerFactory>();
+        }
+        catch
+        {
+            var factories = context.Registry.GetAll<ILoggerFactory>();
+            loggerFactory = factories.FirstOrDefault();
+        }
+
         // Create UI adapter and register UI services
-        _uiAdapter = new TerminalUiAdapter(_sceneRenderer, _logger, styles);
+        _uiAdapter = new TerminalUiAdapter(_sceneRenderer, _logger, context.Configuration, loggerFactory, styles);
 
         // Bind activity log if available
         var activityLogs = context.Registry.GetAll<IActivityLog>();

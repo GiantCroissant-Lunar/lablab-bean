@@ -1,5 +1,5 @@
-import { WebSocketServer } from "ws";
 import type { Server } from "http";
+import { WebSocketServer } from "ws";
 import { TerminalManager } from "./manager.js";
 import type { TerminalOptions } from "./types.js";
 

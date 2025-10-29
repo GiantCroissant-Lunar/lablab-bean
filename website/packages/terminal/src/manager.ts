@@ -1,7 +1,7 @@
+import { randomUUID } from "crypto";
 import * as pty from "node-pty";
 import type { WebSocket } from "ws";
 import type { TerminalOptions, TerminalSession } from "./types.js";
-import { randomUUID } from "crypto";
 
 export class TerminalManager {
   private sessions: Map<string, TerminalSession> = new Map();

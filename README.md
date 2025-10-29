@@ -9,20 +9,35 @@
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey?style=flat-square)](https://github.com/your-username/lablab-bean)
 
-A multi-platform development toolkit featuring task automation, web terminal, and cross-platform console applications.
+> A multi-platform development toolkit featuring task automation, web terminal, and cross-platform console applications with event-driven plugin architecture.
 
-## Features
+## ✨ Key Features
 
-- 🔨 **Task Automation**: Powered by [Task](https://taskfile.dev)
-- 📝 **Spec-Kit**: Template-based code generation and specifications
-- 🪝 **Pre-commit Hooks**: Automated code quality checks
-- 🌐 **Web Terminal**: Astro.js + xterm.js + node-pty
-- 💻 **Console App**: Terminal.Gui v2 TUI application
-- 🎮 **Windows App**: SadConsole ASCII graphics application
-- 🎬 **Media Player**: Terminal-based video/audio player with FFmpeg + Braille rendering
-- ⚛️ **Reactive**: ReactiveUI, System.Reactive, R3
-- 🏗️ **Modern .NET**: .NET 8 with Microsoft.Extensions.*
-- 🔌 **Event-Driven Plugins**: Loosely coupled plugin architecture with pub-sub messaging (1.1M+ events/sec)
+### 🏗️ Core Platform
+
+- **Task Automation**: Powered by [Task](https://taskfile.dev) with comprehensive workflow management
+- **Event-Driven Architecture**: High-performance plugin system (1.1M+ events/sec)
+- **Cross-Platform**: Windows, Linux, macOS support
+- **Modern .NET**: .NET 8 with Microsoft.Extensions ecosystem
+
+### 🌐 Applications
+
+- **Web Terminal**: Astro.js + xterm.js + node-pty for browser-based terminal
+- **Console App**: Terminal.Gui v2 TUI application
+- **Windows App**: SadConsole ASCII graphics application
+- **Media Player**: Terminal-based video/audio player with FFmpeg + Braille rendering
+
+### 🎮 Gameplay Systems
+
+- **Complete RPG Suite**: Quest, NPC, Progression, Spell, Merchant, Boss, and Hazards systems
+- **Arch ECS**: High-performance entity component system (5M+ entities/sec)
+- **AI Integration**: Semantic Kernel for dynamic content generation
+
+### 🛠️ Developer Tools
+
+- **Spec-Kit**: Template-based code generation and specifications
+- **Pre-commit Hooks**: Automated code quality checks
+- **Reactive Programming**: ReactiveUI, System.Reactive, R3
 
 ## Project Structure
 
@@ -63,665 +78,278 @@ lablab-bean/
 
 - .NET 8 SDK
 
-## Quick Start
+## 🚀 Quick Start
 
-### 🔧 Development Mode (Recommended for Development)
+### Prerequisites
 
-Start the full stack with hot reload for rapid development:
+- [Task](https://taskfile.dev) - `winget install Task.Task` or `brew install go-task/tap/go-task`
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js 18+](https://nodejs.org/) and [pnpm 8+](https://pnpm.io/)
+
+### One-Command Setup
 
 ```bash
-# One-command development stack with hot reload
-task dev-stack
+# Initialize project and install dependencies
+task init
 
-# Or step by step:
-task build              # Build .NET components (one-time)
+# Start development stack with hot reload
+task dev-stack
+```
+
+Visit <http://localhost:3000> for the web terminal interface.
+
+### Development Workflow
+
+```bash
 task dev-stack          # Start dev stack with hot reload
 task dev-status         # Check status
 task dev-logs           # View logs
 task dev-stop           # Stop the stack
 ```
 
-**What runs in development mode:**
-
-- 🌐 **Astro Dev Server** - <http://localhost:3000> (hot reload enabled)
-- 🔌 **PTY Terminal Backend** - TypeScript watch mode
-- 💻 **Console App** - .NET development mode
-
-**Key Features:**
-
-- ✨ Astro hot reload - instant UI updates
-- 🔄 TypeScript watch mode for terminal backend
-- 🚀 Fast iteration without rebuilding
-- 📦 Uses local PM2 (no global installation needed)
-
-### 🚀 Production Build & Run
-
-Build and run the complete stack from versioned artifacts:
+### Production Deployment
 
 ```bash
-# One-command build and run
-task release-and-run
-
-# Or step by step:
-task build-release       # Build versioned artifacts
-task stack-run          # Start the stack
-task stack-status       # Check status
-task stack-logs         # View logs
+task release-and-run    # Build and start production stack
 ```
 
-**Quick Script (Windows):**
+**Available Applications:**
 
-```powershell
-.\build\scripts\build-and-run.ps1
-```
-
-The stack includes:
-
-- 🌐 **Web App** - <http://localhost:3000> (bundled Astro)
+- 🌐 **Web Terminal** - <http://localhost:3000>
 - 💻 **Console App** - Terminal.Gui TUI
 - 🎮 **Windows App** - SadConsole GUI
 
-See [RELEASE.md](docs/RELEASE.md) for complete release documentation.
+See [docs/guides/development.md](docs/guides/development.md) for detailed setup instructions.
 
-### 🛠️ Manual Component Development
-
-#### Task Automation
+### Manual Component Development
 
 ```bash
-task install              # Install dependencies
-task pre-commit-install   # Install pre-commit hooks
-task check               # Run all checks
+# Task automation
+task install && task pre-commit-install && task check
+
+# Website (Web Terminal)
+cd website && pnpm install && pnpm dev
+
+# .NET Console App
+cd dotnet/console-app/LablabBean.Console && dotnet run
+
+# .NET Windows App
+cd dotnet/windows-app/LablabBean.Windows && dotnet run
 ```
 
-#### Website (Web Terminal)
+## 🔌 Plugin Architecture
 
-```bash
-cd website
-pnpm install
-pnpm dev                 # Start dev server at http://localhost:3000
-```
+High-performance event-driven plugin system with **1.1M+ events/sec** throughput and **0.003ms** latency.
 
-#### .NET Console App (Terminal.Gui)
-
-```bash
-cd dotnet/console-app/LablabBean.Console
-dotnet run
-```
-
-#### .NET Windows App (SadConsole)
-
-```bash
-cd dotnet/windows-app/LablabBean.Windows
-dotnet run
-```
-
-## Plugin Development
-
-The project features an **event-driven plugin architecture** with exceptional performance (1.1M+ events/sec, 0.003ms latency).
-
-### Quick Start: Create Your First Plugin
+### Quick Plugin Creation
 
 ```bash
 cd plugins/
 dotnet new classlib -n YourPlugin -f net8.0
+# Implement IPlugin interface - see docs/plugins/event-driven-development.md
 ```
-
-Add references and implement `IPlugin` interface. See the [Event-Driven Development Guide](docs/plugins/event-driven-development.md) for a complete tutorial.
-
-### Example Plugins
-
-- **Analytics Plugin**: Track game events without direct dependencies
-- **Mock Game Service**: Provide game mechanics with event publishing
-- **Reactive UI**: Auto-update UI on game events (no polling)
-
-See [plugins/examples/](plugins/examples/) for working examples.
 
 ### Key Features
 
 - **Event Bus**: Pub-sub messaging with `IEventBus`
+- **Loose Coupling**: Plugins communicate via events, not direct references
 - **Service Contracts**: Platform-independent interfaces
 - **Priority-Based Selection**: Multiple implementations with priority
-- **Loose Coupling**: Plugins communicate via events, not direct references
 
-### Documentation
+**Documentation**: [Event-Driven Development Guide](docs/plugins/event-driven-development.md) | [Architecture Spec](specs/007-tiered-contract-architecture/spec.md)
 
-- **Developer Guide**: [docs/plugins/event-driven-development.md](docs/plugins/event-driven-development.md)
-- **Quickstart**: [specs/007-tiered-contract-architecture/quickstart.md](specs/007-tiered-contract-architecture/quickstart.md)
-- **Performance**: [specs/007-tiered-contract-architecture/performance-results.md](specs/007-tiered-contract-architecture/performance-results.md)
-- **Spec**: [specs/007-tiered-contract-architecture/spec.md](specs/007-tiered-contract-architecture/spec.md)
+## 🎮 Gameplay Systems
 
-## Gameplay Plugins
+Complete RPG suite built on **Arch ECS** (5M+ entities/sec) with AI-powered content generation.
 
-The project includes a comprehensive suite of gameplay plugins built on the **Arch ECS** (Entity Component System) architecture, providing a complete dungeon crawler experience.
+### Available Systems
 
-### 🎮 Available Gameplay Plugins
+| System | Features | Documentation |
+|--------|----------|---------------|
+| **Quest** | AI-generated quests, objectives, rewards, chains | [README](dotnet/plugins/LablabBean.Plugins.Quest/README.md) |
+| **NPC** | 10 unique NPCs, dialogue trees, reputation system | [README](dotnet/plugins/LablabBean.Plugins.NPC/README.md) |
+| **Progression** | Level 1-20, stat growth, class specializations | [README](dotnet/plugins/LablabBean.Plugins.Progression/README.md) |
+| **Spells** | 15 spells across Fire/Ice/Lightning schools | [README](dotnet/plugins/LablabBean.Plugins.Spells/README.md) |
+| **Merchant** | 3 merchant types, 50+ items, dynamic pricing | [README](dotnet/plugins/LablabBean.Plugins.Merchant/README.md) |
+| **Boss** | 5 unique bosses, multi-phase encounters | [README](dotnet/plugins/LablabBean.Plugins.Boss/README.md) |
+| **Hazards** | Environmental traps and obstacles | [README](dotnet/plugins/LablabBean.Plugins.Hazards/README.md) |
 
-#### 1. Quest System (`LablabBean.Plugins.Quest`)
-
-Complete quest management with objectives, rewards, and AI-generated content.
-
-**Features:**
-
-- Quest creation with multiple objective types (kill, collect, interact, explore)
-- Quest chains and prerequisites
-- Dynamic reward system (XP, gold, items)
-- AI-powered quest generation using Semantic Kernel
-- Quest state tracking (NotStarted, Active, Completed, Failed, Abandoned)
-
-**Documentation:** [Quest Plugin README](dotnet/plugins/LablabBean.Plugins.Quest/README.md)
-
-#### 2. NPC System (`LablabBean.Plugins.NPC`)
-
-Interactive NPCs with dialogue trees and reputation systems.
-
-**Features:**
-
-- 10 unique NPCs (Guard, Merchant, Blacksmith, etc.)
-- Branching dialogue trees with multiple response options
-- Reputation tracking affects NPC interactions
-- Disposition states (Friendly, Neutral, Hostile, Fearful)
-- Quest giver integration
-
-**Documentation:** [NPC Plugin README](dotnet/plugins/LablabBean.Plugins.NPC/README.md)
-
-#### 3. Progression System (`LablabBean.Plugins.Progression`)
-
-Character leveling, stat growth, and ability unlocks.
-
-**Features:**
-
-- Level 1-20 progression with exponential XP curve
-- Stat growth (Health, Mana, Strength, Intelligence, Agility, Vitality)
-- Ability unlocks every 3 levels
-- Class specializations (Warrior, Mage, Rogue)
-- Prestige system for endgame
-
-**Documentation:** [Progression Plugin README](dotnet/plugins/LablabBean.Plugins.Progression/README.md)
-
-#### 4. Spell System (`LablabBean.Plugins.Spells`)
-
-Magic system with 15 spells across 3 schools of magic.
-
-**Features:**
-
-- **Fire Magic**: Fireball, Flame Strike, Meteor
-- **Ice Magic**: Ice Shard, Frost Nova, Blizzard
-- **Lightning Magic**: Lightning Bolt, Chain Lightning, Thunderstorm
-- Mana management and regeneration
-- Spell cooldowns and costs
-- Area-of-effect and single-target spells
-
-**Documentation:** [Spells Plugin README](dotnet/plugins/LablabBean.Plugins.Spells/README.md)
-
-#### 5. Merchant System (`LablabBean.Plugins.Merchant`)
-
-Trading system with dynamic pricing and 3 merchant types.
-
-**Features:**
-
-- 3 merchant types (General, Blacksmith, Apothecary)
-- 50+ items across categories (weapons, armor, potions, materials)
-- Dynamic pricing based on reputation and item rarity
-- Buy/sell/trade mechanics
-- Item quality tiers (Common, Uncommon, Rare, Epic, Legendary)
-
-**Documentation:** [Merchant Plugin README](dotnet/plugins/LablabBean.Plugins.Merchant/README.md)
-
-#### 6. Boss System (`LablabBean.Plugins.Boss`)
-
-Epic boss encounters with multi-phase battles and special mechanics.
-
-**Features:**
-
-- 5 unique bosses with distinct mechanics
-- Multi-phase encounters (2-3 phases per boss)
-- Special abilities and attack patterns
-- Enrage mechanics and phase transitions
-- Unique loot tables per boss
-
-**Documentation:** [Boss Plugin README](dotnet/plugins/LablabBean.Plugins.Boss/README.md)
-
-#### 7. Hazards System (`LablabBean.Plugins.Hazards`)
-
-Environmental hazards and dungeon obstacles.
-
-**Features:**
-
-- Spike traps, fire traps, poison gas, falling rocks
-- Periodic and triggered hazard types
-- Damage-over-time effects
-- Visual indicators for hazards
-
-**Documentation:** [Hazards Plugin README](dotnet/plugins/LablabBean.Plugins.Hazards/README.md)
-
-### 🏗️ Architecture
-
-All gameplay plugins are built on:
-
-- **Arch ECS**: High-performance entity component system (5M+ entities/sec)
-- **Event-Driven**: Loosely coupled via `IEventBus`
-- **Service-Oriented**: Clean service interfaces for easy integration
-- **Data-Driven**: JSON/YAML configuration for game content
-
-### 📖 Plugin Development Guides
-
-- **Event-Driven Development**: [docs/plugins/event-driven-development.md](docs/plugins/event-driven-development.md)
-- **Plugin Architecture**: [specs/007-tiered-contract-architecture/spec.md](specs/007-tiered-contract-architecture/spec.md)
-- **ECS Guide**: [Arch ECS Documentation](https://github.com/genaray/Arch)
-
-### 🎯 Integration Example
+### Integration Example
 
 ```csharp
-// Start a quest
 questService.StartQuest(playerEntity, "fetch_herbs");
-
-// Cast a spell
 spellService.CastSpell(playerEntityId, spellId, targetEntityId);
-
-// Trade with merchant
 merchantService.BuyItem(playerEntity, merchantEntity, itemId, quantity);
-
-// Talk to NPC
-npcService.StartDialogue(playerEntity, npcEntity);
 ```
 
-All plugins publish events through the `IEventBus` for loose coupling and reactive UIs.
-
-## Available Tasks
-
-View all available tasks:
+## 📋 Available Tasks
 
 ```bash
-task --list
+task --list  # View all available tasks
 ```
 
-### Development Stack Tasks
+### Essential Commands
 
-- `task dev-stack` - Start development stack with hot reload
-- `task dev-stop` - Stop development stack
-- `task dev-restart` - Restart development stack
-- `task dev-status` - Show development stack status
-- `task dev-logs` - View development logs (live)
-- `task dev-delete` - Delete development stack from PM2
+| Command | Description |
+|---------|-------------|
+| `task init` | Initialize project and install dependencies |
+| `task dev-stack` | Start development stack with hot reload |
+| `task release-and-run` | Build and start production stack |
+| `task check` | Run all validation checks |
+| `task format` | Format all files |
 
-### Release & Production Stack Tasks
+### Development Stack
 
-- `task build-release` - Build complete release with versioned artifacts
-- `task release-and-run` - Build and start the full stack (one command)
-- `task stack-run` - Start production stack from versioned artifacts
-- `task stack-stop` - Stop all PM2 processes
-- `task stack-restart` - Restart production stack
-- `task stack-status` - Show PM2 stack status
-- `task stack-logs` - View all logs (live)
-- `task stack-logs-web` - View web app logs only
-- `task stack-logs-console` - View console app logs only
-- `task stack-monit` - Open PM2 monitoring dashboard
-- `task stack-delete` - Delete all PM2 processes
-- `task list-versions` - List all available versioned artifacts
-- `task show-version` - Show current version
-- `task test-web` - Run Playwright tests
-- `task test-full` - Build, start, test, and report (complete test workflow)
+- `task dev-stack/stop/restart/status/logs` - Development stack management
+- `task stack-run/stop/restart/status/logs` - Production stack management
 
-### Common Tasks
+### Code Quality
 
-- `task init` - Initialize the project
-- `task install` - Install project dependencies and tools
-- `task check` - Run all validation checks
-- `task format` - Format all files
-- `task clean` - Clean generated files
-- `task info` - Show project information
+- `task pre-commit-install/run/update` - Pre-commit hook management
+- `task dotnet:format/analyze/fix/check` - .NET code quality
+- `task validate-yaml/markdown` - File validation
 
-### Pre-commit Tasks
+### Spec-Kit
 
-- `task pre-commit-install` - Install pre-commit hooks
-- `task pre-commit-run` - Run pre-commit hooks on all files
-- `task pre-commit-update` - Update pre-commit hooks
+- `task speck-init` - Initialize spec-kit directories
+- `task speck-generate` - Generate from templates
 
-### Speck-kit Tasks
+## 🪝 Code Quality
 
-- `task speck-init` - Initialize speck-kit directories
-- `task speck-generate` - Generate from template (requires TEMPLATE and OUTPUT variables)
+Automated pre-commit hooks ensure code quality across all languages:
 
-### Validation Tasks
-
-- `task validate-yaml` - Validate YAML files
-- `task validate-markdown` - Validate Markdown files
-
-### .NET Tasks
-
-- `task dotnet:format` - Format .NET code using dotnet format
-- `task dotnet:analyze` - Analyze .NET code using Roslynator
-- `task dotnet:fix` - Fix .NET code issues using Roslynator
-- `task dotnet:check` - Run both format and analysis
-
-## Pre-commit Hooks
-
-The project uses pre-commit hooks to ensure code quality. The following hooks are configured:
-
-- **General Checks**: trailing whitespace, end-of-file fixer, YAML/JSON validation, large file detection, private key detection
-- **Markdown**: markdownlint with auto-fix
-- **YAML**: pretty-format-yaml with auto-fix
-- **Python**: Ruff (linting and formatting), mypy (type checking)
-- **.NET**: dotnet format, Roslynator code analysis, one-type-per-file validation
-- **Shell Scripts**: shellcheck (linting), shfmt (formatting)
-- **Web**: Prettier (JavaScript/TypeScript/CSS/Astro)
-- **Security**: Gitleaks secret detection
-
-To manually run all hooks:
+**Configured Hooks**: General checks, Markdown/YAML formatting, Python (Ruff/mypy), .NET (format/Roslynator), Shell (shellcheck/shfmt), Web (Prettier), Security (Gitleaks)
 
 ```bash
-task pre-commit-run
+task pre-commit-install  # Install hooks
+task pre-commit-run      # Run manually
 ```
 
-## Speck-kit Integration
+## 📝 Spec-Kit Integration
 
-Spec-kit provides template-based code generation and standardized specifications. Configuration is in `.lablab-bean.yaml`.
+Template-based code generation and standardized specifications.
 
 ### Quick Start
 
-**New to spec-kit?** Start here:
-
 ```bash
-# Read the 5-minute quick start guide
-code docs/guides/spec-kit-quickstart.md
-```
-
-### Initialize Spec-kit
-
-```bash
-task speck-init
-```
-
-### Create a Specification
-
-```bash
-# Copy example specification
-copy docs\specs\dungeon-generation-system.md docs\specs\my-feature.md
-
-# Edit your specification
-code docs\specs\my-feature.md
-```
-
-### Generate Code from Template
-
-```bash
-# Copy monster template (manual for now)
-copy templates\entity\monster.tmpl MyMonster.cs
-
-# Replace {{.Variables}} with actual values
-# See: docs/specs/monster-template-example.md (guide for using templates)
+task speck-init                                    # Initialize spec-kit
+code docs/guides/spec-kit-quickstart.md           # 5-minute guide
 ```
 
 ### Available Templates
 
-Located in `templates/`:
-
-- **entity/monster.tmpl**: Generate monster classes with stats, AI, and behavior
-- **docs/spec-template.tmpl**: Generate feature specifications with standard format
+- `templates/entity/monster.tmpl` - Monster classes with stats, AI, behavior
+- `templates/docs/spec-template.tmpl` - Feature specifications
 
 ### Available Specifications
 
-Located in `docs/specs/`:
+- `docs/specs/dungeon-generation-system.md` - Dungeon generation (implemented)
+- `docs/specs/monster-template-example.md` - Template usage guide
 
-- **dungeon-generation-system.md**: Dungeon generation algorithm (implemented v0.0.2)
-- **monster-template-example.md**: How to use monster templates
-- **README.md**: Specifications directory guide
+**Documentation**: [Quick Start](docs/guides/spec-kit-quickstart.md) | [Complete Guide](docs/guides/spec-kit-utilization.md)
 
-### Documentation
+## 🔄 Development Workflow
 
-- **docs/guides/spec-kit-quickstart.md**: 5-minute quick start guide
-- **docs/guides/spec-kit-utilization.md**: Complete strategy and implementation plan
-- **docs/specs/**: Feature specifications and examples
+```bash
+# 1. Make changes to your files
+# 2. Format and validate
+task format && task check
 
-### Configuration
+# 3. Commit (pre-commit hooks run automatically)
+git commit -m "Your changes"
 
-Edit `.lablab-bean.yaml` to configure spec-kit templates:
-
-```yaml
-speck:
-  enabled: true
-  templates_dir: ./templates
-  output_dir: ./generated
-  templates:
-    api: ./templates/api.tmpl
-    model: ./templates/model.tmpl
-  default_variables:
-    author: Your Name
-    license: MIT
+# 4. Generate from templates (optional)
+task speck-generate TEMPLATE=model OUTPUT=my-model.md
 ```
 
-## Development Workflow
+## 🏗️ Architecture
 
-1. **Make changes** to your files
-2. **Format and check**:
+### Applications
 
-   ```bash
-   task format
-   task check
-   ```
+| Component | Tech Stack | Features |
+|-----------|------------|----------|
+| **Web Terminal** | Astro.js, React, xterm.js, node-pty | Browser-based terminal, WebSocket communication |
+| **Console App** | Terminal.Gui v2, ReactiveUI | Cross-platform TUI, keyboard shortcuts |
+| **Windows App** | SadConsole, MonoGame | Retro ASCII graphics, roguelike UI |
 
-3. **Commit** your changes (pre-commit hooks will run automatically)
-4. **Generate from templates** as needed:
+### Framework Libraries
 
-   ```bash
-   task speck-generate TEMPLATE=model OUTPUT=my-model.md
-   ```
+- **LablabBean.Core** - Domain models, interfaces, business logic
+- **LablabBean.Infrastructure** - DI, logging (Serilog), configuration
+- **LablabBean.Reactive** - ReactiveUI ViewModels, System.Reactive, R3
 
-## Components
+**Documentation**: [Website README](website/README.md) | [.NET README](dotnet/README.md)
 
-### 1. Website (Node.js + pnpm)
+## ⚙️ Configuration
 
-**Tech Stack:**
-
-- Astro.js (SSR framework)
-- React (UI components)
-- xterm.js (Terminal emulator)
-- node-pty (PTY bindings)
-- Tailwind CSS
-
-**Features:**
-
-- Web-based terminal in browser
-- Real-time WebSocket communication
-- Cross-platform shell support (PowerShell/Bash)
-
-[Read more →](website/README.md)
-
-### 2. .NET Console App (Terminal.Gui)
-
-**Tech Stack:**
-
-- Terminal.Gui v2
-- ReactiveUI
-- Microsoft.Extensions.*
-- Serilog
-
-**Features:**
-
-- Cross-platform TUI
-- Menu bar & status bar
-- File operations
-- Keyboard shortcuts
-
-[Read more →](dotnet/README.md)
-
-### 3. .NET Windows App (SadConsole)
-
-**Tech Stack:**
-
-- SadConsole
-- MonoGame
-- ReactiveUI
-- Microsoft.Extensions.*
-
-**Features:**
-
-- Retro ASCII graphics
-- Roguelike-style UI
-- Reactive updates
-
-[Read more →](dotnet/README.md)
-
-### 4. Framework Libraries
-
-**LablabBean.Core:**
-
-- Domain models
-- Interfaces
-- Business logic
-
-**LablabBean.Infrastructure:**
-
-- Dependency injection
-- Logging (Serilog)
-- Configuration
-
-**LablabBean.Reactive:**
-
-- ReactiveUI ViewModels
-- System.Reactive
-- ObservableCollections
-- MessagePipe
-- R3
-
-## Configuration
-
-The project uses `.lablab-bean.yaml` for configuration:
+Project configuration in `.lablab-bean.yaml`:
 
 ```yaml
 project:
   name: lablab-bean
   version: 0.1.0
-  description: Task automation and template generation toolkit
 
 speck:
   enabled: true
   templates_dir: ./templates
   output_dir: ./generated
-  templates:
-    api: ./templates/api.tmpl
-    model: ./templates/model.tmpl
 
 pre_commit:
   enabled: true
   auto_install: true
 ```
 
-## Documentation
+## 📚 Documentation
 
-This project uses a structured documentation system with organized categories:
+Structured documentation system with YAML front-matter and automatic validation.
 
-### 📁 Documentation Structure
+### Quick Links
+
+- **Getting Started**: [Quick Start](docs/QUICKSTART.md) | [Developer Setup](docs/QUICKSTART-DEV.md)
+- **Development**: [Development Guide](docs/guides/development.md) | [Testing](docs/guides/testing.md) | [Debugging](docs/guides/debugging.md)
+- **Architecture**: [System Architecture](docs/ARCHITECTURE.md) | [Project Organization](docs/ORGANIZATION.md)
+- **Spec-Kit**: [Quick Start](docs/guides/spec-kit-quickstart.md) | [Complete Guide](docs/guides/spec-kit-utilization.md)
+
+### Structure
 
 ```
 docs/
-├── README.md                  # Documentation navigation
-├── ARCHITECTURE.md            # System architecture
-├── CONTRIBUTING.md            # Contribution guidelines
-├── ORGANIZATION.md            # Project organization
-├── DOCUMENTATION-SCHEMA.md    # Documentation standards
-├── QUICK-REFERENCE.md         # Quick reference guide
-│
-├── guides/                    # How-to guides and tutorials
-│   ├── development.md         # Development guide
-│   ├── debugging.md           # Debugging guide
-│   ├── testing.md             # Testing guide
-│   ├── project-setup.md       # Project setup
-│   ├── spec-kit-quickstart.md # Spec-kit quick start
-│   ├── spec-kit-utilization.md # Spec-kit detailed guide
-│   ├── agent-usage.md         # AI agent usage guide
-│   ├── pm2-hot-reload-migration.md # PM2 migration
-│   └── file-organization-migration.md # File organization migration
-│
-├── specs/                     # Feature specifications
-│   ├── dungeon-generation-system.md
-│   ├── dungeon-crawler-features.md
-│   └── monster-template-example.md
-│
-├── findings/                  # Research and analysis
-│   └── terminal-gui-pm2-fixes.md
-│
-├── archive/                   # Historical/superseded docs
-│   ├── handover.md
-│   ├── setup-complete.md
-│   ├── file-organization-changes.md
-│   └── ... (older versions)
-│
-└── index/
-    └── registry.json          # Machine-readable doc registry
+├── guides/     # How-to guides and tutorials
+├── specs/      # Feature specifications
+├── findings/   # Research and analysis
+└── archive/    # Historical documentation
 ```
 
-### 🎯 Quick Links
+**Validation**: `python scripts/validate_docs.py` | **Navigation**: [docs/README.md](docs/README.md)
 
-**Getting Started:**
+## 🤖 AI Agent Support
 
-- [Quick Start](docs/QUICKSTART.md) - User quick start
-- [Developer Quick Start](docs/QUICKSTART-DEV.md) - Setup development environment
-- [Project Setup Guide](docs/guides/project-setup.md) - Detailed setup instructions
+Structured instructions for AI coding assistants in `.agent/` directory.
 
-**Development:**
+**Available**: [Claude](CLAUDE.md) → [.agent/adapters/claude.md](.agent/adapters/claude.md)
+**Coming Soon**: GitHub Copilot, Windsurf
 
-- [Development Guide](docs/guides/development.md) - Development workflow
-- [Testing Guide](docs/guides/testing.md) - Testing strategy
-- [Debugging Guide](docs/guides/debugging.md) - Troubleshooting
+**Documentation**: [.agent/README.md](.agent/README.md)
 
-**Spec-Kit:**
-
-- [Spec-Kit Quick Start](docs/guides/spec-kit-quickstart.md) - 5-minute intro
-- [Spec-Kit Utilization](docs/guides/spec-kit-utilization.md) - Complete guide
-- [Feature Specifications](docs/specs/) - All specs
-
-**Architecture:**
-
-- [Architecture](docs/ARCHITECTURE.md) - System architecture
-- [Organization](docs/ORGANIZATION.md) - Project structure
-- [Contributing](docs/CONTRIBUTING.md) - How to contribute
-
-### 📝 Documentation System Features
-
-- **Schema**: All docs include YAML front-matter ([DOCUMENTATION-SCHEMA.md](docs/DOCUMENTATION-SCHEMA.md))
-- **Registry**: Machine-readable doc registry at `docs/index/registry.json`
-- **Validation**: Automatic validation with duplicate detection
-- **Categories**: Organized into guides/, specs/, findings/, archive/
-
-**Validate documentation:**
+## 🤝 Contributing
 
 ```bash
-python scripts/validate_docs.py
+task pre-commit-install              # Install hooks
+# Make your changes
+task check                          # Run validation
+python scripts/validate_docs.py     # Validate docs
+git commit -m "Your changes"        # Commit (hooks run automatically)
 ```
 
-See [docs/README.md](docs/README.md) for complete documentation navigation.
+**AI Assistants**: Read [CLAUDE.md](CLAUDE.md) for AI coding guidelines
+**Guidelines**: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
-## AI Agent Instructions
+## 📄 License
 
-This project includes structured instructions for AI coding assistants:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- **Claude Code**: [CLAUDE.md](CLAUDE.md) → [.agent/adapters/claude.md](.agent/adapters/claude.md)
-- **GitHub Copilot**: `.github/copilot-instructions.md` (coming soon)
-- **Windsurf**: `.windsurf/rules.md` (coming soon)
+## 💬 Support
 
-The `.agent/` directory contains:
-
-- **Base Rules**: Core principles, normative rules, and glossary
-- **Adapters**: Agent-specific configurations
-- **Meta**: Versioning and governance
-
-See [.agent/README.md](.agent/README.md) for details.
-
-## Contributing
-
-1. Install pre-commit hooks: `task pre-commit-install`
-2. Read agent instructions if using AI assistants: [CLAUDE.md](CLAUDE.md)
-3. Make your changes
-4. Run checks: `task check`
-5. Validate documentation: `python scripts/validate_docs.py`
-6. Commit your changes (hooks will run automatically)
-7. Submit a pull request
-
-## License
-
-[Add your license here]
-
-## Support
-
-[Add support information here]
+- **Documentation**: [docs/README.md](docs/README.md)
+- **Issues**: [GitHub Issues](https://github.com/your-username/lablab-bean/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-username/lablab-bean/discussions)

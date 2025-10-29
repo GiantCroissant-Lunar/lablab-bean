@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
+import { expect, test } from "@playwright/test";
 
 function findLatestReport(baseDir: string): string | null {
   if (!fs.existsSync(baseDir)) return null;
