@@ -2,7 +2,7 @@
 
 Status: Adopted
 
-Last Updated: 2025-10-27
+Last Updated: 2025-10-28
 
 Overview
 
@@ -57,12 +57,47 @@ Data-driven styles (color + glyph)
 
 Rendering pipeline summary
 
-- Adapters convert world/map state into a TileBuffer (glyph mode):
-  - Map cells colored by Styles
-  - Entity overlays colored by `Renderable.Foreground/Background` with Z-order
+- Adapters convert world/map state into a TileBuffer:
+  - **Glyph Mode** (traditional ASCII/Unicode):
+    - Map cells colored by Styles
+    - Entity overlays colored by `Renderable.Foreground/Background` with Z-order
+  - **Image Mode** (Kitty graphics protocol):
+    - Map cells mapped to tile IDs from tileset
+    - Entities mapped to tile IDs with color tints applied
+    - Rasterized to RGBA pixel buffer via `TileRasterizer`
+    - Encoded using Kitty graphics protocol
 - Renderers draw TileBuffer to bound targets:
   - Terminal: `TerminalSceneRenderer.SetRenderTarget(View)`
   - SadConsole: `SadConsoleSceneRenderer.SetRenderTarget(ScreenSurface)`
+
+Kitty Graphics Protocol (High-Quality Rendering)
+
+- **What**: Modern terminal graphics standard for pixel-perfect image rendering
+- **Where**: Supported in WezTerm, Kitty terminal, Konsole (with Kitty mode)
+- **Automatic**: Detection via `ITerminalCapabilityDetector`, falls back to glyph mode on unsupported terminals
+- **Configuration** (in `appsettings.json`):
+  ```json
+  {
+    "Rendering": {
+      "Terminal": {
+        "Tileset": "./assets/tiles.png",
+        "TileSize": 16,
+        "PreferHighQuality": true
+      }
+    }
+  }
+  ```
+- **Image Mode Rendering Pipeline**:
+  1. `TerminalUiAdapter.BuildImageTileBuffer()` maps glyphs → tile IDs
+  2. `TileRasterizer.Rasterize()` composites tiles → RGBA pixels
+  3. `KittyGraphicsProtocol.Encode()` encodes pixels → escape sequences
+  4. `Console.Write()` outputs to terminal
+- **Benefits**: 
+  - Millions of colors vs 16/256 in ASCII mode
+  - Pixel-perfect sprite rendering
+  - Smooth animations via placement ID reuse
+  - Hardware-accelerated compositing
+- **Documentation**: See `docs/guides/KITTY_GRAPHICS_SETUP.md` for setup and troubleshooting
 
 Operational notes
 

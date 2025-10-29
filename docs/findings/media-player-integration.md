@@ -21,6 +21,7 @@ Complete guide for integrating the LablabBean media player into your application
 using LablabBean.Plugins.MediaPlayer.Core;
 using LablabBean.Plugins.MediaPlayer.FFmpeg;
 using LablabBean.Plugins.MediaPlayer.Terminal.Braille;
+using LablabBean.Plugins.MediaPlayer.Terminal.Kitty;
 
 // In your startup/Program.cs
 services.AddLablabBeanReactive(); // Required for observables
@@ -28,6 +29,7 @@ services.AddLablabBeanReactive(); // Required for observables
 MediaPlayerPlugin.RegisterServices(services);
 FFmpegPlaybackPlugin.RegisterServices(services);
 BrailleRendererPlugin.RegisterServices(services);
+KittyRendererPlugin.RegisterServices(services); // ✅ NEW: High-quality video
 ```
 
 ### 2. Use MediaService
@@ -103,7 +105,12 @@ Interface for rendering engines (e.g., Braille, SIXEL).
 
 - `BrailleRenderer` - Unicode braille characters (universal fallback)
 - `SixelRenderer` - High-quality graphics (coming soon)
-- `KittyRenderer` - Kitty graphics protocol (coming soon)
+- `KittyRenderer` - Kitty graphics protocol ✅ **COMPLETE** (SPEC-025)
+  - Supports RGBA32 and RGB24 pixel formats
+  - Uses placement ID for smooth video playback
+  - Hardware-accelerated rendering in compatible terminals
+  - Automatic fallback to Braille on unsupported terminals
+  - See `docs/guides/KITTY_GRAPHICS_SETUP.md` for setup
 
 ### ITerminalCapabilityDetector
 
