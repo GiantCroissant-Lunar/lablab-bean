@@ -11,6 +11,7 @@ using LablabBean.Game.TerminalUI.Services;
 using LablabBean.Game.TerminalUI.Views;
 using LablabBean.Rendering.Contracts;
 using LablabBean.Game.TerminalUI.Styles;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Terminal.Gui;
 using ContractsPosition = LablabBean.Contracts.Game.Models.Position;
@@ -26,6 +27,7 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
 {
     private readonly ISceneRenderer _sceneRenderer;
     private readonly ILogger _logger;
+    private readonly IConfiguration? _configuration;
     private readonly TerminalRenderStyles _styles;
     private Window? _mainWindow;
     private HudService? _hudService;
@@ -34,11 +36,17 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
     private IActivityLog? _activityLog;
     private World? _currentWorld;
     private DungeonMap? _currentMap;
+    private bool _preferHighQuality;
+    private Tileset? _tileset;
+    private TileRasterizer? _rasterizer;
+    private ILoggerFactory? _loggerFactory;
 
-    public TerminalUiAdapter(ISceneRenderer sceneRenderer, ILogger logger, TerminalRenderStyles? styles = null)
+    public TerminalUiAdapter(ISceneRenderer sceneRenderer, ILogger logger, IConfiguration? configuration = null, ILoggerFactory? loggerFactory = null, TerminalRenderStyles? styles = null)
     {
         _sceneRenderer = sceneRenderer;
         _logger = logger;
+        _configuration = configuration;
+        _loggerFactory = loggerFactory;
         _styles = styles ?? TerminalRenderStyles.Default();
     }
 
@@ -47,6 +55,35 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
     public Task InitializeAsync(UIInitOptions options, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Initializing Terminal UI Adapter");
+
+        // T059, T060: Check renderer capabilities and configuration
+        string? preferHighQualityStr = _configuration?["Rendering:Terminal:PreferHighQuality"];
+        _preferHighQuality = string.IsNullOrEmpty(preferHighQualityStr) || bool.Parse(preferHighQualityStr);
+        bool supportsImageMode = _sceneRenderer.SupportsImageMode;
+
+        // T061: Log image mode support
+        _logger.LogInformation("Renderer supports image mode: {SupportsImageMode}, PreferHighQuality: {PreferHighQuality}",
+            supportsImageMode, _preferHighQuality);
+
+        // T065, T066: Initialize tileset and rasterizer if needed
+        if (supportsImageMode && _preferHighQuality && _loggerFactory != null)
+        {
+            string? tilesetPath = _configuration?["Rendering:Terminal:Tileset"];
+            string? tileSizeStr = _configuration?["Rendering:Terminal:TileSize"];
+            int tileSize = string.IsNullOrEmpty(tileSizeStr) ? 16 : int.Parse(tileSizeStr);
+
+            if (!string.IsNullOrEmpty(tilesetPath))
+            {
+                var loader = new TilesetLoader(_loggerFactory.CreateLogger<TilesetLoader>());
+                _tileset = loader.Load(tilesetPath, tileSize);
+                if (_tileset != null)
+                {
+                    _rasterizer = new TileRasterizer(_loggerFactory.CreateLogger<TileRasterizer>());
+                    _logger.LogInformation("Tileset loaded for image mode rendering");
+                }
+            }
+        }
+
         Initialize();
         return Task.CompletedTask;
     }
@@ -60,66 +97,25 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
         {
             _hudService.Update(_currentWorld);
 
-            // Build a glyph buffer from WorldViewService and render via ISceneRenderer
-            try
+            // T068: Choose rendering mode based on capabilities
+            TileBuffer? tileBuffer = null;
+
+            if (_sceneRenderer.SupportsImageMode && _preferHighQuality && _tileset != null && _rasterizer != null)
             {
-                if (_worldViewService.TryBuildGlyphArray(_currentWorld, _currentMap, out var glyphs))
-                {
-                    int height = glyphs.GetLength(0);
-                    int width = glyphs.GetLength(1);
-                    var tileBuffer = new TileBuffer(width, height, glyphMode: true);
-
-                    // Build per-cell entity color overrides within viewport (highest Z wins)
-                    uint[,] entFg = new uint[height, width];
-                    uint[,] entBg = new uint[height, width];
-                    int[,] entZ = new int[height, width];
-                    for (int yy = 0; yy < height; yy++) for (int xx = 0; xx < width; xx++) entZ[yy, xx] = int.MinValue;
-
-                    if (_worldViewService.TryComputeCamera(_currentWorld, _currentMap, out var camX, out var camY))
-                    {
-                        var query = new QueryDescription().WithAll<CorePosition, Renderable, Visible>();
-                        _currentWorld.Query(in query, (Entity e, ref CorePosition pos, ref Renderable renderable, ref Visible vis) =>
-                        {
-                            if (!vis.IsVisible) return;
-                            if (!_currentMap.IsInFOV(pos.Point)) return;
-                            int vx = pos.Point.X - camX;
-                            int vy = pos.Point.Y - camY;
-                            if (vx < 0 || vy < 0 || vx >= width || vy >= height) return;
-                            if (renderable.ZOrder <= entZ[vy, vx]) return;
-                            entZ[vy, vx] = renderable.ZOrder;
-                            entFg[vy, vx] = ToArgb(renderable.Foreground);
-                            entBg[vy, vx] = ToArgb(renderable.Background);
-                        });
-                    }
-
-                    if (tileBuffer.Glyphs != null)
-                    {
-                        for (int y = 0; y < height; y++)
-                        {
-                            for (int x = 0; x < width; x++)
-                            {
-                                var ch = glyphs[y, x];
-                                ColorRef fg;
-                                ColorRef bg;
-                                if (entZ[y, x] != int.MinValue)
-                                {
-                                    fg = new ColorRef(0, entFg[y, x]);
-                                    bg = new ColorRef(0, entBg[y, x]);
-                                }
-                                else
-                                {
-                                    var style = _styles.LookupForGlyph(ch);
-                                    fg = new ColorRef(0, style.ForegroundArgb);
-                                    bg = new ColorRef(0, style.BackgroundArgb);
-                                }
-                                tileBuffer.Glyphs[y, x] = new Glyph(ch, fg, bg);
-                            }
-                        }
-                    }
-                    _ = _sceneRenderer.RenderAsync(tileBuffer, CancellationToken.None);
-                }
+                // Use image mode rendering
+                tileBuffer = BuildImageTileBuffer(_currentWorld, _currentMap);
             }
-            catch { /* best effort */ }
+
+            // Fallback to glyph mode
+            if (tileBuffer == null)
+            {
+                tileBuffer = BuildGlyphBuffer(_currentWorld, _currentMap);
+            }
+
+            if (tileBuffer != null)
+            {
+                _ = _sceneRenderer.RenderAsync(tileBuffer, CancellationToken.None);
+            }
         }
 
         return Task.CompletedTask;
@@ -190,6 +186,165 @@ public class TerminalUiAdapter : IService, IDungeonCrawlerUI
 
     public View? GetWorldView() => _worldViewService?.WorldView;
     public View? GetWorldRenderView() => _worldViewService?.RenderViewControl;
+
+    #endregion
+
+    #region Rendering Helpers
+
+    // T062: Private method to build image tile buffer
+    private TileBuffer? BuildImageTileBuffer(World world, DungeonMap map)
+    {
+        if (_worldViewService == null || _tileset == null || _rasterizer == null) return null;
+
+        try
+        {
+            if (!_worldViewService.TryBuildGlyphArray(world, map, out var glyphs)) return null;
+
+            int height = glyphs.GetLength(0);
+            int width = glyphs.GetLength(1);
+
+            // T063: Allocate ImageTile array
+            ImageTile[,] imageTiles = new ImageTile[height, width];
+
+            // T064: Map game tiles to tile IDs
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    char glyph = glyphs[y, x];
+                    int tileId = MapGlyphToTileId(glyph);
+                    imageTiles[y, x] = new ImageTile(tileId, null, 255); // Base tile without tint, full opacity
+                }
+            }
+
+            // T065: Apply entity colors as tint colors
+            if (_worldViewService.TryComputeCamera(world, map, out var camX, out var camY))
+            {
+                var query = new QueryDescription().WithAll<CorePosition, Renderable, Visible>();
+                world.Query(in query, (Entity e, ref CorePosition pos, ref Renderable renderable, ref Visible vis) =>
+                {
+                    if (!vis.IsVisible) return;
+                    if (!map.IsInFOV(pos.Point)) return;
+                    int vx = pos.Point.X - camX;
+                    int vy = pos.Point.Y - camY;
+                    if (vx < 0 || vy < 0 || vx >= width || vy >= height) return;
+
+                    int tileId = MapRenderableToTileId(renderable);
+                    uint tintColor = ToArgb(renderable.Foreground);
+                    imageTiles[vy, vx] = new ImageTile(tileId, tintColor, 255); // Full opacity
+                });
+            }
+
+            // T066, T067: Rasterize tiles and return TileBuffer
+            byte[]? pixelData = _rasterizer.Rasterize(imageTiles, _tileset);
+
+            if (pixelData != null)
+            {
+                var tileBuffer = TileBuffer.CreateImageBuffer(width * _tileset.TileSize, height * _tileset.TileSize);
+                tileBuffer.PixelData = pixelData;
+                return tileBuffer;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to build image tile buffer, falling back to glyph mode");
+        }
+
+        return null;
+    }
+
+    private TileBuffer? BuildGlyphBuffer(World world, DungeonMap map)
+    {
+        if (_worldViewService == null) return null;
+
+        try
+        {
+            if (!_worldViewService.TryBuildGlyphArray(world, map, out var glyphs)) return null;
+
+            int height = glyphs.GetLength(0);
+            int width = glyphs.GetLength(1);
+            var tileBuffer = new TileBuffer(width, height, glyphMode: true);
+
+            // Build per-cell entity color overrides within viewport (highest Z wins)
+            uint[,] entFg = new uint[height, width];
+            uint[,] entBg = new uint[height, width];
+            int[,] entZ = new int[height, width];
+            for (int yy = 0; yy < height; yy++) for (int xx = 0; xx < width; xx++) entZ[yy, xx] = int.MinValue;
+
+            if (_worldViewService.TryComputeCamera(world, map, out var camX, out var camY))
+            {
+                var query = new QueryDescription().WithAll<CorePosition, Renderable, Visible>();
+                world.Query(in query, (Entity e, ref CorePosition pos, ref Renderable renderable, ref Visible vis) =>
+                {
+                    if (!vis.IsVisible) return;
+                    if (!map.IsInFOV(pos.Point)) return;
+                    int vx = pos.Point.X - camX;
+                    int vy = pos.Point.Y - camY;
+                    if (vx < 0 || vy < 0 || vx >= width || vy >= height) return;
+                    if (renderable.ZOrder <= entZ[vy, vx]) return;
+                    entZ[vy, vx] = renderable.ZOrder;
+                    entFg[vy, vx] = ToArgb(renderable.Foreground);
+                    entBg[vy, vx] = ToArgb(renderable.Background);
+                });
+            }
+
+            if (tileBuffer.Glyphs != null)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        var ch = glyphs[y, x];
+                        ColorRef fg;
+                        ColorRef bg;
+                        if (entZ[y, x] != int.MinValue)
+                        {
+                            fg = new ColorRef(0, entFg[y, x]);
+                            bg = new ColorRef(0, entBg[y, x]);
+                        }
+                        else
+                        {
+                            var style = _styles.LookupForGlyph(ch);
+                            fg = new ColorRef(0, style.ForegroundArgb);
+                            bg = new ColorRef(0, style.BackgroundArgb);
+                        }
+                        tileBuffer.Glyphs[y, x] = new Glyph(ch, fg, bg);
+                    }
+                }
+            }
+
+            return tileBuffer;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to build glyph buffer");
+            return null;
+        }
+    }
+
+    // T064: Map glyphs to tile IDs
+    private int MapGlyphToTileId(char glyph)
+    {
+        return glyph switch
+        {
+            '.' => 0,  // Floor
+            '#' => 1,  // Wall
+            '+' => 2,  // Door
+            _ => 0     // Default to floor
+        };
+    }
+
+    private int MapRenderableToTileId(Renderable renderable)
+    {
+        return renderable.Glyph switch
+        {
+            '@' => 10, // Player
+            'g' => 11, // Goblin/Enemy
+            'o' => 11, // Orc/Enemy
+            'i' => 20, // Item
+            _ => 0     // Default
+        };
+    }
 
     #endregion
 
