@@ -16,6 +16,10 @@
       <Private>false</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\framework\LablabBean.Rendering.Terminal.Contracts\LablabBean.Rendering.Terminal.Contracts.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Rendering.Terminal.Kitty\LablabBean.Rendering.Terminal.Kitty.csproj" />
+    <ProjectReference Include="..\..\framework\LablabBean.Contracts.Media\LablabBean.Contracts.Media.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
