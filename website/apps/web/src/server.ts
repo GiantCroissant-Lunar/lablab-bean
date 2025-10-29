@@ -1,5 +1,5 @@
-import type { Server } from "http";
 import { TerminalServer } from "@lablab-bean/terminal";
+import type { Server } from "http";
 
 let terminalServer: TerminalServer | null = null;
 
