@@ -1,0 +1,20 @@
+[hub]
+repo = "GiantCroissant-Lunar/lunar-snake-hub"
+branch = "main"
+
+[packs]
+# Version pinning for hub assets
+agents = "0.1.0"      # Agent rules, prompts, adapters
+nuke = "0.1.0"        # NUKE build components
+precommit = "0.1.0"   # Pre-commit hooks
+
+[sync]
+# What to pull into .hub-cache/ at runtime
+include = [
+    "agents/rules/**",
+    "agents/prompts/**",
+    "agents/adapters/**",
+    "agents/scripts/**",
+    "agents/integrations/**",
+    "nuke/**",
+]

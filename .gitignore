@@ -1,3 +1,7 @@
+# Hub-synced content (runtime only, never commit)
+.hub-cache/
+.agent           # Symlink to .hub-cache/agents
+
 # Generated files
 generated/
 output/
